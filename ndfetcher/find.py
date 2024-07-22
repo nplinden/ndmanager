@@ -38,6 +38,9 @@ def find_cli():
                         type=str,
                         help=f"Nuclide name.")
     args = parser.parse_args()
+    if endf6_path is None:
+        print("$ENDF6_PATH must be set to use ndfind")
+        return
     try:
         for p in find(args.libname, args.nsub, args.nuclide):
             print(str(p))
