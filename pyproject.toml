@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ndfetcher"
 readme = "README.md"
-version = "0.1"
+version = "0.1.0"
 authors = [{ name="Nicolas Linden", email="linden.nicolas@orange.fr"}]
 description = "Fetching nuclear data"
 classifiers = ["Programming Language :: Python :: 3.7"]
