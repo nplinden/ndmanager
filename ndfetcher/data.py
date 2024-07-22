@@ -4,10 +4,10 @@ import re
 NDLIBS = {
     "jeff33": "JEFF-3.3",
     "jeff311": "JEFF-3.1.1",
-    # "jendl5": "JENDL-5-Aug2023",
+    "jendl5": "JENDL-5-Aug2023",
     "endfb71": "ENDF-B-VII.1",
     "endfb8": "ENDF-B-VIII.0",
-    # "tendl23": "TENDL-2023",
+    "tendl23": "TENDL-2023",
 }
 
 NSUB = ["decay", "g", "n", "nfpy", "sfpy", "tsl"]
