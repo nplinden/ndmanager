@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ndfetcher"
+readme = "README.md"
+version = "0.1"
+description = "Fetching nuclear data"
+classifiers = ["Programming Language :: Python :: 3.7"]
+requires-python = ">=3.7"
+
+[project.scripts]
+ndfetch = "ndfetcher.download:download_cli"
+ndfind = "ndfetcher.find:find_cli"
+
+[tool.setuptools]
+packages = ['ndfetcher']
