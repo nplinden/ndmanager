@@ -8,6 +8,7 @@ NDLIBS = {
     "endfb71": "ENDF-B-VII.1",
     "endfb8": "ENDF-B-VIII.0",
     "tendl23": "TENDL-2023",
+    "cendl32": "CENDL-3.2",
 }
 
 NSUB = ["decay", "g", "n", "nfpy", "sfpy", "tsl"]
