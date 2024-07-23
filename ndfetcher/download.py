@@ -37,7 +37,7 @@ def download(libname, reaction):
             target = current / f"{libname}/{reaction}"
             target.parent.mkdir(exist_ok=True, parents=True)
             shutil.rmtree(target, ignore_errors=True)
-            source.rename(target)
+            shutil.move(source, target)
     print(f"{libname:10} {reaction:4} {target}")
     return target
 
