@@ -4,6 +4,7 @@ from multiprocessing import Pool
 from pathlib import Path
 from ndfetcher.data import TSL_NEUTRON, nuclide_from_file, nuc_in_file
 from pprint import pprint
+import argparse as ap
 from contextlib import chdir
 import yaml
 
@@ -133,7 +134,6 @@ def list_ard(basis, photo_in):
 
     return basis_dict
     
-
 def generate(ymlpath, destination=".", dryrun=False):
     if endf6_path is None:
         raise EnvironmentError("The $ENDF6_PATH must be set.")
@@ -222,6 +222,19 @@ def generate(ymlpath, destination=".", dryrun=False):
 
         library.export_to_xml('cross_sections.xml')
 
+def generate_cli():
+    parser = ap.ArgumentParser(
+        prog="ndprocess",
+        description="Process ENDF6 files to HDF5 OpenMC ready library files.",
+    )
+    parser.add_argument("filename", 
+                        type=str,
+                        help=f"The name of the YAML file describing the target library.")
+    parser.add_argument("destination", 
+                        type=str,
+                        help=f"Path to write the library to.")
+    parser.add_argument("--dryrun", help="Does not perform NJOY runs.",
+                    action="store_true")
 
-
-
+    args = parser.parse_args()
+    generate(args.filename, args.destination, args.dry_run)

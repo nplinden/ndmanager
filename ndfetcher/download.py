@@ -85,21 +85,3 @@ def download_cli():
         print(f"\t{s[0]}/{s[1]}")
     with Pool() as p:
         p.starmap(download, stargs)
-
-
-    #download(args.libname, args.nsub)
-
-# if __name__=="__main__":
-#     download_cli()
-
-# if __name__=="__main__":
-#     parser = ap.ArgumentParser(
-#         prog="ndfetch",
-#         description="Fetch nuclear data",
-#     )
-#     parser.add_argument("--libname", "-l", 
-#                         type=str,
-#                         help=f"The name of the library to download, from {{{list(NDLIBS.keys())}}}")
-#     parser.add_argument("--nsub", "-n",
-#                         type=str,
-#                         help=f"Sublibrary type, from {{{NSUB}}}")
