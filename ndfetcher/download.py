@@ -38,7 +38,24 @@ def download(libname, reaction):
             target.parent.mkdir(exist_ok=True, parents=True)
             shutil.rmtree(target, ignore_errors=True)
             shutil.move(source, target)
-    print(f"{libname:10} {reaction:4} {target}")
+
+    # Some erratafiles
+    if libname == "endfb8":
+        B10 = (target / "n_0525_5-B-10.dat")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            with chdir(tmpdir):
+                cmds = [
+                    "wget",
+                    '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
+                    'https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf',
+                ]
+                sp.call(args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+                source = Path("n-005_B_010.endf")
+                shutil.move(source, B10)
+
+
+        
+    
     return target
 
 def download_cli():

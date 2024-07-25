@@ -52,7 +52,7 @@ TSL_NEUTRON = {
             "tsl_0008_H(CaH2).dat": "H1",
             "tsl_0011_D(D2O).dat": "H2",
             "tsl_0026_4-Be.dat": "Be9",
-            "tsl_0031_Graphite.dat": "C12",
+            "tsl_0031_Graphite.dat": "C0",
             "tsl_0037_H(CH2).dat": "H1",
             "tsl_0052_24-Mg.dat": "Mg24",
             "tsl_0059_Ca(CaH2).dat": "Ca40"
@@ -69,7 +69,7 @@ TSL_NEUTRON = {
             "tsl_0012_para-D.dat": "H2",
             "tsl_0013_ortho-D.dat": "H2",
             "tsl_0026_4-Be.dat": "Be9",
-            "tsl_0031_Graphite.dat": "C12",
+            "tsl_0031_Graphite.dat": "C0",
             "tsl_0037_H(CH2).dat": "H1",
             "tsl_0038_Mesi-PhII.dat": "H1",
             "tsl_0042_Tolue-PhII.dat": "H1",
@@ -91,7 +91,7 @@ TSL_NEUTRON = {
             "tsl_0013_ortho-d.dat": "H2",
             "tsl_0026_Bemetal.dat": "Be9",
             "tsl_0027_Be(BeO).dat": "Be9",
-            "tsl_0031_graphite.dat": "C12",
+            "tsl_0031_graphite.dat": "C0",
             "tsl_0033_l-ch4.dat": "H1",
             "tsl_0034_s-ch4.dat": "H1",
             "tsl_0037_H(CH2).dat": "H1",
@@ -238,3 +238,8 @@ def nuclide2z_a_m(nuclide):
         M = int(m.removeprefix("m"))
 
     return Z, A, M
+
+nuc_in_file = re.compile(r"([A-Z][a-z]*)-(\d+)([A-Z]*)")
+def nuclide_from_file(p):
+    element, A, m = nuc_in_file.search(p.name).groups()
+    return f"{element}{A}{m}"
