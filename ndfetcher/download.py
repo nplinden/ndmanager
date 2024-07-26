@@ -9,6 +9,14 @@ from itertools import product
 from multiprocessing import Pool
 from ndfetcher.data import NSUB, NDLIBS
 
+
+def clear_line(n=1):
+    LINE_UP = "\033[1A"
+    LINE_CLEAR = "\x1b[2K"
+    for i in range(n):
+        print(LINE_UP, end=LINE_CLEAR)
+
+
 def download(libname, reaction):
     current = Path(".").absolute()
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -20,15 +28,19 @@ def download(libname, reaction):
                 "--no-parent",
                 '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
                 '--reject html,htm,txt,tmp,"index*","robots*"',
-                f'https://www-nds.iaea.org/public/download-endf/{fancyname}/{reaction}/',
+                f"https://www-nds.iaea.org/public/download-endf/{fancyname}/{reaction}/",
             ]
 
-            code = sp.call(args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+            code = sp.call(
+                args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL
+            )
             if code != 0:
                 print(f"{libname:10} {reaction:4} None")
                 return
 
-            source = Path(f"www-nds.iaea.org/public/download-endf/{fancyname}/{reaction}/")
+            source = Path(
+                f"www-nds.iaea.org/public/download-endf/{fancyname}/{reaction}/"
+            )
             for p in source.glob("*zip"):
                 with zipfile.ZipFile(p, "r") as zf:
                     zf.extractall(p.parent)
@@ -40,38 +52,42 @@ def download(libname, reaction):
             shutil.move(source, target)
 
     # Some erratafiles
-    if libname == "endfb8":
-        B10 = (target / "n_0525_5-B-10.dat")
+    if libname == "endfb8" and reaction == "n":
+        B10 = target / "n_0525_5-B-10.dat"
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
                 cmds = [
                     "wget",
                     '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
-                    'https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf',
+                    "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf",
                 ]
-                sp.call(args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+                sp.call(
+                    args=" ".join(cmds),
+                    shell=True,
+                    stdout=sp.DEVNULL,
+                    stderr=sp.DEVNULL,
+                )
                 source = Path("n-005_B_010.endf")
                 shutil.move(source, B10)
 
-
-        
-    
     return target
+
 
 def download_cli():
     parser = ap.ArgumentParser(
         prog="ndfetch",
         description="Fetch nuclear data",
     )
-    parser.add_argument("libname", 
-                        type=str,
-                        help=f"The name of the library to download, from {{{list(NDLIBS.keys())}}}")
-    parser.add_argument("nsub",
-                        nargs="*",
-                        type=str,
-                        help=f"Sublibrary type, from {{{NSUB}}}")
+    parser.add_argument(
+        "libname",
+        type=str,
+        help=f"The name of the library to download, from {{{list(NDLIBS.keys())}}}",
+    )
+    parser.add_argument(
+        "nsub", nargs="*", type=str, help=f"Sublibrary type, from {{{NSUB}}}"
+    )
     args = parser.parse_args()
-    
+
     assert args.libname in NDLIBS
     if not args.nsub:
         stargs = list(product([args.libname], NSUB))
