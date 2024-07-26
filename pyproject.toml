@@ -16,7 +16,7 @@ Homepage = "https://github.com/nplinden/ndfetcher"
 
 [project.scripts]
 ndfetch = "ndfetcher.download:download_cli"
-ndfind = "ndfetcher.find:find_cli"
+ndprocess = "ndfetcher.generate:generate_cli"
 
 [tool.setuptools]
 packages = ['ndfetcher']
