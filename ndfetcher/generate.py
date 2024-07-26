@@ -260,4 +260,4 @@ def generate_cli():
     )
 
     args = parser.parse_args()
-    generate(args.filename, args.destination, args.dry_run)
+    generate(args.filename, args.destination, args.dryrun)
