@@ -173,7 +173,6 @@ def generate(ymlpath, destination=".", dryrun=False):
         else:
             temperatures = [int(t) for t in temperatures.split()]
         n_in = inputs.get("n", {})
-        tsl_in = inputs.get("tsl", {})
 
         # NEUTRONS
         neutron = list_neutron(basis, n_in)
@@ -193,7 +192,12 @@ def generate(ymlpath, destination=".", dryrun=False):
                     library.register_file(p)
 
         # THERMAL SCATTERING LAW
-        tsl = list_tsl(basis, tsl_in)
+        tsl_in = inputs.get("tsl", {})
+        if isinstance(tsl_in, str):
+            # In this case this is a ndlib name
+            tsl = list_tsl(tsl_in, {})
+        else:
+            tsl = list_tsl(basis, tsl_in)
         dest = destination / "tsl"
         dest.mkdir(parents=True, exist_ok=True)
         args = [(dest, neutron[t[0]], t[1]) for t in tsl]
