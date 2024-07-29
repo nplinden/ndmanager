@@ -3,6 +3,7 @@ from pathlib import Path
 import yaml
 from contextlib import chdir
 import openmc
+import openmc.deplete
 import argparse as ap
 
 
