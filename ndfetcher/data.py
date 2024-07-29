@@ -239,7 +239,7 @@ def nuclide2z_a_m(nuclide):
 
     return Z, A, M
 
-nuc_in_file = re.compile(r"([A-Z][a-z]*)-(\d+)([A-Z]*)")
+nuc_in_file = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
 def nuclide_from_file(p):
     element, A, m = nuc_in_file.search(p.name).groups()
     return f"{element}{A}{m}"
