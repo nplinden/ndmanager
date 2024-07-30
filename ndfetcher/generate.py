@@ -179,7 +179,7 @@ def generate(ymlpath, destination=".", dryrun=False):
         neutron = list_neutron(basis, n_in)
         dest = destination / "neutron"
         dest.mkdir(parents=True, exist_ok=True)
-        args = [(dest, n, neutron[n]) for n in neutron]
+        args = [(dest, neutron[n], temperatures) for n in neutron]
         if dryrun:
             for arg in args:
                 print(arg[0], str(arg[1]), str(arg[2]))
