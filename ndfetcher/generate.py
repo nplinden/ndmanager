@@ -47,6 +47,7 @@ def list_neutron(basis, n_in):
 
     # Remove neutron evaluations if they are present.
     basis_dict.pop("n1", None)
+    basis_dict.pop("nn1", None)
     basis_dict.pop("N1", None)
 
     # Add custom evaluations.
