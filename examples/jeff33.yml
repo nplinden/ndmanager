@@ -19,7 +19,7 @@
 # O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
 #         evaluation instead.
 name: jeff33+
-temperatures: 0 250 294 600 900 973 1200
+temperatures: 250 294 600 900 973 1200
 basis: jeff33
 n:
     ommit: C0
