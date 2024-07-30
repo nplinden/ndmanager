@@ -262,5 +262,6 @@ def chain(ymlpath):
         chain.export_to_xml("chain.xml")
 
 def generate_cmd(args: ap.Namespace):
-    chain(args.filename)
+    if args.chain:
+        chain(args.filename)
     generate(args.filename, args.dryrun)

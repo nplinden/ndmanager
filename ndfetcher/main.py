@@ -50,6 +50,11 @@ def main():
         help="Does not perform NJOY runs.",
         action="store_true"
     )
+    build_parser.add_argument(
+        "--chain",
+        help="Builds the depletion chain.",
+        action="store_true"
+    )
     build_parser.set_defaults(func=generate_cmd)
 
 
@@ -58,6 +63,3 @@ def main():
         args.func(args)
     else:
         parser.print_help()
-
-# if __name__=="__main__":
-#     main()
