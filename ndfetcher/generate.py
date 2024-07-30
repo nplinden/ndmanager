@@ -2,17 +2,11 @@ import os
 import openmc
 from multiprocessing import Pool
 from pathlib import Path
-from ndfetcher.data import TSL_NEUTRON, nuclide_from_file
+from ndfetcher.data import TSL_NEUTRON, nuclide_from_file, ND_PATH, ENDF6_PATH
 from pprint import pprint
 import argparse as ap
 from contextlib import chdir
 import yaml
-
-if "ENDF6_PATH" in os.environ:
-    endf6_path = Path(os.environ["ENDF6_PATH"])
-else:
-    endf6_path = None
-
 
 def process_neutron(directory, path, temperatures):
     print(f"Processing {path}")
@@ -38,7 +32,7 @@ def list_neutron(basis, n_in):
         if nuclide in add:
             raise ValueError("A nuclide can't be both ommited and added.")
 
-    basis_paths = Path(f"{endf6_path}/{basis}/n").glob("*.dat")
+    basis_paths = Path(f"{ENDF6_PATH}/{basis}/n").glob("*.dat")
     basis_dict = {nuclide_from_file(p): p for p in basis_paths}
 
     # Remove unwanted evaluations
@@ -54,7 +48,7 @@ def list_neutron(basis, n_in):
     # Overwrite if the main library already provides them.
     for guestlib, _nuclides in add.items():
         nuclides = _nuclides.split()
-        guest_paths = Path(f"{endf6_path}/{guestlib}/n").glob("*.dat")
+        guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/n").glob("*.dat")
         guest_endf6 = {
             nuclide_from_file(n): n
             for n in guest_paths
@@ -74,7 +68,7 @@ def list_tsl(basis, tsl_in):
         if tsl in add:
             raise ValueError("A tsl file can't be both ommited and added.")
 
-    basis_paths = Path(f"{endf6_path}/{basis}/tsl").glob("*.dat")
+    basis_paths = Path(f"{ENDF6_PATH}/{basis}/tsl").glob("*.dat")
     basis_paths = [p for p in basis_paths if p.name not in ommit]
     basis_neutrons = TSL_NEUTRON[basis]
     for k in basis_neutrons:
@@ -85,7 +79,7 @@ def list_tsl(basis, tsl_in):
     # Add custom evaluations.
     for guestlib, _tsl in add.items():
         tsl = _tsl.split()
-        guest_paths = Path(f"{endf6_path}/{guestlib}/tsl").glob("*.dat")
+        guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/tsl").glob("*.dat")
         guest_neutrons = TSL_NEUTRON[guestlib]
         for k in guest_neutrons:
             if guest_neutrons[k] in substitute:
@@ -103,7 +97,7 @@ def list_photo(basis, photo_in):
         if nuclide in add:
             raise ValueError("A nuclide can't be both ommited and added.")
 
-    basis_paths = Path(f"{endf6_path}/{basis}/photo").glob("*.dat")
+    basis_paths = Path(f"{ENDF6_PATH}/{basis}/photo").glob("*.dat")
     basis_dict = {nuclide_from_file(p).rstrip("0"): p for p in basis_paths}
 
     # Remove unwanted evaluations
@@ -114,7 +108,7 @@ def list_photo(basis, photo_in):
     # Overwrite if the main library already provides them.
     for guestlib, _photo in add.items():
         photo = _photo.split()
-        guest_paths = Path(f"{endf6_path}/{guestlib}/photo").glob("*.dat")
+        guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/photo").glob("*.dat")
         guest_endf6 = {
             nuclide_from_file(n).rstrip("0"): n
             for n in guest_paths
@@ -133,7 +127,7 @@ def list_ard(basis, photo_in):
         if nuclide in add:
             raise ValueError("A nuclide can't be both ommited and added.")
 
-    basis_paths = Path(f"{endf6_path}/{basis}/ard").glob("*.dat")
+    basis_paths = Path(f"{ENDF6_PATH}/{basis}/ard").glob("*.dat")
     basis_dict = {nuclide_from_file(p).rstrip("0"): p for p in basis_paths}
 
     # Remove unwanted evaluations
@@ -144,7 +138,7 @@ def list_ard(basis, photo_in):
     # Overwrite if the main library already provides them.
     for guestlib, _photo in add.items():
         photo = _photo.split()
-        guest_paths = Path(f"{endf6_path}/{guestlib}/ard").glob("*.dat")
+        guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/ard").glob("*.dat")
         guest_endf6 = {
             nuclide_from_file(n).rstrip("0"): n
             for n in guest_paths
@@ -155,14 +149,10 @@ def list_ard(basis, photo_in):
     return basis_dict
 
 
-def generate(ymlpath, destination=".", dryrun=False):
-    if endf6_path is None:
-        raise EnvironmentError("The $ENDF6_PATH must be set.")
-    destination = Path(destination)
-
+def generate(ymlpath, dryrun=False):
     inputs = yaml.safe_load(open(ymlpath))
 
-    name = Path(inputs["name"])
+    name = ND_PATH / inputs["name"]
     name.mkdir(parents=True, exist_ok=True)
     with chdir(name):
         library = openmc.data.DataLibrary()
@@ -177,7 +167,7 @@ def generate(ymlpath, destination=".", dryrun=False):
 
         # NEUTRONS
         neutron = list_neutron(basis, n_in)
-        dest = destination / "neutron"
+        dest = Path("neutron")
         dest.mkdir(parents=True, exist_ok=True)
         args = [(dest, neutron[n], temperatures) for n in neutron]
         if dryrun:
@@ -199,7 +189,7 @@ def generate(ymlpath, destination=".", dryrun=False):
             tsl = list_tsl(tsl_in, {})
         else:
             tsl = list_tsl(basis, tsl_in)
-        dest = destination / "tsl"
+        dest = Path("tsl")
         dest.mkdir(parents=True, exist_ok=True)
         args = [(dest, neutron[t[0]], t[1]) for t in tsl]
         if dryrun:
@@ -228,7 +218,7 @@ def generate(ymlpath, destination=".", dryrun=False):
         else:
             ard = list_ard(basis, ard_in)
 
-        dest = destination / "photon"
+        dest = Path("photon")
         dest.mkdir(parents=True, exist_ok=True)
         if dryrun:
             pprint(photo)
@@ -247,22 +237,30 @@ def generate(ymlpath, destination=".", dryrun=False):
 
         library.export_to_xml("cross_sections.xml")
 
+def chain(ymlpath):
+    if ENDF6_PATH is None:
+        raise EnvironmentError("The $ENDF6_PATH must be set.")
 
-def generate_cli():
-    parser = ap.ArgumentParser(
-        prog="ndprocess",
-        description="Process ENDF6 files to HDF5 OpenMC ready library files.",
-    )
-    parser.add_argument(
-        "filename",
-        type=str,
-        help="The name of the YAML file describing the target library.",
-    )
-    parser.add_argument("destination", type=str,
-                        help="Path to write the library to.")
-    parser.add_argument(
-        "--dryrun", help="Does not perform NJOY runs.", action="store_true"
-    )
+    inputs = yaml.safe_load(open(ymlpath))
 
-    args = parser.parse_args()
-    generate(args.filename, args.destination, args.dryrun)
+    name = ND_PATH / inputs["name"]
+    name.mkdir(parents=True, exist_ok=True)
+    with chdir(name):
+        basis = inputs["basis"]
+
+        neutron = (ENDF6_PATH / basis / "n").glob("*.dat")
+        decay = (ENDF6_PATH / basis / "decay").glob("*.dat")
+        nfpy = (ENDF6_PATH / basis / "nfpy").glob("dat")
+
+        chain = openmc.deplete.Chain.from_endf(
+            neutron_files=neutron,
+            decay_files=decay,
+            fpy_files=nfpy,
+            reactions=list(openmc.deplete.chain.REACTIONS.keys())
+        )
+
+        chain.export_to_xml("chain.xml")
+
+def generate_cmd(args: ap.Namespace):
+    chain(args.filename)
+    generate(args.filename, args.dryrun)

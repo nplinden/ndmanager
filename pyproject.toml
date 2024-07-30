@@ -15,9 +15,7 @@ requires-python = ">=3.7"
 Homepage = "https://github.com/nplinden/ndfetcher"
 
 [project.scripts]
-ndfetch = "ndfetcher.download:download_cli"
-ndprocess = "ndfetcher.generate:generate_cli"
-ndchain = "ndfetcher.chain:chain_cli"
+ndf = "ndfetcher.main:main"
 
 [tool.setuptools]
 packages = ['ndfetcher']

@@ -1,5 +1,16 @@
 import re
+import os
+from pathlib import Path
 
+try:
+    ENDF6_PATH = Path(os.environ["ENDF6_PATH"])
+except KeyError:
+    raise EnvironmentError("$ENDF6_PATH must be set to use NDFetcher.")
+
+try:
+    ND_PATH = Path(os.environ["ND_PATH"])
+except KeyError:
+    raise EnvironmentError("$ND_PATH must be set to use NDFetcher.")
 
 NDLIBS = {
     "jeff33": "JEFF-3.3",
@@ -11,7 +22,7 @@ NDLIBS = {
     "cendl32": "CENDL-3.2",
 }
 
-NSUB = ["decay", "g", "n", "nfpy", "sfpy", "tsl", "ard", "photo"]
+NSUB = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
 
 ATOMIC_SYMBOL = {0: 'n', 1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C',
                  7: 'N', 8: 'O', 9: 'F', 10: 'Ne', 11: 'Na', 12: 'Mg', 13: 'Al',
