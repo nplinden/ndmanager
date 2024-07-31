@@ -56,10 +56,16 @@ def find_negative_in_lib(libfile, mt):
     plib = Path(libfile)
     root = ET.parse(plib).getroot()
 
+    directorynode = root.find("directory")
+    if directorynode is not None:
+        directory = directorynode.text
+    else:
+        directory = ""
+
     negatives = {}
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron":
-            libpath = plib.parent / lib.attrib["path"]
+            libpath = plib.parent / directory / lib.attrib["path"]
             negatives |= find_negative(libpath, mt)
     return negatives
 
@@ -79,9 +85,16 @@ def set_negative_to_zero_in_lib(libfile, mt):
     plib = Path(libfile)
     root = ET.parse(plib).getroot()
 
+    directorynode = root.find("directory")
+    if directorynode is not None:
+        directory = directorynode.text
+    else:
+        directory = ""
+
+
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron":
-            libpath = plib.parent / lib.attrib["path"]
+            libpath = plib.parent / directory / lib.attrib["path"]
             set_negative_to_zero(libpath, lib.attrib["materials"], mt)
     return 
 
@@ -89,9 +102,15 @@ def find_nuclide_in_lib(libfile, nuclide):
     plib = Path(libfile)
     root = ET.parse(plib).getroot()
 
+    directorynode = root.find("directory")
+    if directorynode is not None:
+        directory = directorynode.text
+    else:
+        directory = ""
+
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron" and lib.attrib["materials"] == nuclide:
-            return plib.parent / lib.attrib["path"]
+            return plib.parent / directory / lib.attrib["path"]
     
 
 def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True):
