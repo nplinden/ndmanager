@@ -5,6 +5,7 @@ import tempfile
 from contextlib import chdir
 import shutil
 from ndfetcher.data import NDLIBS, ENDF6_PATH
+from ndfetcher.nuclide import Nuclide
 
 
 def download(libname, sublib):
@@ -38,10 +39,14 @@ def download(libname, sublib):
             target.parent.mkdir(exist_ok=True, parents=True)
             shutil.rmtree(target, ignore_errors=True)
             shutil.move(source, target)
+            if sublib not in ["tsl"]:
+                for p in Path(target).glob("*.dat"):
+                    name = Nuclide.from_file(p).name
+                    p.rename(p.parent / f"{name}.endf6")
 
     # Some erratafiles
     if libname == "endfb8" and sublib == "n":
-        B10 = ENDF6_PATH / f"{libname}/{sublib}" / "n_0525_5-B-10.dat"
+        B10 = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
                 cmds = [

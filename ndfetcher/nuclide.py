@@ -46,6 +46,8 @@ class Nuclide:
     def name(self):
         if self.M > 0:
             return f"{ATOMIC_SYMBOL[self.Z]}{self.A}_m{self.M}"
+        elif self.A == 0:
+            return ATOMIC_SYMBOL[self.Z]
         else:
             return f"{ATOMIC_SYMBOL[self.Z]}{self.A}"
 
