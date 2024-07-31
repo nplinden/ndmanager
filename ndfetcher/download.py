@@ -57,5 +57,11 @@ def download(libname, sublib):
                 )
                 source = Path("n-005_B_010.endf")
                 shutil.move(source, B10)
+    if libname == "jeff33" and sublib == "tsl":
+        tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.dat"
+        lines = open(tape).readlines()
+        lines[1] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
+        with open(tape, "w") as f:
+            print("".join(lines), file=f)
 
     return "✔️"

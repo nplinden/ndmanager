@@ -1,5 +1,4 @@
 import argparse as ap
-from ndfetcher.data import NSUB, NDLIBS
 from ndfetcher.commands import download_cmd, generate_cmd, list_cmd, clone_cmd, remove_cmd, sn301_cmd, info_cmd
 
 def main():
@@ -19,7 +18,6 @@ def main():
                                 action="extend",
                                 nargs="+",
                                 type=str,
-                                choices=list(NDLIBS.keys()),
                                 help="List of nuclear data libraries to download."
                                 )
     download_parser.add_argument("-s", 
@@ -27,7 +25,6 @@ def main():
                                 action="extend",
                                 nargs="+",
                                 type=str,
-                                choices=NSUB,
                                 help="List of sublibraries libraries to download."
                                 )
     download_parser.set_defaults(func=download_cmd)

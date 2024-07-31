@@ -21,7 +21,7 @@ NDLIBS = {
                 """(JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
         "homepage": "https://www.oecd-nea.org/dbforms/data/eva/evatapes/jeff_31/index-JEFF3.1.1.html"
 
-        },
+    },
     "jeff311": {
         "fancyname": "JEFF-3.1.1",
         "sublibraries": ["decay", "n", "nfpy", "p", "sfpy", "tsl"],
@@ -29,7 +29,7 @@ NDLIBS = {
         "info": """Version 3.1.1 of the Joint Evaluated Fission and Fusion"""
                 """(JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
         "homepage": "https://www.oecd-nea.org/dbdata/jeff/jeff33/"
-        },
+    },
     "jendl5": {
         "fancyname": "JENDL-5-Aug2023",
         "sublibraries": ["ard", "d", "decay", "e", "g", "he4", "n", "nfpy", "p", "photo", "sfpy", "tsl"],
@@ -37,28 +37,29 @@ NDLIBS = {
         "info": """Version 5 of the Japanese Evaluated Nuclear Data Library (JENDL)"""
                 """library distributed by JAEA""",
         "homepage": "https://wwwndc.jaea.go.jp/jendl/j5/j5.html"
-        },
+    },
     "endfb71": {
         "fancyname": "ENDF-B-VII.1",
         "sublibraries": ["ard", "d", "decay", "e", "g", "he3", "n", "nfpy", "p", "photo", "sfpy", "std", "t", "tsl"],
         "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VII.1",
         "info": """Version 7.1 of the ENDF-B data library distributed by the NNDC""",
         "homepage": "https://www.nndc.bnl.gov/endf-b7.1/"
-        },
+    },
     "endfb8": {
         "fancyname": "ENDF-B-VIII.0",
-        "sublibraries": ["ard", "d", "decay", "e", "g", "he3", "he4", "n", "nfpy", "p", "photo", "sfpy", "std", "t", "tsl"],
+        "sublibraries": ["ard", "d", "decay", "e", "g", "he3", "he4", "n", "nfpy", "p", "photo", "sfpy", "std", "t",
+                         "tsl"],
         "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VIII.0",
         "info": """Version 8.0 of the ENDF-B data library distributed by the NNDC""",
         "homepage": "https://www.nndc.bnl.gov/endf-b8.0/"
-        },
+    },
     "tendl23": {
         "fancyname": "TENDL-2023",
         "sublibraries": ["d", "g", "he3", "he4", "n", "p", "t"],
         "source": "https://www-nds.iaea.org/public/download-endf/TENDL-2023",
         "info": "2023 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).",
         "homepage": "https://tendl.web.psi.ch/tendl_2023/tendl2023.html"
-        },
+    },
     "cendl32": {
         "fancyname": "CENDL-3.2",
         "sublibraries": ["n"],
@@ -66,10 +67,15 @@ NDLIBS = {
         "info": """Version 3.2 of the Chinese Evaluated Nuclear Data Library (JENDL)"""
                 """library distributed by the China Nuclear Data Center.""",
         "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm"
-        },
+    },
 }
 
-NSUB = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
+NSUB_list = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
+
+NSUB = {
+
+}
+
 
 ATOMIC_SYMBOL = {0: 'n', 1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C',
                  7: 'N', 8: 'O', 9: 'F', 10: 'Ne', 11: 'Na', 12: 'Mg', 13: 'Al',
@@ -265,38 +271,3 @@ TSL_NEUTRON = {
             "tsl_Zr(ZrH)_0058.dat": "Zr90",
         }
 }
-
-p = re.compile(r"^([A-Za-z]+)([0-9]+)([_]*)([A-Za-z0-9]*)")
-
-def nuclide2zam(nuclide):
-    element, A, underscore, m = p.match(nuclide).groups()
-    
-    Z = ATOMIC_SYMBOL[element]
-    A = int(A)
-    if not m:
-        M = 0
-    elif not underscore:
-        M = META_SYMBOL[m]
-    else:
-        M = int(m.removeprefix("m"))
-
-    return 10_000 * Z + 10 * A + M
-
-def nuclide2z_a_m(nuclide):
-    element, A, underscore, m = p.match(nuclide).groups()
-    
-    Z = ATOMIC_SYMBOL[element]
-    A = int(A)
-    if not m:
-        M = 0
-    elif not underscore:
-        M = META_SYMBOL[m]
-    else:
-        M = int(m.removeprefix("m"))
-
-    return Z, A, M
-
-nuc_in_file = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
-def nuclide_from_file(p):
-    element, A, m = nuc_in_file.search(p.name).groups()
-    return f"{element}{A}{m}"

@@ -2,7 +2,7 @@ import argparse as ap
 from pathlib import Path
 import os
 from itertools import product
-from ndfetcher.data import NSUB, ENDF6_PATH, ND_PATH
+from ndfetcher.data import NSUB_list, ENDF6_PATH, ND_PATH
 import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool
@@ -89,7 +89,7 @@ def download_cmd(args: ap.Namespace):
     if args.sub is not None:
         sub = args.sub
     else:
-        sub = NSUB
+        sub = NSUB_list
     stargs = list(product(lib, sub))
 
     initial_table = np.array([["❔" for i in sub] for l in lib])

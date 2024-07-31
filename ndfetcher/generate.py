@@ -1,7 +1,8 @@
 import os
 from multiprocessing import Pool
 from pathlib import Path
-from ndfetcher.data import TSL_NEUTRON, nuclide_from_file, ND_PATH, ENDF6_PATH
+from ndfetcher.data import TSL_NEUTRON, ND_PATH, ENDF6_PATH
+from ndfetcher.nuclide import Nuclide
 from pprint import pprint
 import argparse as ap
 from contextlib import chdir
@@ -36,7 +37,7 @@ def list_neutron(basis, n_in):
             raise ValueError("A nuclide can't be both ommited and added.")
 
     basis_paths = Path(f"{ENDF6_PATH}/{basis}/n").glob("*.dat")
-    basis_dict = {nuclide_from_file(p): p for p in basis_paths}
+    basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
 
     # Remove unwanted evaluations
     for nuclide in ommit:
@@ -53,9 +54,9 @@ def list_neutron(basis, n_in):
         nuclides = _nuclides.split()
         guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/n").glob("*.dat")
         guest_endf6 = {
-            nuclide_from_file(n): n
+            Nuclide.from_file(n).name: n
             for n in guest_paths
-            if nuclide_from_file(n) in nuclides
+            if Nuclide.from_file(n).name in nuclides
         }
         basis_dict |= guest_endf6
 
@@ -101,7 +102,7 @@ def list_photo(basis, photo_in):
             raise ValueError("A nuclide can't be both ommited and added.")
 
     basis_paths = Path(f"{ENDF6_PATH}/{basis}/photo").glob("*.dat")
-    basis_dict = {nuclide_from_file(p).rstrip("0"): p for p in basis_paths}
+    basis_dict = {Nuclide.from_file(p).name.rstrip("0"): p for p in basis_paths}
 
     # Remove unwanted evaluations
     for photo in ommit:
@@ -113,9 +114,9 @@ def list_photo(basis, photo_in):
         photo = _photo.split()
         guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/photo").glob("*.dat")
         guest_endf6 = {
-            nuclide_from_file(n).rstrip("0"): n
+            Nuclide.from_file(n).name.rstrip("0"): n
             for n in guest_paths
-            if nuclide_from_file(n) in photo
+            if Nuclide.from_file(n).name in photo
         }
         basis_dict |= guest_endf6
 
@@ -131,7 +132,7 @@ def list_ard(basis, photo_in):
             raise ValueError("A nuclide can't be both ommited and added.")
 
     basis_paths = Path(f"{ENDF6_PATH}/{basis}/ard").glob("*.dat")
-    basis_dict = {nuclide_from_file(p).rstrip("0"): p for p in basis_paths}
+    basis_dict = {Nuclide.from_file(p).name.rstrip("0"): p for p in basis_paths}
 
     # Remove unwanted evaluations
     for photo in ommit:
@@ -143,9 +144,9 @@ def list_ard(basis, photo_in):
         photo = _photo.split()
         guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/ard").glob("*.dat")
         guest_endf6 = {
-            nuclide_from_file(n).rstrip("0"): n
+            Nuclide.from_file(n).name.rstrip("0"): n
             for n in guest_paths
-            if nuclide_from_file(n) in photo
+            if Nuclide.from_file(n).name in photo
         }
         basis_dict |= guest_endf6
 
