@@ -219,7 +219,6 @@ TSL_NEUTRON = {
         }
 }
 
-
 p = re.compile(r"^([A-Za-z]+)([0-9]+)([_]*)([A-Za-z0-9]*)")
 
 def nuclide2zam(nuclide):

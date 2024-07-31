@@ -1,5 +1,4 @@
 import os
-import openmc
 from multiprocessing import Pool
 from pathlib import Path
 from ndfetcher.data import TSL_NEUTRON, nuclide_from_file, ND_PATH, ENDF6_PATH
@@ -9,6 +8,8 @@ from contextlib import chdir
 import yaml
 
 def process_neutron(directory, path, temperatures):
+    import openmc
+
     print(f"Processing {path}")
     data = openmc.data.IncidentNeutron.from_njoy(
         path, temperatures=temperatures)
@@ -19,6 +20,8 @@ def process_neutron(directory, path, temperatures):
 
 
 def process_tsl(directory, neutron, thermal):
+    import openmc
+
     data = openmc.data.ThermalScattering.from_njoy(neutron, thermal)
     h5_file = directory / f"{data.name}.h5"
     data.export_to_hdf5(h5_file)
@@ -150,6 +153,8 @@ def list_ard(basis, photo_in):
 
 
 def generate(ymlpath, dryrun=False):
+    import openmc
+    
     inputs = yaml.safe_load(open(ymlpath))
 
     name = ND_PATH / inputs["name"]
@@ -189,17 +194,18 @@ def generate(ymlpath, dryrun=False):
             tsl = list_tsl(tsl_in, {})
         else:
             tsl = list_tsl(basis, tsl_in)
-        dest = Path("tsl")
-        dest.mkdir(parents=True, exist_ok=True)
-        args = [(dest, neutron[t[0]], t[1]) for t in tsl]
-        if dryrun:
-            for arg in args:
-                print(arg[0], str(arg[1]), str(arg[2]))
-        else:
-            with Pool() as p:
-                p.starmap(process_tsl, args)
-            for p in sorted(dest.glob("*.h5")):
-                library.register_file(p)
+        if tsl:
+            dest = Path("tsl")
+            dest.mkdir(parents=True, exist_ok=True)
+            args = [(dest, neutron[t[0]], t[1]) for t in tsl]
+            if dryrun:
+                for arg in args:
+                    print(arg[0], str(arg[1]), str(arg[2]))
+            else:
+                with Pool() as p:
+                    p.starmap(process_tsl, args)
+                for p in sorted(dest.glob("*.h5")):
+                    library.register_file(p)
 
         # PHOTONS
         photo_in = inputs.get("photo", {})
@@ -218,28 +224,28 @@ def generate(ymlpath, dryrun=False):
         else:
             ard = list_ard(basis, ard_in)
 
-        dest = Path("photon")
-        dest.mkdir(parents=True, exist_ok=True)
-        if dryrun:
-            pprint(photo)
-            pprint(ard)
-        for atom in photo:
-            data = openmc.data.IncidentPhoton.from_endf(
-                photo[atom],
-                ard.get(atom, None),
-            )
+        if photo and ard:
+            dest = Path("photon")
+            dest.mkdir(parents=True, exist_ok=True)
+            if dryrun:
+                pprint(photo)
+                pprint(ard)
+            for atom in photo:
+                data = openmc.data.IncidentPhoton.from_endf(
+                    photo[atom],
+                    ard.get(atom, None),
+                )
 
-            atomname = atom.rstrip("0")
-            data.export_to_hdf5(dest / f"{atomname}.h5", "w")
+                atomname = atom.rstrip("0")
+                data.export_to_hdf5(dest / f"{atomname}.h5", "w")
 
-        for p in sorted(dest.glob("*.h5")):
-            library.register_file(p)
+            for p in sorted(dest.glob("*.h5")):
+                library.register_file(p)
 
         library.export_to_xml("cross_sections.xml")
 
 def chain(ymlpath):
-    if ENDF6_PATH is None:
-        raise EnvironmentError("The $ENDF6_PATH must be set.")
+    import openmc
 
     inputs = yaml.safe_load(open(ymlpath))
 
@@ -260,8 +266,3 @@ def chain(ymlpath):
         )
 
         chain.export_to_xml("chain.xml")
-
-def generate_cmd(args: ap.Namespace):
-    if args.chain:
-        chain(args.filename)
-    generate(args.filename, args.dryrun)

@@ -1,9 +1,6 @@
-import os
-from pathlib import Path
 import argparse as ap
 from ndfetcher.data import NSUB, NDLIBS
-from ndfetcher.download import download_cmd
-from ndfetcher.generate import generate_cmd
+from ndfetcher.commands import download_cmd, generate_cmd, list_cmd, clone_cmd, remove_cmd, sn301_cmd
 
 def main():
     parser = ap.ArgumentParser(
@@ -56,6 +53,85 @@ def main():
         action="store_true"
     )
     build_parser.set_defaults(func=generate_cmd)
+
+    #list
+    list_parser = subparsers.add_parser(
+        "list",
+        help="List available libraries."
+    )
+    list_parser.add_argument(
+        "type",
+        type=str,
+        help="Type of library to choose from endf6 or openmc"
+    )
+    list_parser.set_defaults(func=list_cmd)
+
+    #clone
+    clone_parser = subparsers.add_parser(
+        "clone",
+        help="Clone an ENDF6 or OpenMC library"
+    )
+    clone_parser.add_argument(
+        "type",
+        type=str,
+        help="Type of library to choose from endf6 or openmc"
+    )
+    clone_parser.add_argument(
+        "source",
+        type=str,
+        help="Name for the original library",
+    )
+    clone_parser.add_argument(
+        "target",
+        type=str,
+        help="Name for the new cloned library",
+    )
+    clone_parser.set_defaults(func=clone_cmd)
+
+    #remove
+    remove_parser = subparsers.add_parser(
+        "remove",
+        help="Remove an ENDF6 or OpenMC library"
+    )
+    remove_parser.add_argument(
+        "type",
+        type=str,
+        help="Type of library to remove from endf6 or openmc"
+    )
+    remove_parser.add_argument(
+        "library",
+        type=str,
+        help="Names of the libraries",
+        action="extend",
+        nargs="+",
+    )
+    remove_parser.set_defaults(func=remove_cmd)
+
+    #sn301
+    sn301_parser = subparsers.add_parser(
+        "sn301",
+        help="Substitute negative MT=301 in HDF5 library."
+    )
+    sn301_parser.add_argument(
+        "--target",
+        "-t",
+        type=str,
+        help="The library to fix."
+    )
+    sn301_parser.add_argument(
+        "--sources",
+        "-s",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of nuclear data libraries to choose from."
+    )
+    sn301_parser.add_argument(
+        "--dryrun",
+        help="Does not perform the substitution.",
+        action="store_true"
+    )
+    sn301_parser.set_defaults(func=sn301_cmd)
 
 
     args = parser.parse_args()
