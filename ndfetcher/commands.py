@@ -1,15 +1,17 @@
 import argparse as ap
 from pathlib import Path
+import os
 from itertools import product
 from ndfetcher.data import NSUB, ENDF6_PATH, ND_PATH
 import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool
 import time
-from ndfetcher.utils import clear_line
+from ndfetcher.utils import clear_line, print_offset
 from ndfetcher.download import download
 from ndfetcher.generate import chain, generate
 from ndfetcher.substitute import replace_negatives_in_lib
+from ndfetcher.data import NDLIBS
 import shutil
 
 def sn301_cmd(args: ap.Namespace):
@@ -43,12 +45,39 @@ def remove_cmd(args: ap.Namespace):
             shutil.rmtree(library)
     
 def list_cmd(args: ap.Namespace):
+    col, rows = os.get_terminal_size()
     if args.type == "endf6":
-        for p in ENDF6_PATH.glob("*"):
-            print(p.name)
+        print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
+        toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")]) 
+        print(toprint)
+        print("\n\n")
     elif args.type == "openmc":
-        for p in ND_PATH.glob("*"):
-            print(p.name)
+        print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
+        toprint = "  ".join([p.name for p in ND_PATH.glob("*")]) 
+        print(toprint)
+        print("\n\n")
+    elif args.type == "all":
+        print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
+        toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")]) 
+        print(toprint)
+        print("\n\n")
+        print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
+        toprint = "  ".join([p.name for p in ND_PATH.glob("*")]) 
+        print(toprint)
+        print("\n\n")
+
+def info_cmd(args: ap.Namespace):
+    dico = NDLIBS[args.library]
+    col, _ = os.get_terminal_size()
+    toprint = f"  {args.library}  "
+    print(f"{toprint:{'-'}{'^'}{col}}")
+    print(f"{'Fancy name:':<25} {dico['fancyname']}")
+    print(f"{'Source:':<25} {dico['source']}")
+    print(f"{'Homepage:':<25} {dico['homepage']}")
+    subs = "  ".join(dico["sublibraries"])
+    print(f"{'Available Sublibraries:':<25} {subs}")
+    s = f"{'Info: ':<25} {dico['info']}"
+    print_offset(s, 26, 1)
 
 def generate_cmd(args: ap.Namespace):
     if args.chain:

@@ -1,6 +1,6 @@
 import argparse as ap
 from ndfetcher.data import NSUB, NDLIBS
-from ndfetcher.commands import download_cmd, generate_cmd, list_cmd, clone_cmd, remove_cmd, sn301_cmd
+from ndfetcher.commands import download_cmd, generate_cmd, list_cmd, clone_cmd, remove_cmd, sn301_cmd, info_cmd
 
 def main():
     parser = ap.ArgumentParser(
@@ -62,9 +62,24 @@ def main():
     list_parser.add_argument(
         "type",
         type=str,
+        nargs="?",
+        default="all",
         help="Type of library to choose from endf6 or openmc"
     )
     list_parser.set_defaults(func=list_cmd)
+
+    #info
+    info_parser = subparsers.add_parser(
+        "info",
+        help="Get info the a nuclear data libary"
+    )
+    info_parser.add_argument(
+        "library",
+        type=str,
+        help="Name of the desired library"
+    )
+    info_parser.set_defaults(func=info_cmd)
+
 
     #clone
     clone_parser = subparsers.add_parser(

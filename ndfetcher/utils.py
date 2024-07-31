@@ -1,4 +1,5 @@
 from h5py import File
+import os
 import numpy as np
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -146,4 +147,12 @@ def clear_line(n=1):
     for i in range(n):
         print(LINE_UP, end=LINE_CLEAR)
 
+def print_offset(s, offset, offsetstart):
+    col, _ = os.get_terminal_size()
+    indices = list(range(0, len(s), col - offset))
+    parts = [s[i:j] for i,j in zip(indices, indices[1:]+[None])]
+    for i in range(len(parts)):
+        if i >= offsetstart:
+            parts[i] = (offset * " ") + parts[i]
+    print("\n".join(parts))
 

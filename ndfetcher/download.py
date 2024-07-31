@@ -10,7 +10,7 @@ from ndfetcher.data import NDLIBS, ENDF6_PATH
 def download(libname, sublib):
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
-            fancyname = NDLIBS[libname]
+            fancyname = NDLIBS[libname]["fancyname"]
             cmds = [
                 "wget",
                 "-r",

@@ -13,13 +13,60 @@ except KeyError:
     raise EnvironmentError("$ND_PATH must be set to use NDFetcher.")
 
 NDLIBS = {
-    "jeff33": "JEFF-3.3",
-    "jeff311": "JEFF-3.1.1",
-    "jendl5": "JENDL-5-Aug2023",
-    "endfb71": "ENDF-B-VII.1",
-    "endfb8": "ENDF-B-VIII.0",
-    "tendl23": "TENDL-2023",
-    "cendl32": "CENDL-3.2",
+    "jeff33": {
+        "fancyname": "JEFF-3.3",
+        "sublibraries": ["decay", "n", "nfpy", "sfpy", "tsl"],
+        "source": "https://www-nds.iaea.org/public/download-endf/JEFF-3.3",
+        "info": """Version 3.3 of the Joint Evaluated Fission and Fusion"""
+                """(JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
+        "homepage": "https://www.oecd-nea.org/dbforms/data/eva/evatapes/jeff_31/index-JEFF3.1.1.html"
+
+        },
+    "jeff311": {
+        "fancyname": "JEFF-3.1.1",
+        "sublibraries": ["decay", "n", "nfpy", "p", "sfpy", "tsl"],
+        "source": "https://www-nds.iaea.org/public/download-endf/JEFF-3.1.1",
+        "info": """Version 3.1.1 of the Joint Evaluated Fission and Fusion"""
+                """(JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
+        "homepage": "https://www.oecd-nea.org/dbdata/jeff/jeff33/"
+        },
+    "jendl5": {
+        "fancyname": "JENDL-5-Aug2023",
+        "sublibraries": ["ard", "d", "decay", "e", "g", "he4", "n", "nfpy", "p", "photo", "sfpy", "tsl"],
+        "source": "https://www-nds.iaea.org/public/download-endf/JENDL-5-Aug2023",
+        "info": """Version 5 of the Japanese Evaluated Nuclear Data Library (JENDL)"""
+                """library distributed by JAEA""",
+        "homepage": "https://wwwndc.jaea.go.jp/jendl/j5/j5.html"
+        },
+    "endfb71": {
+        "fancyname": "ENDF-B-VII.1",
+        "sublibraries": ["ard", "d", "decay", "e", "g", "he3", "n", "nfpy", "p", "photo", "sfpy", "std", "t", "tsl"],
+        "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VII.1",
+        "info": """Version 7.1 of the ENDF-B data library distributed by the NNDC""",
+        "homepage": "https://www.nndc.bnl.gov/endf-b7.1/"
+        },
+    "endfb8": {
+        "fancyname": "ENDF-B-VIII.0",
+        "sublibraries": ["ard", "d", "decay", "e", "g", "he3", "he4", "n", "nfpy", "p", "photo", "sfpy", "std", "t", "tsl"],
+        "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VIII.0",
+        "info": """Version 8.0 of the ENDF-B data library distributed by the NNDC""",
+        "homepage": "https://www.nndc.bnl.gov/endf-b8.0/"
+        },
+    "tendl23": {
+        "fancyname": "TENDL-2023",
+        "sublibraries": ["d", "g", "he3", "he4", "n", "p", "t"],
+        "source": "https://www-nds.iaea.org/public/download-endf/TENDL-2023",
+        "info": "2023 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).",
+        "homepage": "https://tendl.web.psi.ch/tendl_2023/tendl2023.html"
+        },
+    "cendl32": {
+        "fancyname": "CENDL-3.2",
+        "sublibraries": ["n"],
+        "source": "https://www-nds.iaea.org/public/download-endf/CENDL-3.2",
+        "info": """Version 3.2 of the Chinese Evaluated Nuclear Data Library (JENDL)"""
+                """library distributed by the China Nuclear Data Center.""",
+        "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm"
+        },
 }
 
 NSUB = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
