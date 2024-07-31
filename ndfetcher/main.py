@@ -1,6 +1,7 @@
 import argparse as ap
 from ndfetcher.commands import download_cmd, generate_cmd, list_cmd, clone_cmd, remove_cmd, sn301_cmd, info_cmd
 
+
 def main():
     parser = ap.ArgumentParser(
         prog="ndf",
@@ -13,23 +14,23 @@ def main():
         "download",
         help="Download ENDF6 files from the IAEA website.",
     )
-    download_parser.add_argument("-l", 
-                                "--lib",
-                                action="extend",
-                                nargs="+",
-                                type=str,
-                                help="List of nuclear data libraries to download."
-                                )
-    download_parser.add_argument("-s", 
-                                "--sub",
-                                action="extend",
-                                nargs="+",
-                                type=str,
-                                help="List of sublibraries libraries to download."
-                                )
+    download_parser.add_argument("-l",
+                                 "--lib",
+                                 action="extend",
+                                 nargs="+",
+                                 type=str,
+                                 help="List of nuclear data libraries to download."
+                                 )
+    download_parser.add_argument("-s",
+                                 "--sub",
+                                 action="extend",
+                                 nargs="+",
+                                 type=str,
+                                 help="List of sublibraries libraries to download."
+                                 )
     download_parser.set_defaults(func=download_cmd)
 
-    #build
+    # build
     build_parser = subparsers.add_parser(
         "build",
         help="Build a database from a YAML file."
@@ -51,7 +52,7 @@ def main():
     )
     build_parser.set_defaults(func=generate_cmd)
 
-    #list
+    # list
     list_parser = subparsers.add_parser(
         "list",
         help="List available libraries."
@@ -65,7 +66,7 @@ def main():
     )
     list_parser.set_defaults(func=list_cmd)
 
-    #info
+    # info
     info_parser = subparsers.add_parser(
         "info",
         help="Get info the a nuclear data libary"
@@ -77,8 +78,7 @@ def main():
     )
     info_parser.set_defaults(func=info_cmd)
 
-
-    #clone
+    # clone
     clone_parser = subparsers.add_parser(
         "clone",
         help="Clone an ENDF6 or OpenMC library"
@@ -100,7 +100,7 @@ def main():
     )
     clone_parser.set_defaults(func=clone_cmd)
 
-    #remove
+    # remove
     remove_parser = subparsers.add_parser(
         "remove",
         help="Remove an ENDF6 or OpenMC library"
@@ -119,7 +119,7 @@ def main():
     )
     remove_parser.set_defaults(func=remove_cmd)
 
-    #sn301
+    # sn301
     sn301_parser = subparsers.add_parser(
         "sn301",
         help="Substitute negative MT=301 in HDF5 library."
@@ -144,7 +144,6 @@ def main():
         action="store_true"
     )
     sn301_parser.set_defaults(func=sn301_cmd)
-
 
     args = parser.parse_args()
     if hasattr(args, "func"):

@@ -1,15 +1,14 @@
-import os
 from multiprocessing import Pool
 from pathlib import Path
 from ndfetcher.data import TSL_NEUTRON, ND_PATH, ENDF6_PATH
 from ndfetcher.nuclide import Nuclide
 from pprint import pprint
-import argparse as ap
 from contextlib import chdir
 import yaml
 
+
 def process_neutron(directory, path, temperatures):
-    import openmc
+    import openmc.data
 
     print(f"Processing {path}")
     data = openmc.data.IncidentNeutron.from_njoy(
@@ -21,7 +20,7 @@ def process_neutron(directory, path, temperatures):
 
 
 def process_tsl(directory, neutron, thermal):
-    import openmc
+    import openmc.data
 
     data = openmc.data.ThermalScattering.from_njoy(neutron, thermal)
     h5_file = directory / f"{data.name}.h5"
@@ -82,7 +81,6 @@ def list_tsl(basis, tsl_in):
 
     # Add custom evaluations.
     for guestlib, _tsl in add.items():
-        tsl = _tsl.split()
         guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/tsl").glob("*.dat")
         guest_neutrons = TSL_NEUTRON[guestlib]
         for k in guest_neutrons:
@@ -123,9 +121,9 @@ def list_photo(basis, photo_in):
     return basis_dict
 
 
-def list_ard(basis, photo_in):
-    ommit = photo_in.get("ommit", "").split()
-    add = photo_in.get("add", {})
+def list_ard(basis, ard_in):
+    ommit = ard_in.get("ommit", "").split()
+    add = ard_in.get("add", {})
 
     for nuclide in ommit:
         if nuclide in add:
@@ -135,18 +133,18 @@ def list_ard(basis, photo_in):
     basis_dict = {Nuclide.from_file(p).name.rstrip("0"): p for p in basis_paths}
 
     # Remove unwanted evaluations
-    for photo in ommit:
-        basis_dict.pop(photo, None)
+    for ard in ommit:
+        basis_dict.pop(ard, None)
 
     # Add custom evaluations.
     # Overwrite if the main library already provides them.
-    for guestlib, _photo in add.items():
-        photo = _photo.split()
+    for guestlib, _ard in add.items():
+        ard = _ard.split()
         guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/ard").glob("*.dat")
         guest_endf6 = {
             Nuclide.from_file(n).name.rstrip("0"): n
             for n in guest_paths
-            if Nuclide.from_file(n).name in photo
+            if Nuclide.from_file(n).name in ard
         }
         basis_dict |= guest_endf6
 
@@ -154,8 +152,8 @@ def list_ard(basis, photo_in):
 
 
 def generate(ymlpath, dryrun=False):
-    import openmc
-    
+    import openmc.data
+
     inputs = yaml.safe_load(open(ymlpath))
 
     name = ND_PATH / inputs["name"]
@@ -185,8 +183,8 @@ def generate(ymlpath, dryrun=False):
                     print(a)
                 p.starmap(process_neutron, args)
 
-                for p in sorted(dest.glob("*.h5")):
-                    library.register_file(p)
+                for path in sorted(dest.glob("*.h5")):
+                    library.register_file(path)
 
         # THERMAL SCATTERING LAW
         tsl_in = inputs.get("tsl", {})
@@ -233,20 +231,21 @@ def generate(ymlpath, dryrun=False):
                 pprint(ard)
             for atom in photo:
                 data = openmc.data.IncidentPhoton.from_endf(
-                    photo[atom],
+                    str(photo[atom]),
                     ard.get(atom, None),
                 )
 
                 atomname = atom.rstrip("0")
-                data.export_to_hdf5(dest / f"{atomname}.h5", "w")
+                data.export_to_hdf5(str(dest / f"{atomname}.h5"), "w")
 
             for p in sorted(dest.glob("*.h5")):
                 library.register_file(p)
 
         library.export_to_xml("cross_sections.xml")
 
+
 def chain(ymlpath):
-    import openmc
+    import openmc.deplete
 
     inputs = yaml.safe_load(open(ymlpath))
 
@@ -259,11 +258,11 @@ def chain(ymlpath):
         decay = (ENDF6_PATH / basis / "decay").glob("*.dat")
         nfpy = (ENDF6_PATH / basis / "nfpy").glob("dat")
 
-        chain = openmc.deplete.Chain.from_endf(
+        chainfile = openmc.deplete.Chain.from_endf(
             neutron_files=neutron,
             decay_files=decay,
             fpy_files=nfpy,
             reactions=list(openmc.deplete.chain.REACTIONS.keys())
         )
 
-        chain.export_to_xml("chain.xml")
+        chainfile.export_to_xml("chain.xml")

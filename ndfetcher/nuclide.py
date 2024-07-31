@@ -3,7 +3,7 @@ from ndfetcher.data import ATOMIC_SYMBOL, META_SYMBOL
 
 
 class Nuclide:
-    splitname_re = re.compile(r"^([A-Za-z]+)([0-9]+)([_]*)([A-Za-z0-9]*)")
+    splitname_re = re.compile(r"^([A-Za-z]+)([0-9]+)(_*)([A-Za-z0-9]*)")
     file2zam_re = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
 
     def __init__(self, Z, A, M):
@@ -42,14 +42,12 @@ class Nuclide:
             m = int(f.readline().split()[3])
         return cls(z, a, m)
 
-
     @property
     def name(self):
         if self.M > 0:
             return f"{ATOMIC_SYMBOL[self.Z]}{self.A}_m{self.M}"
         else:
             return f"{ATOMIC_SYMBOL[self.Z]}{self.A}"
-
 
     @property
     def zam(self):

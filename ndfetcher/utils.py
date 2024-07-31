@@ -4,9 +4,10 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+
 def overwrite(nuclide, mt, sourcefile, targetfile):
     with File(sourcefile, "r") as source, File(targetfile, "r+") as target:
-        
+
         source_rgroup = source[f"{nuclide}/reactions/reaction_{mt:03d}/"]
         target_rgroup = source[f"{nuclide}/reactions/reaction_{mt:03d}/"]
 
@@ -21,7 +22,7 @@ def overwrite(nuclide, mt, sourcefile, targetfile):
         for T in temperatures:
             target_grid = target[f"{nuclide}/energy/{T:d}K"][...]
             target_attrs = target[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"].attrs
-            
+
             source_grid = source[f"{nuclide}/energy/{T:d}K"][...]
             source_xs = source[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"][...]
 
@@ -30,6 +31,7 @@ def overwrite(nuclide, mt, sourcefile, targetfile):
             target[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"] = replacement
             for k, v in target_attrs.items():
                 target[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"].attrs[k] = v
+
 
 def find_negative(libpath, mt):
     result = {}
@@ -53,6 +55,7 @@ def find_negative(libpath, mt):
     else:
         return {}
 
+
 def find_negative_in_lib(libfile, mt):
     plib = Path(libfile)
     root = ET.parse(plib).getroot()
@@ -70,6 +73,7 @@ def find_negative_in_lib(libfile, mt):
             negatives |= find_negative(libpath, mt)
     return negatives
 
+
 def set_negative_to_zero(file, nuclide, mt):
     with File(file, "r+") as f:
         try:
@@ -80,7 +84,8 @@ def set_negative_to_zero(file, nuclide, mt):
         for T in temperatures:
             xs = f[f"{nuclide}/reactions/reaction_{mt:03d}/{T}/xs"][...]
             f[f"{nuclide}/reactions/reaction_{mt:03d}/{T}/xs"][xs < 0] = 0.
-    return 
+    return
+
 
 def set_negative_to_zero_in_lib(libfile, mt):
     plib = Path(libfile)
@@ -92,12 +97,12 @@ def set_negative_to_zero_in_lib(libfile, mt):
     else:
         directory = ""
 
-
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron":
             libpath = plib.parent / directory / lib.attrib["path"]
             set_negative_to_zero(libpath, lib.attrib["materials"], mt)
-    return 
+    return
+
 
 def find_nuclide_in_lib(libfile, nuclide):
     plib = Path(libfile)
@@ -112,34 +117,7 @@ def find_nuclide_in_lib(libfile, nuclide):
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron" and lib.attrib["materials"] == nuclide:
             return plib.parent / directory / lib.attrib["path"]
-    
 
-def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True):
-    negatives = find_negative_in_lib(targetlib, mt)
-    source_negatives = {source: find_negative_in_lib(source, mt) for source in sources}
-
-    for nuclide in negatives:
-        found = False
-        for sourcelib, sn in source_negatives.items():
-            source = find_nuclide_in_lib(sourcelib, nuclide)
-            target = find_nuclide_in_lib(targetlib, nuclide)
-            if source is None:
-                continue
-            elif nuclide in sn:
-                continue
-            else:
-                found = True
-                if verbose:
-                    print(f"Replacing\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}")
-                if not dryrun:
-                    overwrite(nuclide, mt, source, target)
-                continue
-        if not found:
-            if verbose:
-                print(f"No replacement found\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}")
-            if not dryrun:
-                set_negative_to_zero(target, nuclide, mt)
-    return
 
 def clear_line(n=1):
     LINE_UP = '\033[1A'
@@ -147,12 +125,12 @@ def clear_line(n=1):
     for i in range(n):
         print(LINE_UP, end=LINE_CLEAR)
 
+
 def print_offset(s, offset, offsetstart):
     col, _ = os.get_terminal_size()
     indices = list(range(0, len(s), col - offset))
-    parts = [s[i:j] for i,j in zip(indices, indices[1:]+[None])]
+    parts = [s[i:j] for i, j in zip(indices, indices[1:] + [None])]
     for i in range(len(parts)):
         if i >= offsetstart:
             parts[i] = (offset * " ") + parts[i]
     print("\n".join(parts))
-
