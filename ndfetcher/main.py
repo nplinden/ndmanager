@@ -74,6 +74,8 @@ def main():
     info_parser.add_argument(
         "library",
         type=str,
+        action="extend",
+        nargs="+",
         help="Name of the desired library"
     )
     info_parser.set_defaults(func=info_cmd)

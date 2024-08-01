@@ -74,17 +74,26 @@ def list_cmd(args: ap.Namespace):
 
 
 def info_cmd(args: ap.Namespace):
-    dico = NDLIBS[args.library]
-    col, _ = os.get_terminal_size()
-    toprint = f"  {args.library}  "
-    print(f"{toprint:{'-'}{'^'}{col}}")
-    print(f"{'Fancy name:':<25} {dico['fancyname']}")
-    print(f"{'Source:':<25} {dico['source']}")
-    print(f"{'Homepage:':<25} {dico['homepage']}")
-    subs = "  ".join(dico["sublibraries"])
-    print(f"{'Available Sublibraries:':<25} {subs}")
-    s = f"{'Info: ':<25} {dico['info']}"
-    print_offset(s, 26, 1)
+    for lib in args.library:
+        dico = NDLIBS[lib]
+        col, _ = os.get_terminal_size()
+        toprint = f"  {lib}  "
+        print(f"{toprint:{'-'}{'^'}{col}}")
+        print(f"{'Fancy name:':<25} {dico['fancyname']}")
+        print(f"{'Source:':<25} {dico['source']}")
+        print(f"{'Homepage:':<25} {dico['homepage']}")
+        subs = "  ".join(dico["sublibraries"])
+        print(f"{'Available Sublibraries:':<25} {subs}")
+        s = f"{'Info: ':<25} {dico['info']}"
+        print_offset(s, 26, 1)
+        if "index" in dico:
+            index = dico["index"]
+            s = f"{'Index: ':<25} {index[0]}"
+            print_offset(s, 26, 1)
+            for s in index[1:]:
+                print_offset(s, 26, 0)
+
+    print(f"{'':{'-'}{'^'}{col}}")
 
 
 def generate_cmd(args: ap.Namespace):
