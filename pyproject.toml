@@ -15,7 +15,8 @@ requires-python = ">=3.7"
 Homepage = "https://github.com/nplinden/ndfetcher"
 
 [project.scripts]
-ndf = "ndfetcher.main:main"
+ndf = "ndfetcher.main:ndf"
+ndb = "ndfetcher.main:ndb"
 
 [tool.setuptools]
 packages = ['ndfetcher']

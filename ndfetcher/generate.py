@@ -1,6 +1,6 @@
 from multiprocessing import Pool
 from pathlib import Path
-from ndfetcher.data import TSL_NEUTRON, ND_PATH, ENDF6_PATH
+from ndfetcher.data import TSL_NEUTRON, OMC_LIBRARIES, ENDF6_PATH
 from ndfetcher.nuclide import Nuclide
 from pprint import pprint
 from contextlib import chdir
@@ -156,7 +156,7 @@ def generate(ymlpath, dryrun=False):
 
     inputs = yaml.safe_load(open(ymlpath))
 
-    name = ND_PATH / inputs["name"]
+    name = OMC_LIBRARIES / inputs["name"]
     name.mkdir(parents=True, exist_ok=True)
     with chdir(name):
         library = openmc.data.DataLibrary()
@@ -249,7 +249,7 @@ def chain(ymlpath):
 
     inputs = yaml.safe_load(open(ymlpath))
 
-    name = ND_PATH / inputs["name"]
+    name = OMC_LIBRARIES / inputs["name"]
     name.mkdir(parents=True, exist_ok=True)
     with chdir(name):
         basis = inputs["basis"]

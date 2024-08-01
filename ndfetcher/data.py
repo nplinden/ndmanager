@@ -7,9 +7,9 @@ except KeyError:
     raise EnvironmentError("$ENDF6_PATH must be set to use NDFetcher.")
 
 try:
-    ND_PATH = Path(os.environ["ND_PATH"])
+    OMC_LIBRARIES = Path(os.environ["OMC_LIBRARIES"])
 except KeyError:
-    raise EnvironmentError("$ND_PATH must be set to use NDFetcher.")
+    raise EnvironmentError("$OMC_LIBRARIES must be set to use NDFetcher.")
 
 NDLIBS = {
     "jeff33": {
@@ -374,3 +374,10 @@ TSL_NEUTRON = {
             "tsl_Zr(ZrH)_0058.dat": "Zr90",
         }
 }
+
+def load(libname):
+    p = OMC_LIBRARIES / libname
+    if not p.exists:
+        raise FileNotFoundError(f"OpenMC library {libname} does not exist.")
+    else:
+        os.environ["OPENMC_CROSS_SECTIONS"] = str(p / "cross_sections.xml")

@@ -1,7 +1,7 @@
 import argparse as ap
 import os
 from itertools import product
-from ndfetcher.data import NSUB_list, ENDF6_PATH, ND_PATH
+from ndfetcher.data import NSUB_list, ENDF6_PATH, OMC_LIBRARIES
 import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool
@@ -13,67 +13,30 @@ from ndfetcher.substitute import replace_negatives_in_lib
 from ndfetcher.data import NDLIBS
 import shutil
 
-
-def sn301_cmd(args: ap.Namespace):
-    target = ND_PATH / args.target / "cross_sections.xml"
-    sources = [ND_PATH / s / "cross_sections.xml" for s in args.sources]
-    replace_negatives_in_lib(
-        target, sources, 301, dryrun=args.dryrun, verbose=True
-    )
-
-
-def clone_cmd(args: ap.Namespace):
-    if args.type == "endf6":
-        source = ENDF6_PATH / args.source
-        target = ENDF6_PATH / args.target
-    elif args.type == "openmc":
-        source = ND_PATH / args.source
-        target = ND_PATH / args.target
-    else:
-        raise ValueError(f"Unknown library type {args.type}")
+def ndf_clone(args: ap.Namespace):
+    source = ENDF6_PATH / args.source
+    target = ENDF6_PATH / args.target
     if not source.exists():
         raise ValueError(f"{args.source} is not in the library list.")
     if target.exists():
         raise ValueError(f"{args.target} is already in the library list.")
     shutil.copytree(source, target)
 
-
-def remove_cmd(args: ap.Namespace):
-    if args.type == "endf6":
-        libraries = [ENDF6_PATH / lib for lib in args.library]
-    elif args.type == "openmc":
-        libraries = [ND_PATH / lib for lib in args.library]
-    else:
-        raise ValueError(f"Unknown library type {args.type}")
+def ndf_remove(args: ap.Namespace):
+    libraries = [ENDF6_PATH / lib for lib in args.library]
     for library in libraries:
         if library.exists():
             shutil.rmtree(library)
 
-
-def list_cmd(args: ap.Namespace):
-    col, rows = os.get_terminal_size()
-    if args.type == "endf6":
-        print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
-        toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")])
-        print(toprint)
-        print("\n\n")
-    elif args.type == "openmc":
-        print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
-        toprint = "  ".join([p.name for p in ND_PATH.glob("*")])
-        print(toprint)
-        print("\n\n")
-    elif args.type == "all":
-        print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
-        toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")])
-        print(toprint)
-        print("\n\n")
-        print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
-        toprint = "  ".join([p.name for p in ND_PATH.glob("*")])
-        print(toprint)
-        print("\n\n")
+def ndf_list(*args):
+    col, _ = os.get_terminal_size()
+    print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
+    toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")])
+    print(toprint)
+    print("\n\n")
 
 
-def info_cmd(args: ap.Namespace):
+def ndf_info(args: ap.Namespace):
     for lib in args.library:
         dico = NDLIBS[lib]
         col, _ = os.get_terminal_size()
@@ -95,14 +58,7 @@ def info_cmd(args: ap.Namespace):
 
     print(f"{'':{'-'}{'^'}{col}}")
 
-
-def generate_cmd(args: ap.Namespace):
-    if args.chain is not None:
-        chain(args.filename)
-    generate(args.filename, args.dryrun)
-
-
-def download_cmd(args: ap.Namespace):
+def ndf_download(args: ap.Namespace):
     lib = args.lib
     if args.sub is not None:
         sub = args.sub
@@ -133,3 +89,4 @@ def download_cmd(args: ap.Namespace):
             print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
             if all(isdone):
                 break
+
