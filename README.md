@@ -2,9 +2,9 @@ A tool to download ENDF6 nuclear data files from the [IAEA website](https://www-
 
 ## Installation
 
-You can install NDFetcher with `pip`:
+You can install NDManager with `pip`:
 ```bash
-pip install git+https://github.com/nplinden/ndfetcher.git
+pip install git+https://github.com/nplinden/ndmanager.git
 ```
 
 ## Examples
