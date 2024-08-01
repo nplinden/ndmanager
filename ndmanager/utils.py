@@ -1,5 +1,5 @@
 import os
-from ndmanager import OMC_LIBRARIES
+from ndmanager import OMC_LIBRARIES, ENDF6_PATH
 
 def clear_line(n=1):
     LINE_UP = '\033[1A'
@@ -47,3 +47,15 @@ def set_nuclear_data(libname, chain=False):
     set_ndl(libname)
     if chain:
         set_chain(libname)
+
+def get_endf6(libname, sub, nuclide):
+    p = (ENDF6_PATH / libname)
+    if not p.exists():
+        raise ValueError(f"Library '{libname}' does not exist")
+    p = p / sub
+    if not p.exists():
+        raise ValueError(f"No {sub} sublibrary available for '{libname}'")
+    p = p / f"{nuclide}.endf6"
+    if not p.exists():
+        raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
+    return p
