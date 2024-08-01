@@ -3,6 +3,7 @@ import os
 import numpy as np
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from ndfetcher import OMC_LIBRARIES
 
 
 def overwrite(nuclide, mt, sourcefile, targetfile):
@@ -134,3 +135,34 @@ def print_offset(s, offset, offsetstart):
         if i >= offsetstart:
             parts[i] = (offset * " ") + parts[i]
     print("\n".join(parts))
+
+def set_ndl(libname):
+    import openmc
+
+    if libname[-4:] == ".xml":
+        openmc.config["cross_sections"] = libname
+    else:
+        p = OMC_LIBRARIES / libname / "cross_sections.xml"
+        if p.exists():
+            openmc.config["cross_sections"] = p
+        else:
+            raise FileNotFoundError(f"Invalid library name '{libname}'")
+
+def set_chain(libname):
+    import openmc 
+
+    if libname[-4:] == ".xml":
+        openmc.config["chain_file"] = libname
+    else:
+        p = OMC_LIBRARIES / libname
+        if not p.exists():
+            raise FileNotFoundError(f"Invalid library name '{libname}'")
+        p = p / "chain.xml"
+        if  not p.exists():
+            raise FileNotFoundError(f"No chain available for library '{libname}'")
+        openmc.config["chain_file"] = p 
+
+def set_nuclear_data(libname, chain=False):
+    set_ndl(libname)
+    if chain:
+        set_chain(libname)
