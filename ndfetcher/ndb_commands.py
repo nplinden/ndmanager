@@ -52,3 +52,9 @@ def ndb_build(args: ap.Namespace):
         chain(args.filename)
     generate(args.filename, args.dryrun)
 
+def ndb_path(args: ap.Namespace):
+    p = OMC_LIBRARIES / args.library / "cross_sections.xml"
+    if not p.exists():
+        raise ValueError("Library cross_section.xml file does not exist")
+    else:
+        print(str(p))

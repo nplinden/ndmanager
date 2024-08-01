@@ -1,7 +1,7 @@
 import argparse as ap
 
 from ndfetcher.ndf_commands import ndf_download, ndf_list, ndf_info, ndf_clone, ndf_remove
-from ndfetcher.ndb_commands import ndb_list, ndb_clone, ndb_remove, ndb_build, ndb_sn301
+from ndfetcher.ndb_commands import ndb_list, ndb_clone, ndb_remove, ndb_build, ndb_sn301, ndb_path
 
 
 def ndf():
@@ -182,6 +182,19 @@ def ndb():
         action="store_true"
     )
     sn301_parser.set_defaults(func=ndb_sn301)
+
+    # info
+    path_parser = subparsers.add_parser(
+        "path",
+        help="Get path to the library's cross_section.xml file"
+    )
+    path_parser.add_argument(
+        "library",
+        type=str,
+        help="Name of the desired library"
+    )
+    path_parser.set_defaults(func=ndb_path)
+
 
     args = parser.parse_args()
     if hasattr(args, "func"):
