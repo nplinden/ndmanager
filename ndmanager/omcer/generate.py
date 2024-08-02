@@ -1,7 +1,9 @@
 from multiprocessing import Pool
+import time
 from pathlib import Path
-from ndmanager.data import TSL_NEUTRON, OMC_LIBRARIES, ENDF6_PATH
+from ndmanager.data import TSL_NEUTRON, OPENMC_NUCLEAR_DATA, ENDF6_PATH
 from ndmanager.nuclide import Nuclide
+from ndmanager.utils import clear_line
 from pprint import pprint
 from contextlib import chdir
 import yaml
@@ -10,12 +12,12 @@ import yaml
 def process_neutron(directory, path, temperatures):
     import openmc.data
 
-    print(f"Processing {path}")
+    # print(f"Processing {path}")
     data = openmc.data.IncidentNeutron.from_njoy(
         path, temperatures=temperatures)
     h5_file = directory / f"{data.name}.h5"
 
-    print(f"Writing {h5_file} ...")
+    # print(f"Writing {h5_file} ...")
     data.export_to_hdf5(h5_file, "w")
 
 
@@ -156,7 +158,7 @@ def generate(ymlpath, dryrun=False):
 
     inputs = yaml.safe_load(open(ymlpath))
 
-    name = OMC_LIBRARIES / inputs["name"]
+    name = OPENMC_NUCLEAR_DATA / inputs["name"]
     name.mkdir(parents=True, exist_ok=True)
     with chdir(name):
         library = openmc.data.DataLibrary()
@@ -170,6 +172,8 @@ def generate(ymlpath, dryrun=False):
         n_in = inputs.get("n", {})
 
         # NEUTRONS
+        print("Processing neutron evaluations")
+        t0 = time.time()
         neutron = list_neutron(basis, n_in)
         dest = Path("neutron")
         dest.mkdir(parents=True, exist_ok=True)
@@ -179,14 +183,20 @@ def generate(ymlpath, dryrun=False):
                 print(arg[0], str(arg[1]), str(arg[2]))
         else:
             with Pool() as p:
-                for a in args:
-                    print(a)
-                p.starmap(process_neutron, args)
+                results = [p.apply_async(process_neutron, a) for a in args]
+                while 1:
+                    time.sleep(0.5)
+                    isdone = [r.ready() for r in results]
+                    ndone = sum(isdone)
+                    print(f"Progress: {ndone:4d}/{len(isdone)}")
+                    clear_line(1)
 
                 for path in sorted(dest.glob("*.h5")):
                     library.register_file(path)
+        print(f"Processing time: {time.time()-t0:.1f}")
 
         # THERMAL SCATTERING LAW
+        print("Processing Thermal Scattering Laws (TSL)")
         tsl_in = inputs.get("tsl", {})
         if isinstance(tsl_in, str):
             # In this case this is a ndlib name
@@ -202,7 +212,14 @@ def generate(ymlpath, dryrun=False):
                     print(arg[0], str(arg[1]), str(arg[2]))
             else:
                 with Pool() as p:
-                    p.starmap(process_tsl, args)
+                    results = [p.apply_async(process_tsl, a) for a in args]
+                    while 1:
+                        time.sleep(0.5)
+                        isdone = [r.ready() for r in results]
+                        ndone = sum(isdone)
+                        print(f"Progress: {ndone:4d}/{len(isdone)}")
+                        clear_line(1)
+                    # p.starmap(process_tsl, args)
                 for p in sorted(dest.glob("*.h5")):
                     library.register_file(p)
 
@@ -249,7 +266,7 @@ def chain(ymlpath):
 
     inputs = yaml.safe_load(open(ymlpath))
 
-    name = OMC_LIBRARIES / inputs["name"]
+    name = OPENMC_NUCLEAR_DATA / inputs["name"]
     name.mkdir(parents=True, exist_ok=True)
     with chdir(name):
         basis = inputs["basis"]
@@ -262,7 +279,9 @@ def chain(ymlpath):
             neutron_files=neutron,
             decay_files=decay,
             fpy_files=nfpy,
-            reactions=list(openmc.deplete.chain.REACTIONS.keys())
+            reactions=list(openmc.deplete.chain.REACTIONS.keys()),
+            reactions=('(n,2n)', '(n,3n)', '(n,4n)', '(n,gamma)', '(n,p)', '(n,a)', '(n,t)'),
+            progress=False
         )
 
         chainfile.export_to_xml("chain.xml")

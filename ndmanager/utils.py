@@ -1,5 +1,5 @@
 import os
-from ndmanager import OMC_LIBRARIES, ENDF6_PATH
+from ndmanager import OPENMC_NUCLEAR_DATA, ENDF6_PATH
 
 def clear_line(n=1):
     LINE_UP = '\033[1A'
@@ -23,7 +23,7 @@ def set_ndl(libname):
     if libname[-4:] == ".xml":
         openmc.config["cross_sections"] = libname
     else:
-        p = OMC_LIBRARIES / libname / "cross_sections.xml"
+        p = OPENMC_NUCLEAR_DATA / libname / "cross_sections.xml"
         if p.exists():
             openmc.config["cross_sections"] = p
         else:
@@ -35,7 +35,7 @@ def set_chain(libname):
     if libname[-4:] == ".xml":
         openmc.config["chain_file"] = libname
     else:
-        p = OMC_LIBRARIES / libname
+        p = OPENMC_NUCLEAR_DATA / libname
         if not p.exists():
             raise FileNotFoundError(f"Invalid library name '{libname}'")
         p = p / "chain.xml"

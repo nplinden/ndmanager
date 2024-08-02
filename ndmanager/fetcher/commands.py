@@ -1,7 +1,7 @@
 import argparse as ap
 import os
 from itertools import product
-from ndmanager.data import NSUB_list, ENDF6_PATH, OMC_LIBRARIES
+from ndmanager.data import NSUB_list, ENDF6_PATH, OPENMC_NUCLEAR_DATA
 import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool

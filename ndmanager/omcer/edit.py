@@ -3,7 +3,7 @@ import os
 import numpy as np
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from ndmanager import OMC_LIBRARIES
+from ndmanager import OPENMC_NUCLEAR_DATA
 
 def overwrite(nuclide, mt, sourcefile, targetfile):
     with File(sourcefile, "r") as source, File(targetfile, "r+") as target:

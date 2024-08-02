@@ -1,4 +1,5 @@
-# This defines a library based on the ENDF-B/VIII.0 evaluations.
+description: |
+  This defines a library based on the ENDF-B/VIII.0 evaluations.
 name: endfb8
 basis: endfb8
-temperatures: 250 294 600 900 973 1200
+temperatures: 973

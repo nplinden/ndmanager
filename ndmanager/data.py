@@ -7,9 +7,9 @@ except KeyError:
     raise EnvironmentError("$ENDF6_PATH must be set to use NDManager.")
 
 try:
-    OMC_LIBRARIES = Path(os.environ["OMC_LIBRARIES"])
+    OPENMC_NUCLEAR_DATA = Path(os.environ["OPENMC_NUCLEAR_DATA"])
 except KeyError:
-    raise EnvironmentError("$OMC_LIBRARIES must be set to use NDManager.")
+    raise EnvironmentError("$OPENMC_NUCLEAR_DATA must be set to use NDManager.")
 
 NDLIBS = {
     "jeff33": {
@@ -376,7 +376,7 @@ TSL_NEUTRON = {
 }
 
 def load(libname):
-    p = OMC_LIBRARIES / libname
+    p = OPENMC_NUCLEAR_DATA / libname
     if not p.exists:
         raise FileNotFoundError(f"OpenMC library {libname} does not exist.")
     else:
