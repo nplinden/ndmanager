@@ -174,6 +174,36 @@ NDLIBS = {
     },
 }
 
+OPENMC_OFFICIAL_LIBS = {
+    "endfb71":
+        {
+            "fancyname": "ENDF-B/VII.1",
+            "source": "https://anl.box.com/shared/static/9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
+            "tarname": "9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
+            "extractedname": "endfb-vii.1-hdf5",
+            "info": "Official OpenMC library based on ENDF-B/VII.1",
+            "homepage": "https://openmc.org/official-data-libraries/"
+        },
+    "endfb8":
+        {
+            "fancyname": "ENDF-B/VIII.0",
+            "source": "https://anl.box.com/shared/static/uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
+            "tarname": "uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
+            "extractedname": "endfb-viii.0-hdf5",
+            "info": "Official OpenMC library based on ENDF-B/VIII.0",
+            "homepage": "https://openmc.org/official-data-libraries/"
+        },
+    "jeff33":
+        {
+            "fancyname": "JEFF-3.3",
+            "source": "https://anl.box.com/shared/static/4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
+            "tarname": "4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
+            "extractedname": "jeff-3.3-hdf5",
+            "info": "Official OpenMC library based on JEFF-3.3",
+            "homepage": "https://openmc.org/official-data-libraries/"
+        }
+}
+
 NSUB_list = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
 
 NSUB = {

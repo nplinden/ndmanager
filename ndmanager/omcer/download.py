@@ -1,0 +1,25 @@
+import subprocess as sp
+from pathlib import Path
+import zipfile
+import tempfile
+from contextlib import chdir
+import shutil
+from ndmanager.data import ENDF6_PATH, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
+from ndmanager.nuclide import Nuclide
+
+def download(libname):
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with chdir(tmpdir):
+            if libname[:9] == "official:":
+                name = libname[9:]
+                dico = OPENMC_OFFICIAL_LIBS[name]
+                sp.run(["wget", "-q", "--show-progress", dico['source']])
+                sp.run(["tar", "xf", dico["tarname"]])
+
+                source = Path(dico["extractedname"])
+                target = OPENMC_NUCLEAR_DATA / "official" / name
+                target.parent.mkdir(exist_ok=True, parents=True)
+                shutil.rmtree(target, ignore_errors=True)
+                shutil.move(source, target)
+
+

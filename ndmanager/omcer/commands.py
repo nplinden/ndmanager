@@ -10,6 +10,7 @@ from ndmanager.utils import clear_line, print_offset
 from ndmanager.fetcher.download import download
 from ndmanager.omcer.generate import chain, generate
 from ndmanager.omcer.substitute import replace_negatives_in_lib
+from ndmanager.omcer.download import download
 from ndmanager.data import NDLIBS
 import shutil
 
@@ -39,7 +40,7 @@ def ndb_remove(args: ap.Namespace):
             shutil.rmtree(library)
 
 
-def ndb_list(*args):
+def ndb_avail(*args):
     col, _ = os.get_terminal_size()
     print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
     toprint = "  ".join([p.name for p in OPENMC_NUCLEAR_DATA.glob("*")])
@@ -59,3 +60,13 @@ def ndb_path(args: ap.Namespace):
         raise ValueError("Library cross_section.xml file does not exist")
     else:
         print(str(p))
+
+def ndb_load(args: ap.Namespace):
+    target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
+    link = OPENMC_NUCLEAR_DATA / "cross_sections.xml"
+    link.unlink()
+    link.symlink_to(target)
+
+def ndb_install(args: ap.Namespace):
+    for lib in args.library:
+        download(lib)

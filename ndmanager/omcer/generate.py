@@ -190,6 +190,8 @@ def generate(ymlpath, dryrun=False):
                     ndone = sum(isdone)
                     print(f"Progress: {ndone:4d}/{len(isdone)}")
                     clear_line(1)
+                    if ndone == len(isdone):
+                        break
 
                 for path in sorted(dest.glob("*.h5")):
                     library.register_file(path)
@@ -219,6 +221,8 @@ def generate(ymlpath, dryrun=False):
                         ndone = sum(isdone)
                         print(f"Progress: {ndone:4d}/{len(isdone)}")
                         clear_line(1)
+                        if ndone == len(isdone):
+                            break
                     # p.starmap(process_tsl, args)
                 for p in sorted(dest.glob("*.h5")):
                     library.register_file(p)
