@@ -280,7 +280,6 @@ def chain(ymlpath):
             decay_files=decay,
             fpy_files=nfpy,
             reactions=list(openmc.deplete.chain.REACTIONS.keys()),
-            reactions=('(n,2n)', '(n,3n)', '(n,4n)', '(n,gamma)', '(n,p)', '(n,a)', '(n,t)'),
             progress=False
         )
 
