@@ -1,6 +1,6 @@
 import argparse as ap
 
-from ndmanager.fetcher import ndf_download, ndf_list, ndf_info, ndf_clone, ndf_remove
+from ndmanager.fetcher import ndf_install, ndf_avail, ndf_info, ndf_clone, ndf_remove, ndf_list
 from ndmanager.omcer import ndb_list, ndb_clone, ndb_remove, ndb_build, ndb_sn301, ndb_path
 
 
@@ -11,31 +11,37 @@ def ndf():
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
 
-    # download
-    download_parser = subparsers.add_parser(
-        "download",
+    # install
+    install_parser = subparsers.add_parser(
+        "install",
         help="Download ENDF6 files from the IAEA website",
     )
-    download_parser.add_argument("-l",
-                                 "--lib",
+    install_parser.add_argument("libraries",
                                  action="extend",
                                  nargs="+",
                                  type=str,
                                  help="List of nuclear data libraries to download"
                                  )
-    download_parser.add_argument("-s",
+    install_parser.add_argument("-s",
                                  "--sub",
                                  action="extend",
                                  nargs="+",
                                  type=str,
                                  help="List of sublibraries libraries to download"
                                  )
-    download_parser.set_defaults(func=ndf_download)
+    install_parser.set_defaults(func=ndf_install)
+
+    # avail
+    avail_parser = subparsers.add_parser(
+        "avail",
+        help="List installed ENDF6 libraries"
+    )
+    avail_parser.set_defaults(func=ndf_avail)
 
     # list
     list_parser = subparsers.add_parser(
         "list",
-        help="List installed ENDF6 libraries"
+        help="List libraries compatible with NDManager"
     )
     list_parser.set_defaults(func=ndf_list)
 

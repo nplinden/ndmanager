@@ -11,6 +11,7 @@ from ndmanager.fetcher.download import download
 from ndmanager.omcer.generate import chain, generate
 from ndmanager.omcer.substitute import replace_negatives_in_lib
 from ndmanager.data import NDLIBS
+from itertools import cycle
 import shutil
 
 def ndf_clone(args: ap.Namespace):
@@ -28,12 +29,23 @@ def ndf_remove(args: ap.Namespace):
         if library.exists():
             shutil.rmtree(library)
 
-def ndf_list(*args):
+def ndf_avail(*args):
     col, _ = os.get_terminal_size()
-    print(f"{'  ENDF6 Libraries  ':{'-'}{'^'}{col}}")
+    print(f"{'  Available ENDF6 Libraries  ':{'-'}{'^'}{col}}")
     toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")])
     print(toprint)
     print("\n\n")
+
+def ndf_list(*args):
+    col, _ = os.get_terminal_size()
+    for lib in NDLIBS:
+        fancyname = NDLIBS[lib]["fancyname"]
+        if (ENDF6_PATH / lib).exists():
+            s = f"{lib:<8} {fancyname:<15} [✓]: {NDLIBS[lib]['info']}"
+            print_offset(s, 13, 1)
+        else:
+            s = f"{lib:<8} {fancyname:<15} [ ]: {NDLIBS[lib]['info']}"
+            print_offset(s, 13, 1)
 
 
 def ndf_info(args: ap.Namespace):
@@ -58,8 +70,8 @@ def ndf_info(args: ap.Namespace):
 
     print(f"{'':{'-'}{'^'}{col}}")
 
-def ndf_download(args: ap.Namespace):
-    lib = args.lib
+def ndf_install(args: ap.Namespace):
+    lib = args.libraries
     if args.sub is not None:
         sub = args.sub
     else:
@@ -68,16 +80,17 @@ def ndf_download(args: ap.Namespace):
 
     initial_table = np.array([["❔" for __ in sub] for _ in lib])
     initial_table = np.hstack((np.array([lib]).T, initial_table))
-    print("🔄: downloading    ✔️ : done    ❌: unavailable")
     print(tabulate(initial_table, [] + sub, tablefmt="rounded_outline"))
 
     with Pool() as p:
         results = [p.apply_async(download, a) for a in stargs]
+        c = cycle([".", "..", "..."])
 
         while True:
-            time.sleep(1)
+            time.sleep(0.5)
+            symb = next(c)
             isdone = [r.ready() for r in results]
-            progress = (np.array([r.get() if r.ready() else "🔄" for r in results])
+            progress = (np.array([r.get() if r.ready() else symb for r in results])
                         .reshape((len(lib), len(sub))))
 
             progress = np.hstack(

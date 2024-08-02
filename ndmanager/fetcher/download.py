@@ -25,7 +25,7 @@ def download(libname, sublib):
                 args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL
             )
             if code != 0:
-                return "❌"
+                return "✕"
 
             source = Path(
                 f"www-nds.iaea.org/public/download-endf/{fancyname}/{sublib}/"
@@ -69,4 +69,4 @@ def download(libname, sublib):
         with open(tape, "w") as f:
             print("".join(lines), file=f)
 
-    return "✔️"
+    return "✓"
