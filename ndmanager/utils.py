@@ -1,5 +1,5 @@
 import os
-from ndmanager import OPENMC_NUCLEAR_DATA, ENDF6_PATH
+from ndmanager.data import OPENMC_NUCLEAR_DATA, ENDF6_PATH
 
 def clear_line(n=1):
     LINE_UP = '\033[1A'
@@ -59,3 +59,15 @@ def get_endf6(libname, sub, nuclide):
     if not p.exists():
         raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
     return p
+
+def check_nuclear_data(libpath, nuclides):
+    import openmc
+
+    lib = openmc.data.DataLibrary.from_xml(libpath)
+    missing = []
+    for nuclide in nuclides:
+        if lib.get_by_material(nuclide) is None:
+            missing.append(nuclide)
+    if missing:
+        raise ValueError(f"Nuclear Data Library lacks the following required nuclides: {missing}")
+    
