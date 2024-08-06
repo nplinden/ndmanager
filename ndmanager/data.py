@@ -11,6 +11,8 @@ try:
 except KeyError:
     raise EnvironmentError("$OPENMC_NUCLEAR_DATA must be set to use NDManager.")
 
+NDM_DIR = Path.home() / ".ndmanager"
+
 NDLIBS = {
     "jeff33": {
         "fancyname": "JEFF-3.3",

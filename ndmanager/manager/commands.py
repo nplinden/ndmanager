@@ -1,13 +1,12 @@
 from pathlib import Path
 import argparse as ap
 import shutil
+from ndmanager.data import NDM_DIR
 
 def ndm_init(args: ap.Namespace):
-    dotfile = Path.home() / ".ndmanager"
-
-    if dotfile.exists():
+    if NDM_DIR.exists():
         if args.force:
-            shutil.rmtree(dotfile)
+            shutil.rmtree(NDM_DIR)
         else:
-            raise ValueError(f"{dotfile} directory already exists.")
-    dotfile.mkdir(parents=True)
+            raise ValueError(f"{NDM_DIR} directory already exists.")
+    NDM_DIR.mkdir(parents=True)
