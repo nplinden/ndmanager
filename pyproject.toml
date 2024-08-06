@@ -20,4 +20,4 @@ ndo = "ndmanager.omcer.main:main"
 ndm = "ndmanager.manager.main:main"
 
 [tool.setuptools]
-packages = ['ndmanager', 'ndmanager.fetcher', 'ndmanager.omcer']
+packages = ['ndmanager', 'ndmanager.fetcher', 'ndmanager.omcer', 'ndmanager.manager']
