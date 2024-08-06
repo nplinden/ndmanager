@@ -1,7 +1,7 @@
 import argparse as ap
 import os
 from itertools import product
-from ndmanager.data import NSUB_list, ENDF6_PATH, OPENMC_NUCLEAR_DATA
+from ndmanager.data import ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool
@@ -10,7 +10,7 @@ from ndmanager.utils import clear_line, print_offset
 from ndmanager.fetcher.download import download
 from ndmanager.omcer.generate import chain, generate
 from ndmanager.omcer.substitute import replace_negatives_in_lib
-from ndmanager.data import NDLIBS
+from ndmanager.data import ENDF6_LIBS
 from itertools import cycle
 import shutil
 
@@ -38,19 +38,19 @@ def ndf_avail(*args):
 
 def ndf_list(*args):
     col, _ = os.get_terminal_size()
-    for lib in NDLIBS:
-        fancyname = NDLIBS[lib]["fancyname"]
+    for lib in ENDF6_LIBS:
+        fancyname = ENDF6_LIBS[lib]["fancyname"]
         if (ENDF6_PATH / lib).exists():
-            s = f"{lib:<8} {fancyname:<15} [✓]: {NDLIBS[lib]['info']}"
+            s = f"{lib:<8} {fancyname:<15} [✓]: {ENDF6_LIBS[lib]['info']}"
             print_offset(s, 30, 1)
         else:
-            s = f"{lib:<8} {fancyname:<15} [ ]: {NDLIBS[lib]['info']}"
+            s = f"{lib:<8} {fancyname:<15} [ ]: {ENDF6_LIBS[lib]['info']}"
             print_offset(s, 30, 1)
 
 
 def ndf_info(args: ap.Namespace):
     for lib in args.library:
-        dico = NDLIBS[lib]
+        dico = ENDF6_LIBS[lib]
         col, _ = os.get_terminal_size()
         toprint = f"  {lib}  "
         print(f"{toprint:{'-'}{'^'}{col}}")
@@ -75,7 +75,7 @@ def ndf_install(args: ap.Namespace):
     if args.sub is not None:
         sub = args.sub
     else:
-        sub = NSUB_list
+        sub = SUBLIBRARIES_SHORTLIST
     stargs = list(product(lib, sub))
 
     initial_table = np.array([["❔" for __ in sub] for _ in lib])

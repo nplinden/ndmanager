@@ -4,14 +4,14 @@ import zipfile
 import tempfile
 from contextlib import chdir
 import shutil
-from ndmanager.data import NDLIBS, ENDF6_PATH
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
 from ndmanager.nuclide import Nuclide
 
 
 def download(libname, sublib):
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
-            fancyname = NDLIBS[libname]["fancyname"]
+            fancyname = ENDF6_LIBS[libname]["fancyname"]
             cmds = [
                 "wget",
                 "-r",

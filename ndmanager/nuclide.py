@@ -3,6 +3,7 @@ from ndmanager.data import ATOMIC_SYMBOL, META_SYMBOL
 
 
 class Nuclide:
+    """A class to manage Nuclide names."""
     splitname_re = re.compile(r"^([A-Za-z]+)([0-9]+)(_*)([A-Za-z0-9]*)")
     file2zam_re = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
 

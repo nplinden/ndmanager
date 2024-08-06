@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Dict, List
 
 try:
     ENDF6_PATH = Path(os.environ["ENDF6_PATH"])
@@ -11,9 +12,9 @@ try:
 except KeyError:
     raise EnvironmentError("$OPENMC_NUCLEAR_DATA must be set to use NDManager.")
 
-NDM_DIR = Path.home() / ".ndmanager"
+NDM_DIR: Path = Path.home() / ".ndmanager"
 
-NDLIBS = {
+ENDF6_LIBS: Dict[str, str | List[str]] = {
     "jeff33": {
         "fancyname": "JEFF-3.3",
         "sublibraries": ["decay", "n", "nfpy", "sfpy", "tsl"],
@@ -176,7 +177,7 @@ NDLIBS = {
     },
 }
 
-OPENMC_OFFICIAL_LIBS = {
+OPENMC_OFFICIAL_LIBS: Dict[str, Dict[str, str]] = {
     "endfb71":
         {
             "fancyname": "ENDF-B/VII.1",
@@ -206,7 +207,7 @@ OPENMC_OFFICIAL_LIBS = {
         }
 }
 
-OPENMC_LANL_LIBS = {
+OPENMC_LANL_LIBS: Dict[str, Dict[str, str]] = {
     "endfb70":
         {
             "fancyname": "ENDF-B/VII.0",
@@ -236,13 +237,26 @@ OPENMC_LANL_LIBS = {
         }
 }
 
-NSUB_list = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
-
-NSUB = {
-
+SUBLIBRARIES: Dict[str, str] = {
+    "n": "Incident-Neutron Data",
+    "decay": "Radioactive Decay Data",
+    "nfpy": "Neutron-Induced Fission Product Yields",
+    "sfpy": "Spontaneous Fission Product Yields",
+    "tsl": "Thermal Neutron Scattering Data",
+    "ard": "Atomic Relaxation Data",
+    "photo": "Photo-Atomic Interaction Data",
+    "g": "Photo-Nuclear Data",
+    "e": "Electro-Atomic Interaction Data",
+    "p": "Incident-Proton Data",
+    "d": "Incident-Deuteron Data",
+    "t": "Incident-Tritium Data",
+    "he4": "Incident-He4 Data",
+    "he3": "Incident-He3 Data",
 }
 
-ATOMIC_SYMBOL = {0: 'n', 1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C',
+SUBLIBRARIES_SHORTLIST: List[str] = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo"]
+
+ATOMIC_SYMBOL: Dict[int | str, int | str] = {0: 'n', 1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C',
                  7: 'N', 8: 'O', 9: 'F', 10: 'Ne', 11: 'Na', 12: 'Mg', 13: 'Al',
                  14: 'Si', 15: 'P', 16: 'S', 17: 'Cl', 18: 'Ar', 19: 'K',
                  20: 'Ca', 21: 'Sc', 22: 'Ti', 23: 'V', 24: 'Cr', 25: 'Mn',
@@ -266,14 +280,14 @@ ATOMIC_SYMBOL = {0: 'n', 1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C',
 
 ATOMIC_SYMBOL |= {v: k for k, v in ATOMIC_SYMBOL.items()}
 
-META_SYMBOL = {
+META_SYMBOL: Dict[str, int] = {
     "G": 0,
     "M": 1,
     "N": 2,
     "O": 3
 }
 
-TSL_NEUTRON = {
+TSL_NEUTRON: Dict[str, Dict[str, str]] = {
     "jeff311":
         {
             "tsl_0001_H(H2O).dat": "H1",
@@ -436,10 +450,3 @@ TSL_NEUTRON = {
             "tsl_Zr(ZrH)_0058.dat": "Zr90",
         }
 }
-
-def load(libname):
-    p = OPENMC_NUCLEAR_DATA / libname
-    if not p.exists:
-        raise FileNotFoundError(f"OpenMC library {libname} does not exist.")
-    else:
-        os.environ["OPENMC_CROSS_SECTIONS"] = str(p / "cross_sections.xml")
