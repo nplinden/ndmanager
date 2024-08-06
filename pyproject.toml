@@ -16,7 +16,7 @@ Homepage = "https://github.com/nplinden/ndmanager"
 
 [project.scripts]
 ndf = "ndmanager.fetcher.main:main"
-ndb = "ndmanager.omcer.main:main"
+ndo = "ndmanager.omcer.main:main"
 
 [tool.setuptools]
 packages = ['ndmanager', 'ndmanager.fetcher', 'ndmanager.omcer']

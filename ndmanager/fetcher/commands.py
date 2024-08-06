@@ -42,10 +42,10 @@ def ndf_list(*args):
         fancyname = NDLIBS[lib]["fancyname"]
         if (ENDF6_PATH / lib).exists():
             s = f"{lib:<8} {fancyname:<15} [✓]: {NDLIBS[lib]['info']}"
-            print_offset(s, 13, 1)
+            print_offset(s, 30, 1)
         else:
             s = f"{lib:<8} {fancyname:<15} [ ]: {NDLIBS[lib]['info']}"
-            print_offset(s, 13, 1)
+            print_offset(s, 30, 1)
 
 
 def ndf_info(args: ap.Namespace):

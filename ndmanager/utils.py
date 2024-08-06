@@ -70,4 +70,3 @@ def check_nuclear_data(libpath, nuclides):
             missing.append(nuclide)
     if missing:
         raise ValueError(f"Nuclear Data Library lacks the following required nuclides: {missing}")
-    
