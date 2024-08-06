@@ -64,7 +64,8 @@ def ndb_path(args: ap.Namespace):
 def ndb_load(args: ap.Namespace):
     target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
     link = OPENMC_NUCLEAR_DATA / "cross_sections.xml"
-    link.unlink()
+    if link.exists():
+        link.unlink()
     link.symlink_to(target)
 
 def ndb_install(args: ap.Namespace):

@@ -204,6 +204,36 @@ OPENMC_OFFICIAL_LIBS = {
         }
 }
 
+OPENMC_LANL_LIBS = {
+    "endfb70":
+        {
+            "fancyname": "ENDF-B/VII.0",
+            "source": "https://anl.box.com/shared/static/t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
+            "tarname": "t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
+            "extractedname": "mcnp_endfb70",
+            "info": "ENDF-B/VII.0 based library converted from ACE files distributed with MCNP5/6",
+            "homepage": "https://openmc.org/lanl-data-libraries/"
+        },
+    "endfb71":
+        {
+            "fancyname": "ENDF-B/VII.1",
+            "source": "https://anl.box.com/shared/static/d359skd2w6wrm86om2997a1bxgigc8pu.xz",
+            "tarname": "d359skd2w6wrm86om2997a1bxgigc8pu.xz",
+            "extractedname": "mcnp_endfb71",
+            "info": "ENDF-B/VII.1 based library converted from ACE files distributed with MCNP5/6",
+            "homepage": "https://openmc.org/lanl-data-libraries/"
+        },
+    "endfb8":
+        {
+            "fancyname": "ENDF-B.VIII.0",
+            "source": "https://anl.box.com/shared/static/nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
+            "tarname": "nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
+            "extractedname": "lib80x_hdf5",
+            "info": "ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National lab (LANL)",
+            "homepage": "https://openmc.org/lanl-data-libraries/"
+        }
+}
+
 NSUB_list = ["n", "decay", "nfpy", "sfpy", "tsl", "ard", "photo", "g"]
 
 NSUB = {
