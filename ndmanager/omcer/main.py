@@ -1,6 +1,6 @@
 import argparse as ap
 
-from ndmanager.omcer import ndb_avail, ndb_clone, ndb_remove, ndb_build, ndb_sn301, ndb_path, ndb_load, ndb_install
+from ndmanager.omcer import ndo_avail, ndo_clone, ndo_remove, ndo_build, ndo_sn301, ndo_path, ndo_load, ndo_install
 
 def main():
     parser = ap.ArgumentParser(
@@ -14,7 +14,7 @@ def main():
         "avail",
         help="List installed libraries"
     )
-    avail_parser.set_defaults(func=ndb_avail)
+    avail_parser.set_defaults(func=ndo_avail)
 
     # clone
     clone_parser = subparsers.add_parser(
@@ -31,7 +31,7 @@ def main():
         type=str,
         help="Name for the new cloned library",
     )
-    clone_parser.set_defaults(func=ndb_clone)
+    clone_parser.set_defaults(func=ndo_clone)
 
     # install
     install_parser = subparsers.add_parser(
@@ -45,7 +45,7 @@ def main():
         action="extend",
         nargs="+",
     )
-    install_parser.set_defaults(func=ndb_install)
+    install_parser.set_defaults(func=ndo_install)
 
     # remove
     remove_parser = subparsers.add_parser(
@@ -59,7 +59,7 @@ def main():
         action="extend",
         nargs="+",
     )
-    remove_parser.set_defaults(func=ndb_remove)
+    remove_parser.set_defaults(func=ndo_remove)
 
     # load
     load_parser = subparsers.add_parser(
@@ -71,7 +71,7 @@ def main():
         type=str,
         help="Name of the library",
     )
-    load_parser.set_defaults(func=ndb_load)
+    load_parser.set_defaults(func=ndo_load)
 
     # build
     build_parser = subparsers.add_parser(
@@ -93,7 +93,7 @@ def main():
         help="Builds the depletion chain",
         action="store_true"
     )
-    build_parser.set_defaults(func=ndb_build)
+    build_parser.set_defaults(func=ndo_build)
 
     # sn301
     sn301_parser = subparsers.add_parser(
@@ -119,9 +119,9 @@ def main():
         help="Do not perform the substitution",
         action="store_true"
     )
-    sn301_parser.set_defaults(func=ndb_sn301)
+    sn301_parser.set_defaults(func=ndo_sn301)
 
-    # info
+    # path
     path_parser = subparsers.add_parser(
         "path",
         help="Get path to the library's cross_section.xml file"
@@ -131,7 +131,7 @@ def main():
         type=str,
         help="Name of the desired library"
     )
-    path_parser.set_defaults(func=ndb_path)
+    path_parser.set_defaults(func=ndo_path)
 
 
     args = parser.parse_args()
