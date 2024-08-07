@@ -56,7 +56,7 @@ def ndo_path(args: ap.Namespace):
 def ndo_get(args: ap.Namespace):
     target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
     if target.exists():
-        return target
+        print(target)
     else:
         raise ValueError(f"{args.library} not found")
 
