@@ -133,7 +133,6 @@ def main():
     )
     path_parser.set_defaults(func=ndo_path)
 
-
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
