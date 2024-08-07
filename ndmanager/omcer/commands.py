@@ -55,7 +55,7 @@ def ndo_path(args: ap.Namespace):
 
 def ndo_load(args: ap.Namespace):
     target = OPENMC_NUCLEAR_DATA / args.library
-    link = NDM_DIR / "cross_sections.xml"
+    link = NDM_DIR / "ndlib"
     if link.exists():
         link.unlink()
     link.symlink_to(target)
