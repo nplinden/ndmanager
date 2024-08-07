@@ -1,6 +1,6 @@
 import argparse as ap
 
-from ndmanager.omcer import ndo_avail, ndo_clone, ndo_remove, ndo_build, ndo_sn301, ndo_path, ndo_load, ndo_install
+from ndmanager.omcer import ndo_avail, ndo_clone, ndo_remove, ndo_build, ndo_sn301, ndo_path, ndo_get, ndo_install
 
 def main():
     parser = ap.ArgumentParser(
@@ -61,17 +61,17 @@ def main():
     )
     remove_parser.set_defaults(func=ndo_remove)
 
-    # load
-    load_parser = subparsers.add_parser(
-        "load",
-        help="Load an OpenMC nuclear data library"
+    # get
+    get_parser = subparsers.add_parser(
+        "get",
+        help="Get an OpenMC nuclear data library"
     )
-    load_parser.add_argument(
+    get_parser.add_argument(
         "library",
         type=str,
         help="Name of the library",
     )
-    load_parser.set_defaults(func=ndo_load)
+    get_parser.set_defaults(func=ndo_get)
 
     # build
     build_parser = subparsers.add_parser(

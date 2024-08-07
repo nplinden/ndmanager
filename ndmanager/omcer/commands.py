@@ -53,12 +53,12 @@ def ndo_path(args: ap.Namespace):
     else:
         print(str(p))
 
-def ndo_load(args: ap.Namespace):
-    target = OPENMC_NUCLEAR_DATA / args.library
-    link = NDM_DIR / "ndlib"
-    if link.exists():
-        link.unlink()
-    link.symlink_to(target)
+def ndo_get(args: ap.Namespace):
+    target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
+    if target.exists():
+        return target
+    else:
+        raise ValueError(f"{args.library} not found")
 
 def ndo_install(args: ap.Namespace):
     for lib in args.library:
