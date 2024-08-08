@@ -14,7 +14,7 @@ except KeyError:
 
 NDM_DIR: Path = Path.home() / ".ndmanager"
 
-ENDF6_LIBS: Dict[str, str | List[str]] = {
+ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "jeff33": {
         "fancyname": "JEFF-3.3",
         "sublibraries": ["decay", "n", "nfpy", "sfpy", "tsl"],

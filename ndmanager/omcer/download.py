@@ -1,11 +1,9 @@
 import subprocess as sp
 from pathlib import Path
-import zipfile
 import tempfile
 from contextlib import chdir
 import shutil
 from ndmanager.data import OPENMC_LANL_LIBS, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
-from ndmanager.nuclide import Nuclide
 
 
 def download(libname):

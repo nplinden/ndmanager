@@ -7,9 +7,14 @@ name = "ndmanager"
 readme = "README.md"
 version = "0.1.1"
 authors = [{ name="Nicolas Linden", email="linden.nicolas@orange.fr"}]
-description = "Fetching nuclear data"
-classifiers = ["Programming Language :: Python :: 3.7"]
-requires-python = ">=3.7"
+description = "Managing you nuclear data collection"
+classifiers = ["Programming Language :: Python :: 3.11"]
+requires-python = ">=3.11"
+dependencies = [
+    'tabulate',
+    'h5py',
+    'pyyaml',
+]
 
 [project.urls]
 Homepage = "https://github.com/nplinden/ndmanager"

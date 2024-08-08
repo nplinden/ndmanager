@@ -2,17 +2,15 @@ import argparse as ap
 import os
 from itertools import product
 from ndmanager.data import ENDF6_PATH, SUBLIBRARIES_SHORTLIST
-import numpy as np
 from tabulate import tabulate
 from multiprocessing import Pool
 import time
 from ndmanager.utils import clear_line, print_offset
 from ndmanager.fetcher.download import download
-from ndmanager.omcer.generate import chain, generate
-from ndmanager.omcer.substitute import replace_negatives_in_lib
 from ndmanager.data import ENDF6_LIBS
 from itertools import cycle
 import shutil
+from functools import reduce
 
 
 def ndf_clone(args: ap.Namespace):
@@ -75,17 +73,25 @@ def ndf_info(args: ap.Namespace):
     print(f"{'':{'-'}{'^'}{col}}")
 
 
+def list_reshape(lst, shape):
+    if len(shape) == 1:
+        return lst
+    n = reduce(lambda x, y: x * y, shape[1:])
+    return [
+        list_reshape(lst[i * n : (i + 1) * n], shape[1:]) for i in range(len(lst) // n)
+    ]
+
+
 def ndf_install(args: ap.Namespace):
-    lib = args.libraries
+    libs = args.libraries
     if args.sub is not None:
         sub = args.sub
     else:
         sub = SUBLIBRARIES_SHORTLIST
-    stargs = list(product(lib, sub))
+    stargs = list(product(libs, sub))
 
-    initial_table = np.array([["❔" for __ in sub] for _ in lib])
-    initial_table = np.hstack((np.array([lib]).T, initial_table))
-    print(tabulate(initial_table, [] + sub, tablefmt="rounded_outline"))
+    table = [[lib] + ["..." for __ in sub] for lib in libs]
+    print(tabulate(table, [] + sub, tablefmt="rounded_outline"))
 
     with Pool() as p:
         results = [p.apply_async(download, a) for a in stargs]
@@ -95,13 +101,13 @@ def ndf_install(args: ap.Namespace):
             time.sleep(0.5)
             symb = next(c)
             isdone = [r.ready() for r in results]
-            progress = np.array(
-                [r.get() if r.ready() else symb for r in results]
-            ).reshape((len(lib), len(sub)))
+            symbols = [r.get() if r.ready() else symb for r in results]
 
-            progress = np.hstack([np.array([lib]).T, progress])
+            progress = []
+            for ilib, lib in enumerate(libs):
+                progress.append([lib] + symbols[ilib : ilib + len(sub)])
 
-            clear_line(len(lib) + 4)
+            clear_line(len(libs) + 4)
             print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
             if all(isdone):
                 break
