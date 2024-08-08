@@ -7,12 +7,11 @@ from ndmanager.omcer.substitute import replace_negatives_in_lib
 from ndmanager.omcer.download import download
 import shutil
 
+
 def ndo_sn301(args: ap.Namespace):
     target = OPENMC_NUCLEAR_DATA / args.target / "cross_sections.xml"
     sources = [OPENMC_NUCLEAR_DATA / s / "cross_sections.xml" for s in args.sources]
-    replace_negatives_in_lib(
-        target, sources, 301, dryrun=args.dryrun, verbose=True
-    )
+    replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)
 
 
 def ndo_clone(args: ap.Namespace):
@@ -46,6 +45,7 @@ def ndo_build(args: ap.Namespace):
         chain(args.filename)
     generate(args.filename, args.dryrun)
 
+
 def ndo_path(args: ap.Namespace):
     p = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
     if not p.exists():
@@ -53,12 +53,14 @@ def ndo_path(args: ap.Namespace):
     else:
         print(str(p))
 
+
 def ndo_get(args: ap.Namespace):
     target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
     if target.exists():
         print(target)
     else:
         raise ValueError(f"{args.library} not found")
+
 
 def ndo_install(args: ap.Namespace):
     for lib in args.library:

@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from ndmanager import OPENMC_NUCLEAR_DATA
 
+
 def overwrite(nuclide, mt, sourcefile, targetfile):
     with File(sourcefile, "r") as source, File(targetfile, "r+") as target:
 
@@ -17,11 +18,15 @@ def overwrite(nuclide, mt, sourcefile, targetfile):
 
         for T in temperatures:
             if T not in source_temperatures:
-                raise ValueError(f"Temperature {T} not available for MT={mt} in {sourcefile}")
+                raise ValueError(
+                    f"Temperature {T} not available for MT={mt} in {sourcefile}"
+                )
 
         for T in temperatures:
             target_grid = target[f"{nuclide}/energy/{T:d}K"][...]
-            target_attrs = target[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"].attrs
+            target_attrs = target[
+                f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"
+            ].attrs
 
             source_grid = source[f"{nuclide}/energy/{T:d}K"][...]
             source_xs = source[f"{nuclide}/reactions/reaction_{mt:03d}/{T}K/xs"][...]
@@ -83,7 +88,7 @@ def set_negative_to_zero(file, nuclide, mt):
         temperatures = [T for T in rgroup.keys() if "K" in T]
         for T in temperatures:
             xs = f[f"{nuclide}/reactions/reaction_{mt:03d}/{T}/xs"][...]
-            f[f"{nuclide}/reactions/reaction_{mt:03d}/{T}/xs"][xs < 0] = 0.
+            f[f"{nuclide}/reactions/reaction_{mt:03d}/{T}/xs"][xs < 0] = 0.0
     return
 
 

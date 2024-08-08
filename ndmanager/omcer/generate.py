@@ -13,8 +13,7 @@ def process_neutron(directory, path, temperatures):
     import openmc.data
 
     # print(f"Processing {path}")
-    data = openmc.data.IncidentNeutron.from_njoy(
-        path, temperatures=temperatures)
+    data = openmc.data.IncidentNeutron.from_njoy(path, temperatures=temperatures)
     h5_file = directory / f"{data.name}.h5"
 
     # print(f"Writing {h5_file} ...")
@@ -284,7 +283,7 @@ def chain(ymlpath):
             decay_files=decay,
             fpy_files=nfpy,
             reactions=list(openmc.deplete.chain.REACTIONS.keys()),
-            progress=False
+            progress=False,
         )
 
         chainfile.export_to_xml("chain.xml")

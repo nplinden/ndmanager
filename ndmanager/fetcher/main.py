@@ -1,5 +1,13 @@
 import argparse as ap
-from ndmanager.fetcher import ndf_install, ndf_avail, ndf_info, ndf_clone, ndf_remove, ndf_list
+from ndmanager.fetcher import (
+    ndf_install,
+    ndf_avail,
+    ndf_info,
+    ndf_clone,
+    ndf_remove,
+    ndf_list,
+)
+
 
 def main():
     parser = ap.ArgumentParser(
@@ -13,53 +21,49 @@ def main():
         "install",
         help="Download ENDF6 files from the IAEA website",
     )
-    install_parser.add_argument("libraries",
-                                 action="extend",
-                                 nargs="+",
-                                 type=str,
-                                 help="List of nuclear data libraries to download"
-                                 )
-    install_parser.add_argument("-s",
-                                 "--sub",
-                                 action="extend",
-                                 nargs="+",
-                                 type=str,
-                                 help="List of sublibraries libraries to download"
-                                 )
+    install_parser.add_argument(
+        "libraries",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of nuclear data libraries to download",
+    )
+    install_parser.add_argument(
+        "-s",
+        "--sub",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of sublibraries libraries to download",
+    )
     install_parser.set_defaults(func=ndf_install)
 
     # avail
-    avail_parser = subparsers.add_parser(
-        "avail",
-        help="List installed ENDF6 libraries"
-    )
+    avail_parser = subparsers.add_parser("avail", help="List installed ENDF6 libraries")
     avail_parser.set_defaults(func=ndf_avail)
 
     # list
     list_parser = subparsers.add_parser(
-        "list",
-        help="List libraries compatible with NDManager"
+        "list", help="List libraries compatible with NDManager"
     )
     list_parser.set_defaults(func=ndf_list)
 
     # info
     info_parser = subparsers.add_parser(
-        "info",
-        help="Get info on a nuclear data libary"
+        "info", help="Get info on a nuclear data libary"
     )
     info_parser.add_argument(
         "library",
         type=str,
         action="extend",
         nargs="+",
-        help="Name of the desired library"
+        help="Name of the desired library",
     )
     info_parser.set_defaults(func=ndf_info)
 
     # clone
     clone_parser = subparsers.add_parser(
-        "clone",
-        help="Clone an installed ENDF6 library"
+        "clone", help="Clone an installed ENDF6 library"
     )
     clone_parser.add_argument(
         "source",
@@ -75,8 +79,7 @@ def main():
 
     # remove
     remove_parser = subparsers.add_parser(
-        "remove",
-        help="Remove one or more installed ENDF6 libraries"
+        "remove", help="Remove one or more installed ENDF6 libraries"
     )
     remove_parser.add_argument(
         "library",

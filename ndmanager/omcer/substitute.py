@@ -1,4 +1,9 @@
-from ndmanager.omcer.edit import find_negative_in_lib, find_nuclide_in_lib, overwrite, set_negative_to_zero
+from ndmanager.omcer.edit import (
+    find_negative_in_lib,
+    find_nuclide_in_lib,
+    overwrite,
+    set_negative_to_zero,
+)
 
 
 def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True):
@@ -19,13 +24,17 @@ def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True)
             else:
                 found = True
                 if verbose:
-                    print(f"Replacing\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}")
+                    print(
+                        f"Replacing\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}"
+                    )
                 if not dryrun:
                     overwrite(nuclide, mt, source, target)
                 continue
         if not found:
             if verbose:
-                print(f"No replacement found\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}")
+                print(
+                    f"No replacement found\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}"
+                )
             if not dryrun:
                 set_negative_to_zero(target, nuclide, mt)
     return

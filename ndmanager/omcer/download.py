@@ -7,13 +7,14 @@ import shutil
 from ndmanager.data import OPENMC_LANL_LIBS, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
 from ndmanager.nuclide import Nuclide
 
+
 def download(libname):
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
             if libname[:9] == "official:":
                 name = libname[9:]
                 dico = OPENMC_OFFICIAL_LIBS[name]
-                sp.run(["wget", "-q", "--show-progress", dico['source']])
+                sp.run(["wget", "-q", "--show-progress", dico["source"]])
                 sp.run(["tar", "xf", dico["tarname"]])
 
                 source = Path(dico["extractedname"])
@@ -24,7 +25,7 @@ def download(libname):
             elif libname[:5] == "lanl:":
                 name = libname[5:]
                 dico = OPENMC_LANL_LIBS[name]
-                sp.run(["wget", "-q", "--show-progress", dico['source']])
+                sp.run(["wget", "-q", "--show-progress", dico["source"]])
                 sp.run(["tar", "xf", dico["tarname"]])
 
                 source = Path(dico["extractedname"])

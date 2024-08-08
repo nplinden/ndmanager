@@ -14,6 +14,7 @@ from ndmanager.data import ENDF6_LIBS
 from itertools import cycle
 import shutil
 
+
 def ndf_clone(args: ap.Namespace):
     source = ENDF6_PATH / args.source
     target = ENDF6_PATH / args.target
@@ -23,11 +24,13 @@ def ndf_clone(args: ap.Namespace):
         raise ValueError(f"{args.target} is already in the library list.")
     shutil.copytree(source, target)
 
+
 def ndf_remove(args: ap.Namespace):
     libraries = [ENDF6_PATH / lib for lib in args.library]
     for library in libraries:
         if library.exists():
             shutil.rmtree(library)
+
 
 def ndf_avail(*args):
     col, _ = os.get_terminal_size()
@@ -35,6 +38,7 @@ def ndf_avail(*args):
     toprint = "  ".join([p.name for p in ENDF6_PATH.glob("*")])
     print(toprint)
     print("\n\n")
+
 
 def ndf_list(*args):
     col, _ = os.get_terminal_size()
@@ -70,6 +74,7 @@ def ndf_info(args: ap.Namespace):
 
     print(f"{'':{'-'}{'^'}{col}}")
 
+
 def ndf_install(args: ap.Namespace):
     lib = args.libraries
     if args.sub is not None:
@@ -90,16 +95,13 @@ def ndf_install(args: ap.Namespace):
             time.sleep(0.5)
             symb = next(c)
             isdone = [r.ready() for r in results]
-            progress = (np.array([r.get() if r.ready() else symb for r in results])
-                        .reshape((len(lib), len(sub))))
+            progress = np.array(
+                [r.get() if r.ready() else symb for r in results]
+            ).reshape((len(lib), len(sub)))
 
-            progress = np.hstack(
-                [np.array([lib]).T,
-                 progress]
-            )
+            progress = np.hstack([np.array([lib]).T, progress])
 
             clear_line(len(lib) + 4)
             print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
             if all(isdone):
                 break
-
