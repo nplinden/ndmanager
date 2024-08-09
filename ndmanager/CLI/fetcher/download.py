@@ -4,8 +4,8 @@ import zipfile
 import tempfile
 from contextlib import chdir
 import shutil
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
-from ndmanager.nuclide import Nuclide
+from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH
+from ndmanager.API.nuclide import Nuclide
 
 
 def download(libname, sublib):

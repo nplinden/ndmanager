@@ -1,7 +1,7 @@
 from pathlib import Path
 import argparse as ap
 import shutil
-from ndmanager.data import NDM_DIR
+from ndmanager.API.data import NDM_DIR
 
 
 def ndm_init(args: ap.Namespace):

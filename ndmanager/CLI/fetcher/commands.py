@@ -1,13 +1,13 @@
 import argparse as ap
 import os
 from itertools import product
-from ndmanager.data import ENDF6_PATH, SUBLIBRARIES_SHORTLIST
+from ndmanager.API.data import ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from tabulate import tabulate
 from multiprocessing import Pool
 import time
-from ndmanager.utils import clear_line, print_offset
-from ndmanager.fetcher.download import download
-from ndmanager.data import ENDF6_LIBS
+from ndmanager.API.utils import clear_line, print_offset
+from ndmanager.CLI.fetcher.download import download
+from ndmanager.API.data import ENDF6_LIBS
 from itertools import cycle
 import shutil
 from functools import reduce

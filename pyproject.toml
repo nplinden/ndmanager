@@ -20,9 +20,9 @@ dependencies = [
 Homepage = "https://github.com/nplinden/ndmanager"
 
 [project.scripts]
-ndf = "ndmanager.fetcher.main:main"
-ndo = "ndmanager.omcer.main:main"
-ndm = "ndmanager.manager.main:main"
+ndf = "ndmanager.CLI.fetcher.main:main"
+ndo = "ndmanager.CLI.omcer.main:main"
+ndm = "ndmanager.CLI.manager.main:main"
 
 [tool.setuptools]
-packages = ['ndmanager', 'ndmanager.fetcher', 'ndmanager.omcer', 'ndmanager.manager']
+packages = ['ndmanager', 'ndmanager.API', 'ndmanager.CLI.fetcher', 'ndmanager.CLI.omcer', 'ndmanager.CLI.manager']

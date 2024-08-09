@@ -1,9 +1,9 @@
 from multiprocessing import Pool
 import time
 from pathlib import Path
-from ndmanager.data import TSL_NEUTRON, OPENMC_NUCLEAR_DATA, ENDF6_PATH
-from ndmanager.nuclide import Nuclide
-from ndmanager.utils import clear_line
+from ndmanager.API.data import TSL_NEUTRON, OPENMC_NUCLEAR_DATA, ENDF6_PATH
+from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.utils import clear_line
 from pprint import pprint
 from contextlib import chdir
 import yaml

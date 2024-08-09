@@ -1,5 +1,5 @@
 import argparse as ap
-from ndmanager.fetcher import (
+from ndmanager.CLI.fetcher import (
     ndf_install,
     ndf_avail,
     ndf_info,

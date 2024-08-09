@@ -1,5 +1,5 @@
 import re
-from ndmanager.data import ATOMIC_SYMBOL, META_SYMBOL
+from ndmanager.API.data import ATOMIC_SYMBOL, META_SYMBOL
 
 
 class Nuclide:

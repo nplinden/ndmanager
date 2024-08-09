@@ -1,4 +1,4 @@
-from ndmanager.omcer.edit import (
+from ndmanager.CLI.omcer.edit import (
     find_negative_in_lib,
     find_nuclide_in_lib,
     overwrite,

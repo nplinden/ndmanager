@@ -1,5 +1,5 @@
 import os
-from ndmanager.data import OPENMC_NUCLEAR_DATA, ENDF6_PATH
+from ndmanager.API.data import OPENMC_NUCLEAR_DATA, ENDF6_PATH
 
 
 def clear_line(n=1):

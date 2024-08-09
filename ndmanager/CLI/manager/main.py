@@ -1,6 +1,6 @@
 import argparse as ap
 
-from ndmanager.manager import ndm_init
+from ndmanager.CLI.manager import ndm_init
 
 
 def main():

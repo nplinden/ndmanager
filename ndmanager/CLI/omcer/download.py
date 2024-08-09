@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 from contextlib import chdir
 import shutil
-from ndmanager.data import OPENMC_LANL_LIBS, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
+from ndmanager.API.data import OPENMC_LANL_LIBS, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
 
 
 def download(libname):
