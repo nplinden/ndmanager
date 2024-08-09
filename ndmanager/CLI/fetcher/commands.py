@@ -1,16 +1,16 @@
 import argparse as ap
 import os
-from itertools import product
-from ndmanager.API.data import ENDF6_PATH, SUBLIBRARIES_SHORTLIST
-from tabulate import tabulate
-from multiprocessing import Pool
+import shutil
 import time
+from functools import reduce
+from itertools import cycle, product
+from multiprocessing import Pool
+
+from tabulate import tabulate
+
+from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.API.utils import clear_line, print_offset
 from ndmanager.CLI.fetcher.download import download
-from ndmanager.API.data import ENDF6_LIBS
-from itertools import cycle
-import shutil
-from functools import reduce
 
 
 def ndf_clone(args: ap.Namespace):

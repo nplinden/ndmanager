@@ -1,3 +1,3 @@
-from .substitute import *
-from .generate import *
 from .commands import *
+from .generate import *
+from .substitute import *

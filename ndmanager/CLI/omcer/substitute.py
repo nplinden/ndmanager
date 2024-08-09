@@ -1,9 +1,6 @@
-from ndmanager.CLI.omcer.edit import (
-    find_negative_in_lib,
-    find_nuclide_in_lib,
-    overwrite,
-    set_negative_to_zero,
-)
+from ndmanager.CLI.omcer.edit import (find_negative_in_lib,
+                                      find_nuclide_in_lib, overwrite,
+                                      set_negative_to_zero)
 
 
 def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True):

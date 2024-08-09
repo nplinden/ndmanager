@@ -1,7 +1,8 @@
-from h5py import File
-import numpy as np
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+import numpy as np
+from h5py import File
 
 
 def overwrite(nuclide, mt, sourcefile, targetfile):

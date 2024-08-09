@@ -1,12 +1,14 @@
-from multiprocessing import Pool
 import time
+from contextlib import chdir
+from multiprocessing import Pool
 from pathlib import Path
-from ndmanager.API.data import TSL_NEUTRON, OPENMC_NUCLEAR_DATA, ENDF6_PATH
+from pprint import pprint
+
+import yaml
+
+from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, TSL_NEUTRON
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import clear_line
-from pprint import pprint
-from contextlib import chdir
-import yaml
 
 
 def process_neutron(directory, path, temperatures):

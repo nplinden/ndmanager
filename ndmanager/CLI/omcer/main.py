@@ -1,15 +1,7 @@
 import argparse as ap
 
-from ndmanager.omcer import (
-    ndo_avail,
-    ndo_clone,
-    ndo_remove,
-    ndo_build,
-    ndo_sn301,
-    ndo_path,
-    ndo_get,
-    ndo_install,
-)
+from ndmanager.omcer import (ndo_avail, ndo_build, ndo_clone, ndo_get,
+                             ndo_install, ndo_path, ndo_remove, ndo_sn301)
 
 
 def main():

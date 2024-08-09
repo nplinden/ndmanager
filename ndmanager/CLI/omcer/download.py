@@ -1,9 +1,11 @@
+import shutil
 import subprocess as sp
-from pathlib import Path
 import tempfile
 from contextlib import chdir
-import shutil
-from ndmanager.API.data import OPENMC_LANL_LIBS, OPENMC_OFFICIAL_LIBS, OPENMC_NUCLEAR_DATA
+from pathlib import Path
+
+from ndmanager.API.data import (OPENMC_LANL_LIBS, OPENMC_NUCLEAR_DATA,
+                                OPENMC_OFFICIAL_LIBS)
 
 
 def download(libname):

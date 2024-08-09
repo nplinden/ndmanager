@@ -1,12 +1,7 @@
 import argparse as ap
-from ndmanager.CLI.fetcher import (
-    ndf_install,
-    ndf_avail,
-    ndf_info,
-    ndf_clone,
-    ndf_remove,
-    ndf_list,
-)
+
+from ndmanager.CLI.fetcher import (ndf_avail, ndf_clone, ndf_info, ndf_install,
+                                   ndf_list, ndf_remove)
 
 
 def main():

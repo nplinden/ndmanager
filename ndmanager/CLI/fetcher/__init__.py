@@ -1,2 +1,2 @@
-from .download import *
 from .commands import *
+from .download import *

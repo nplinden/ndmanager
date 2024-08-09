@@ -1,6 +1,7 @@
-from pathlib import Path
 import argparse as ap
 import shutil
+from pathlib import Path
+
 from ndmanager.API.data import NDM_DIR
 
 

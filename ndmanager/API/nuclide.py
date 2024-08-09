@@ -1,4 +1,5 @@
 import re
+
 from ndmanager.API.data import ATOMIC_SYMBOL, META_SYMBOL
 
 
