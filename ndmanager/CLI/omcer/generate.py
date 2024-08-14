@@ -2,7 +2,6 @@ import time
 from contextlib import chdir
 from multiprocessing import Pool
 from pathlib import Path
-from pprint import pprint
 
 import yaml
 
@@ -30,15 +29,25 @@ def process_tsl(directory, neutron, thermal):
     data.export_to_hdf5(h5_file)
 
 
-def list_neutron(basis, n_in):
-    ommit = n_in.get("ommit", "").split()
-    add = n_in.get("add", {})
+def list_neutron(neutron_params):
+    """List the paths to neutron ENDF6 evaluations necessary to build the
+    neutron HDF5 libraries.
+
+    Args:
+        neutron_params (Dict[str, str]): The neutron parameters in the form of a dictionnary.
+
+    Returns:
+        Dict[str, Path]: A dictionnary that associates nuclide names to ENDF6 paths.
+    """
+    basis = neutron_params["basis"]
+    ommit = neutron_params.get("ommit", "").split()
+    add = neutron_params.get("add", {})
 
     for nuclide in ommit:
         if nuclide in add:
             raise ValueError("A nuclide can't be both ommited and added.")
 
-    basis_paths = Path(f"{ENDF6_PATH}/{basis}/n").glob("*.dat")
+    basis_paths = (ENDF6_PATH / basis / "n").glob("*.endf6")
     basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
 
     # Remove unwanted evaluations
@@ -52,15 +61,17 @@ def list_neutron(basis, n_in):
 
     # Add custom evaluations.
     # Overwrite if the main library already provides them.
+    guest_dict = {}
     for guestlib, _nuclides in add.items():
         nuclides = _nuclides.split()
-        guest_paths = Path(f"{ENDF6_PATH}/{guestlib}/n").glob("*.dat")
-        guest_endf6 = {
-            Nuclide.from_file(n).name: n
-            for n in guest_paths
-            if Nuclide.from_file(n).name in nuclides
-        }
-        basis_dict |= guest_endf6
+        for nuclide in nuclides:
+            p = ENDF6_PATH / guestlib / "n" / f"{nuclide}.endf6"
+            if not p.exists():
+                raise ValueError(
+                    f"Nuclide {nuclide} is not available in the {guestlib} library."
+                )
+            guest_dict[nuclide] = p
+        basis_dict |= guest_dict
 
     return basis_dict
 
@@ -164,18 +175,17 @@ def generate(ymlpath, dryrun=False):
     with chdir(name):
         library = openmc.data.DataLibrary()
 
-        basis = inputs["basis"]
-        temperatures = inputs.get("temperatures", 0)
+        # GET TARGET TEMPERATURES
+        temperatures = inputs.get("temperatures", 273)
         if isinstance(temperatures, int) or isinstance(temperatures, float):
             temperatures = [int(temperatures)]
         else:
             temperatures = [int(t) for t in temperatures.split()]
-        n_in = inputs.get("n", {})
 
         # NEUTRONS
-        print("Processing neutron evaluations")
+        n_dict = inputs.get("n", {})
         t0 = time.time()
-        neutron = list_neutron(basis, n_in)
+        neutron = list_neutron(n_dict)
         dest = Path("neutron")
         dest.mkdir(parents=True, exist_ok=True)
         args = [(dest, neutron[n], temperatures) for n in neutron]
@@ -183,85 +193,93 @@ def generate(ymlpath, dryrun=False):
             for arg in args:
                 print(arg[0], str(arg[1]), str(arg[2]))
         else:
+            print(f"Processing neutron evaluations: 0/{len(args)}")
             with Pool() as p:
                 results = [p.apply_async(process_neutron, a) for a in args]
                 while 1:
                     time.sleep(0.5)
                     isdone = [r.ready() for r in results]
                     ndone = sum(isdone)
-                    print(f"Progress: {ndone:4d}/{len(isdone)}")
+                    t = time.time() - t0
                     clear_line(1)
+                    print(
+                        f"Processing neutron evaluations: {ndone:4d}/{len(isdone)} t={t:.1f} s."
+                    )
                     if ndone == len(isdone):
                         break
-
-                for path in sorted(dest.glob("*.h5")):
+                for path in sorted(
+                    dest.glob("*.h5"), key=lambda x: Nuclide.from_name(x.stem).zam
+                ):
                     library.register_file(path)
-        print(f"Processing time: {time.time()-t0:.1f}")
+        t = time.time() - t0
+        print(f"Processing neutron evaluations: {len(isdone)}/{len(isdone)} {t:.1f}")
 
         # THERMAL SCATTERING LAW
-        print("Processing Thermal Scattering Laws (TSL)")
-        tsl_in = inputs.get("tsl", {})
-        if isinstance(tsl_in, str):
-            # In this case this is a ndlib name
-            tsl = list_tsl(tsl_in, {})
-        else:
-            tsl = list_tsl(basis, tsl_in)
-        if tsl:
-            dest = Path("tsl")
-            dest.mkdir(parents=True, exist_ok=True)
-            args = [(dest, neutron[t[0]], t[1]) for t in tsl]
-            if dryrun:
-                for arg in args:
-                    print(arg[0], str(arg[1]), str(arg[2]))
-            else:
-                with Pool() as p:
-                    results = [p.apply_async(process_tsl, a) for a in args]
-                    while 1:
-                        time.sleep(0.5)
-                        isdone = [r.ready() for r in results]
-                        ndone = sum(isdone)
-                        print(f"Progress: {ndone:4d}/{len(isdone)}")
-                        clear_line(1)
-                        if ndone == len(isdone):
-                            break
-                    # p.starmap(process_tsl, args)
-                for p in sorted(dest.glob("*.h5")):
-                    library.register_file(p)
-
-        # PHOTONS
-        photo_in = inputs.get("photo", {})
-        if isinstance(photo_in, str):
-            # In this case this is a ndlib name
-            photo = list_photo(photo_in, {})
-        else:
-            photo = list_photo(basis, photo_in)
-        dest.mkdir(parents=True, exist_ok=True)
-
-        # ATOMIC RELAXATION
-        ard_in = inputs.get("ard", {})
-        if isinstance(ard_in, str):
-            # In this case this is a ndlib name
-            ard = list_ard(ard_in, {})
-        else:
-            ard = list_ard(basis, ard_in)
-
-        if photo and ard:
-            dest = Path("photon")
-            dest.mkdir(parents=True, exist_ok=True)
-            if dryrun:
-                pprint(photo)
-                pprint(ard)
-            for atom in photo:
-                data = openmc.data.IncidentPhoton.from_endf(
-                    str(photo[atom]),
-                    ard.get(atom, None),
-                )
-
-                atomname = atom.rstrip("0")
-                data.export_to_hdf5(str(dest / f"{atomname}.h5"), "w")
-
-            for p in sorted(dest.glob("*.h5")):
-                library.register_file(p)
+        # print("Processing Thermal Scattering Laws (TSL)")
+        # tsl_in = inputs.get("tsl", None)
+        # if tsl_in is None:
+        #     tsl = None
+        # elif isinstance(tsl_in, str):
+        #     # In this case this is a ndlib name
+        #     tsl = list_tsl(tsl_in, {})
+        # else:
+        #     tsl = list_tsl(basis, tsl_in)
+        # if tsl:
+        #     dest = Path("tsl")
+        #     dest.mkdir(parents=True, exist_ok=True)
+        #     args = [(dest, neutron[t[0]], t[1]) for t in tsl]
+        #     if dryrun:
+        #         for arg in args:
+        #             print(arg[0], str(arg[1]), str(arg[2]))
+        #     else:
+        #         with Pool() as p:
+        #             results = [p.apply_async(process_tsl, a) for a in args]
+        #             while 1:
+        #                 time.sleep(0.5)
+        #                 isdone = [r.ready() for r in results]
+        #                 ndone = sum(isdone)
+        #                 print(f"Progress: {ndone:4d}/{len(isdone)}")
+        #                 clear_line(1)
+        #                 if ndone == len(isdone):
+        #                     break
+        #             # p.starmap(process_tsl, args)
+        #         for p in sorted(dest.glob("*.h5")):
+        #             library.register_file(p)
+        #
+        # # PHOTONS
+        # photo_in = inputs.get("photo", {})
+        # if isinstance(photo_in, str):
+        #     # In this case this is a ndlib name
+        #     photo = list_photo(photo_in, {})
+        # else:
+        #     photo = list_photo(basis, photo_in)
+        # dest.mkdir(parents=True, exist_ok=True)
+        #
+        # # ATOMIC RELAXATION
+        # ard_in = inputs.get("ard", {})
+        # if isinstance(ard_in, str):
+        #     # In this case this is a ndlib name
+        #     ard = list_ard(ard_in, {})
+        # else:
+        #     ard = list_ard(basis, ard_in)
+        #
+        # if photo and ard:
+        #     dest = Path("photon")
+        #     dest.mkdir(parents=True, exist_ok=True)
+        #     if dryrun:
+        #         pprint(photo)
+        #         pprint(ard)
+        #     for atom in photo:
+        #         data = openmc.data.IncidentPhoton.from_endf(
+        #             str(photo[atom]),
+        #             ard.get(atom, None),
+        #         )
+        #
+        #         atomname = atom.rstrip("0")
+        #         data.export_to_hdf5(str(dest / f"{atomname}.h5"), "w")
+        #
+        #     for p in sorted(dest.glob("*.h5")):
+        #         library.register_file(p)
 
         library.export_to_xml("cross_sections.xml")
 

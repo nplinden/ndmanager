@@ -1,9 +1,10 @@
 import os
+from typing import List
 
 from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA
 
 
-def clear_line(n: int=1):
+def clear_line(n: int = 1):
     """Move the print cursor up n lines.
 
     Args:
@@ -16,7 +17,7 @@ def clear_line(n: int=1):
 
 
 def print_offset(s: str, offset: int, offsetstart: int):
-    """Print the string with a integer valued offset on the left. offsetstart
+    """Print the string with an integer valued offset on the left. offsetstart
     if useful for multiline string where the first line should not be offset.
 
     Args:
@@ -34,7 +35,7 @@ def print_offset(s: str, offset: int, offsetstart: int):
 
 
 def set_ndl(libname: str):
-    """Set openmc.config["cross_section"] value to the path to the 
+    """Set openmc.config["cross_section"] value to the path to the
     cross_sections.xml file of the desired library.
 
     Args:
@@ -79,8 +80,8 @@ def set_chain(libname: str):
         openmc.config["chain_file"] = p
 
 
-def set_nuclear_data(libname: str, chain: str=False):
-    """Set openmc.config["chain_file"] and openmc.config["cross_sections"] 
+def set_nuclear_data(libname: str, chain: str = False):
+    """Set openmc.config["chain_file"] and openmc.config["cross_sections"]
     value to the corresponding paths for the desired library.
 
     Args:
@@ -95,7 +96,7 @@ def set_nuclear_data(libname: str, chain: str=False):
         set_chain(libname)
 
 
-def get_endf6(libname, sub, nuclide):
+def get_endf6(libname: str, sub: str, nuclide: str):
     p = ENDF6_PATH / libname
     if not p.exists():
         raise ValueError(f"Library '{libname}' does not exist")
@@ -108,7 +109,7 @@ def get_endf6(libname, sub, nuclide):
     return p
 
 
-def check_nuclear_data(libpath, nuclides):
+def check_nuclear_data(libpath: str, nuclides: List[str]):
     import openmc
 
     lib = openmc.data.DataLibrary.from_xml(libpath)

@@ -71,5 +71,21 @@ def download(libname, sublib):
         )
         with open(tape, "w") as f:
             print("".join(lines), file=f)
+    if libname == "cendl31" and sublib == "n":
+        tape = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
+        lines = open(tape).readlines()
+        lines[205] = (
+            " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
+        )
+        with open(tape, "w") as f:
+            print("".join(lines), file=f)
+
+        tape = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
+        lines = open(tape).readlines()
+        lines[203] = (
+            "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
+        )
+        with open(tape, "w") as f:
+            print("".join(lines), file=f)
 
     return "✓"

@@ -40,9 +40,6 @@ def ndo_avail(*args):
 
 
 def ndo_build(args: ap.Namespace):
-    if args.chain is not None:
-        print("Processing chain file")
-        chain(args.filename)
     generate(args.filename, args.dryrun)
 
 

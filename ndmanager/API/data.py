@@ -209,13 +209,26 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
         "fancyname": "CENDL-3.2",
         "sublibraries": ["n"],
         "source": "https://www-nds.iaea.org/public/download-endf/CENDL-3.2",
-        "info": """Version 3.2 of the Chinese Evaluated Nuclear Data Library (JENDL)"""
-        """library distributed by the China Nuclear Data Center.""",
+        "info": """Version 3.2 of the Chinese Evaluated Nuclear Data Library (CENDL)"""
+        """ distributed by the China Nuclear Data Center.""",
         "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm",
         "index": [
             "1 NSUB=10     Materials:272   Size:388Mb   Zipped:109Mb    20.MeV-50.MeV    [N]     Incident-Neutron Data",
             "",
             "Total: Materials:272   Size:388Mb   Zipped:109Mb",
+        ],
+    },
+    "cendl31": {
+        "fancyname": "CENDL-3.1",
+        "sublibraries": ["n"],
+        "source": "https://www-nds.iaea.org/public/download-endf/CENDL-3.1",
+        "info": """Version 3.1 of the Chinese Evaluated Nuclear Data Library (CENDL)"""
+        """ distributed by the China Nuclear Data Center.""",
+        "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm",
+        "index": [
+            "1 NSUB=10     Materials:240   Size:156Mb   Zipped:36Mb     [N]     Incident-Neutron Data",
+            "",
+            "Total: Materials:240   Size:156Mb   Zipped:36Mb",
         ],
     },
 }

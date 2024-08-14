@@ -22,8 +22,8 @@ description: |
             I use the ENDF-B/VIII.0 evaluation instead.
 name: endfb71+
 temperatures: 250 294 600 900 973 1200
-basis: endfb71
 n:
+    basis: endfb71
     ommit: C0
     add:
         endfb8: C12 C13 O18 Ne20 Ne21 Ne22 Yb168 Yb170 Yb171 Yb172 Yb173 Yb174 Yb76 Os184 Os186 Os187 Os188 Os189 Os190 Os192 Pt190 Pt192 Pt194 Pt195 Pt196 Pt198
