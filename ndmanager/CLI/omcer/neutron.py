@@ -5,17 +5,15 @@ from pathlib import Path
 
 from ndmanager.API.data import ENDF6_PATH
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.utils import clear_line
+from ndmanager.CLI.omcer.utils import process
 
 
 def process_neutron(directory, path, temperatures):
     import openmc.data
 
-    # print(f"Processing {path}")
     data = openmc.data.IncidentNeutron.from_njoy(path, temperatures=temperatures)
     h5_file = directory / f"{data.name}.h5"
 
-    # print(f"Writing {h5_file} ...")
     data.export_to_hdf5(h5_file, "w")
 
 
@@ -67,8 +65,6 @@ def list_neutron(neutron_params):
 
 
 def generate_neutron(n_dict, temperatures, dryrun, library):
-    # NEUTRONS
-    t0 = time.time()
     neutron = list_neutron(n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
@@ -77,23 +73,11 @@ def generate_neutron(n_dict, temperatures, dryrun, library):
         for arg in args:
             print(arg[0], str(arg[1]), str(arg[2]))
     else:
-        print(f"Processing neutron evaluations: 0/{len(args)}")
-        print(f"Time elapsed: 0 s.")
-        with Pool() as p:
-            results = [p.apply_async(process_neutron, a) for a in args]
-            while 1:
-                time.sleep(0.5)
-                isdone = [r.ready() for r in results]
-                ndone = sum(isdone)
-                clear_line(2)
-                print(f"Processing neutron evaluations: {ndone:4d}/{len(isdone)}")
-                print(f"Time elapsed: {time.time() - t0:.1f} s.")
-                if ndone == len(isdone):
-                    break
-            for path in sorted(
-                dest.glob("*.h5"), key=lambda x: Nuclide.from_name(x.stem).zam
-            ):
-                library.register_file(path)
-        clear_line(2)
-        print(f"Processing neutron evaluations: {ndone:4d}/{len(isdone)}")
-        print(f"Time elapsed: {time.time() - t0:.1f} s.")
+        process(
+            dest,
+            library,
+            process_neutron,
+            args,
+            "neutron",
+            lambda x: Nuclide.from_name(x.stem).zam,
+        )

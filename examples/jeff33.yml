@@ -27,7 +27,10 @@ n:
     add:
         endfb8: Ta180 C12 C13 O17
 tsl:
+    basis: jeff33
     substitute:
         C0: C12
-photo: endfb8
-ard: endfb8
+photo:
+    basis: endfb8
+ard:
+    basis: endfb8
