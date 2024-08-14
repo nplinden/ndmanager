@@ -14,7 +14,7 @@ from ndmanager.CLI.omcer import (
 
 def main():
     parser = ap.ArgumentParser(
-        prog="ndb",
+        prog="ndo",
         description="Manage your OpenMC HDF5 nuclear data libraries",
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
