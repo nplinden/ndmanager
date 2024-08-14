@@ -4,13 +4,12 @@ from pathlib import Path
 
 import yaml
 
-from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, TSL_NEUTRON
+from ndmanager.API.data import (ATOMIC_SYMBOL, ENDF6_PATH, OPENMC_NUCLEAR_DATA,
+                                TSL_NEUTRON)
 from ndmanager.API.nuclide import Nuclide
-
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.tsl import generate_tsl
 from ndmanager.CLI.omcer.utils import process
-from ndmanager.API.data import ATOMIC_SYMBOL
 
 
 def process_photon(directory, photo, ard):

@@ -1,7 +1,7 @@
+import time
+from multiprocessing import Pool
 from pathlib import Path
 from pprint import pprint
-from multiprocessing import Pool
-import time
 
 from ndmanager.API.data import ENDF6_PATH, TSL_NEUTRON
 from ndmanager.API.utils import clear_line

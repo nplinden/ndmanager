@@ -1,7 +1,9 @@
 import argparse as ap
 
-from ndmanager.CLI.fetcher import (ndf_avail, ndf_clone, ndf_info, ndf_install,
-                                   ndf_list, ndf_remove)
+from ndmanager.CLI.fetcher.info import info
+from ndmanager.CLI.fetcher.install import install
+from ndmanager.CLI.fetcher.listlibs import listlibs
+from ndmanager.CLI.fetcher.remove import remove
 
 
 def main():
@@ -31,17 +33,13 @@ def main():
         type=str,
         help="List of sublibraries libraries to download",
     )
-    install_parser.set_defaults(func=ndf_install)
-
-    # avail
-    avail_parser = subparsers.add_parser("avail", help="List installed ENDF6 libraries")
-    avail_parser.set_defaults(func=ndf_avail)
+    install_parser.set_defaults(func=install)
 
     # list
     list_parser = subparsers.add_parser(
         "list", help="List libraries compatible with NDManager"
     )
-    list_parser.set_defaults(func=ndf_list)
+    list_parser.set_defaults(func=listlibs)
 
     # info
     info_parser = subparsers.add_parser(
@@ -54,23 +52,7 @@ def main():
         nargs="+",
         help="Name of the desired library",
     )
-    info_parser.set_defaults(func=ndf_info)
-
-    # clone
-    clone_parser = subparsers.add_parser(
-        "clone", help="Clone an installed ENDF6 library"
-    )
-    clone_parser.add_argument(
-        "source",
-        type=str,
-        help="Name for the original library",
-    )
-    clone_parser.add_argument(
-        "target",
-        type=str,
-        help="Name for the new cloned library",
-    )
-    clone_parser.set_defaults(func=ndf_clone)
+    info_parser.set_defaults(func=info)
 
     # remove
     remove_parser = subparsers.add_parser(
@@ -83,7 +65,7 @@ def main():
         action="extend",
         nargs="+",
     )
-    remove_parser.set_defaults(func=ndf_remove)
+    remove_parser.set_defaults(func=remove)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

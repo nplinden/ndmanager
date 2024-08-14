@@ -1,5 +1,5 @@
-from multiprocessing import Pool
 import time
+from multiprocessing import Pool
 
 from ndmanager.API.utils import clear_line
 

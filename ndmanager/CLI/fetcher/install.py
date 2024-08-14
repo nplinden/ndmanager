@@ -1,12 +1,19 @@
+import argparse as ap
 import shutil
 import subprocess as sp
 import tempfile
+import time
 import zipfile
 from contextlib import chdir
+from itertools import cycle, product
+from multiprocessing import Pool
 from pathlib import Path
 
-from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH
+from tabulate import tabulate
+
+from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.utils import clear_line
 
 
 def download(libname, sublib):
@@ -92,3 +99,35 @@ def download(libname, sublib):
             print("".join(lines), file=f)
 
     return "✓"
+
+
+def install(args: ap.Namespace):
+    libs = args.libraries
+    if args.sub is not None:
+        sub = args.sub
+    else:
+        sub = SUBLIBRARIES_SHORTLIST
+    stargs = list(product(libs, sub))
+
+    table = [[lib] + ["..." for __ in sub] for lib in libs]
+    print(tabulate(table, [] + sub, tablefmt="rounded_outline"))
+
+    with Pool() as p:
+        results = [p.apply_async(download, a) for a in stargs]
+        c = cycle([".", "..", "..."])
+
+        while True:
+            time.sleep(0.5)
+            symb = next(c)
+            isdone = [r.ready() for r in results]
+            symbols = [r.get() if r.ready() else symb for r in results]
+
+            progress = []
+            for ilib, lib in enumerate(libs):
+                left, right = ilib * len(sub), (ilib + 1) * len(sub)
+                progress.append([lib] + symbols[left:right])
+
+            clear_line(len(libs) + 4)
+            print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
+            if all(isdone):
+                break

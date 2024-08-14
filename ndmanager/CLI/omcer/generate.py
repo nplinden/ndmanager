@@ -6,10 +6,9 @@ import yaml
 
 from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, TSL_NEUTRON
 from ndmanager.API.nuclide import Nuclide
-
 from ndmanager.CLI.omcer.neutron import generate_neutron
-from ndmanager.CLI.omcer.tsl import generate_tsl
 from ndmanager.CLI.omcer.photon import generate_photon
+from ndmanager.CLI.omcer.tsl import generate_tsl
 
 
 def get_temperatures(inputs):
