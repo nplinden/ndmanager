@@ -42,7 +42,10 @@ def download(libname, sublib):
             shutil.move(source, target)
             if sublib not in ["tsl"]:
                 for p in Path(target).glob("*.dat"):
+                    nuclide = Nuclide.from_file(p)
                     name = Nuclide.from_file(p).name
+                    if nuclide.A == 0:
+                        name += "0"
                     p.rename(p.parent / f"{name}.endf6")
 
     # Some erratafiles
