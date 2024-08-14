@@ -31,32 +31,8 @@ def ndo_remove(args: ap.Namespace):
             shutil.rmtree(library)
 
 
-def ndo_avail(*args):
-    col, _ = os.get_terminal_size()
-    print(f"{'  OpenMC HDF5 Libraries  ':{'-'}{'^'}{col}}")
-    toprint = "  ".join([p.name for p in OPENMC_NUCLEAR_DATA.glob("*")])
-    print(toprint)
-    print("\n\n")
-
-
 def ndo_build(args: ap.Namespace):
     generate(args.filename, args.dryrun)
-
-
-def ndo_path(args: ap.Namespace):
-    p = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
-    if not p.exists():
-        raise ValueError("Library cross_sections.xml file does not exist")
-    else:
-        print(str(p))
-
-
-def ndo_get(args: ap.Namespace):
-    target = OPENMC_NUCLEAR_DATA / args.library / "cross_sections.xml"
-    if target.exists():
-        print(target)
-    else:
-        raise ValueError(f"{args.library} not found")
 
 
 def ndo_install(args: ap.Namespace):

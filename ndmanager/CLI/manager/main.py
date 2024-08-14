@@ -1,6 +1,6 @@
 import argparse as ap
 
-from ndmanager.CLI.manager import ndm_init
+from ndmanager.CLI.manager.init import init
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
     init_parser.add_argument(
         "--force", "-f", help="Force re-initialization", action="store_true"
     )
-    init_parser.set_defaults(func=ndm_init)
+    init_parser.set_defaults(func=init)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

@@ -1,7 +1,6 @@
 import argparse as ap
 
-from ndmanager.CLI.omcer import (ndo_avail, ndo_build, ndo_clone, ndo_get,
-                                 ndo_install, ndo_path, ndo_remove, ndo_sn301)
+from ndmanager.CLI.omcer import ndo_build, ndo_clone, ndo_install, ndo_remove, ndo_sn301
 
 
 def main():
@@ -10,10 +9,6 @@ def main():
         description="Manage your OpenMC HDF5 nuclear data libraries",
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
-
-    # list
-    avail_parser = subparsers.add_parser("avail", help="List installed libraries")
-    avail_parser.set_defaults(func=ndo_avail)
 
     # clone
     clone_parser = subparsers.add_parser(
@@ -57,15 +52,6 @@ def main():
     )
     remove_parser.set_defaults(func=ndo_remove)
 
-    # get
-    get_parser = subparsers.add_parser("get", help="Get an OpenMC nuclear data library")
-    get_parser.add_argument(
-        "library",
-        type=str,
-        help="Name of the library",
-    )
-    get_parser.set_defaults(func=ndo_get)
-
     # build
     build_parser = subparsers.add_parser(
         "build", help="Build an OpenMC library from a YAML input file"
@@ -100,13 +86,6 @@ def main():
         "--dryrun", help="Do not perform the substitution", action="store_true"
     )
     sn301_parser.set_defaults(func=ndo_sn301)
-
-    # path
-    path_parser = subparsers.add_parser(
-        "path", help="Get path to the library's cross_section.xml file"
-    )
-    path_parser.add_argument("library", type=str, help="Name of the desired library")
-    path_parser.set_defaults(func=ndo_path)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

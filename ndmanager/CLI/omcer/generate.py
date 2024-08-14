@@ -1,6 +1,7 @@
 import time
 from contextlib import chdir
 from pathlib import Path
+import shutil
 
 import yaml
 
@@ -25,7 +26,7 @@ def generate(ymlpath, dryrun=False):
 
     inputs = yaml.safe_load(open(ymlpath))
 
-    directory = OPENMC_NUCLEAR_DATA / inputs["name"]
+    directory = OPENMC_NUCLEAR_DATA / "custom" / inputs["name"]
     directory.mkdir(parents=True, exist_ok=True)
     with chdir(directory):
         library = openmc.data.DataLibrary()
@@ -43,6 +44,8 @@ def generate(ymlpath, dryrun=False):
             generate_photon(photo, ard, dryrun, library)
 
         library.export_to_xml("cross_sections.xml")
+        target = f"{inputs['name']}.yml"
+        shutil.copy(ymlpath, target)
 
 
 def chain(ymlpath):
