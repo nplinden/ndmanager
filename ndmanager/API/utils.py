@@ -110,7 +110,7 @@ def get_endf6(libname: str, sub: str, nuclide: str):
 
 
 def check_nuclear_data(libpath: str, nuclides: List[str]):
-    import openmc
+    import openmc.data
 
     lib = openmc.data.DataLibrary.from_xml(libpath)
     missing = []
