@@ -105,7 +105,8 @@ def ndf_install(args: ap.Namespace):
 
             progress = []
             for ilib, lib in enumerate(libs):
-                progress.append([lib] + symbols[ilib : ilib + len(sub)])
+                left, right = ilib * len(sub), ilib * (len(sub) + 1)
+                progress.append([lib] + symbols[left:right])
 
             clear_line(len(libs) + 4)
             print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
