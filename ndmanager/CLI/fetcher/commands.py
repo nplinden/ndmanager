@@ -105,7 +105,7 @@ def ndf_install(args: ap.Namespace):
 
             progress = []
             for ilib, lib in enumerate(libs):
-                left, right = ilib * len(sub), ilib * (len(sub) + 1)
+                left, right = ilib * len(sub), (ilib + 1) * len(sub)
                 progress.append([lib] + symbols[left:right])
 
             clear_line(len(libs) + 4)
