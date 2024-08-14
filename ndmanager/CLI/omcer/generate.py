@@ -32,11 +32,11 @@ def generate(ymlpath, dryrun=False):
         library = openmc.data.DataLibrary()
         temperatures = get_temperatures(inputs)
 
-        # if "n" in inputs:
-        #     generate_neutron(inputs["n"], temperatures, dryrun, library)
+        if "n" in inputs:
+            generate_neutron(inputs["n"], temperatures, dryrun, library)
 
-        # if "tsl" in inputs:
-        #     generate_tsl(inputs["tsl"], inputs["n"], temperatures, dryrun, library)
+        if "tsl" in inputs:
+            generate_tsl(inputs["tsl"], inputs["n"], temperatures, dryrun, library)
 
         if "photo" in inputs:
             photo = inputs["photo"]
