@@ -5,11 +5,12 @@ import time
 from functools import reduce
 from itertools import cycle, product
 from multiprocessing import Pool
+import textwrap
 
 from tabulate import tabulate
 
 from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
-from ndmanager.API.utils import clear_line, print_offset
+from ndmanager.API.utils import clear_line, header, footer
 from ndmanager.CLI.fetcher.download import download
 
 
@@ -40,37 +41,45 @@ def ndf_avail(*args):
 
 def ndf_list(*args):
     col, _ = os.get_terminal_size()
+    lst = []
     for lib in ENDF6_LIBS:
         fancyname = ENDF6_LIBS[lib]["fancyname"]
         if (ENDF6_PATH / lib).exists():
-            s = f"{lib:<8} {fancyname:<15} [✓]: {ENDF6_LIBS[lib]['info']}"
-            print_offset(s, 30, 1)
+            check = "✓"
         else:
-            s = f"{lib:<8} {fancyname:<15} [ ]: {ENDF6_LIBS[lib]['info']}"
-            print_offset(s, 30, 1)
+            check = " "
+        s = f"{lib:<8} {fancyname:<15} [{check}]: {ENDF6_LIBS[lib]['info']}"
+        s = textwrap.wrap(s, initial_indent="", subsequent_indent=30 * " ", width=col)
+        lst.append("\n".join(s))
+    print("\n".join(lst))
 
 
 def ndf_info(args: ap.Namespace):
+    col, _ = os.get_terminal_size()
+
+    def wrap(string, initial_indent=""):
+        toprint = textwrap.wrap(
+            string, initial_indent=initial_indent, subsequent_indent=26 * " ", width=col
+        )
+        toprint = "\n".join(toprint)
+        return toprint
+
+    info = []
     for lib in args.library:
         dico = ENDF6_LIBS[lib]
-        col, _ = os.get_terminal_size()
-        toprint = f"  {lib}  "
-        print(f"{toprint:{'-'}{'^'}{col}}")
-        print(f"{'Fancy name:':<25} {dico['fancyname']}")
-        print(f"{'Source:':<25} {dico['source']}")
-        print(f"{'Homepage:':<25} {dico['homepage']}")
+        info.append(header(lib))
+        info.append(wrap(f"{'Fancy name:':<25} {dico['fancyname']}"))
+        info.append(wrap(f"{'Source:':<25} {dico['source']}"))
+        info.append(wrap(f"{'Homepage:':<25} {dico['homepage']}"))
         subs = "  ".join(dico["sublibraries"])
-        print(f"{'Available Sublibraries:':<25} {subs}")
-        s = f"{'Info: ':<25} {dico['info']}"
-        print_offset(s, 26, 1)
+        info.append(wrap(f"{'Available Sublibraries:':<25} {subs}"))
         if "index" in dico:
             index = dico["index"]
-            s = f"{'Index: ':<25} {index[0]}"
-            print_offset(s, 26, 1)
+            info.append(wrap(f"{'Index: ':<25} {index[0]}"))
             for s in index[1:]:
-                print_offset(s, 26, 0)
-
-    print(f"{'':{'-'}{'^'}{col}}")
+                info.append(wrap(s, initial_indent=26 * " "))
+        info.append(footer())
+    print("\n".join(info))
 
 
 def list_reshape(lst, shape):

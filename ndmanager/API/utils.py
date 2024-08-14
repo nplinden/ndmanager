@@ -16,24 +16,6 @@ def clear_line(n: int = 1):
         print(LINE_UP, end=LINE_CLEAR)
 
 
-def print_offset(s: str, offset: int, offsetstart: int):
-    """Print the string with an integer valued offset on the left. offsetstart
-    if useful for multiline string where the first line should not be offset.
-
-    Args:
-        s (string): The string to print.
-        offset (int): The left offset value.
-        offsetstart (int): Line number to start offsetting on.
-    """
-    col, _ = os.get_terminal_size()
-    indices = list(range(0, len(s), col - offset))
-    parts = [s[i:j] for i, j in zip(indices, indices[1:] + [None])]
-    for i in range(len(parts)):
-        if i >= offsetstart:
-            parts[i] = (offset * " ") + parts[i]
-    print("\n".join(parts))
-
-
 def set_ndl(libname: str):
     """Set openmc.config["cross_section"] value to the path to the
     cross_sections.xml file of the desired library.
@@ -121,3 +103,14 @@ def check_nuclear_data(libpath: str, nuclides: List[str]):
         raise ValueError(
             f"Nuclear Data Library lacks the following required nuclides: {missing}"
         )
+
+
+def header(string):
+    col, _ = os.get_terminal_size()
+    toprint = f"  {string}  "
+    return f"{toprint:{'-'}{'^'}{col}}"
+
+
+def footer():
+    col, _ = os.get_terminal_size()
+    return f"{'':{'-'}{'^'}{col}}"
