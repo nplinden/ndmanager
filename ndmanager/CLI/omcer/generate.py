@@ -21,13 +21,13 @@ def get_temperatures(inputs):
 
 
 def modulefile(filename, description, libpath):
-    module_template = r"""#%%Module
+    module_template = r'''#%%Module
 proc ModulesHelp { } {
-    puts stderr '%s'
+    puts stderr "%s"
 }
-module-whatis '%s\n''
-setenv OPENMC_CROSS_SECTIONS '%s'
-"""
+module-whatis "%s\n"
+setenv OPENMC_CROSS_SECTIONS "%s"
+'''
     text = module_template % (description, description, str(libpath))
     with open(NDMANAGER_MODULEPATH / filename, "w") as f:
         print(text, file=f)
