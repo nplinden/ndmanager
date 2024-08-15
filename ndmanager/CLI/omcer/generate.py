@@ -1,12 +1,11 @@
-import time
 from contextlib import chdir
 from pathlib import Path
 import shutil
+import os
 
 import yaml
 
-from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, TSL_NEUTRON
-from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
@@ -21,13 +20,30 @@ def get_temperatures(inputs):
     return temperatures
 
 
+def modulefile(filename, description, libpath):
+    module_template = r"""#%%Module
+proc ModulesHelp { } {
+    puts stderr '%s'
+}
+module-whatis '%s\n''
+setenv OPENMC_CROSS_SECTIONS '%s'
+"""
+    text = module_template % (description, description, str(libpath))
+    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
+        print(text, file=f)
+    return True
+
+
 def generate(ymlpath, dryrun=False):
     import openmc.data
 
     inputs = yaml.safe_load(open(ymlpath))
+    f = open(ymlpath, "r")
 
     directory = OPENMC_NUCLEAR_DATA / "custom" / inputs["name"]
-    directory.mkdir(parents=True, exist_ok=True)
+    if directory.exists():
+        shutil.rmtree(directory)
+    directory.mkdir(parents=True)
     with chdir(directory):
         library = openmc.data.DataLibrary()
         temperatures = get_temperatures(inputs)
@@ -44,8 +60,13 @@ def generate(ymlpath, dryrun=False):
             generate_photon(photo, ard, dryrun, library)
 
         library.export_to_xml("cross_sections.xml")
-        target = f"{inputs['name']}.yml"
-        shutil.copy(ymlpath, target)
+        with open(f"{inputs['name']}.yml", "w") as target:
+            print("".join(f.readlines()), file=target)
+
+    if NDMANAGER_MODULEPATH is not None:
+        modulefile(
+            inputs["name"], inputs["description"], directory / "cross_sections.xml"
+        )
 
 
 def chain(ymlpath):

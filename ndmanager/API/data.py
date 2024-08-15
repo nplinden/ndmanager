@@ -5,12 +5,17 @@ from typing import Dict, List
 try:
     ENDF6_PATH = Path(os.environ["ENDF6_PATH"])
 except KeyError:
-    raise EnvironmentError("$ENDF6_PATH must be set to use NDManager.")
+    ENDF6_PATH = None
 
 try:
     OPENMC_NUCLEAR_DATA = Path(os.environ["OPENMC_NUCLEAR_DATA"])
 except KeyError:
-    raise EnvironmentError("$OPENMC_NUCLEAR_DATA must be set to use NDManager.")
+    OPENMC_NUCLEAR_DATA = None
+
+try:
+    NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"])
+except KeyError:
+    NDMANAGER_MODULEPATH = None
 
 NDM_DIR: Path = Path.home() / ".ndmanager"
 
@@ -233,57 +238,58 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     },
 }
 
-OPENMC_OFFICIAL_LIBS: Dict[str, Dict[str, str]] = {
-    "endfb71": {
-        "fancyname": "ENDF-B/VII.1",
-        "source": "https://anl.box.com/shared/static/9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
-        "tarname": "9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
-        "extractedname": "endfb-vii.1-hdf5",
-        "info": "Official OpenMC library based on ENDF-B/VII.1",
-        "homepage": "https://openmc.org/official-data-libraries/",
+OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
+    "official": {
+        "endfb71": {
+            "fancyname": "ENDF-B/VII.1",
+            "source": "https://anl.box.com/shared/static/9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
+            "tarname": "9igk353zpy8fn9ttvtrqgzvw1vtejoz6.xz",
+            "extractedname": "endfb-vii.1-hdf5",
+            "info": "Official OpenMC library based on ENDF-B/VII.1",
+            "homepage": "https://openmc.org/official-data-libraries/",
+        },
+        "endfb8": {
+            "fancyname": "ENDF-B/VIII.0",
+            "source": "https://anl.box.com/shared/static/uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
+            "tarname": "uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
+            "extractedname": "endfb-viii.0-hdf5",
+            "info": "Official OpenMC library based on ENDF-B/VIII.0",
+            "homepage": "https://openmc.org/official-data-libraries/",
+        },
+        "jeff33": {
+            "fancyname": "JEFF-3.3",
+            "source": "https://anl.box.com/shared/static/4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
+            "tarname": "4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
+            "extractedname": "jeff-3.3-hdf5",
+            "info": "Official OpenMC library based on JEFF-3.3",
+            "homepage": "https://openmc.org/official-data-libraries/",
+        },
     },
-    "endfb8": {
-        "fancyname": "ENDF-B/VIII.0",
-        "source": "https://anl.box.com/shared/static/uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
-        "tarname": "uhbxlrx7hvxqw27psymfbhi7bx7s6u6a.xz",
-        "extractedname": "endfb-viii.0-hdf5",
-        "info": "Official OpenMC library based on ENDF-B/VIII.0",
-        "homepage": "https://openmc.org/official-data-libraries/",
-    },
-    "jeff33": {
-        "fancyname": "JEFF-3.3",
-        "source": "https://anl.box.com/shared/static/4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
-        "tarname": "4jwkvrr9pxlruuihcrgti75zde6g7bum.xz",
-        "extractedname": "jeff-3.3-hdf5",
-        "info": "Official OpenMC library based on JEFF-3.3",
-        "homepage": "https://openmc.org/official-data-libraries/",
-    },
-}
-
-OPENMC_LANL_LIBS: Dict[str, Dict[str, str]] = {
-    "endfb70": {
-        "fancyname": "ENDF-B/VII.0",
-        "source": "https://anl.box.com/shared/static/t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
-        "tarname": "t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
-        "extractedname": "mcnp_endfb70",
-        "info": "ENDF-B/VII.0 based library converted from ACE files distributed with MCNP5/6",
-        "homepage": "https://openmc.org/lanl-data-libraries/",
-    },
-    "endfb71": {
-        "fancyname": "ENDF-B/VII.1",
-        "source": "https://anl.box.com/shared/static/d359skd2w6wrm86om2997a1bxgigc8pu.xz",
-        "tarname": "d359skd2w6wrm86om2997a1bxgigc8pu.xz",
-        "extractedname": "mcnp_endfb71",
-        "info": "ENDF-B/VII.1 based library converted from ACE files distributed with MCNP5/6",
-        "homepage": "https://openmc.org/lanl-data-libraries/",
-    },
-    "endfb8": {
-        "fancyname": "ENDF-B.VIII.0",
-        "source": "https://anl.box.com/shared/static/nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
-        "tarname": "nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
-        "extractedname": "lib80x_hdf5",
-        "info": "ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National lab (LANL)",
-        "homepage": "https://openmc.org/lanl-data-libraries/",
+    "lanl": {
+        "endfb70": {
+            "fancyname": "ENDF-B/VII.0",
+            "source": "https://anl.box.com/shared/static/t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
+            "tarname": "t25g7g6v0emygu50lr2ych1cf6o7454b.xz",
+            "extractedname": "mcnp_endfb70",
+            "info": "ENDF-B/VII.0 based library converted from ACE files distributed with MCNP5/6",
+            "homepage": "https://openmc.org/lanl-data-libraries/",
+        },
+        "endfb71": {
+            "fancyname": "ENDF-B/VII.1",
+            "source": "https://anl.box.com/shared/static/d359skd2w6wrm86om2997a1bxgigc8pu.xz",
+            "tarname": "d359skd2w6wrm86om2997a1bxgigc8pu.xz",
+            "extractedname": "mcnp_endfb71",
+            "info": "ENDF-B/VII.1 based library converted from ACE files distributed with MCNP5/6",
+            "homepage": "https://openmc.org/lanl-data-libraries/",
+        },
+        "endfb8": {
+            "fancyname": "ENDF-B.VIII.0",
+            "source": "https://anl.box.com/shared/static/nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
+            "tarname": "nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
+            "extractedname": "lib80x_hdf5",
+            "info": "ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National lab (LANL)",
+            "homepage": "https://openmc.org/lanl-data-libraries/",
+        },
     },
 }
 
@@ -441,6 +447,9 @@ ATOMIC_SYMBOL |= {v: k for k, v in ATOMIC_SYMBOL.items()}
 META_SYMBOL: Dict[str, int] = {"G": 0, "M": 1, "N": 2, "O": 3}
 
 TSL_NEUTRON: Dict[str, Dict[str, str]] = {
+    "test": {
+        "tsl_0056_26-Fe-56.dat": "Fe56",
+    },
     "jeff311": {
         "tsl_0001_H(H2O).dat": "H1",
         "tsl_0007_H(ZrH).dat": "H1",

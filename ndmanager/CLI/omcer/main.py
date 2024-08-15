@@ -1,6 +1,13 @@
 import argparse as ap
 
-from ndmanager.CLI.omcer import ndo_build, ndo_clone, ndo_install, ndo_remove, ndo_sn301
+from ndmanager.CLI.omcer.listlibs import listlibs
+from ndmanager.CLI.omcer.commands import (
+    ndo_build,
+    ndo_clone,
+    ndo_install,
+    ndo_remove,
+    ndo_sn301,
+)
 
 
 def main():
@@ -25,6 +32,12 @@ def main():
         help="Name for the new cloned library",
     )
     clone_parser.set_defaults(func=ndo_clone)
+
+    # list
+    list_parser = subparsers.add_parser(
+        "list", help="List libraries compatible with NDManager"
+    )
+    list_parser.set_defaults(func=listlibs)
 
     # install
     install_parser = subparsers.add_parser(
