@@ -8,6 +8,7 @@ from contextlib import chdir
 from itertools import cycle, product
 from multiprocessing import Pool
 from pathlib import Path
+from functools import reduce
 
 from tabulate import tabulate
 
@@ -105,6 +106,9 @@ def install(args: ap.Namespace):
     libs = args.libraries
     if args.sub is not None:
         sub = args.sub
+    elif args.all:
+        sub = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in libs]
+        sub = list(reduce(lambda x, y: x | y, sub))
     else:
         sub = SUBLIBRARIES_SHORTLIST
     stargs = list(product(libs, sub))

@@ -25,13 +25,18 @@ def main():
         type=str,
         help="List of nuclear data libraries to download",
     )
-    install_parser.add_argument(
+
+    group = install_parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-s",
         "--sub",
         action="extend",
         nargs="+",
         type=str,
         help="List of sublibraries libraries to download",
+    )
+    group.add_argument(
+        "--all", "-a", action="store_true", help="Download all sublibraries."
     )
     install_parser.set_defaults(func=install)
 
