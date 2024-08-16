@@ -6,6 +6,7 @@ import os
 import yaml
 
 from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
+from ndmanager.API.utils import modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
@@ -18,20 +19,6 @@ def get_temperatures(inputs):
     else:
         temperatures = [int(t) for t in temperatures.split()]
     return temperatures
-
-
-def modulefile(filename, description, libpath):
-    module_template = r"""#%%Module
-proc ModulesHelp { } {
-    puts stderr "%s"
-}
-module-whatis "%s\n"
-setenv OPENMC_CROSS_SECTIONS "%s"
-"""
-    text = module_template % (description, description, str(libpath))
-    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
-        print(text, file=f)
-    return True
 
 
 def generate(ymlpath, dryrun=False):

@@ -1,7 +1,7 @@
 import os
 from typing import List
 
-from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA
+from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
 from ndmanager.API.nuclide import Nuclide
 
 
@@ -163,3 +163,17 @@ def list_endf6(sublibrary, params):
         basis_dict |= guest_dict
 
     return basis_dict
+
+
+def modulefile(filename, description, libpath):
+    module_template = r"""#%%Module
+proc ModulesHelp { } {
+    puts stderr "%s"
+}
+module-whatis "%s\n"
+setenv OPENMC_CROSS_SECTIONS "%s"
+"""
+    text = module_template % (description, description, str(libpath))
+    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
+        print(text, file=f)
+    return True
