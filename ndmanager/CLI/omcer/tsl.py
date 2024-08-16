@@ -1,11 +1,7 @@
-import time
-from multiprocessing import Pool
 from pathlib import Path
-from pprint import pprint
 
 from ndmanager.API.data import ENDF6_PATH, TSL_NEUTRON
-from ndmanager.API.utils import clear_line
-from ndmanager.CLI.omcer.neutron import list_neutron
+from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.omcer.utils import process
 
 
@@ -45,7 +41,7 @@ def list_tsl(tsl_params, neutrons):
 
 
 def generate_tsl(tsl_params, neutron_params, temperatures, dryrun, library):
-    neutrons = list_neutron(neutron_params)
+    neutrons = list_endf6("n", neutron_params)
     tsl = list_tsl(tsl_params, neutrons)
 
     dest = Path("tsl")

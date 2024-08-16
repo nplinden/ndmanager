@@ -22,7 +22,14 @@ Homepage = "https://github.com/nplinden/ndmanager"
 [project.scripts]
 ndf = "ndmanager.CLI.fetcher.main:main"
 ndo = "ndmanager.CLI.omcer.main:main"
+ndc = "ndmanager.CLI.chainer.main:main"
 ndm = "ndmanager.CLI.manager.main:main"
 
 [tool.setuptools]
-packages = ['ndmanager', 'ndmanager.API', 'ndmanager.CLI.fetcher', 'ndmanager.CLI.omcer', 'ndmanager.CLI.manager']
+packages = ['ndmanager',
+    'ndmanager.API',
+    'ndmanager.CLI.fetcher',
+    'ndmanager.CLI.omcer',
+    'ndmanager.CLI.chainer',
+    'ndmanager.CLI.manager'
+]
