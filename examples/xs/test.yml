@@ -1,0 +1,12 @@
+description: |
+  A test library
+name: test
+n:
+  basis: test
+tsl:
+  basis: test
+photo:
+  basis: test
+ard:
+  basis: test
+temperatures: 273

@@ -1,0 +1,34 @@
+description: |
+    This defines a library based on the ENDF-B/VII.1 evaluations for
+    neutron cross-sections and thermal scattering laws, and on
+    ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
+    relaxation.
+    Some evaluations from other libraries are used instead
+    or in addition to ENDF-B/VII.1 evaluations:
+    C0:     ENDF-B/VII.1 only containes the C0 isotope of carbon. Since
+            using C0 can cause some issues running the same problem
+            with multiple libraries, I prefer to remove it and
+            use ENDF-B/VIII.0 carbon instead. Normally you would also
+            build TSL libraries using C0, is substitute it for C12.
+    O17:    Occurs naturaly but is absent from ENDF-B/VII.1. 
+            I use the ENDF-B/VIII.0 evaluation instead.
+    Ne*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
+            I use the ENDF-B/VIII.0 evaluation instead.
+    Yb*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
+            I use the ENDF-B/VIII.0 evaluation instead.
+    Os*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
+            I use the ENDF-B/VIII.0 evaluation instead.
+    Pt*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
+            I use the ENDF-B/VIII.0 evaluation instead.
+name: endfb71+
+temperatures: 250 294 600 900 973 1200
+n:
+    basis: endfb71
+    ommit: C0
+    add:
+        endfb8: C12 C13 O18 Ne20 Ne21 Ne22 Yb168 Yb170 Yb171 Yb172 Yb173 Yb174 Yb76 Os184 Os186 Os187 Os188 Os189 Os190 Os192 Pt190 Pt192 Pt194 Pt195 Pt196 Pt198
+tsl:
+    substitute:
+        C0: C12
+photo: endfb8
+ard: endfb8

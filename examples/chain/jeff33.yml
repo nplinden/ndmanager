@@ -1,0 +1,12 @@
+name: jeff33-short
+halflife: 8.6e4
+n: 
+  basis: jeff33
+  ommit: C0
+  add:
+    endfb8: Ta180 C12 C13 O17
+decay: 
+  basis: jeff33
+nfpy: 
+  basis: jeff33
+
