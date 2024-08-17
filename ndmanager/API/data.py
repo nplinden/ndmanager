@@ -17,8 +17,6 @@ try:
 except KeyError:
     NDMANAGER_MODULEPATH = None
 
-NDM_DIR: Path = Path.home() / ".ndmanager"
-
 ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "jeff33": {
         "fancyname": "JEFF-3.3",
