@@ -1,12 +1,10 @@
 from contextlib import chdir
-from pathlib import Path
 import shutil
-import os
 
 import yaml
 
 from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
-from ndmanager.API.utils import modulefile
+from ndmanager.API.utils import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
@@ -51,9 +49,8 @@ def generate(ymlpath, dryrun=False):
             print("".join(f.readlines()), file=target)
 
     if NDMANAGER_MODULEPATH is not None:
-        modulefile(
-            inputs["name"], inputs["description"], directory / "cross_sections.xml"
-        )
+        name = f"xs/{inputs['name']}"
+        xs_modulefile(name, inputs["description"], directory / "cross_sections.xml")
 
 
 def chain(ymlpath):

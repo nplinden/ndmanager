@@ -5,12 +5,12 @@ from ndmanager.API.data import (
     OPENMC_LIBS,
     OPENMC_NUCLEAR_DATA,
 )
-from ndmanager.API.utils import footer, header
+from ndmanager.API.utils import header
 
 
 def listlibs(*args):
     col, _ = os.get_terminal_size()
-    lst = [header("Available libraries")]
+    lst = [header("Installable Libraries")]
     for family, dico in OPENMC_LIBS.items():
         for libname, libdict in dico.items():
             fancyname = libdict["fancyname"]
@@ -24,5 +24,11 @@ def listlibs(*args):
                 s, initial_indent="", subsequent_indent=38 * " ", width=col
             )
             lst.append("\n".join(s))
-    lst.append(footer())
+    lst.append("")
+    lst.append(header("Custom Libraries"))
+    s = " ".join(
+        [f"{s.name:<15}" for s in list((OPENMC_NUCLEAR_DATA / "custom").glob("*"))]
+    )
+    s = textwrap.wrap(s, width=col)
+    lst.append("\n".join(s))
     print("\n".join(lst))

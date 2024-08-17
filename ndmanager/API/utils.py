@@ -165,13 +165,27 @@ def list_endf6(sublibrary, params):
     return basis_dict
 
 
-def modulefile(filename, description, libpath):
+def xs_modulefile(filename, description, libpath):
     module_template = r"""#%%Module
 proc ModulesHelp { } {
     puts stderr "%s"
 }
 module-whatis "%s\n"
 setenv OPENMC_CROSS_SECTIONS "%s"
+"""
+    text = module_template % (description, description, str(libpath))
+    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
+        print(text, file=f)
+    return True
+
+
+def chain_modulefile(filename, description, libpath):
+    module_template = r"""#%%Module
+proc ModulesHelp { } {
+    puts stderr "%s"
+}
+module-whatis "%s\n"
+setenv OPENMC_CHAIN_FILE "%s"
 """
     text = module_template % (description, description, str(libpath))
     with open(NDMANAGER_MODULEPATH / filename, "w") as f:

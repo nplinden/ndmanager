@@ -9,7 +9,7 @@ description: |
             using C0 can cause some issues running the same problem
             with multiple libraries, I prefer to remove it and
             use ENDF-B/VIII.0 carbon instead. Normally you would also
-            build TSL libraries using C0, is substitute it for C12.
+            build TSL libraries using C0, I substitute it for C12.
     O17:    Occurs naturaly but is absent from ENDF-B/VII.1. 
             I use the ENDF-B/VIII.0 evaluation instead.
     Ne*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
@@ -21,7 +21,7 @@ description: |
     Pt*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
             I use the ENDF-B/VIII.0 evaluation instead.
 name: endfb71+
-temperatures: 250 294 600 900 973 1200
+temperatures: 273
 n:
     basis: endfb71
     ommit: C0

@@ -1,12 +1,13 @@
-name: jeff33-short
-halflife: 8.6e4
-n: 
+name: jeff33
+description: |
+  A depletion chain based on the JEFF-3.3 evaluations.
+n:
   basis: jeff33
   ommit: C0
   add:
     endfb8: Ta180 C12 C13 O17
 decay: 
   basis: jeff33
-nfpy: 
+nfpy:
   basis: jeff33
 

@@ -3,8 +3,8 @@ import shutil
 import yaml
 from contextlib import chdir
 
-from ndmanager.API.utils import list_endf6
-from ndmanager.API.data import OPENMC_NUCLEAR_DATA
+from ndmanager.API.utils import list_endf6, chain_modulefile
+from ndmanager.API.data import OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
 
 
 def build(args: ap.Namespace):
@@ -38,3 +38,8 @@ def build(args: ap.Namespace):
 
         with open(f"{name}.yml", "w") as target:
             print("".join(f.readlines()), file=target)
+
+    if NDMANAGER_MODULEPATH is not None:
+        name = f"chain/{inputs['name']}"
+        description = inputs.get("description", "")
+        chain_modulefile(name, description, directory / "cross_sections.xml")

@@ -1,6 +1,7 @@
 import argparse as ap
 
 from ndmanager.CLI.chainer.build import build
+from ndmanager.CLI.chainer.listchains import listchains
 
 
 def main():
@@ -20,6 +21,11 @@ def main():
         help="The name of the YAML file describing the target depletion chain",
     )
     build_parser.set_defaults(func=build)
+
+    list_parser = subparsers.add_parser(
+        "list", help="List libraries compatible with NDManager"
+    )
+    list_parser.set_defaults(func=listchains)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

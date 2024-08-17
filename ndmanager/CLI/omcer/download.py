@@ -5,7 +5,7 @@ from contextlib import chdir
 from pathlib import Path
 
 from ndmanager.API.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
-from ndmanager.API.utils import modulefile
+from ndmanager.API.utils import xs_modulefile
 
 
 def download(libname):
@@ -23,4 +23,4 @@ def download(libname):
             shutil.move(source, target)
 
     if NDMANAGER_MODULEPATH is not None:
-        modulefile(f"{family}-{lib}", dico["info"], target / "cross_sections.xml")
+        xs_modulefile(f"xs/{family}-{lib}", dico["info"], target / "cross_sections.xml")
