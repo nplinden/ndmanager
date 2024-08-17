@@ -40,7 +40,7 @@ For now, the only source of data is the official OpenMC website.
 ``install``
 -----------
 
-The ``ndo install`` command allows you to install:
+The ``ndo install`` command allows you to install a library:
 
 .. code-block:: bash
 
@@ -101,7 +101,7 @@ build the HDF5 files: ``n`` for incident neutron data, ``tsl`` for thermal scatt
 data, ``photo`` for photo-atomic data, and ``ard`` for atomic relaxation data.
 
 All of these field require a ``basis`` subfield to indicate a default source of ENDF6
-tape to use. For the ``n``, ``photo``, and ``ard`` fields, two additionnal subfields can be
+tapes to use. For the ``n``, ``photo``, and ``ard`` fields, two additionnal subfields can be
 added:
 
 * ``ommit`` takes a list of nuclide that will be ommitted from the build.

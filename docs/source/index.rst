@@ -16,7 +16,5 @@ in the OpenMC specific HDF5 format.
    :caption: Contents:
 
    installation
-   ndfetcher
-   ndomcer
-   ndchainer
+   CLI/index
 
