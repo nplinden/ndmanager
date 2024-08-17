@@ -160,7 +160,7 @@ libraries:
 
     $ module avail
     ---------------------------- /Users/nlinden/.ndmanager/modulefiles ----------------------------
-    jeff33  lanl-endfb71
+    xs/jeff33  xs/lanl-endfb71
 
     ----------------------- /opt/homebrew/Cellar/modules/5.4.0/modulefiles ------------------------
     dot  module-git  module-info  modules  null  use.own
