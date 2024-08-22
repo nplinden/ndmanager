@@ -1,3 +1,4 @@
+"""Some functions to format printed output"""
 import os
 
 

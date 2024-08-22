@@ -1,10 +1,9 @@
 """Some utility functions"""
 
-import openmc
 from typing import List
 
+import openmc
 from ndmanager.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA
-from ndmanager.API.nuclide import Nuclide
 
 
 def set_ndl(libname: str):
@@ -17,7 +16,6 @@ def set_ndl(libname: str):
     Raises:
         FileNotFoundError: raised if the library is not installed.
     """
-    import openmc
 
     if libname[-4:] == ".xml":
         openmc.config["cross_sections"] = libname
@@ -69,6 +67,21 @@ def set_nuclear_data(libname: str, chain: str = False):
 
 
 def get_endf6(libname: str, sub: str, nuclide: str):
+    """Get the path to a ENDF6 tape stored in the NDManager library
+
+    Args:
+        libname (str): The name of the desired evaluation
+        sub (str): The name of the ENDF6 sublibrary
+        nuclide (str): The name of the nuclide in the GNDS format
+
+    Raises:
+        ValueError: The library does not exist 
+        ValueError: The sublibrary is not available for the library
+        ValueError: The nuclide is not available in the sublibrary
+
+    Returns:
+        pathlib.Path: The path to the library
+    """
     p = ENDF6_PATH / libname
     if not p.exists():
         raise ValueError(f"Library '{libname}' does not exist")
@@ -82,8 +95,15 @@ def get_endf6(libname: str, sub: str, nuclide: str):
 
 
 def check_nuclear_data(libpath: str, nuclides: List[str]):
-    import openmc.data
+    """Check that the OpenMC nuclear data library contains the desired nuclides.
 
+    Args:
+        libpath (str): The path to the cross_sections.xml file
+        nuclides (List[str]): The nuclide of nuclides to check for
+
+    Raises:
+        ValueError: _description_
+    """
     lib = openmc.data.DataLibrary.from_xml(libpath)
     missing = []
     for nuclide in nuclides:

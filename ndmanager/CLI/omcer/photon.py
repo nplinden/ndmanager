@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from ndmanager.data import ATOMIC_SYMBOL
-from ndmanager.data import list_endf6
+from ndmanager.utils import list_endf6
 from ndmanager.CLI.omcer.utils import process
 
 

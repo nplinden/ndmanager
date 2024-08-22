@@ -3,7 +3,7 @@ import shutil
 import yaml
 from contextlib import chdir
 
-from ndmanager.data import list_endf6
+from ndmanager.utils import list_endf6
 from ndmanager.data import OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
 from ndmanager.CLI.chainer.module import chain_modulefile
 
