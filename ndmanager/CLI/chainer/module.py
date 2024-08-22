@@ -13,4 +13,3 @@ setenv OPENMC_CHAIN_FILE "%s"
     with open(NDMANAGER_MODULEPATH / filename, "w") as f:
         print(text, file=f)
     return True
-

@@ -6,8 +6,7 @@ from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
-from ndmanager.data import (ENDF6_PATH, NDMANAGER_MODULEPATH,
-                            OPENMC_NUCLEAR_DATA)
+from ndmanager.data import ENDF6_PATH, NDMANAGER_MODULEPATH, OPENMC_NUCLEAR_DATA
 
 
 def get_temperatures(inputs):

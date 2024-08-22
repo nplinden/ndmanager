@@ -1,7 +1,12 @@
 import argparse as ap
 
-from ndmanager.CLI.omcer.commands import (ndo_build, ndo_clone, ndo_install,
-                                          ndo_remove, ndo_sn301)
+from ndmanager.CLI.omcer.commands import (
+    ndo_build,
+    ndo_clone,
+    ndo_install,
+    ndo_remove,
+    ndo_sn301,
+)
 from ndmanager.CLI.omcer.listlibs import listlibs
 
 

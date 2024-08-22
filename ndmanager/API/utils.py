@@ -75,7 +75,7 @@ def get_endf6(libname: str, sub: str, nuclide: str):
         nuclide (str): The name of the nuclide in the GNDS format
 
     Raises:
-        ValueError: The library does not exist 
+        ValueError: The library does not exist
         ValueError: The sublibrary is not available for the library
         ValueError: The nuclide is not available in the sublibrary
 

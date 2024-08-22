@@ -76,25 +76,25 @@ def download(libname, sublib):
     if libname == "jeff33" and sublib == "tsl":
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.dat"
         lines = open(tape).readlines()
-        lines[1] = (
-            " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
-        )
+        lines[
+            1
+        ] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
         with open(tape, "w") as f:
             print("".join(lines), file=f)
     if libname == "cendl31" and sublib == "n":
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
         lines = open(tape).readlines()
-        lines[205] = (
-            " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
-        )
+        lines[
+            205
+        ] = " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
         with open(tape, "w") as f:
             print("".join(lines), file=f)
 
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
         lines = open(tape).readlines()
-        lines[203] = (
-            "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
-        )
+        lines[
+            203
+        ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
         with open(tape, "w") as f:
             print("".join(lines), file=f)
 

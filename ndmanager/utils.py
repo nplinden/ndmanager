@@ -1,6 +1,7 @@
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.data import ENDF6_PATH
 
+
 def list_endf6(sublibrary, params):
     """List the paths to ENDF6 evaluations necessary to build the cross sections
     and depletion chains.

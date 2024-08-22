@@ -11,7 +11,7 @@ class Nuclide:
     file2zam_re = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
 
     def __init__(self, Z: int, A: int, M: int) -> None:
-        """Instanciate a nuclide using it atomic number, mass number and 
+        """Instanciate a nuclide using it atomic number, mass number and
         metastable index.
 
         Args:
@@ -63,7 +63,7 @@ class Nuclide:
     @classmethod
     def from_file(cls, filename: str) -> "Nuclide":
         """Instanciate a nuclide using a path to an ENDF6 file, for files
-        containing multiple MAT numbers, only the first nuclide will be 
+        containing multiple MAT numbers, only the first nuclide will be
         returned
 
         Args:
