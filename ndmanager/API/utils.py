@@ -1,20 +1,10 @@
+"""Some utility functions"""
+
 import os
 from typing import List
 
-from ndmanager.API.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
+from ndmanager.data import ENDF6_PATH, OPENMC_NUCLEAR_DATA
 from ndmanager.API.nuclide import Nuclide
-
-
-def clear_line(n: int = 1):
-    """Move the print cursor up n lines.
-
-    Args:
-        n (int, optional): Number of lines the cursor will be moved up. Defaults to 1.
-    """
-    LINE_UP = "\033[1A"
-    LINE_CLEAR = "\x1b[2K"
-    for i in range(n):
-        print(LINE_UP, end=LINE_CLEAR)
 
 
 def set_ndl(libname: str):
@@ -105,18 +95,6 @@ def check_nuclear_data(libpath: str, nuclides: List[str]):
             f"Nuclear Data Library lacks the following required nuclides: {missing}"
         )
 
-
-def header(string):
-    col, _ = os.get_terminal_size()
-    toprint = f"  {string}  "
-    return f"{toprint:{'-'}{'^'}{col}}"
-
-
-def footer():
-    col, _ = os.get_terminal_size()
-    return f"{'':{'-'}{'^'}{col}}"
-
-
 def list_endf6(sublibrary, params):
     """List the paths to ENDF6 evaluations necessary to build the
     depletion chains.
@@ -163,31 +141,3 @@ def list_endf6(sublibrary, params):
         basis_dict |= guest_dict
 
     return basis_dict
-
-
-def xs_modulefile(filename, description, libpath):
-    module_template = r"""#%%Module
-proc ModulesHelp { } {
-    puts stderr "%s"
-}
-module-whatis "%s\n"
-setenv OPENMC_CROSS_SECTIONS "%s"
-"""
-    text = module_template % (description, description, str(libpath))
-    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
-        print(text, file=f)
-    return True
-
-
-def chain_modulefile(filename, description, libpath):
-    module_template = r"""#%%Module
-proc ModulesHelp { } {
-    puts stderr "%s"
-}
-module-whatis "%s\n"
-setenv OPENMC_CHAIN_FILE "%s"
-"""
-    text = module_template % (description, description, str(libpath))
-    with open(NDMANAGER_MODULEPATH / filename, "w") as f:
-        print(text, file=f)
-    return True

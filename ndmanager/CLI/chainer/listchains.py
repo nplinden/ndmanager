@@ -3,8 +3,8 @@ import textwrap
 import yaml
 import os
 
-from ndmanager.API.data import OPENMC_NUCLEAR_DATA
-from ndmanager.API.utils import header, footer, chain_modulefile
+from ndmanager.data import OPENMC_NUCLEAR_DATA
+from ndmanager.format import header, footer
 
 
 def listchains(args: ap.Namespace):

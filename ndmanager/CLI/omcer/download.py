@@ -4,8 +4,8 @@ import tempfile
 from contextlib import chdir
 from pathlib import Path
 
-from ndmanager.API.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
-from ndmanager.API.utils import xs_modulefile
+from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
+from ndmanager.CLI.omcer.module import xs_modulefile
 
 
 def download(libname):

@@ -2,8 +2,8 @@ import argparse as ap
 import os
 import textwrap
 
-from ndmanager.API.data import ENDF6_LIBS
-from ndmanager.API.utils import footer, header
+from ndmanager.data import ENDF6_LIBS
+from ndmanager.format import footer, header
 
 
 def info(args: ap.Namespace):

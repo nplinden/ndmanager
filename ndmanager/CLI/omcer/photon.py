@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ndmanager.API.data import ATOMIC_SYMBOL
+from ndmanager.data import ATOMIC_SYMBOL
 from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.omcer.utils import process
 

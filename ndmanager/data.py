@@ -1,3 +1,4 @@
+"""Defining some data used throughout the code."""
 import os
 from pathlib import Path
 from typing import Dict, List

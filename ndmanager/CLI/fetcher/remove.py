@@ -1,7 +1,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.API.data import ENDF6_PATH
+from ndmanager.data import ENDF6_PATH
 
 
 def remove(args: ap.Namespace):

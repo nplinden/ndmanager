@@ -1,7 +1,7 @@
 import time
 from multiprocessing import Pool
 
-from ndmanager.API.utils import clear_line
+from ndmanager.format import clear_line
 
 
 def process(dest, library, processor, args, evaltype, key=lambda x: x):

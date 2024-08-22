@@ -12,9 +12,9 @@ from functools import reduce
 
 from tabulate import tabulate
 
-from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.utils import clear_line
+from ndmanager.format import clear_line
 
 
 def download(libname, sublib):

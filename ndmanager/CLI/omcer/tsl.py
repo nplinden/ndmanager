@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ndmanager.API.data import ENDF6_PATH, TSL_NEUTRON
+from ndmanager.data import ENDF6_PATH, TSL_NEUTRON
 from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.omcer.utils import process
 

@@ -1,11 +1,11 @@
 import os
 import textwrap
 
-from ndmanager.API.data import (
+from ndmanager.data import (
     OPENMC_LIBS,
     OPENMC_NUCLEAR_DATA,
 )
-from ndmanager.API.utils import header
+from ndmanager.format import header
 
 
 def listlibs(*args):

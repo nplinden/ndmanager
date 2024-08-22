@@ -1,8 +1,8 @@
 import os
 import textwrap
 
-from ndmanager.API.data import ENDF6_LIBS, ENDF6_PATH
-from ndmanager.API.utils import footer, header
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
+from ndmanager.format import footer, header
 
 
 def listlibs(*args):
