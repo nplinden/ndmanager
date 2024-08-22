@@ -2,7 +2,7 @@ import time
 from multiprocessing import Pool
 from pathlib import Path
 
-from ndmanager.API.utils import list_endf6
+from ndmanager.data import list_endf6
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
 
