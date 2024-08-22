@@ -1,10 +1,7 @@
 import os
 import textwrap
 
-from ndmanager.data import (
-    OPENMC_LIBS,
-    OPENMC_NUCLEAR_DATA,
-)
+from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA
 from ndmanager.format import header
 
 

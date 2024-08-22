@@ -1,10 +1,10 @@
 import argparse as ap
-import textwrap
-import yaml
 import os
+import textwrap
 
+import yaml
 from ndmanager.data import OPENMC_NUCLEAR_DATA
-from ndmanager.format import header, footer
+from ndmanager.format import footer, header
 
 
 def listchains(args: ap.Namespace):

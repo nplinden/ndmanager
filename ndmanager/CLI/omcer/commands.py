@@ -2,10 +2,10 @@ import argparse as ap
 import os
 import shutil
 
-from ndmanager.data import OPENMC_NUCLEAR_DATA
 from ndmanager.CLI.omcer.download import download
 from ndmanager.CLI.omcer.generate import chain, generate
 from ndmanager.CLI.omcer.substitute import replace_negatives_in_lib
+from ndmanager.data import OPENMC_NUCLEAR_DATA
 
 
 def ndo_sn301(args: ap.Namespace):

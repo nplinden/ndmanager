@@ -1,5 +1,6 @@
 from ndmanager.data import NDMANAGER_MODULEPATH
 
+
 def xs_modulefile(filename, description, libpath):
     module_template = r"""#%%Module
 proc ModulesHelp { } {

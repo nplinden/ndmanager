@@ -1,8 +1,8 @@
 from pathlib import Path
 
+from ndmanager.CLI.omcer.utils import process
 from ndmanager.data import ATOMIC_SYMBOL
 from ndmanager.utils import list_endf6
-from ndmanager.CLI.omcer.utils import process
 
 
 def process_photon(directory, photo, ard):

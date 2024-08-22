@@ -1,11 +1,11 @@
 import argparse as ap
 import shutil
-import yaml
 from contextlib import chdir
 
-from ndmanager.utils import list_endf6
-from ndmanager.data import OPENMC_NUCLEAR_DATA, NDMANAGER_MODULEPATH
+import yaml
 from ndmanager.CLI.chainer.module import chain_modulefile
+from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_NUCLEAR_DATA
+from ndmanager.utils import list_endf6
 
 
 def build(args: ap.Namespace):

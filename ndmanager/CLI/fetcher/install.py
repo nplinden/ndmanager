@@ -5,16 +5,15 @@ import tempfile
 import time
 import zipfile
 from contextlib import chdir
+from functools import reduce
 from itertools import cycle, product
 from multiprocessing import Pool
 from pathlib import Path
-from functools import reduce
 
-from tabulate import tabulate
-
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.API.nuclide import Nuclide
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.format import clear_line
+from tabulate import tabulate
 
 
 def download(libname, sublib):
