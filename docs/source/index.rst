@@ -16,5 +16,5 @@ in the OpenMC specific HDF5 format.
    :caption: Contents:
 
    installation
-   CLI/index
+   overview/index
 

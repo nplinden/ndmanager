@@ -14,6 +14,8 @@ dependencies = [
     'tabulate',
     'h5py',
     'pyyaml',
+    'requests',
+    'beautifulsoup4'
 ]
 
 [project.urls]

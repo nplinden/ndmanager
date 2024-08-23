@@ -1,8 +1,8 @@
-.. _CLI:
+.. _Overview:
 
-======================
-Command Line Interface
-======================
+========
+Overview
+========
 
 Documentation on the command line interface of NDManager.
 
