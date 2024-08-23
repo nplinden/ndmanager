@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Callable, Tuple
 
 import openmc.data
+
 from ndmanager.format import clear_line
 
 

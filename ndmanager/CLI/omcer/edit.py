@@ -6,6 +6,7 @@ from typing import Dict, List
 
 import numpy as np
 from h5py import File
+
 from ndmanager.data import OPENMC_NUCLEAR_DATA
 
 

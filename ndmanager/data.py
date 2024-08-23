@@ -18,11 +18,16 @@ try:
 except KeyError:
     NDMANAGER_MODULEPATH = None
 
+USERAGENT = (
+    '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0)'
+    ' Gecko/20100101 Firefox/26.0"'
+)
+
 ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "jeff33": {
         "fancyname": "JEFF-3.3",
         "sublibraries": ["decay", "n", "nfpy", "sfpy", "tsl"],
-        "source": "https://www-nds.iaea.org/public/download-endf/JEFF-3.3",
+        "source": r"https://www-nds.iaea.org/public/download-endf/JEFF-3.3",
         "info": """Version 3.3 of the Joint Evaluated Fission and Fusion"""
         """ (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
         "homepage": "https://www.oecd-nea.org/dbforms/data/eva/evatapes/jeff_31/index-JEFF3.1.1.html",
@@ -39,7 +44,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "jeff311": {
         "fancyname": "JEFF-3.1.1",
         "sublibraries": ["decay", "n", "nfpy", "p", "sfpy", "tsl"],
-        "source": "https://www-nds.iaea.org/public/download-endf/JEFF-3.1.1",
+        "source": r"https://www-nds.iaea.org/public/download-endf/JEFF-3.1.1",
         "info": """Version 3.1.1 of the Joint Evaluated Fission and Fusion"""
         """ (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)""",
         "homepage": "https://www.oecd-nea.org/dbdata/jeff/jeff33/",
@@ -70,7 +75,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
             "sfpy",
             "tsl",
         ],
-        "source": "https://www-nds.iaea.org/public/download-endf/JENDL-5-Aug2023",
+        "source": r"https://www-nds.iaea.org/public/download-endf/JENDL-5-Aug2023",
         "info": """Version 5 of the Japanese Evaluated Nuclear Data Library (JENDL)"""
         """library distributed by JAEA""",
         "homepage": "https://wwwndc.jaea.go.jp/jendl/j5/j5.html",
@@ -109,7 +114,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
             "t",
             "tsl",
         ],
-        "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VII.1",
+        "source": r"https://www-nds.iaea.org/public/download-endf/ENDF-B-VII.1",
         "info": """Version 7.1 of the ENDF-B data library distributed by the NNDC""",
         "homepage": "https://www.nndc.bnl.gov/endf-b7.1/",
         "index": [
@@ -150,7 +155,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
             "t",
             "tsl",
         ],
-        "source": "https://www-nds.iaea.org/public/download-endf/ENDF-B-VIII.0",
+        "source": r"https://www-nds.iaea.org/public/download-endf/ENDF-B-VIII.0",
         "info": """Version 8.0 of the ENDF-B data library distributed by the NNDC""",
         "homepage": "https://www.nndc.bnl.gov/endf-b8.0/",
         "index": [
@@ -176,7 +181,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "tendl19": {
         "fancyname": "TENDL-2019",
         "sublibraries": ["d", "g", "he3", "he4", "n", "p", "t"],
-        "source": "https://www-nds.iaea.org/public/download-endf/TENDL-2019",
+        "source": r"https://www-nds.iaea.org/public/download-endf/TENDL-2019",
         "info": "2019 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).",
         "homepage": "https://tendl.web.psi.ch/tendl_2019/tendl2019.html",
         "index": [
@@ -194,7 +199,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "tendl23": {
         "fancyname": "TENDL-2023",
         "sublibraries": ["d", "g", "he3", "he4", "n", "p", "t"],
-        "source": "https://www-nds.iaea.org/public/download-endf/TENDL-2023",
+        "source": r"https://www-nds.iaea.org/public/download-endf/TENDL-2023",
         "info": "2023 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).",
         "homepage": "https://tendl.web.psi.ch/tendl_2023/tendl2023.html",
         "index": [
@@ -212,7 +217,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "cendl32": {
         "fancyname": "CENDL-3.2",
         "sublibraries": ["n"],
-        "source": "https://www-nds.iaea.org/public/download-endf/CENDL-3.2",
+        "source": r"https://www-nds.iaea.org/public/download-endf/CENDL-3.2",
         "info": """Version 3.2 of the Chinese Evaluated Nuclear Data Library (CENDL)"""
         """ distributed by the China Nuclear Data Center.""",
         "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm",
@@ -225,7 +230,7 @@ ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "cendl31": {
         "fancyname": "CENDL-3.1",
         "sublibraries": ["n"],
-        "source": "https://www-nds.iaea.org/public/download-endf/CENDL-3.1",
+        "source": r"https://www-nds.iaea.org/public/download-endf/CENDL-3.1",
         "info": """Version 3.1 of the Chinese Evaluated Nuclear Data Library (CENDL)"""
         """ distributed by the China Nuclear Data Center.""",
         "homepage": "https://en.cnnc.com.cn/2020-06/17/c_501119.htm",

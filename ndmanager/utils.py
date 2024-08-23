@@ -1,5 +1,6 @@
 """A few utility functions"""
 from typing import Dict
+
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.data import ENDF6_PATH
 

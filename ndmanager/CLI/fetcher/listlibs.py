@@ -20,8 +20,7 @@ def listlibs_parser(subparsers: ap._SubParsersAction):
 
 
 def listlibs(*args):
-    """List the libaries available for download with NDManager
-    """
+    """List the libaries available for download with NDManager"""
     col, _ = os.get_terminal_size()
     lst = []
     lst.append(header("Available libraries"))

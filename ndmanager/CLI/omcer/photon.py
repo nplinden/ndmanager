@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict
 
 import openmc.data
+
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.data import ATOMIC_SYMBOL
 from ndmanager.utils import list_endf6

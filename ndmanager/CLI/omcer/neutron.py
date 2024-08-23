@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict, List
 
 import openmc.data
+
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.utils import list_endf6

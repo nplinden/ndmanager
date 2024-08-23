@@ -5,6 +5,7 @@ from contextlib import chdir
 
 import openmc.data
 import yaml
+
 from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon

@@ -11,15 +11,13 @@ from itertools import cycle, product
 from multiprocessing import Pool
 from pathlib import Path
 
-from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
-from ndmanager.format import clear_line
 from tabulate import tabulate
 
-USERAGENT = (
-    '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0)'
-    ' Gecko/20100101 Firefox/26.0"'
-)
+from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.utils import download_endf6
+from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST,
+                            USERAGENT)
+from ndmanager.format import clear_line
 
 
 def install_parser(subparsers: ap._SubParsersAction):
@@ -53,6 +51,20 @@ def install_parser(subparsers: ap._SubParsersAction):
         "--all", "-a", action="store_true", help="Download all sublibraries."
     )
     parser.set_defaults(func=install)
+
+
+def download_test():
+    """Download a minimal library for testing purposes"""
+    target = ENDF6_PATH / "test"
+    download_endf6("endfb8", "n", "Fe56", target / "n" / "Fe56.endf6")
+    download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
+
+    download_endf6("endfb8", "tsl", "Fe56", target / "tsl" / "tsl_0056_26-Fe-56.dat")
+
+    download_endf6("endfb8", "photo", "C0", target / "photo" / "C0.endf6")
+    download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")
+    download_endf6("endfb8", "photo", "Fe0", target / "photo" / "Fe0.endf6")
+    download_endf6("endfb8", "ard", "Fe0", target / "ard" / "Fe0.endf6")
 
 
 def download(libname, sublib):
@@ -158,6 +170,11 @@ def install(args: ap.Namespace):
         args (ap.Namespace): The argparse object containing the command line argument
     """
     libs = args.libraries
+    if "test" in libs:
+        download_test()
+        libs.remove("test")
+    if not libs:
+        return
     if args.sub is not None:
         sub = args.sub
     elif args.all:

@@ -20,6 +20,7 @@ class Nuclide:
             M (int): Metastable index
         """
         self.Z = Z
+        self.element = ATOMIC_SYMBOL[Z]
         self.A = A
         self.M = M
 
