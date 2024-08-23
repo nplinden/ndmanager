@@ -39,4 +39,4 @@ def get_terminal_size():
     try:
         return os.get_terminal_size()
     except OSError:
-        return os.terminal_size((80, 80))
+        return os.terminal_size((150, 80))
