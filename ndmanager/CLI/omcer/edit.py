@@ -1,8 +1,11 @@
+import argparse as ap
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
 from h5py import File
+
+from ndmanager.data import OPENMC_NUCLEAR_DATA
 
 
 def overwrite(nuclide, mt, sourcefile, targetfile):
@@ -121,3 +124,62 @@ def find_nuclide_in_lib(libfile, nuclide):
     for lib in root.findall("library"):
         if lib.attrib.get("type") == "neutron" and lib.attrib["materials"] == nuclide:
             return plib.parent / directory / lib.attrib["path"]
+
+
+def replace_negatives_in_lib(targetlib, sources, mt, dryrun=False, verbose=True):
+    negatives = find_negative_in_lib(targetlib, mt)
+    source_negatives = {source: find_negative_in_lib(source, mt) for source in sources}
+
+    for nuclide in negatives:
+        found = False
+        source = None
+        target = None
+        for sourcelib, sn in source_negatives.items():
+            source = find_nuclide_in_lib(sourcelib, nuclide)
+            target = find_nuclide_in_lib(targetlib, nuclide)
+            if source is None:
+                continue
+            elif nuclide in sn:
+                continue
+            else:
+                found = True
+                if verbose:
+                    print(
+                        f"Replacing\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}"
+                    )
+                if not dryrun:
+                    overwrite(nuclide, mt, source, target)
+                continue
+        if not found:
+            if verbose:
+                print(
+                    f"No replacement found\n\tnuclide={nuclide}\n\tmt={mt}\n\ttarget={target}\n\tsource={source}"
+                )
+            if not dryrun:
+                set_negative_to_zero(target, nuclide, mt)
+    return
+
+
+def sn301_parser(subparsers):
+    parser = subparsers.add_parser(
+        "sn301", help="Substitute negative MT=301 cross-section in HDF5 library"
+    )
+    parser.add_argument("--target", "-t", type=str, help="The library to fix")
+    parser.add_argument(
+        "--sources",
+        "-s",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of nuclear data libraries to choose from",
+    )
+    parser.add_argument(
+        "--dryrun", help="Do not perform the substitution", action="store_true"
+    )
+    parser.set_defaults(func=sn301)
+
+
+def sn301(args: ap.Namespace):
+    target = OPENMC_NUCLEAR_DATA / args.target / "cross_sections.xml"
+    sources = [OPENMC_NUCLEAR_DATA / s / "cross_sections.xml" for s in args.sources]
+    replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)

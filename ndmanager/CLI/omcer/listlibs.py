@@ -5,6 +5,13 @@ from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA
 from ndmanager.format import header
 
 
+def listlibs_parser(subparsers):
+    parser = subparsers.add_parser(
+        "list", help="List libraries compatible with NDManager"
+    )
+    parser.set_defaults(func=listlibs)
+
+
 def listlibs(*args):
     col, _ = os.get_terminal_size()
     lst = [header("Installable Libraries")]
@@ -23,9 +30,12 @@ def listlibs(*args):
             lst.append("\n".join(s))
     lst.append("")
     lst.append(header("Custom Libraries"))
-    s = " ".join(
-        [f"{s.name:<15}" for s in list((OPENMC_NUCLEAR_DATA / "custom").glob("*"))]
-    )
+    dirs = [p.name for p in OPENMC_NUCLEAR_DATA.glob("*")]
+    if "official" in dirs:
+        dirs.remove("official")
+    if "lanl" in dirs:
+        dirs.remove("lanl")
+    s = " ".join([f"{i:<15}" for i in dirs])
     s = textwrap.wrap(s, width=col)
     lst.append("\n".join(s))
     print("\n".join(lst))

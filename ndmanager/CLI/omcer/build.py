@@ -1,5 +1,7 @@
+import argparse as ap
 import shutil
 from contextlib import chdir
+import openmc.data
 
 import yaml
 from ndmanager.CLI.omcer.module import xs_modulefile
@@ -18,13 +20,30 @@ def get_temperatures(inputs):
     return temperatures
 
 
-def generate(ymlpath, dryrun=False):
-    import openmc.data
+def build_parser(subparsers):
+    parser = subparsers.add_parser(
+        "build", help="Build an OpenMC library from a YAML input file"
+    )
+    parser.add_argument(
+        "filename",
+        type=str,
+        help="The name of the YAML file describing the target library",
+    )
+    parser.add_argument(
+        "--dryrun", help="Do not perform NJOY runs", action="store_true"
+    )
+    parser.add_argument(
+        "--chain", help="Builds the depletion chain", action="store_true"
+    )
+    parser.set_defaults(func=build)
 
-    inputs = yaml.safe_load(open(ymlpath))
-    f = open(ymlpath, "r")
 
-    directory = OPENMC_NUCLEAR_DATA / "custom" / inputs["name"]
+def build(args: ap.Namespace):
+
+    inputs = yaml.safe_load(open(args.filename))
+    f = open(args.filename, "r")
+
+    directory = OPENMC_NUCLEAR_DATA / inputs["name"]
     if directory.exists():
         shutil.rmtree(directory)
     directory.mkdir(parents=True)
@@ -33,15 +52,15 @@ def generate(ymlpath, dryrun=False):
         temperatures = get_temperatures(inputs)
 
         if "n" in inputs:
-            generate_neutron(inputs["n"], temperatures, dryrun, library)
+            generate_neutron(inputs["n"], temperatures, args.dryrun, library)
 
         if "tsl" in inputs:
-            generate_tsl(inputs["tsl"], inputs["n"], temperatures, dryrun, library)
+            generate_tsl(inputs["tsl"], inputs["n"], temperatures, args.dryrun, library)
 
         if "photo" in inputs:
             photo = inputs["photo"]
             ard = inputs.get("ard", None)
-            generate_photon(photo, ard, dryrun, library)
+            generate_photon(photo, ard, args.dryrun, library)
 
         library.export_to_xml("cross_sections.xml")
         with open(f"{inputs['name']}.yml", "w") as target:
@@ -50,28 +69,3 @@ def generate(ymlpath, dryrun=False):
     if NDMANAGER_MODULEPATH is not None:
         name = f"xs/{inputs['name']}"
         xs_modulefile(name, inputs["description"], directory / "cross_sections.xml")
-
-
-def chain(ymlpath):
-    import openmc.deplete
-
-    inputs = yaml.safe_load(open(ymlpath))
-
-    name = OPENMC_NUCLEAR_DATA / inputs["name"]
-    name.mkdir(parents=True, exist_ok=True)
-    with chdir(name):
-        basis = inputs["basis"]
-
-        neutron = (ENDF6_PATH / basis / "n").glob("*.dat")
-        decay = (ENDF6_PATH / basis / "decay").glob("*.dat")
-        nfpy = (ENDF6_PATH / basis / "nfpy").glob("dat")
-
-        chainfile = openmc.deplete.Chain.from_endf(
-            neutron_files=neutron,
-            decay_files=decay,
-            fpy_files=nfpy,
-            reactions=list(openmc.deplete.chain.REACTIONS.keys()),
-            progress=False,
-        )
-
-        chainfile.export_to_xml("chain.xml")
