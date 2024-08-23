@@ -1,3 +1,4 @@
+"""Definition and parser for the `ndo clone` command"""
 import argparse as ap
 import shutil
 
@@ -5,6 +6,11 @@ from ndmanager.data import OPENMC_NUCLEAR_DATA
 
 
 def clone_parser(subparsers):
+    """Add the parser for the 'ndo clone' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
     parser = subparsers.add_parser("clone", help="Clone an installed OpenMC library")
     parser.add_argument(
         "source",
@@ -20,6 +26,15 @@ def clone_parser(subparsers):
 
 
 def clone(args: ap.Namespace):
+    """Clone an HDF5 library from the NDManager database
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+
+    Raises:
+        ValueError: The source library does not exist
+        ValueError: The target library already exists
+    """
     source = OPENMC_NUCLEAR_DATA / args.source
     target = OPENMC_NUCLEAR_DATA / args.target
     if not source.exists():
