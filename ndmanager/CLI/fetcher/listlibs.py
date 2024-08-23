@@ -4,7 +4,7 @@ import os
 import textwrap
 
 from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
-from ndmanager.format import footer, header
+from ndmanager.format import footer, header, get_terminal_size
 
 
 def listlibs_parser(subparsers: ap._SubParsersAction):
@@ -21,7 +21,7 @@ def listlibs_parser(subparsers: ap._SubParsersAction):
 
 def listlibs(*args):
     """List the libaries available for download with NDManager"""
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
     lst = []
     lst.append(header("Available libraries"))
     for libname, libdict in ENDF6_LIBS.items():

@@ -6,7 +6,7 @@ import textwrap
 import yaml
 
 from ndmanager.data import OPENMC_NUCLEAR_DATA
-from ndmanager.format import footer, header
+from ndmanager.format import footer, header, get_terminal_size
 
 
 def list_parser(subparsers: ap._SubParsersAction):
@@ -23,7 +23,7 @@ def list_parser(subparsers: ap._SubParsersAction):
 
 def listchains(args: ap.Namespace):
     """List the available chains"""
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
     chaindir = OPENMC_NUCLEAR_DATA / "chains"
     lst = [header("Available Chains")]
     dico = {}

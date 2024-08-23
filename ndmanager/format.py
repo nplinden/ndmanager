@@ -21,7 +21,7 @@ def header(string):
     Returns:
         str: The formatted header
     """
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
     toprint = f"  {string}  "
     return f"{toprint:{'-'}{'^'}{col}}"
 
@@ -32,5 +32,11 @@ def footer():
     Returns:
         str: The formatted footer
     """
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
     return f"{'':{'-'}{'^'}{col}}"
+
+def get_terminal_size():
+    try:
+        return os.get_terminal_size()
+    except OSError:
+        return os.terminal_size((80, 80))

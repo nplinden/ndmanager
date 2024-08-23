@@ -3,7 +3,7 @@ import os
 import textwrap
 
 from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA
-from ndmanager.format import header
+from ndmanager.format import header, get_terminal_size
 
 
 def listlibs_parser(subparsers):
@@ -20,7 +20,7 @@ def listlibs_parser(subparsers):
 
 def listlibs(*args):
     """List the OpenMC libaries available for download with NDManager"""
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
     lst = [header("Installable Libraries")]
     for family, dico in OPENMC_LIBS.items():
         for libname, libdict in dico.items():

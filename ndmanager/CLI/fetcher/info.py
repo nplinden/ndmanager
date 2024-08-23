@@ -4,7 +4,7 @@ import os
 import textwrap
 
 from ndmanager.data import ENDF6_LIBS
-from ndmanager.format import footer, header
+from ndmanager.format import footer, header, get_terminal_size
 
 
 def info_parser(subparsers: ap._SubParsersAction):
@@ -31,7 +31,7 @@ def info(args: ap.Namespace) -> None:
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-    col, _ = os.get_terminal_size()
+    col, _ = get_terminal_size()
 
     def wrap(string, initial_indent=""):
         toprint = textwrap.wrap(
