@@ -1,3 +1,4 @@
+"""Definition and parser for the `ndo install` command"""
 import shutil
 import argparse as ap
 import subprocess as sp
@@ -10,6 +11,11 @@ from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_LIBS, OPENMC_NUCLEAR_DAT
 
 
 def install_parser(subparsers):
+    """Add the parser for the 'ndo build' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
     parser = subparsers.add_parser(
         "install", help="Install one or more OpenMC libraries"
     )
@@ -24,13 +30,18 @@ def install_parser(subparsers):
 
 
 def install(args: ap.Namespace):
+    """Download and install a OpenMC nuclear data library from the official website
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+    """
     for libname in args.library:
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
                 family, lib = libname.split("/")
                 dico = OPENMC_LIBS[family][lib]
-                sp.run(["wget", "-q", "--show-progress", dico["source"]])
-                sp.run(["tar", "xf", dico["tarname"]])
+                sp.run(["wget", "-q", "--show-progress", dico["source"]], check=True)
+                sp.run(["tar", "xf", dico["tarname"]], check=True)
 
                 source = Path(dico["extractedname"])
                 target = OPENMC_NUCLEAR_DATA / family / lib

@@ -58,8 +58,6 @@ def build(args: ap.Namespace):
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-
-
     with open(args.filename, encoding="utf-8") as f:
         inputs = yaml.safe_load(f)
         f.seek(0)
