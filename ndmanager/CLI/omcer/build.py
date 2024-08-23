@@ -2,8 +2,8 @@
 import argparse as ap
 import shutil
 from contextlib import chdir
-import openmc.data
 
+import openmc.data
 import yaml
 from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
@@ -72,15 +72,15 @@ def build(args: ap.Namespace):
         temperatures = get_temperatures(inputs)
 
         if "n" in inputs:
-            generate_neutron(inputs["n"], temperatures, args.dryrun, library)
+            generate_neutron(inputs["n"], temperatures, library, args.dryrun)
 
         if "tsl" in inputs:
-            generate_tsl(inputs["tsl"], inputs["n"], temperatures, args.dryrun, library)
+            generate_tsl(inputs["tsl"], inputs["n"], library, args.dryrun)
 
         if "photo" in inputs:
             photo = inputs["photo"]
             ard = inputs.get("ard", None)
-            generate_photon(photo, ard, args.dryrun, library)
+            generate_photon(photo, ard, library, args.dryrun)
 
         library.export_to_xml("cross_sections.xml")
         with open(f"{inputs['name']}.yml", "w", encoding="utf-8") as target:

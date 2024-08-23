@@ -1,9 +1,10 @@
 """A few utility functions"""
+from typing import Dict
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.data import ENDF6_PATH
 
 
-def list_endf6(sublibrary, params):
+def list_endf6(sublibrary: str, params: Dict[str, str]):
     """List the paths to ENDF6 evaluations necessary to build the cross sections
     and depletion chains.
 

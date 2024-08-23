@@ -1,13 +1,14 @@
 """Definition and parser for the `ndo install` command"""
-import shutil
 import argparse as ap
+import shutil
 import subprocess as sp
 import tempfile
 from contextlib import chdir
 from pathlib import Path
 
 from ndmanager.CLI.omcer.module import xs_modulefile
-from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_LIBS, OPENMC_NUCLEAR_DATA
+from ndmanager.data import (NDMANAGER_MODULEPATH, OPENMC_LIBS,
+                            OPENMC_NUCLEAR_DATA)
 
 
 def install_parser(subparsers):

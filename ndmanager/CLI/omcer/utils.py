@@ -1,13 +1,34 @@
+"""A function that encapsulates nuclear data processing from OpenMC"""
 import time
 from multiprocessing import Pool
+from pathlib import Path
+from typing import Callable, Tuple
 
+import openmc.data
 from ndmanager.format import clear_line
 
 
-def process(dest, library, processor, args, evaltype, key=lambda x: x):
+def process(
+    dest: Path,
+    library: openmc.data.DataLibrary,
+    processor: Callable,
+    args: Tuple,
+    evaltype: str,
+    key: Callable = lambda x: x,
+):
+    """Encapsulation fo the nuclear data processing capabilities of OpenMC
+
+    Args:
+        dest (Path): The directory to write the files to
+        library (openmc.data.DataLibrary): The library object
+        processor (function): The function use to process the data
+        args (Tuple): The list of arguments to pass to the processor
+        evaltype (str): The desired type of evaluation
+        key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
+    """
     t0 = time.time()
     print(f"Processing {evaltype} evaluations: 0/{len(args)}")
-    print(f"Time elapsed: 0 s.")
+    print("Time elapsed: 0 s.")
     with Pool() as p:
         results = [p.apply_async(processor, arg) for arg in args]
         while 1:

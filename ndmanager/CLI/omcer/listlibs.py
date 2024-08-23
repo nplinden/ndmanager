@@ -1,3 +1,4 @@
+"""Definition and parser for the `ndo install` command"""
 import os
 import textwrap
 
@@ -6,6 +7,11 @@ from ndmanager.format import header
 
 
 def listlibs_parser(subparsers):
+    """Add the parser for the 'ndo build' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
     parser = subparsers.add_parser(
         "list", help="List libraries compatible with NDManager"
     )
@@ -13,6 +19,7 @@ def listlibs_parser(subparsers):
 
 
 def listlibs(*args):
+    """List the OpenMC libaries available for download with NDManager"""
     col, _ = os.get_terminal_size()
     lst = [header("Installable Libraries")]
     for family, dico in OPENMC_LIBS.items():
