@@ -1,3 +1,4 @@
+"""Definition and parser for the 'ndf install' command"""
 import argparse as ap
 import shutil
 import subprocess as sp
@@ -15,8 +16,55 @@ from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST
 from ndmanager.format import clear_line
 from tabulate import tabulate
 
+USERAGENT = (
+    '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0)'
+    ' Gecko/20100101 Firefox/26.0"'
+)
+
+
+def install_parser(subparsers: ap._SubParsersAction):
+    """Add the parser for the 'ndf install' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
+    parser = subparsers.add_parser(
+        "install",
+        help="Download ENDF6 files from the IAEA website",
+    )
+    parser.add_argument(
+        "libraries",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of nuclear data libraries to download",
+    )
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "-s",
+        "--sub",
+        action="extend",
+        nargs="+",
+        type=str,
+        help="List of sublibraries libraries to download",
+    )
+    group.add_argument(
+        "--all", "-a", action="store_true", help="Download all sublibraries."
+    )
+    parser.set_defaults(func=install)
+
 
 def download(libname, sublib):
+    """Download a library/sublibrary from the IAEA website.
+
+    Args:
+        libname (str): Name of the desired library
+        sublib (str): Name of the desired sublibrary
+
+    Returns:
+        str: A tick mark
+    """
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
             fancyname = ENDF6_LIBS[libname]["fancyname"]
@@ -24,7 +72,7 @@ def download(libname, sublib):
                 "wget",
                 "-r",
                 "--no-parent",
-                '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
+                f'--user-agent="{USERAGENT}"',
                 '--reject html,htm,txt,tmp,"index*","robots*"',
                 f"https://www-nds.iaea.org/public/download-endf/{fancyname}/{sublib}/",
             ]
@@ -57,12 +105,11 @@ def download(libname, sublib):
 
     # Some erratafiles
     if libname == "endfb8" and sublib == "n":
-        B10 = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
                 cmds = [
                     "wget",
-                    '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0) Gecko/20100101 Firefox/26.0"',
+                    f'--user-agent="{USERAGENT}"',
                     "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf",
                 ]
                 sp.call(
@@ -72,36 +119,44 @@ def download(libname, sublib):
                     stderr=sp.DEVNULL,
                 )
                 source = Path("n-005_B_010.endf")
-                shutil.move(source, B10)
+                shutil.move(source, ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6")
     if libname == "jeff33" and sublib == "tsl":
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.dat"
-        lines = open(tape).readlines()
+        with open(tape, encoding="utf-8") as f:
+            lines = f.readlines()
         lines[
             1
         ] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
-        with open(tape, "w") as f:
+        with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
     if libname == "cendl31" and sublib == "n":
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
-        lines = open(tape).readlines()
+        with open(tape, encoding="utf-8") as f:
+            lines = f.readlines()
         lines[
             205
         ] = " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
-        with open(tape, "w") as f:
+        with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
 
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
-        lines = open(tape).readlines()
+        with open(tape, encoding="utf-8") as f:
+            lines = f.readlines()
         lines[
             203
         ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
-        with open(tape, "w") as f:
+        with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
 
     return "✓"
 
 
 def install(args: ap.Namespace):
+    """Download a set of libraries/sublibraries from the IAEA website
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+    """
     libs = args.libraries
     if args.sub is not None:
         sub = args.sub
@@ -121,9 +176,8 @@ def install(args: ap.Namespace):
 
         while True:
             time.sleep(0.5)
-            symb = next(c)
             isdone = [r.ready() for r in results]
-            symbols = [r.get() if r.ready() else symb for r in results]
+            symbols = [r.get() if r.ready() else next(c) for r in results]
 
             progress = []
             for ilib, lib in enumerate(libs):

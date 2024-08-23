@@ -1,3 +1,4 @@
+"""Definition and parser for the 'ndf info' command"""
 import argparse as ap
 import os
 import textwrap
@@ -6,7 +7,30 @@ from ndmanager.data import ENDF6_LIBS
 from ndmanager.format import footer, header
 
 
-def info(args: ap.Namespace):
+def info_parser(subparsers: ap._SubParsersAction):
+    """Add the parser for the 'ndf info' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
+    parser = subparsers.add_parser("info", help="Get info on a nuclear data libary")
+    parser.add_argument(
+        "library",
+        type=str,
+        action="extend",
+        nargs="+",
+        help="Name of the desired library",
+    )
+    parser.set_defaults(func=info)
+
+
+def info(args: ap.Namespace) -> None:
+    """Display the info related to a nuclear data library available on the
+    IAEA website.
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+    """
     col, _ = os.get_terminal_size()
 
     def wrap(string, initial_indent=""):

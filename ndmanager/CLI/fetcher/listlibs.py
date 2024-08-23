@@ -1,3 +1,5 @@
+"""Definition and parser for the 'ndf list' command"""
+import argparse as ap
 import os
 import textwrap
 
@@ -5,17 +7,31 @@ from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
 from ndmanager.format import footer, header
 
 
+def listlibs_parser(subparsers: ap._SubParsersAction):
+    """Add the parser for the 'ndf list' command to a subparser object
+
+    Args:
+        subparsers (argparse._SubParsersAction): An argparse subparser object
+    """
+    parser = subparsers.add_parser(
+        "list", help="List libraries compatible with NDManager"
+    )
+    parser.set_defaults(func=listlibs)
+
+
 def listlibs(*args):
+    """List the libaries available for download with NDManager
+    """
     col, _ = os.get_terminal_size()
     lst = []
     lst.append(header("Available libraries"))
-    for lib in ENDF6_LIBS:
-        fancyname = ENDF6_LIBS[lib]["fancyname"]
-        if (ENDF6_PATH / lib).exists():
+    for libname, libdict in ENDF6_LIBS.items():
+        fancyname = libdict["fancyname"]
+        if (ENDF6_PATH / libname).exists():
             check = "✓"
         else:
             check = " "
-        s = f"{lib:<8} {fancyname:<15} [{check}]: {ENDF6_LIBS[lib]['info']}"
+        s = f"{libname:<8} {fancyname:<15} [{check}]: {libdict['info']}"
         s = textwrap.wrap(s, initial_indent="", subsequent_indent=30 * " ", width=col)
         lst.append("\n".join(s))
     lst.append(footer())

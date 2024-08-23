@@ -1,3 +1,4 @@
+"""A few utility functions"""
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.data import ENDF6_PATH
 

@@ -13,11 +13,24 @@ def clear_line(n: int = 1):
 
 
 def header(string):
+    """Format a cool header with a title
+
+    Args:
+        string (str): The title
+
+    Returns:
+        str: The formatted header
+    """
     col, _ = os.get_terminal_size()
     toprint = f"  {string}  "
     return f"{toprint:{'-'}{'^'}{col}}"
 
 
 def footer():
+    """Format a footer fitting the terminal size
+
+    Returns:
+        str: The formatted footer
+    """
     col, _ = os.get_terminal_size()
     return f"{'':{'-'}{'^'}{col}}"
