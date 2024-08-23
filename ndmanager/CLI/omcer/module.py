@@ -18,5 +18,6 @@ module-whatis "%s\n"
 setenv OPENMC_CROSS_SECTIONS "%s"
 """
     text = module_template % (description, description, str(libpath))
+    (NDMANAGER_MODULEPATH / filename).parent.mkdir(parents=True, exist_ok=True)
     with open(NDMANAGER_MODULEPATH / filename, "w", encoding="utf-8") as f:
         print(text, file=f)
