@@ -5,17 +5,17 @@ from pathlib import Path
 from typing import Dict, List
 
 try:
-    ENDF6_PATH = Path(os.environ["ENDF6_PATH"])
+    ENDF6_PATH = Path(os.environ["ENDF6_PATH"]).absolute()
 except KeyError:
     ENDF6_PATH = None
 
 try:
-    OPENMC_NUCLEAR_DATA = Path(os.environ["OPENMC_NUCLEAR_DATA"])
+    OPENMC_NUCLEAR_DATA = Path(os.environ["OPENMC_NUCLEAR_DATA"]).absolute()
 except KeyError:
     OPENMC_NUCLEAR_DATA = None
 
 try:
-    NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"])
+    NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"]).absolute()
 except KeyError:
     NDMANAGER_MODULEPATH = None
 
