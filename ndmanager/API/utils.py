@@ -11,7 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, META_SYMBOL, IAEA_ROOT
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, META_SYMBOL, IAEA_ROOT, TAPE_SHA1
 
 
 def get_url_paths(url, ext=""):
@@ -234,3 +234,8 @@ def fetch_sublibrary_list(libname: str) -> List[str]:
     hrefs.remove("000-NSUB-index.htm")
     subs = [s.split("-")[0] for s in hrefs]
     return subs
+
+
+def check_tape_integrity(libname: str, sub: str, nuclide: str) -> bool:
+    sha1 = compute_tape_sha1(libname, sub, nuclide)[f"{libname}/{sub}/{nuclide}"]
+    return sha1 == TAPE_SHA1[libname][f"{libname}/{sub}/{nuclide}"]

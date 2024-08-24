@@ -32,6 +32,7 @@ ndc = "ndmanager.CLI.chainer.main:main"
 [tool.setuptools]
 packages = ['ndmanager',
     'ndmanager.API',
+    'ndmanager.SHA1',
     'ndmanager.CLI.fetcher',
     'ndmanager.CLI.omcer',
     'ndmanager.CLI.chainer',
