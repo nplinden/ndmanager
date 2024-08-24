@@ -200,7 +200,16 @@ def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> Dict[str
 
 
 def fetch_lib_info(libname: str) -> str:
+    """Get the text of the 000-NSUB-index.htm file for a given library name
+
+    Args:
+        libname (str): The name of the desired evaluation
+
+    Returns:
+        str: The text of the 000-NSUB-index.htm file
+
+    """
     fancyname = ENDF6_LIBS[libname]["fancyname"]
     url = IAEA_ROOT + fancyname
     response = requests.get(url)
-    info = BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
+    return BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
