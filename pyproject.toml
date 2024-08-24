@@ -18,6 +18,9 @@ dependencies = [
     'beautifulsoup4'
 ]
 
+[project.optional-dependencies]
+test = ["pytest", "pytest-env", "pytest-cov"]
+
 [project.urls]
 Homepage = "https://github.com/nplinden/ndmanager"
 
@@ -32,4 +35,13 @@ packages = ['ndmanager',
     'ndmanager.CLI.fetcher',
     'ndmanager.CLI.omcer',
     'ndmanager.CLI.chainer',
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+env = [
+    "ENDF6_PATH=pytest-artifacts/endf6",
 ]

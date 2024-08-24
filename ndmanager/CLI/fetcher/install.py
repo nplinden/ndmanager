@@ -1,4 +1,5 @@
 """Definition and parser for the 'ndf install' command"""
+
 import argparse as ap
 import shutil
 import subprocess as sp
@@ -15,8 +16,7 @@ from tabulate import tabulate
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import download_endf6
-from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST,
-                            USERAGENT)
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST, USERAGENT
 from ndmanager.format import clear_line
 
 
@@ -84,7 +84,7 @@ def download(libname, sublib):
                 "wget",
                 "-r",
                 "--no-parent",
-                f'--user-agent="{USERAGENT}"',
+                USERAGENT,
                 '--reject html,htm,txt,tmp,"index*","robots*"',
                 f"https://www-nds.iaea.org/public/download-endf/{fancyname}/{sublib}/",
             ]
@@ -136,27 +136,27 @@ def download(libname, sublib):
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.dat"
         with open(tape, encoding="utf-8") as f:
             lines = f.readlines()
-        lines[
-            1
-        ] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
+        lines[1] = (
+            " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
+        )
         with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
     if libname == "cendl31" and sublib == "n":
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
         with open(tape, encoding="utf-8") as f:
             lines = f.readlines()
-        lines[
-            205
-        ] = " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
+        lines[205] = (
+            " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
+        )
         with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
 
         tape = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
         with open(tape, encoding="utf-8") as f:
             lines = f.readlines()
-        lines[
-            203
-        ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
+        lines[203] = (
+            "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
+        )
         with open(tape, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
 
