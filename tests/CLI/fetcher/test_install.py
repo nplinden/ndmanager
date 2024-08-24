@@ -35,5 +35,5 @@ def test_download_test():
 
 
 def test_install():
-    namespace = ap.Namespace(libraries=["endfb8"], sub=["n"], all=False)
+    namespace = ap.Namespace(libraries=["cendl32"], sub=["n"], all=False)
     install(namespace)

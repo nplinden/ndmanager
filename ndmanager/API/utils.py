@@ -5,7 +5,7 @@ import zipfile
 from contextlib import chdir
 from pathlib import Path
 import hashlib
-from typing import Dict
+from typing import Dict, List
 
 import requests
 from bs4 import BeautifulSoup
@@ -210,6 +210,27 @@ def fetch_lib_info(libname: str) -> str:
 
     """
     fancyname = ENDF6_LIBS[libname]["fancyname"]
-    url = IAEA_ROOT + fancyname
+    url = IAEA_ROOT + fancyname + "/000-NSUB-index.htm"
     response = requests.get(url)
     return BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
+
+
+def fetch_sublibrary_list(libname: str) -> List[str]:
+    """Get the list of available sublibraries for a given library name
+
+    Args:
+        libname (str): The name of the desired evaluation
+
+    Returns:
+        List[str]: The list of available sublibraries for a given library name
+
+    """
+    fancyname = ENDF6_LIBS[libname]["fancyname"]
+    url = IAEA_ROOT + fancyname
+
+    r = requests.get(url)
+    a_tags = BeautifulSoup(r.text, "html.parser").find_all("a")
+    hrefs = [a.get("href") for a in a_tags if "-index.htm" in a.get("href")]
+    hrefs.remove("000-NSUB-index.htm")
+    subs = [s.split("-")[0] for s in hrefs]
+    return subs
