@@ -114,6 +114,9 @@ def download(libname, sublib):
                     if nuclide.A == 0:
                         name += "0"
                     p.rename(p.parent / f"{name}.endf6")
+            else:
+                for p in Path(target).glob("*.dat"):
+                    p.rename(p.parent / f"{p.stem}.endf6")
 
     # Some erratafiles
     if libname == "endfb8" and sublib == "n":
@@ -133,7 +136,7 @@ def download(libname, sublib):
                 source = Path("n-005_B_010.endf")
                 shutil.move(source, ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6")
     if libname == "jeff33" and sublib == "tsl":
-        tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.dat"
+        tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.endf6"
         with open(tape, encoding="utf-8") as f:
             lines = f.readlines()
         lines[1] = (
