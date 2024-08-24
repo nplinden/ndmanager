@@ -24,6 +24,8 @@ USERAGENT = (
     ' Gecko/20100101 Firefox/26.0"'
 )
 
+IAEA_ROOT = "https://www-nds.iaea.org/public/download-endf/"
+
 ENDF6_LIBS: Dict[str, Dict[str, str | List[str]]] = {
     "jeff33": {
         "fancyname": "JEFF-3.3",

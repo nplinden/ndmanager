@@ -1,4 +1,5 @@
 """Entry point for the ndc command"""
+
 import argparse as ap
 
 from ndmanager.CLI.chainer.build import build_parser

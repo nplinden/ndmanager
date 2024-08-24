@@ -1,4 +1,5 @@
 """Definition and parser for the `ndc build` command"""
+
 import argparse as ap
 import shutil
 from contextlib import chdir

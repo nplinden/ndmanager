@@ -1,4 +1,5 @@
 """Entry point for the ndf command"""
+
 import argparse as ap
 
 from ndmanager.CLI.fetcher.info import info_parser

@@ -11,7 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, META_SYMBOL
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, META_SYMBOL, IAEA_ROOT
 
 
 def get_url_paths(url, ext=""):
@@ -197,3 +197,10 @@ def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> Dict[str
             return compute_lib_sha1(libname)
         return compute_sublib_sha1(libname, sub)
     return compute_tape_sha1(libname, sub, nuclide)
+
+
+def fetch_lib_info(libname: str) -> str:
+    fancyname = ENDF6_LIBS[libname]["fancyname"]
+    url = IAEA_ROOT + fancyname
+    response = requests.get(url)
+    info = BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text

@@ -1,4 +1,5 @@
 """Entry point for the `ndo` command"""
+
 import argparse as ap
 
 from ndmanager.CLI.omcer.build import build_parser

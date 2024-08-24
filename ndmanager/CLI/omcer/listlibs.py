@@ -1,4 +1,5 @@
 """Definition and parser for the `ndo install` command"""
+
 import os
 import textwrap
 

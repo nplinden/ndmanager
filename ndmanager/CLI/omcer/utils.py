@@ -1,4 +1,5 @@
 """A function that encapsulates nuclear data processing from OpenMC"""
+
 import time
 from multiprocessing import Pool
 from pathlib import Path

@@ -1,4 +1,5 @@
 """Generation of environment modulefiles for use in HPC"""
+
 from ndmanager.data import NDMANAGER_MODULEPATH
 
 

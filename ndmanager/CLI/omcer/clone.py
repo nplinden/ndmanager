@@ -1,4 +1,5 @@
 """Definition and parser for the `ndo clone` command"""
+
 import argparse as ap
 import shutil
 

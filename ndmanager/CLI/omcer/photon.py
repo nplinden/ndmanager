@@ -1,4 +1,5 @@
 """Some functions to process photon evaluations to the OpenMC format"""
+
 from pathlib import Path
 from typing import Dict
 

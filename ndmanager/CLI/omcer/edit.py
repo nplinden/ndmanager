@@ -1,4 +1,5 @@
 """Definition and parser for the `ndo sn301` command"""
+
 import argparse as ap
 import xml.etree.ElementTree as ET
 from pathlib import Path

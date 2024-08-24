@@ -1,4 +1,5 @@
 """Definition and parser for the `ndc list` command"""
+
 import argparse as ap
 import os
 import textwrap

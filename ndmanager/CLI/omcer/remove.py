@@ -1,4 +1,5 @@
 """Definition and parser for the `ndo remove` command"""
+
 import argparse as ap
 import shutil
 

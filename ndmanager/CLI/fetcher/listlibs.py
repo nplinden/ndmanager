@@ -1,4 +1,5 @@
 """Definition and parser for the 'ndf list' command"""
+
 import argparse as ap
 import os
 import textwrap
