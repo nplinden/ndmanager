@@ -1,3 +1,6 @@
+# Project specific
+pytest-artifacts
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

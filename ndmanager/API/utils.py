@@ -11,7 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, OPENMC_NUCLEAR_DATA
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, OPENMC_NUCLEAR_DATA, META_SYMBOL
 
 
 def get_url_paths(url, ext=""):
@@ -97,24 +97,25 @@ def set_nuclear_data(libname: str, chain: str = False):
         set_chain(libname)
 
 
-def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path):
+def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path | str):
     """Fetch an ENDF6 file from the IAEA website.
 
     Args:
         libname (str): The library to download from
         sub (str): The type of sublibrary to download
         nuclide (str): The nuclide in the GNDS name format
-        targetfile (str | None, optional): The name of the file
+        targetfile (str | Path): The path of the file
     """
     content = fetch_endf6(libname, sub, nuclide)
-    targetfile.parent.mkdir(parents=True, exist_ok=True)
-    with open(targetfile, "w", encoding="utf-8") as f:
+    target = Path(targetfile)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with open(target, "w", encoding="utf-8") as f:
         print(content, file=f)
 
 
 def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
     """Fetch an ENDF6 file from the IAEA website. If a filename is provided,
-    the tape will be save to file, otherwise it will be return as a string.
+    the tape will be saved to file, otherwise it will be return as a string.
 
     Args:
         libname (str): The library to download from
@@ -127,7 +128,8 @@ def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
     source = ENDF6_LIBS[libname]["source"] + f"/{sub}/"
     candidates = get_url_paths(source, ".zip")
     n = Nuclide.from_name(nuclide)
-    candidates = [c for c in candidates if f"{n.element}-{n.A}" in c]
+    candidates = [c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c]
+
     assert len(candidates) == 1
     url = candidates[0]
     with tempfile.TemporaryDirectory() as tmpdir:

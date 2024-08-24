@@ -1,4 +1,5 @@
 """Defining some data used throughout the code."""
+
 import os
 from pathlib import Path
 from typing import Dict, List
@@ -498,10 +499,10 @@ ATOMIC_SYMBOL: Dict[int | str, int | str] = {
     117: "Ts",
     118: "Og",
 }
-
 ATOMIC_SYMBOL |= {v: k for k, v in ATOMIC_SYMBOL.items()}
 
-META_SYMBOL: Dict[str, int] = {"G": 0, "M": 1, "N": 2, "O": 3}
+META_SYMBOL: Dict[str | int, int | str] = {"": 0, "M": 1, "N": 2, "O": 3}
+META_SYMBOL |= {v: k for k, v in META_SYMBOL.items()}
 
 TSL_NEUTRON: Dict[str, Dict[str, str]] = {
     "test": {

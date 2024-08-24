@@ -1,5 +1,7 @@
 """A class to manage nuclide names."""
+
 import re
+from pathlib import Path
 
 from ndmanager.data import ATOMIC_SYMBOL, META_SYMBOL
 
@@ -62,7 +64,7 @@ class Nuclide:
         return cls(Z, A, M)
 
     @classmethod
-    def from_file(cls, filename: str) -> "Nuclide":
+    def from_file(cls, filename: str | Path) -> "Nuclide":
         """Instanciate a nuclide using a path to an ENDF6 file, for files
         containing multiple MAT numbers, only the first nuclide will be
         returned
