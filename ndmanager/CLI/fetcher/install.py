@@ -121,7 +121,7 @@ def download(libname, sublib):
             with chdir(tmpdir):
                 cmds = [
                     "wget",
-                    f'--user-agent="{USERAGENT}"',
+                    USERAGENT,
                     "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf",
                 ]
                 sp.call(
