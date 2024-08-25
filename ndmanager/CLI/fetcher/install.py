@@ -59,7 +59,7 @@ def download_test():
     download_endf6("endfb8", "n", "Fe56", target / "n" / "Fe56.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
 
-    download_endf6("endfb8", "tsl", "Fe56", target / "tsl" / "tsl_0056_26-Fe-56.dat")
+    download_endf6("endfb8", "tsl", "Fe56", target / "tsl" / "tsl_0056_26-Fe-56.endf6")
 
     download_endf6("endfb8", "photo", "C0", target / "photo" / "C0.endf6")
     download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")

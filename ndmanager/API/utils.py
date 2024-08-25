@@ -49,7 +49,7 @@ def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path | str)
     content = fetch_endf6(libname, sub, nuclide)
     target = Path(targetfile)
     target.parent.mkdir(parents=True, exist_ok=True)
-    with open(target, "w", encoding="utf-8") as f:
+    with open(target, "w", encoding="utf-8", newline="") as f:
         print(content, file=f, end="")
 
 
@@ -81,7 +81,7 @@ def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
             with zipfile.ZipFile(zipname) as zf:
                 zf.extractall()
             datafile = f"{zipname.rstrip('.zip')}.dat"
-            with open(datafile, "r", encoding="utf-8") as f:
+            with open(datafile, "r", encoding="utf-8", newline="") as f:
                 return f.read()
 
 

@@ -13,6 +13,7 @@ from ndmanager.SHA1.jeff33 import JEFF33_SHA1
 from ndmanager.SHA1.jendl5 import JENDL5_SHA1
 from ndmanager.SHA1.tendl19 import TENDL19_SHA1
 from ndmanager.SHA1.tendl23 import TENDL23_SHA1
+from ndmanager.SHA1.test import TEST_SHA1
 
 
 try:
@@ -689,4 +690,5 @@ TAPE_SHA1 = {
     "jendl5": JENDL5_SHA1,
     "tendl19": TENDL19_SHA1,
     "tendl23": TENDL23_SHA1,
+    "test": TEST_SHA1,
 }
