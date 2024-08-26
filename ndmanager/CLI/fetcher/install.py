@@ -123,6 +123,7 @@ def download(libname, sublib):
                 download_single_file(target, url, zipname)
     errata(libname, sublib)
 
+
 def errata(libname, sublib):
     if libname == "endfb8" and sublib == "n":
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -160,6 +161,7 @@ def errata(libname, sublib):
         ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
         with open(target, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
+
 
 def install(args: ap.Namespace):
     """Download a set of libraries/sublibraries from the IAEA website
