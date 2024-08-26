@@ -5,7 +5,7 @@ import os
 import textwrap
 
 from ndmanager.data import ENDF6_LIBS
-from ndmanager.format import footer, header, get_terminal_size
+from ndmanager.format import footer, get_terminal_size, header
 
 
 def info_parser(subparsers: ap._SubParsersAction):

@@ -1,8 +1,10 @@
 """Set nuclear data paths for OpenMC"""
 
+from typing import List
+
 import openmc
 import openmc.data
-from typing import List
+
 from ndmanager.data import OPENMC_NUCLEAR_DATA
 
 

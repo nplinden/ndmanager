@@ -4,7 +4,7 @@ import os
 import textwrap
 
 from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA
-from ndmanager.format import header, get_terminal_size
+from ndmanager.format import get_terminal_size, header
 
 
 def listlibs_parser(subparsers):

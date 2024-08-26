@@ -7,7 +7,7 @@ import textwrap
 import yaml
 
 from ndmanager.data import OPENMC_NUCLEAR_DATA
-from ndmanager.format import footer, header, get_terminal_size
+from ndmanager.format import footer, get_terminal_size, header
 
 
 def list_parser(subparsers: ap._SubParsersAction):

@@ -6,15 +6,14 @@ from typing import Dict, List
 
 from ndmanager.SHA1.cendl31 import CENDL31_SHA1
 from ndmanager.SHA1.cendl32 import CENDL32_SHA1
-from ndmanager.SHA1.endfb71 import ENDFB71_SHA1
 from ndmanager.SHA1.endfb8 import ENDFB8_SHA1
-from ndmanager.SHA1.jeff311 import JEFF311_SHA1
+from ndmanager.SHA1.endfb71 import ENDFB71_SHA1
 from ndmanager.SHA1.jeff33 import JEFF33_SHA1
+from ndmanager.SHA1.jeff311 import JEFF311_SHA1
 from ndmanager.SHA1.jendl5 import JENDL5_SHA1
 from ndmanager.SHA1.tendl19 import TENDL19_SHA1
 from ndmanager.SHA1.tendl23 import TENDL23_SHA1
 from ndmanager.SHA1.test import TEST_SHA1
-
 
 try:
     ENDF6_PATH = Path(os.environ["ENDF6_PATH"]).absolute()

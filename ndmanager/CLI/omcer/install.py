@@ -8,7 +8,8 @@ from contextlib import chdir
 from pathlib import Path
 
 from ndmanager.CLI.omcer.module import xs_modulefile
-from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_LIBS, OPENMC_NUCLEAR_DATA
+from ndmanager.data import (NDMANAGER_MODULEPATH, OPENMC_LIBS,
+                            OPENMC_NUCLEAR_DATA)
 
 
 def install_parser(subparsers):

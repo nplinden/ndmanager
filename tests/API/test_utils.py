@@ -1,11 +1,8 @@
 import pytest
 
 from ndmanager.data import TAPE_SHA1
-from ndmanager.API.utils import (
-    get_url_paths,
-    download_endf6,
-    compute_lib_sha1,
-)
+from ndmanager.API.utils import ( get_url_paths, download_endf6,)
+from ndmanager.API.sha1 import compute_lib_sha1
 from pathlib import Path
 import hashlib
 
