@@ -309,7 +309,7 @@ ENDF6_SIZES = {
     "cendl32": {"n": 406146231},
 }
 
-OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
+OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {
     "official": {
         "endfb71": {
             "fancyname": "ENDF-B/VII.1",
@@ -318,6 +318,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "endfb-vii.1-hdf5",
             "info": "Official OpenMC library based on ENDF-B/VII.1",
             "homepage": "https://openmc.org/official-data-libraries/",
+            "size": 6242522633,
         },
         "endfb8": {
             "fancyname": "ENDF-B/VIII.0",
@@ -326,6 +327,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "endfb-viii.0-hdf5",
             "info": "Official OpenMC library based on ENDF-B/VIII.0",
             "homepage": "https://openmc.org/official-data-libraries/",
+            "size": 13679001942,
         },
         "jeff33": {
             "fancyname": "JEFF-3.3",
@@ -334,6 +336,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "jeff-3.3-hdf5",
             "info": "Official OpenMC library based on JEFF-3.3",
             "homepage": "https://openmc.org/official-data-libraries/",
+            "size": 9479124726,
         },
     },
     "lanl": {
@@ -344,6 +347,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "mcnp_endfb70",
             "info": "ENDF-B/VII.0 based library converted from ACE files distributed with MCNP5/6",
             "homepage": "https://openmc.org/lanl-data-libraries/",
+            "size": 2241962318,
         },
         "endfb71": {
             "fancyname": "ENDF-B/VII.1",
@@ -352,6 +356,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "mcnp_endfb71",
             "info": "ENDF-B/VII.1 based library converted from ACE files distributed with MCNP5/6",
             "homepage": "https://openmc.org/lanl-data-libraries/",
+            "size": 7186352635,
         },
         "endfb8": {
             "fancyname": "ENDF-B.VIII.0",
@@ -360,6 +365,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str]]] = {
             "extractedname": "lib80x_hdf5",
             "info": "ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National lab (LANL)",
             "homepage": "https://openmc.org/lanl-data-libraries/",
+            "size": 15774715647,
         },
     },
 }

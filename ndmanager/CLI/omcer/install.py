@@ -3,9 +3,13 @@
 import argparse as ap
 import shutil
 import subprocess as sp
+import tarfile
 import tempfile
 from contextlib import chdir
 from pathlib import Path
+
+import requests
+from tqdm import tqdm
 
 from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.data import (NDMANAGER_MODULEPATH, OPENMC_LIBS,
@@ -31,6 +35,43 @@ def install_parser(subparsers):
     parser.set_defaults(func=install)
 
 
+def download(url, tarname, family, lib):
+    r = requests.get(url, stream=True)
+
+    total = int(r.headers.get("content-length", 0))
+    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+    pbar = tqdm(
+        desc=f"Downloading {family}/{lib}",
+        total=total,
+        unit="iB",
+        unit_scale=True,
+        unit_divisor=1024,
+        bar_format=bar_format,
+    )
+    with (open(tarname, "wb") as f):
+        for data in r.iter_content(chunk_size=1024):
+            size = f.write(data)
+            pbar.update(size)
+    pbar.close()
+
+
+def extract(tarname, total, family, lib):
+    tar = tarfile.open(tarname)
+    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+    pbar = tqdm(
+        desc=f"Extracting  {family}/{lib}",
+        total=int(total),
+        unit="iB",
+        unit_scale=True,
+        unit_divisor=1024,
+        bar_format=bar_format,
+    )
+    for item in tar:
+        tar.extract(item, ".")
+        pbar.update(item.size)
+    pbar.close()
+
+
 def install(args: ap.Namespace):
     """Download and install a OpenMC nuclear data library from the official website
 
@@ -42,9 +83,11 @@ def install(args: ap.Namespace):
             with chdir(tmpdir):
                 family, lib = libname.split("/")
                 dico = OPENMC_LIBS[family][lib]
-                sp.run(["wget", "-q", "--show-progress", dico["source"]], check=True)
-                sp.run(["tar", "xf", dico["tarname"]], check=True)
 
+                download(dico["source"], dico["tarname"], family, lib)
+                extract(dico["tarname"], dico["size"], family, lib)
+
+                # sp.run(["tar", "xf", dico["tarname"]], check=True)
                 source = Path(dico["extractedname"])
                 target = OPENMC_NUCLEAR_DATA / family / lib
                 target.parent.mkdir(exist_ok=True, parents=True)

@@ -255,7 +255,7 @@ def install(args: ap.Namespace):
             if isub == 0:
                 desc = f"{library} ┬── {sub}"
             elif isub == len(sublibraries) - 1:
-                desc = f"{''.ljust(len(library))} └── {sub}"
+                desc = f"{''.ljust(len(library))} ╰── {sub}"
             else:
                 desc = f"{''.ljust(len(library))} ├── {sub}"
             desc = f"{desc:<20}"
