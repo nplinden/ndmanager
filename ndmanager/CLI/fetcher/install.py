@@ -59,6 +59,7 @@ def download_test():
     target = ENDF6_PATH / "test"
     download_endf6("endfb8", "n", "Fe56", target / "n" / "Fe56.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
+    download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
 
     download_endf6("endfb8", "tsl", "Fe56", target / "tsl" / "tsl_0056_26-Fe-56.endf6")
 

@@ -383,7 +383,7 @@ SUBLIBRARIES: Dict[str, str] = {
 
 NSUB_IDS = {
     0: "g",
-    3: "e",
+    3: "photo",
     4: "decay",
     5: "sfpy",
     6: "ard",
