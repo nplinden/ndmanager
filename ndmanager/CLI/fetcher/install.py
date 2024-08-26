@@ -2,29 +2,22 @@
 
 import argparse as ap
 import shutil
-import subprocess as sp
 import tempfile
-import time
 import zipfile
 from contextlib import chdir
 from functools import reduce
-from itertools import cycle, product
 from multiprocessing import Pool
-from os import PathLike
 from pathlib import Path
+from typing import Tuple
 
 import requests
 from bs4 import BeautifulSoup
-from tabulate import tabulate
 from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
-from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.sha1 import compute_sublib_sha1
 from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
 from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT,
-                            SUBLIBRARIES_SHORTLIST, USERAGENT)
-from ndmanager.format import clear_line
+                            SUBLIBRARIES_SHORTLIST)
 
 
 def install_parser(subparsers: ap._SubParsersAction):
@@ -57,6 +50,7 @@ def install_parser(subparsers: ap._SubParsersAction):
     group.add_argument(
         "--all", "-a", action="store_true", help="Download all sublibraries."
     )
+    group.add_argument("-j", type=int, default=1, help="Number of concurent processes")
     parser.set_defaults(func=install)
 
 
@@ -74,93 +68,160 @@ def download_test():
     download_endf6("endfb8", "ard", "Fe0", target / "ard" / "Fe0.endf6")
 
 
-def download_single_file(target: str | PathLike, url: str, zipname: str):
+def download_single_file(library: str, sublibrary: str, url: str, zipname: str) -> None:
     """Download a zip file from a web directory, unzip it and move the tape
     contained in the file to the target directory, renaming the tape to the
     correct scheme in the process.
 
     Args:
-        target (str | PathLike): Path to save the tape to
-        url (str): URL adress of the file
-        zipname (str): The name of the downloaded zip file
+        library (str): The name of the library to download from
+        sublibrary (str): The type of sublibrary to download
+        url (str): The url at which the file is stored
+        zipname (str): The name of the zip file to download
     """
+    target = Path(ENDF6_PATH / library / sublibrary)
     content = requests.get(url + zipname).content
     with open(zipname, mode="wb") as f:
         f.write(content)
     with zipfile.ZipFile(zipname, "r") as zf:
         zf.extractall()
-    filename = f"{zipname.rstrip('.zip')}.dat"
+    filename = f"{zipname[:-4]}.dat"
+
+    if errata(library, sublibrary, filename):
+        return
+
     tape = Endf6(filename)
     if tape.sublibrary == "tsl":
-        Path(filename).rename(target / filename.replace(".dat", ".endf6"))
+        name = target / filename.replace(".dat", ".endf6")
+        Path(filename).rename(name)
     elif tape.nuclide.A == 0:
-        Path(filename).rename(target / f"{tape.nuclide.name}0.endf6")
+        name = target / f"{tape.nuclide.name}0.endf6"
+        Path(filename).rename(name)
     else:
-        Path(filename).rename(target / f"{tape.nuclide.name}.endf6")
+        name = target / f"{tape.nuclide.name}.endf6"
+        Path(filename).rename(name)
 
 
-def download(libname, sublib):
-    if sublib not in fetch_sublibrary_list(libname):
-        raise ValueError(f"{sublib} is not available for {libname}")
+def download_single_file_map(args: Tuple[str, str, str, str]) -> None:
+    """Explode a tuple argument to use `download_single_file_map` within Pool.imap
 
-    target = Path(ENDF6_PATH / libname / sublib)
+    Args:
+        args (Tuple[str, str, str, str]): The arguments of `download_single_file`
+                                          grouped in a tuple.
+    """
+    download_single_file(*args)
+
+
+def download(
+    library: str, sublibrary: str, processes: int = 1, desc: str = None
+) -> None:
+    """Download an entire sublibrary from the IAEA website given a library and
+    sublibrary name. The process can be performed in parallel if the `process`
+    parameter is passed.
+    A description can be provided to be used by the `tqdm` progress bar.
+
+    Args:
+        library (str): The library to download from
+        sublibrary (str): The type of sublibrary to download
+        processes (int, optional): The number of processes to allocate. Defaults to 1.
+        desc (str, optional): A description for the `tqdm` progress bar. Defaults to None.
+
+    Raises:
+        ValueError: If the sublibrary does not exist for the given library
+        r.raise_for_status: If the IAEA website is unreachable
+    """
+    if sublibrary not in fetch_sublibrary_list(library):
+        raise ValueError(f"{sublibrary} is not available for {library}")
+
+    target = Path(ENDF6_PATH / library / sublibrary)
     shutil.rmtree(target, ignore_errors=True)
     target.mkdir(exist_ok=True, parents=True)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
-            url = IAEA_ROOT + ENDF6_LIBS[libname]["fancyname"] + f"/{sublib}/"
+            url = IAEA_ROOT + ENDF6_LIBS[library]["fancyname"] + f"/{sublibrary}/"
             r = requests.get(url)
             if not r.ok:
                 raise r.raise_for_status()
             parsed = BeautifulSoup(r.text, "html.parser").find_all("a")
             znames = [n.get("href") for n in parsed if n.get("href").endswith(".zip")]
 
-            pbar = tqdm(znames)
-            for zipname in pbar:
-                description = f"{libname}/{sublib}/{zipname}"
-                pbar.set_description(f"{description:<40}")
-                download_single_file(target, url, zipname)
-    errata(libname, sublib)
+            if processes == 1:
+                pbar = tqdm(znames)
+                for zipname in pbar:
+                    description = f"{library}/{sublibrary}/{zipname}"
+                    pbar.set_description(f"{description:<40}")
+                    download_single_file(library, sublibrary, url, zipname)
+            else:
+                args = [(library, sublibrary, url, zipname) for zipname in znames]
+                with Pool(processes) as p:
+                    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+                    r = list(
+                        tqdm(
+                            p.imap(download_single_file_map, args),
+                            desc=desc,
+                            total=len(args),
+                            bar_format=bar_format,
+                        )
+                    )
 
 
-def errata(libname, sublib):
-    if libname == "endfb8" and sublib == "n":
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with chdir(tmpdir):
-                url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
-                tape = requests.get(url).text
-                target = ENDF6_PATH / f"{libname}/{sublib}/B10.endf6"
-                with open(target, "w", encoding="utf-8", newline="") as f:
-                    f.write(tape)
-    if libname == "jeff33" and sublib == "tsl":
-        target = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.endf6"
-        with open(target, encoding="utf-8") as f:
-            lines = f.readlines()
-        lines[
-            1
-        ] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
-        with open(target, "w", encoding="utf-8", newline="") as f:
-            print("".join(lines), file=f)
+def errata(library: str, sublibrary: str, tapename: str) -> bool:
+    """Download some library-specific errata.
 
-    if libname == "cendl31" and sublib == "n":
-        target = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
-        with open(target, encoding="utf-8") as f:
-            lines = f.readlines()
-        lines[
-            205
-        ] = " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
-        with open(target, "w", encoding="utf-8") as f:
-            print("".join(lines), file=f)
+    Args:
+        library (str): The library to download from
+        sublibrary (str): The type of sublibrary to download
+        tapename (str): The name of the name to check errata for
 
-        target = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
-        with open(target, encoding="utf-8") as f:
-            lines = f.readlines()
-        lines[
-            203
-        ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
-        with open(target, "w", encoding="utf-8") as f:
-            print("".join(lines), file=f)
+    Returns:
+        bool: Wether an errata was found and applied to the tape
+    """
+    if library == "endfb8" and sublibrary == "n":
+        if tapename == "n_0525_5-B-10.dat":
+            url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
+            tape = requests.get(url).text
+            target = ENDF6_PATH / f"{library}/{sublibrary}/B10.endf6"
+            with open(target, "w", encoding="utf-8", newline="") as f:
+                f.write(tape)
+            return True
+    if library == "jeff33" and sublibrary == "tsl":
+        if tapename == "tsl_0026_4-Be.dat":
+            with open(tapename, encoding="utf-8") as f:
+                lines = f.readlines()
+            lines[1] = (
+                " 1.260000+2 8.934800+0         -1          0"
+                "          2          0  26 1451    1\n"
+            )
+            target = ENDF6_PATH / f"{library}/{sublibrary}" / "tsl_0026_4-Be.endf6"
+            with open(target, "w", encoding="utf-8", newline="") as f:
+                print("".join(lines), file=f)
+            return True
+    if library == "cendl31" and sublibrary == "n":
+        if tapename == "n_022-Ti-47_2228.dat":
+            with open(tapename, encoding="utf-8") as f:
+                lines = f.readlines()
+            lines[205] = (
+                " 8) YUAN Junqian,WANG Yongchang,etc.       "
+                "        ,16,(1),57,92012228 1451  205\n"
+            )
+
+            target = ENDF6_PATH / f"{library}/{sublibrary}" / "Ti47.endf6"
+            with open(target, "w", encoding="utf-8") as f:
+                print("".join(lines), file=f)
+            return True
+        if tapename == "n_005-B-10_0525.dat":
+            with open(tapename, encoding="utf-8") as f:
+                lines = f.readlines()
+            lines[203] = (
+                "21)   Day R.B. and Walt M.  Phys.rev.117,1330"
+                " (1960)               525 1451  203\n"
+            )
+            target = ENDF6_PATH / f"{library}/{sublibrary}" / "B10.endf6"
+            with open(target, "w", encoding="utf-8") as f:
+                print("".join(lines), file=f)
+            return True
+    return False
 
 
 def install(args: ap.Namespace):
@@ -186,10 +247,18 @@ def install(args: ap.Namespace):
     avail = {}
     for library in libraries:
         avail[library] = fetch_sublibrary_list(library)
-    to_download = [
-        (lib, sub)
-        for lib, sub in product(libraries, sublibraries)
-        if sub in avail[library]
-    ]
-    for library, sublibrary in to_download:
-        download(library, sublibrary)
+    to_download = []
+    for library in libraries:
+        sublibraries = set(fetch_sublibrary_list(library)) & set(sublibraries)
+        for isub, sub in enumerate(sublibraries):
+            if isub == 0:
+                desc = f"{library} ┬── {sub}"
+            elif isub == len(sublibraries) - 1:
+                desc = f"{''.ljust(len(library))} └── {sub}"
+            else:
+                desc = f"{''.ljust(len(library))} ├── {sub}"
+            desc = f"{desc:<20}"
+            to_download.append((library, sub, desc))
+
+    for library, sublibrary, desc in to_download:
+        download(library, sublibrary, args.j, desc)
