@@ -381,6 +381,22 @@ SUBLIBRARIES: Dict[str, str] = {
     "he3": "Incident-He3 Data",
 }
 
+NSUB_IDS = {
+    0: "g",
+    3: "e",
+    4: "decay",
+    5: "sfpy",
+    6: "ard",
+    10: "n",
+    11: "nfpy",
+    12: "tsl",
+    10010: "p",
+    10020: "d",
+    10030: "t",
+    20030: "he3",
+    20040: "he4",
+}
+
 SUBLIBRARIES_SHORTLIST: List[str] = [
     "n",
     "decay",

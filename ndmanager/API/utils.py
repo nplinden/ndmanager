@@ -1,18 +1,16 @@
 """Some utility functions"""
 
-import hashlib
 import tempfile
 import zipfile
 from contextlib import chdir
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT, META_SYMBOL,
-                            TAPE_SHA1)
+from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT, META_SYMBOL
 
 
 def get_url_paths(url, ext=""):

@@ -92,5 +92,15 @@ def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> Dict[str
 
 
 def check_tape_integrity(libname: str, sub: str, nuclide: str) -> bool:
+    """Checks that the installed tape SHA1 sum matches the reference one
+
+    Args:
+        libname (str): The name of the desired evaluation
+        sub (str): The name of the ENDF6 sublibrary
+        nuclide (str): The name of the nuclide in the GNDS format
+
+    Returns:
+        bool: Wether the tape is valid
+    """
     sha1 = compute_tape_sha1(libname, sub, nuclide)[f"{libname}/{sub}/{nuclide}"]
     return sha1 == TAPE_SHA1[libname][f"{libname}/{sub}/{nuclide}"]

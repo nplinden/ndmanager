@@ -10,14 +10,19 @@ from contextlib import chdir
 from functools import reduce
 from itertools import cycle, product
 from multiprocessing import Pool
+from os import PathLike
 from pathlib import Path
 
+import requests
+from bs4 import BeautifulSoup
 from tabulate import tabulate
+from tqdm import tqdm
 
+from ndmanager.API.endf6 import Endf6
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.utils import download_endf6
-from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, SUBLIBRARIES_SHORTLIST,
-                            USERAGENT)
+from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
+from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT,
+                            SUBLIBRARIES_SHORTLIST, USERAGENT)
 from ndmanager.format import clear_line
 
 
@@ -66,6 +71,54 @@ def download_test():
     download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")
     download_endf6("endfb8", "photo", "Fe0", target / "photo" / "Fe0.endf6")
     download_endf6("endfb8", "ard", "Fe0", target / "ard" / "Fe0.endf6")
+
+
+def download_single_file(target: str | PathLike, url: str, zipname: str):
+    """Download a zip file from a web directory, unzip it and move the tape
+    contained in the file to the target directory, renaming the tape to the
+    correct scheme in the process.
+
+    Args:
+        target (str | PathLike): Path to save the tape to
+        url (str): URL adress of the file
+        zipname (str): The name of the downloaded zip file
+    """
+    content = requests.get(url + zipname).content
+    with open(zipname, mode="wb") as f:
+        f.write(content)
+    with zipfile.ZipFile(zipname, "r") as zf:
+        zf.extractall()
+    filename = f"{zipname.rstrip('.zip')}.dat"
+    tape = Endf6(filename)
+    if tape.sublibrary == "tsl":
+        Path(filename).rename(target / filename.replace(".dat", ".endf6"))
+    elif tape.nuclide.A == 0:
+        Path(filename).rename(target / f"{tape.nuclide.name}0.endf6")
+    else:
+        Path(filename).rename(target / f"{tape.nuclide.name}.endf6")
+
+
+def download_(libname, sublib):
+    if sublib not in fetch_sublibrary_list(libname):
+        raise ValueError(f"{sublib} is not available for {libname}")
+
+    target = Path(ENDF6_PATH / libname / sublib)
+    shutil.rmtree(target, ignore_errors=True)
+    target.mkdir(exist_ok=True, parents=True)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with chdir(tmpdir):
+            url = IAEA_ROOT + ENDF6_LIBS[libname]["fancyname"] + f"/{sublib}/"
+            r = requests.get(url)
+            if not r.ok:
+                raise r.raise_for_status()
+            parsed = BeautifulSoup(r.text, "html.parser").find_all("a")
+            znames = [n.get("href") for n in parsed if n.get("href").endswith(".zip")]
+
+            pbar = tqdm(znames)
+            for zipname in pbar:
+                pbar.set_description(f"{libname}/{sublib}/{zipname}")
+                download_single_file(target, url, zipname)
 
 
 def download(libname, sublib):
@@ -173,39 +226,27 @@ def install(args: ap.Namespace):
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-    libs = args.libraries
-    if "test" in libs:
+    libraries = args.libraries
+    if "test" in libraries:
         download_test()
-        libs.remove("test")
-    if not libs:
+        libraries.remove("test")
+    if not libraries:
         return
     if args.sub is not None:
-        sub = args.sub
+        sublibraries = args.sub
     elif args.all:
-        sub = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in libs]
-        sub = list(reduce(lambda x, y: x | y, sub))
+        sublibraries = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in libraries]
+        sublibraries = list(reduce(lambda x, y: x | y, sublibraries))
     else:
-        sub = SUBLIBRARIES_SHORTLIST
-    stargs = list(product(libs, sub))
+        sublibraries = SUBLIBRARIES_SHORTLIST
 
-    table = [[lib] + ["..." for __ in sub] for lib in libs]
-    print(tabulate(table, [] + sub, tablefmt="rounded_outline"))
-
-    with Pool() as p:
-        results = [p.apply_async(download, a) for a in stargs]
-        c = cycle([".", "..", "..."])
-
-        while True:
-            time.sleep(0.5)
-            isdone = [r.ready() for r in results]
-            symbols = [r.get() if r.ready() else next(c) for r in results]
-
-            progress = []
-            for ilib, lib in enumerate(libs):
-                left, right = ilib * len(sub), (ilib + 1) * len(sub)
-                progress.append([lib] + symbols[left:right])
-
-            clear_line(len(libs) + 4)
-            print(tabulate(progress, [] + sub, tablefmt="rounded_outline"))
-            if all(isdone):
-                break
+    avail = {}
+    for library in libraries:
+        avail[library] = fetch_sublibrary_list(library)
+    to_download = [
+        (lib, sub)
+        for lib, sub in product(libraries, sublibraries)
+        if sub in avail[library]
+    ]
+    for library, sublibrary in to_download:
+        download_(library, sublibrary)
