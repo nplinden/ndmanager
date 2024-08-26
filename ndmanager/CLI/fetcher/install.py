@@ -20,6 +20,7 @@ from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.sha1 import compute_sublib_sha1
 from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
 from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT,
                             SUBLIBRARIES_SHORTLIST, USERAGENT)
@@ -98,7 +99,7 @@ def download_single_file(target: str | PathLike, url: str, zipname: str):
         Path(filename).rename(target / f"{tape.nuclide.name}.endf6")
 
 
-def download_(libname, sublib):
+def download(libname, sublib):
     if sublib not in fetch_sublibrary_list(libname):
         raise ValueError(f"{sublib} is not available for {libname}")
 
@@ -117,108 +118,48 @@ def download_(libname, sublib):
 
             pbar = tqdm(znames)
             for zipname in pbar:
-                pbar.set_description(f"{libname}/{sublib}/{zipname}")
+                description = f"{libname}/{sublib}/{zipname}"
+                pbar.set_description(f"{description:<40}")
                 download_single_file(target, url, zipname)
+    errata(libname, sublib)
 
-
-def download(libname, sublib):
-    """Download a library/sublibrary from the IAEA website.
-
-    Args:
-        libname (str): Name of the desired library
-        sublib (str): Name of the desired sublibrary
-
-    Returns:
-        str: A tick mark
-    """
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with chdir(tmpdir):
-            fancyname = ENDF6_LIBS[libname]["fancyname"]
-            cmds = [
-                "wget",
-                "-r",
-                "--no-parent",
-                USERAGENT,
-                '--reject html,htm,txt,tmp,"index*","robots*"',
-                f"https://www-nds.iaea.org/public/download-endf/{fancyname}/{sublib}/",
-            ]
-
-            code = sp.call(
-                args=" ".join(cmds), shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL
-            )
-            if code != 0:
-                return "✕"
-
-            source = Path(
-                f"www-nds.iaea.org/public/download-endf/{fancyname}/{sublib}/"
-            )
-            for p in source.glob("*zip"):
-                with zipfile.ZipFile(p, "r") as zf:
-                    zf.extractall(p.parent)
-                p.unlink()
-
-            target = ENDF6_PATH / f"{libname}/{sublib}"
-            target.parent.mkdir(exist_ok=True, parents=True)
-            shutil.rmtree(target, ignore_errors=True)
-            shutil.move(source, target)
-            if sublib not in ["tsl"]:
-                for p in Path(target).glob("*.dat"):
-                    nuclide = Nuclide.from_file(p)
-                    name = Nuclide.from_file(p).name
-                    if nuclide.A == 0:
-                        name += "0"
-                    p.rename(p.parent / f"{name}.endf6")
-            else:
-                for p in Path(target).glob("*.dat"):
-                    p.rename(p.parent / f"{p.stem}.endf6")
-
-    # Some erratafiles
+def errata(libname, sublib):
     if libname == "endfb8" and sublib == "n":
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
-                cmds = [
-                    "wget",
-                    USERAGENT,
-                    "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf",
-                ]
-                sp.call(
-                    args=" ".join(cmds),
-                    shell=True,
-                    stdout=sp.DEVNULL,
-                    stderr=sp.DEVNULL,
-                )
-                source = Path("n-005_B_010.endf")
-                shutil.move(source, ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6")
+                url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
+                tape = requests.get(url).text
+                target = ENDF6_PATH / f"{libname}/{sublib}/B10.endf6"
+                with open(target, "w", encoding="utf-8", newline="") as f:
+                    f.write(tape)
     if libname == "jeff33" and sublib == "tsl":
-        tape = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.endf6"
-        with open(tape, encoding="utf-8") as f:
+        target = ENDF6_PATH / f"{libname}/{sublib}" / "tsl_0026_4-Be.endf6"
+        with open(target, encoding="utf-8") as f:
             lines = f.readlines()
         lines[
             1
         ] = " 1.260000+2 8.934800+0         -1          0          2          0  26 1451    1\n"
-        with open(tape, "w", encoding="utf-8") as f:
+        with open(target, "w", encoding="utf-8", newline="") as f:
             print("".join(lines), file=f)
+
     if libname == "cendl31" and sublib == "n":
-        tape = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
-        with open(tape, encoding="utf-8") as f:
+        target = ENDF6_PATH / f"{libname}/{sublib}" / "Ti47.endf6"
+        with open(target, encoding="utf-8") as f:
             lines = f.readlines()
         lines[
             205
         ] = " 8) YUAN Junqian,WANG Yongchang,etc.               ,16,(1),57,92012228 1451  205\n"
-        with open(tape, "w", encoding="utf-8") as f:
+        with open(target, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
 
-        tape = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
-        with open(tape, encoding="utf-8") as f:
+        target = ENDF6_PATH / f"{libname}/{sublib}" / "B10.endf6"
+        with open(target, encoding="utf-8") as f:
             lines = f.readlines()
         lines[
             203
         ] = "21)   Day R.B. and Walt M.  Phys.rev.117,1330 (1960)               525 1451  203\n"
-        with open(tape, "w", encoding="utf-8") as f:
+        with open(target, "w", encoding="utf-8") as f:
             print("".join(lines), file=f)
-
-    return "✓"
-
 
 def install(args: ap.Namespace):
     """Download a set of libraries/sublibraries from the IAEA website
@@ -249,4 +190,4 @@ def install(args: ap.Namespace):
         if sub in avail[library]
     ]
     for library, sublibrary in to_download:
-        download_(library, sublibrary)
+        download(library, sublibrary)
