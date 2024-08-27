@@ -252,13 +252,13 @@ def install(args: ap.Namespace):
 
     to_download = []
     for library in libraries:
-        sublibraries = sorted(list(set(fetch_sublibrary_list(library)) & set(sublibraries)))
-        for isub, sub in enumerate(sublibraries):
-            if len(sublibraries) == 1:
+        localsub = sorted(list(set(fetch_sublibrary_list(library)) & set(sublibraries)))
+        for isub, sub in enumerate(localsub ):
+            if len(localsub ) == 1:
                 desc = f"{library} ─── {sub}"
             if isub == 0:
                 desc = f"{library} ┬── {sub}"
-            elif isub == len(sublibraries) - 1:
+            elif isub == len(localsub) - 1:
                 desc = f"{''.ljust(len(library))} ╰── {sub}"
             else:
                 desc = f"{''.ljust(len(library))} ├── {sub}"
