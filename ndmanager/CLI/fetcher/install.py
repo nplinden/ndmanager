@@ -191,7 +191,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
             with open(target, "w", encoding="utf-8", newline="") as f:
                 f.write(tape)
             return True
-    if library == "jeff33" and sublibrary == "tsl":
+    if library in ["jeff311", "jeff33"] and sublibrary == "tsl":
         if tapename == "tsl_0026_4-Be.dat":
             with open(tapename, encoding="utf-8") as f:
                 lines = f.readlines()
