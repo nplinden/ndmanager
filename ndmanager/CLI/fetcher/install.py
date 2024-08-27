@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
-from ndmanager.data import (ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT,
+from ndmanager.data import (ENDF6_LIBS, NDMANAGER_ENDF6, IAEA_ROOT,
                             SUBLIBRARIES_SHORTLIST)
 
 
@@ -56,7 +56,7 @@ def install_parser(subparsers: ap._SubParsersAction):
 
 def download_test():
     """Download a minimal library for testing purposes"""
-    target = ENDF6_PATH / "test"
+    target = NDMANAGER_ENDF6 / "test"
     download_endf6("endfb8", "n", "Fe56", target / "n" / "Fe56.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
     download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
@@ -80,7 +80,7 @@ def download_single_file(library: str, sublibrary: str, url: str, zipname: str) 
         url (str): The url at which the file is stored
         zipname (str): The name of the zip file to download
     """
-    target = Path(ENDF6_PATH / library / sublibrary)
+    target = Path(NDMANAGER_ENDF6 / library / sublibrary)
     content = requests.get(url + zipname).content
     with open(zipname, mode="wb") as f:
         f.write(content)
@@ -134,7 +134,7 @@ def download(
     if sublibrary not in fetch_sublibrary_list(library):
         raise ValueError(f"{sublibrary} is not available for {library}")
 
-    target = Path(ENDF6_PATH / library / sublibrary)
+    target = Path(NDMANAGER_ENDF6 / library / sublibrary)
     shutil.rmtree(target, ignore_errors=True)
     target.mkdir(exist_ok=True, parents=True)
 
@@ -182,7 +182,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
         if tapename == "n_0525_5-B-10.dat":
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
             tape = requests.get(url).text
-            target = ENDF6_PATH / f"{library}/{sublibrary}/B10.endf6"
+            target = NDMANAGER_ENDF6 / f"{library}/{sublibrary}/B10.endf6"
             with open(target, "w", encoding="utf-8", newline="") as f:
                 f.write(tape)
             return True
@@ -194,7 +194,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
                 " 1.260000+2 8.934800+0         -1          0"
                 "          2          0  26 1451    1\n"
             )
-            target = ENDF6_PATH / f"{library}/{sublibrary}" / "tsl_0026_4-Be.endf6"
+            target = NDMANAGER_ENDF6 / f"{library}/{sublibrary}" / "tsl_0026_4-Be.endf6"
             with open(target, "w", encoding="utf-8", newline="") as f:
                 print("".join(lines), file=f)
             return True
@@ -207,7 +207,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
                 "        ,16,(1),57,92012228 1451  205\n"
             )
 
-            target = ENDF6_PATH / f"{library}/{sublibrary}" / "Ti47.endf6"
+            target = NDMANAGER_ENDF6 / f"{library}/{sublibrary}" / "Ti47.endf6"
             with open(target, "w", encoding="utf-8") as f:
                 print("".join(lines), file=f)
             return True
@@ -218,7 +218,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
                 "21)   Day R.B. and Walt M.  Phys.rev.117,1330"
                 " (1960)               525 1451  203\n"
             )
-            target = ENDF6_PATH / f"{library}/{sublibrary}" / "B10.endf6"
+            target = NDMANAGER_ENDF6 / f"{library}/{sublibrary}" / "B10.endf6"
             with open(target, "w", encoding="utf-8") as f:
                 print("".join(lines), file=f)
             return True

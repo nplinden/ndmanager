@@ -4,7 +4,7 @@ import argparse as ap
 import os
 import textwrap
 
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH
+from ndmanager.data import ENDF6_LIBS, NDMANAGER_ENDF6
 from ndmanager.format import footer, get_terminal_size, header
 
 
@@ -27,7 +27,7 @@ def listlibs(*args):
     lst.append(header("Available libraries"))
     for libname, libdict in ENDF6_LIBS.items():
         fancyname = libdict["fancyname"]
-        if (ENDF6_PATH / libname).exists():
+        if (NDMANAGER_ENDF6 / libname).exists():
             check = "✓"
         else:
             check = " "

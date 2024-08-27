@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import ENDF6_PATH
+from ndmanager.data import NDMANAGER_ENDF6
 
 
 def remove_parser(subparsers: ap._SubParsersAction):
@@ -31,7 +31,7 @@ def remove(args: ap.Namespace):
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-    libraries = [ENDF6_PATH / lib for lib in args.library]
+    libraries = [NDMANAGER_ENDF6 / lib for lib in args.library]
     for library in libraries:
         if library.exists():
             shutil.rmtree(library)

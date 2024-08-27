@@ -6,7 +6,7 @@ NDChainer module
 
 The NDChainer provides the ``ndc`` command to manage your chain files for
 use with OpenMC.
-All chain files are stored in the ``$OPENMC_NUCLEAR_DATA/chains`` directory
+All chain files are stored in the ``$NDMANAGER_HDF5/chains`` directory
 
 ``list``
 --------

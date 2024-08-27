@@ -6,7 +6,7 @@ import textwrap
 
 import yaml
 
-from ndmanager.data import OPENMC_NUCLEAR_DATA
+from ndmanager.data import NDFMANAGER_HDF5
 from ndmanager.format import footer, get_terminal_size, header
 
 
@@ -25,7 +25,7 @@ def list_parser(subparsers: ap._SubParsersAction):
 def listchains(args: ap.Namespace):
     """List the available chains"""
     col, _ = get_terminal_size()
-    chaindir = OPENMC_NUCLEAR_DATA / "chains"
+    chaindir = NDFMANAGER_HDF5 / "chains"
     lst = [header("Available Chains")]
     dico = {}
     if chaindir.exists():

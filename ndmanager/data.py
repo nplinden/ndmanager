@@ -16,14 +16,19 @@ from ndmanager.SHA1.tendl23 import TENDL23_SHA1
 from ndmanager.SHA1.test import TEST_SHA1
 
 try:
-    ENDF6_PATH = Path(os.environ["ENDF6_PATH"]).absolute()
+    NDMANAGER_ENDF6 = Path(os.environ["NDMANAGER_ENDF6"]).absolute()
 except KeyError:
-    ENDF6_PATH = None
+    NDMANAGER_ENDF6 = None
 
 try:
-    OPENMC_NUCLEAR_DATA = Path(os.environ["OPENMC_NUCLEAR_DATA"]).absolute()
+    NDFMANAGER_HDF5 = Path(os.environ["NDMANAGER_HDF5"]).absolute()
 except KeyError:
-    OPENMC_NUCLEAR_DATA = None
+    NDFMANAGER_HDF5 = None
+
+# try:
+#     OPENMC_NUCLEAR_DATA = Path(os.environ["NDMANAGER_CHAIN"]).absolute()
+# except KeyError:
+#     OPENMC_NUCLEAR_DATA = None
 
 try:
     NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"]).absolute()

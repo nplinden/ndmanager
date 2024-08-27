@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import OPENMC_NUCLEAR_DATA
+from ndmanager.data import NDFMANAGER_HDF5
 
 
 def remove_parser(subparsers):
@@ -29,7 +29,7 @@ def remove(args: ap.Namespace):
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-    libraries = [OPENMC_NUCLEAR_DATA / lib for lib in args.library]
+    libraries = [NDFMANAGER_HDF5 / lib for lib in args.library]
     for library in libraries:
         if library.exists():
             shutil.rmtree(library)

@@ -3,7 +3,7 @@
 from typing import Dict
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_PATH
+from ndmanager.data import NDMANAGER_ENDF6
 
 
 def list_endf6(sublibrary: str, params: Dict[str, str]):
@@ -25,7 +25,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
         if nuclide in add:
             raise ValueError("A nuclide can't be both ommited and added.")
 
-    basis_paths = (ENDF6_PATH / basis / sublibrary).glob("*.endf6")
+    basis_paths = (NDMANAGER_ENDF6 / basis / sublibrary).glob("*.endf6")
     basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
 
     # Remove unwanted evaluations
@@ -43,7 +43,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
     for guestlib, _nuclides in add.items():
         nuclides = _nuclides.split()
         for nuclide in nuclides:
-            p = ENDF6_PATH / guestlib / sublibrary / f"{nuclide}.endf6"
+            p = NDMANAGER_ENDF6 / guestlib / sublibrary / f"{nuclide}.endf6"
             if not p.exists():
                 raise ValueError(
                     f"Nuclide {nuclide} is not available in the {guestlib} library."

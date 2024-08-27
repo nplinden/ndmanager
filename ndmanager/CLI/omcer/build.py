@@ -11,7 +11,7 @@ from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
-from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_NUCLEAR_DATA
+from ndmanager.data import NDMANAGER_MODULEPATH, NDFMANAGER_HDF5
 
 
 def get_temperatures(inputs):
@@ -65,7 +65,7 @@ def build(args: ap.Namespace):
         f.seek(0)
         lines = f.readlines()
 
-    directory = OPENMC_NUCLEAR_DATA / inputs["name"]
+    directory = NDFMANAGER_HDF5 / inputs["name"]
     if directory.exists():
         shutil.rmtree(directory)
     directory.mkdir(parents=True)

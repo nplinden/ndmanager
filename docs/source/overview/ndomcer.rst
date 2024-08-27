@@ -10,7 +10,7 @@ There are two ways of obtaining nuclear data in the HDF5 format for use with
 OpenMC: downloading from the official OpenMC website and build your own library
 using OpenMC's python API.
 
-All data is stored in a directory defined by the ``OPENMC_NUCLEAR_DATA``
+All data is stored in a directory defined by the ``NDMANAGER_HDF5``
 environment variable, which you can set in your ``.bashrc`` file or equivalent.
 
 ``list``

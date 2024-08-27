@@ -6,7 +6,7 @@ from typing import Dict
 import openmc.data
 
 from ndmanager.CLI.omcer.utils import process
-from ndmanager.data import ENDF6_PATH, TSL_NEUTRON
+from ndmanager.data import NDMANAGER_ENDF6, TSL_NEUTRON
 from ndmanager.utils import list_endf6
 
 
@@ -40,7 +40,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     add = tsl_params.get("add", {})
 
     basis_neutrons = TSL_NEUTRON[basis]
-    basis_paths = (ENDF6_PATH / basis / "tsl").glob("*.dat")
+    basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.dat")
     basis_paths = [p for p in basis_paths if p.name not in ommit]
 
     couples = []
@@ -52,7 +52,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     for guestlib, _tsl in add.items():
         tsl = _tsl.split()
         for t in tsl:
-            gpath = ENDF6_PATH / guestlib / "tsl" / t
+            gpath = NDMANAGER_ENDF6 / guestlib / "tsl" / t
             nuclide = TSL_NEUTRON[guestlib][t]
             nuclide = neutrons[sub.get(nuclide, nuclide)]
             couples.append((nuclide, gpath))

@@ -44,5 +44,5 @@ testpaths = [
     "tests",
 ]
 env = [
-    "ENDF6_PATH=pytest-artifacts/endf6",
+    "NDMANAGER_ENDF6=pytest-artifacts/endf6",
 ]

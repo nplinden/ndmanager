@@ -12,7 +12,7 @@ For now the main source of ENDF6 files for NDFetcher is the
 `IAEA website <https://www-nds.iaea.org/public/download-endf/>`_, as it stores
 most ENDF6 data libraries using a common, easy to parse directory structure.
 
-All data is stored in a directory defined by the ``ENDF6_PATH`` environment
+All data is stored in a directory defined by the ``NDMANAGER_ENDF6`` environment
 variable, which you can set in your ``.bashrc`` file or equivalent.
 
 ``list``

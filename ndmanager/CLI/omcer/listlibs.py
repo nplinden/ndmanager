@@ -3,7 +3,7 @@
 import os
 import textwrap
 
-from ndmanager.data import OPENMC_LIBS, OPENMC_NUCLEAR_DATA
+from ndmanager.data import OPENMC_LIBS, NDFMANAGER_HDF5
 from ndmanager.format import get_terminal_size, header
 
 
@@ -26,7 +26,7 @@ def listlibs(*args):
     for family, dico in OPENMC_LIBS.items():
         for libname, libdict in dico.items():
             fancyname = libdict["fancyname"]
-            if (OPENMC_NUCLEAR_DATA / family / libname).exists():
+            if (NDFMANAGER_HDF5 / family / libname).exists():
                 check = "✓"
             else:
                 check = " "
@@ -38,7 +38,7 @@ def listlibs(*args):
             lst.append("\n".join(s))
     lst.append("")
     lst.append(header("Custom Libraries"))
-    dirs = [p.name for p in OPENMC_NUCLEAR_DATA.glob("*")]
+    dirs = [p.name for p in NDFMANAGER_HDF5.glob("*")]
     if "official" in dirs:
         dirs.remove("official")
     if "lanl" in dirs:

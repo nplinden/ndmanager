@@ -4,9 +4,9 @@ WORKDIR /wrk
 
 RUN mkdir endf6 nuclear_data modulefiles
 
-ENV ENDF6_PATH="/wrk/endf6"
+ENV NDMANAGER_ENDF6="/wrk/endf6"
 
-ENV OPENMC_NUCLEAR_DATA="/wrk/nuclear_data"
+ENV NDMANAGER_HDF5="/wrk/nuclear_data"
 
 ENV NDMANAGER_MODULEPATH="/wrk/modulefiles"
 

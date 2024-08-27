@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, ENDF6_PATH, IAEA_ROOT, META_SYMBOL
+from ndmanager.data import ENDF6_LIBS, NDMANAGER_ENDF6, IAEA_ROOT, META_SYMBOL
 
 
 def get_url_paths(url, ext=""):
@@ -100,7 +100,7 @@ def get_endf6(libname: str, sub: str, nuclide: str):
     Returns:
         pathlib.Path: The path to the library
     """
-    p = ENDF6_PATH / libname
+    p = NDMANAGER_ENDF6 / libname
     if not p.exists():
         raise ValueError(f"Library '{libname}' does not exist")
     p = p / sub

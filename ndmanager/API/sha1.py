@@ -2,7 +2,7 @@ import hashlib
 from typing import Dict
 
 from ndmanager.API.utils import get_endf6
-from ndmanager.data import ENDF6_PATH, TAPE_SHA1
+from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
 
 
 def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
@@ -42,7 +42,7 @@ def compute_sublib_sha1(libname: str, sub: str) -> Dict[str, str]:
                         SHA1 has as value
 
     """
-    subdir = ENDF6_PATH / libname / sub
+    subdir = NDMANAGER_ENDF6 / libname / sub
     results = {}
     for tape in subdir.iterdir():
         results |= compute_tape_sha1(libname, sub, tape.stem)
@@ -60,7 +60,7 @@ def compute_lib_sha1(libname: str) -> Dict[str, str]:
                         SHA1 has as value
 
     """
-    libdir = ENDF6_PATH / libname
+    libdir = NDMANAGER_ENDF6 / libname
     results = {}
     for sub in libdir.iterdir():
         results |= compute_sublib_sha1(libname, sub.name)

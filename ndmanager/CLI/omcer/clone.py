@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import OPENMC_NUCLEAR_DATA
+from ndmanager.data import NDFMANAGER_HDF5
 
 
 def clone_parser(subparsers):
@@ -36,8 +36,8 @@ def clone(args: ap.Namespace):
         ValueError: The source library does not exist
         ValueError: The target library already exists
     """
-    source = OPENMC_NUCLEAR_DATA / args.source
-    target = OPENMC_NUCLEAR_DATA / args.target
+    source = NDFMANAGER_HDF5 / args.source
+    target = NDFMANAGER_HDF5 / args.target
     if not source.exists():
         raise ValueError(f"{args.source} is not in the library list.")
     if target.exists():

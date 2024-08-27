@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.data import (NDMANAGER_MODULEPATH, OPENMC_LIBS,
-                            OPENMC_NUCLEAR_DATA, OPENMC_CHAINS)
+                            NDFMANAGER_HDF5, OPENMC_CHAINS)
 
 
 
