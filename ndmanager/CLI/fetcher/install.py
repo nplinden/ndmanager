@@ -37,6 +37,11 @@ def install_parser(subparsers: ap._SubParsersAction):
         type=str,
         help="List of nuclear data libraries to download",
     )
+    parser.add_argument(
+        "dryrun",
+        action="store_true",
+        help="Do not download the library",
+    )
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -245,13 +250,12 @@ def install(args: ap.Namespace):
     else:
         sublibraries = SUBLIBRARIES_SHORTLIST
 
-    avail = {}
-    for library in libraries:
-        avail[library] = fetch_sublibrary_list(library)
     to_download = []
     for library in libraries:
-        sublibraries = set(fetch_sublibrary_list(library)) & set(sublibraries)
+        sublibraries = sorted(list(set(fetch_sublibrary_list(library)) & set(sublibraries)))
         for isub, sub in enumerate(sublibraries):
+            if len(sublibraries) == 1:
+                desc = f"{library} ─── {sub}"
             if isub == 0:
                 desc = f"{library} ┬── {sub}"
             elif isub == len(sublibraries) - 1:
@@ -260,6 +264,10 @@ def install(args: ap.Namespace):
                 desc = f"{''.ljust(len(library))} ├── {sub}"
             desc = f"{desc:<20}"
             to_download.append((library, sub, desc))
+
+    if args.dryrun:
+        for _, _, desc in to_download:
+            print(desc)
 
     for library, sublibrary, desc in to_download:
         download(library, sublibrary, args.j, desc)
