@@ -38,7 +38,7 @@ def install_parser(subparsers: ap._SubParsersAction):
         help="List of nuclear data libraries to download",
     )
     parser.add_argument(
-        "dryrun",
+        "--dryrun",
         action="store_true",
         help="Do not download the library",
     )
