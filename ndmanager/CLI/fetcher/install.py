@@ -268,6 +268,7 @@ def install(args: ap.Namespace):
     if args.dryrun:
         for _, _, desc in to_download:
             print(desc)
+        return
 
     for library, sublibrary, desc in to_download:
         download(library, sublibrary, args.j, desc)
