@@ -21,9 +21,9 @@ except KeyError:
     NDMANAGER_ENDF6 = None
 
 try:
-    NDFMANAGER_HDF5 = Path(os.environ["NDMANAGER_HDF5"]).absolute()
+    NDMANAGER_HDF5 = Path(os.environ["NDMANAGER_HDF5"]).absolute()
 except KeyError:
-    NDFMANAGER_HDF5 = None
+    NDMANAGER_HDF5 = None
 
 try:
     NDMANAGER_CHAINS = Path(os.environ["NDMANAGER_CHAINS"]).absolute()
@@ -379,26 +379,32 @@ OPENMC_CHAINS = {
     "endfb71/thermal": {
         "url": "https://anl.box.com/shared/static/os1u896bwsbopurpgas72bi6aij2zzdc.xml",
         "size": 27657141,
+        "info": "A chain based on the ENDF-B/VII.1 evaluation with thermal capture branching ratios",
     },
     "endfb71/fast": {
         "url": "https://anl.box.com/shared/static/9058zje1gm0ekd93hja542su50pccvj0.xml",
         "size": 27657870,
+        "info": "A chain based on the ENDF-B/VII.1 evaluation with fast capture branching ratios",
     },
     "endfb8/thermal": {
         "url": "https://anl.box.com/shared/static/nyezmyuofd4eqt6wzd626lqth7wvpprr.xml",
         "size": 27526672,
+        "info": "A chain based on the ENDF-B/VIII.0 evaluation with thermal capture branching ratios",
     },
     "endfb8/fast": {
         "url": "https://anl.box.com/shared/static/x3kp739hr5upmeqpbwx9zk9ep04fnmtg.xml",
         "size": 27527401,
+        "info": "A chain based on the ENDF-B/VIII.0 evaluation with thermal capture branching ratios",
     },
     "casl/thermal": {
         "url": "https://anl.box.com/shared/static/3nvnasacm2b56716oh5hyndxdyauh5gs.xml",
         "size": 981527,
+        "info": "A simplified chain as described by https://doi.org/10.2172/1256820 with thermal capture branching ratios",
     },
     "casl/fast": {
         "url": "https://anl.box.com/shared/static/9fqbq87j0tx4m6vfl06pl4ccc0hwamg9.xml",
         "size": 981581,
+        "info": "A simplified chain as described by https://doi.org/10.2172/1256820 with fast capture branching ratios",
     },
 }
 

@@ -1,15 +1,13 @@
+"""Definition and parser for the `ndc install` command"""
 import argparse as ap
-import shutil
-import tarfile
 import tempfile
 from contextlib import chdir
-from pathlib import Path
 
 import requests
 from tqdm import tqdm
 
-from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
+from ndmanager.CLI.chainer.module import chain_modulefile
 
 
 def install_parser(subparsers):
@@ -30,6 +28,17 @@ def install_parser(subparsers):
 
 
 def install(args: ap.Namespace):
+    """Download and install a OpenMC chain file from the official website
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+
+    Raises:
+        KeyError: Raised if the requested chain names are not in the database
+    """
+    for chain in args.chain:
+        if chain not in OPENMC_CHAINS:
+            raise KeyError(f"{chain} chain is not available for installation")
     for chain in args.chain:
         with tempfile.TemporaryDirectory() as tmpdir:
             with chdir(tmpdir):
@@ -55,3 +64,6 @@ def install(args: ap.Namespace):
                         size = f.write(data)
                         pbar.update(size)
                 pbar.close()
+        chain_modulefile(chain, 
+                         OPENMC_CHAINS[chain]["info"], 
+                         p / f"{name}.xml")

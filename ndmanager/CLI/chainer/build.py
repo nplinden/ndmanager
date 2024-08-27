@@ -8,7 +8,7 @@ import openmc.deplete
 import yaml
 
 from ndmanager.CLI.chainer.module import chain_modulefile
-from ndmanager.data import NDMANAGER_MODULEPATH, NDFMANAGER_HDF5
+from ndmanager.data import NDMANAGER_MODULEPATH, NDMANAGER_HDF5
 from ndmanager.utils import list_endf6
 
 
@@ -43,7 +43,7 @@ def build(args: ap.Namespace):
     name = inputs["name"]
     hl = float(inputs.get("halflife", -1))
 
-    directory = NDFMANAGER_HDF5 / "chains" / name
+    directory = NDMANAGER_HDF5 / "chains" / name
     if directory.exists():
         shutil.rmtree(directory)
     directory.mkdir(parents=True)

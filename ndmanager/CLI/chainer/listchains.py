@@ -6,7 +6,7 @@ import textwrap
 
 import yaml
 
-from ndmanager.data import NDFMANAGER_HDF5
+from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
 from ndmanager.format import footer, get_terminal_size, header
 
 
@@ -25,18 +25,28 @@ def list_parser(subparsers: ap._SubParsersAction):
 def listchains(args: ap.Namespace):
     """List the available chains"""
     col, _ = get_terminal_size()
-    chaindir = NDFMANAGER_HDF5 / "chains"
-    lst = [header("Available Chains")]
-    dico = {}
-    if chaindir.exists():
-        for p in chaindir.iterdir():
-            dico[p.name] = {}
-            with open(p / f"{p.name}.yml", encoding="utf-8") as f:
-                description = yaml.safe_load(f)["description"]
-            s = f"{p.name:<16} {description}"
-            s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=17 * " ", width=col
-            )
-            lst.append("\n".join(s))
-    lst.append(footer())
+
+    chains = []
+    for xmlfile in NDMANAGER_CHAINS.rglob("*.xml"):
+        p = xmlfile.parent / xmlfile.stem
+        chains.append(str(p.relative_to(NDMANAGER_CHAINS)))
+
+    lst = [header("Installable Chains")]
+    for chain in OPENMC_CHAINS.keys():
+        info = OPENMC_CHAINS[chain]["info"]
+        if chain in chains:
+            check = "✓"
+        else:
+            check = " "
+        s = f"{chain}"
+        s = f"{s:<16} [{check}]: {info}"
+        s = textwrap.wrap(
+            s, initial_indent="", subsequent_indent=23 * " ", width=col
+        )
+        lst.append("\n".join(s))
+    lst.append(header("Available Chains"))
+
+    s = " ".join([f"{i:<15}" for i in sorted(chains)])
+    s = textwrap.wrap(s, width=col)
+    lst.append("\n".join(s))
     print("\n".join(lst))

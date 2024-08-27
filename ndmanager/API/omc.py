@@ -5,7 +5,7 @@ from typing import List
 import openmc
 import openmc.data
 
-from ndmanager.data import NDFMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5
 
 
 def set_ndl(libname: str):
@@ -22,7 +22,7 @@ def set_ndl(libname: str):
     if libname[-4:] == ".xml":
         openmc.config["cross_sections"] = libname
     else:
-        p = NDFMANAGER_HDF5 / libname / "cross_sections.xml"
+        p = NDMANAGER_HDF5 / libname / "cross_sections.xml"
         if p.exists():
             openmc.config["cross_sections"] = p
         else:
@@ -43,7 +43,7 @@ def set_chain(libname: str):
     if libname[-4:] == ".xml":
         openmc.config["chain_file"] = libname
     else:
-        p = NDFMANAGER_HDF5 / libname
+        p = NDMANAGER_HDF5 / libname
         if not p.exists():
             raise FileNotFoundError(f"Invalid library name '{libname}'")
         p = p / "chain.xml"

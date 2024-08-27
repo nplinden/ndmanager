@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import NDFMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5
 
 
 def clone_parser(subparsers):
@@ -36,8 +36,8 @@ def clone(args: ap.Namespace):
         ValueError: The source library does not exist
         ValueError: The target library already exists
     """
-    source = NDFMANAGER_HDF5 / args.source
-    target = NDFMANAGER_HDF5 / args.target
+    source = NDMANAGER_HDF5 / args.source
+    target = NDMANAGER_HDF5 / args.target
     if not source.exists():
         raise ValueError(f"{args.source} is not in the library list.")
     if target.exists():

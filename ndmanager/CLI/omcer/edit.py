@@ -8,7 +8,7 @@ from typing import Dict, List
 import numpy as np
 from h5py import File
 
-from ndmanager.data import NDFMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5
 
 
 def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
@@ -265,6 +265,6 @@ def sn301(args: ap.Namespace):
     Args:
         args (ap.Namespace): The argparse object containing the command line argument
     """
-    target = NDFMANAGER_HDF5 / args.target / "cross_sections.xml"
-    sources = [NDFMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
+    target = NDMANAGER_HDF5 / args.target / "cross_sections.xml"
+    sources = [NDMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
     replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)
