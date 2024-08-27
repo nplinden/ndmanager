@@ -33,8 +33,16 @@ def install_parser(subparsers):
     parser.set_defaults(func=install)
 
 
-def download(url, tarname, family, lib):
-    r = requests.get(url, stream=True)
+def download(url: str, tarname: str, family: str, lib: str):
+    """Download an HDF5 OpenMC library from the official OpenMC website
+
+    Args:
+        url (str): The URL of the library
+        tarname (str): The name of the resulting tar file
+        family (str): The name of the library's family
+        lib (str): The library name
+    """
+    r = requests.get(url, stream=True, timeout=3600)
 
     total = int(r.headers.get("content-length", 0))
     bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
@@ -46,14 +54,22 @@ def download(url, tarname, family, lib):
         unit_divisor=1024,
         bar_format=bar_format,
     )
-    with (open(tarname, "wb") as f):
+    with open(tarname, "wb") as f:
         for data in r.iter_content(chunk_size=1024):
             size = f.write(data)
             pbar.update(size)
     pbar.close()
 
 
-def extract(tarname, total, family, lib):
+def extract(tarname: str, total: int, family: str, lib: str):
+    """Extract a tar file containing an OpenMC HDF5 library
+
+    Args:
+        tarname (str): The name of the tar file
+        total (int): The uncompressed total size of the library
+        family (str): The name of the library's family
+        lib (str): The library name
+    """
     tar = tarfile.open(tarname)
     bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
     pbar = tqdm(

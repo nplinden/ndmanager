@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the TENDL-2019 tapes"""
 TENDL19_SHA1 = {
     "tendl19/he3/Mo93": "66ace7f4dccfb5ea8e47ca612b285f6581f9c485",
     "tendl19/he3/Gd146": "9b9b224d3c650162b34ee5a4a366386a1f300a68",

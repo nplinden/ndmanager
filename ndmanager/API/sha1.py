@@ -1,3 +1,4 @@
+"""Some utility function to compute ENDF6 tape SHA1"""
 import hashlib
 from typing import Dict
 
@@ -11,7 +12,8 @@ def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
     Args:
         libname (str): The name of the desired evaluation
         sub (str): The name of the ENDF6 sublibrary
-        nuclide (str): The name of the nuclide in the GNDS format. For TSL tapes, the name of the tape
+        nuclide (str): The name of the nuclide in the GNDS format. For TSL tapes, 
+                       the name of the tape
 
     Returns:
         Dict[str, str]: A dictionary with the NDManager path of the tape as key and

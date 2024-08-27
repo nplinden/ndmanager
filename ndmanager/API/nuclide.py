@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """A class to manage nuclide names."""
 
 import re

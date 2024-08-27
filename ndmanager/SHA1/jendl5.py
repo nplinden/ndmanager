@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the JENDL-5.0 tapes"""
 JENDL5_SHA1 = {
     "jendl5/decay/Zr78": "a545cff0b15f34d9256902c730dac69bc0e9375b",
     "jendl5/decay/Mo93": "4771552c89590c347f27d0c06f39c527f6d488b7",

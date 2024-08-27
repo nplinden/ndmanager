@@ -46,3 +46,6 @@ testpaths = [
 env = [
     "NDMANAGER_ENDF6=pytest-artifacts/endf6",
 ]
+
+[tool.pylint."messages control"]
+disable=["invalid-name"]

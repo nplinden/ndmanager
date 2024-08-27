@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long
 """Defining some data used throughout the code."""
 
 import os

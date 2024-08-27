@@ -44,7 +44,7 @@ def install(args: ap.Namespace):
             with chdir(tmpdir):
                 url = OPENMC_CHAINS[chain]["url"]
                 total = int(OPENMC_CHAINS[chain]["size"])
-                r = requests.get(url, stream=True)
+                r = requests.get(url, timeout=3600, stream=True)
 
                 library, name = chain.split("/")
                 p = NDMANAGER_CHAINS / library

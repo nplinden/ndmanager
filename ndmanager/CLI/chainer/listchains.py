@@ -1,13 +1,11 @@
 """Definition and parser for the `ndc list` command"""
 
 import argparse as ap
-import os
 import textwrap
 
-import yaml
 
 from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
-from ndmanager.format import footer, get_terminal_size, header
+from ndmanager.format import get_terminal_size, header
 
 
 def list_parser(subparsers: ap._SubParsersAction):
@@ -32,8 +30,8 @@ def listchains(args: ap.Namespace):
         chains.append(str(p.relative_to(NDMANAGER_CHAINS)))
 
     lst = [header("Installable Chains")]
-    for chain in OPENMC_CHAINS.keys():
-        info = OPENMC_CHAINS[chain]["info"]
+    for chain, dico in OPENMC_CHAINS.items():
+        info = dico["info"]
         if chain in chains:
             check = "✓"
         else:

@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the CENDL-3.2 tapes"""
 CENDL32_SHA1 = {
     "cendl32/n/Mo93": "0c53029d97ab1f3c326478627110885989c81071",
     "cendl32/n/B10": "3e4ba8f2b9c0377d9d0f0327d64e49c61aed3369",

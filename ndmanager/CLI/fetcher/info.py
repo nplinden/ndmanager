@@ -1,7 +1,6 @@
 """Definition and parser for the 'ndf info' command"""
 
 import argparse as ap
-import os
 import textwrap
 
 from ndmanager.data import ENDF6_LIBS

@@ -1,6 +1,5 @@
 """Definition and parser for the `ndo install` command"""
 
-import os
 import textwrap
 
 from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS

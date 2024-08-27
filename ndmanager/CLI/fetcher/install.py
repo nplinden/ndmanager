@@ -81,7 +81,7 @@ def download_single_file(library: str, sublibrary: str, url: str, zipname: str) 
         zipname (str): The name of the zip file to download
     """
     target = Path(NDMANAGER_ENDF6 / library / sublibrary)
-    content = requests.get(url + zipname).content
+    content = requests.get(url + zipname, timeout=3600).content
     with open(zipname, mode="wb") as f:
         f.write(content)
     with zipfile.ZipFile(zipname, "r") as zf:
@@ -141,7 +141,7 @@ def download(
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
             url = IAEA_ROOT + ENDF6_LIBS[library]["fancyname"] + f"/{sublibrary}/"
-            r = requests.get(url)
+            r = requests.get(url, timeout=10)
             if not r.ok:
                 raise r.raise_for_status()
             parsed = BeautifulSoup(r.text, "html.parser").find_all("a")
@@ -181,7 +181,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
     if library == "endfb8" and sublibrary == "n":
         if tapename == "n_0525_5-B-10.dat":
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
-            tape = requests.get(url).text
+            tape = requests.get(url, timeout=3600).text
             target = NDMANAGER_ENDF6 / f"{library}/{sublibrary}/B10.endf6"
             with open(target, "w", encoding="utf-8", newline="") as f:
                 f.write(tape)

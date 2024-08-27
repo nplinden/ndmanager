@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the ENDF-B/VII.1 tapes"""
 ENDFB71_SHA1 = {
     "endfb71/decay/Zr78": "21b852867cdd4a9438d78a8a5c4faf7ceebbbd45",
     "endfb71/decay/Mo93": "9bd329e91b1fd8cb70c6f575488450bea0ec050c",

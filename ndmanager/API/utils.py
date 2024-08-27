@@ -124,7 +124,7 @@ def fetch_lib_info(libname: str) -> str:
     """
     fancyname = ENDF6_LIBS[libname]["fancyname"]
     url = IAEA_ROOT + fancyname + "/000-NSUB-index.htm"
-    response = requests.get(url)
+    response = requests.get(url, timeout=10)
     return BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
 
 
@@ -141,7 +141,7 @@ def fetch_sublibrary_list(libname: str) -> List[str]:
     fancyname = ENDF6_LIBS[libname]["fancyname"]
     url = IAEA_ROOT + fancyname
 
-    r = requests.get(url)
+    r = requests.get(url, timeout=10)
     a_tags = BeautifulSoup(r.text, "html.parser").find_all("a")
     hrefs = [a.get("href") for a in a_tags if "-index.htm" in a.get("href")]
     hrefs.remove("000-NSUB-index.htm")

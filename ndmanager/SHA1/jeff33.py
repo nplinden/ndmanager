@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the JEFF-3.3 tapes"""
 JEFF33_SHA1 = {
     "jeff33/decay/Zr78": "19d7b3c1cb3d8bb956a9a9718fc5692647340e73",
     "jeff33/decay/Mo93": "a0bde8d615b6ed50ec30cee68cb5390c3e2c37d4",

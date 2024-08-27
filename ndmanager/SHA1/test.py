@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+"""SHA1 values for the test tapes"""
 TEST_SHA1 = {
     "test/tsl/tsl_0056_26-Fe-56": "d6e6b0c7a55d2b52ffae63c644b9754eb7b1483f",
     "test/n/C12": "af075e8479d0bc26bcbb4c99084f7d048dd41f0a",

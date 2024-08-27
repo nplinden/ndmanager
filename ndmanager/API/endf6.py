@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """A module that defines and ENDF6 class to manipulate ENDF6 tapes"""
 from pathlib import Path
 
@@ -17,7 +18,7 @@ class Endf6:
         self.filename = filename
         self.nuclide = Nuclide.from_file(filename)
         with open(filename, "r", encoding="utf-8") as f:
-            for i in range(4):
+            for _ in range(4):
                 line = f.readline()
             NSUB = int(line[46:56])
         self.sublibrary = NSUB_IDS[NSUB]
