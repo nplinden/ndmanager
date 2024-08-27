@@ -370,6 +370,21 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {
     },
 }
 
+OPENMC_CHAINS = {
+    "endfb71" : {
+        "thermal": "https://anl.box.com/shared/static/os1u896bwsbopurpgas72bi6aij2zzdc.xml",
+        "fast": "https://anl.box.com/shared/static/9058zje1gm0ekd93hja542su50pccvj0.xml"
+    },
+    "endfb8" : {
+        "thermal": "https://anl.box.com/shared/static/nyezmyuofd4eqt6wzd626lqth7wvpprr.xml",
+        "fast": "https://anl.box.com/shared/static/x3kp739hr5upmeqpbwx9zk9ep04fnmtg.xml"
+    },
+    "casl": {
+        "thermal": "https://anl.box.com/shared/static/3nvnasacm2b56716oh5hyndxdyauh5gs.xml",
+        "fast": "https://anl.box.com/shared/static/9fqbq87j0tx4m6vfl06pl4ccc0hwamg9.xml"
+    }
+}
+
 SUBLIBRARIES: Dict[str, str] = {
     "n": "Incident-Neutron Data",
     "decay": "Radioactive Decay Data",

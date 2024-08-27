@@ -2,7 +2,6 @@
 
 import argparse as ap
 import shutil
-import subprocess as sp
 import tarfile
 import tempfile
 from contextlib import chdir
