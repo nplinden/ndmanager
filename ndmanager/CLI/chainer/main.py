@@ -4,6 +4,7 @@ import argparse as ap
 
 from ndmanager.CLI.chainer.build import build_parser
 from ndmanager.CLI.chainer.listchains import list_parser
+from ndmanager.CLI.chainer.install import install_parser
 
 
 def main():
@@ -16,6 +17,7 @@ def main():
 
     build_parser(subparsers)
     list_parser(subparsers)
+    install_parser(subparsers)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

@@ -25,10 +25,10 @@ try:
 except KeyError:
     NDFMANAGER_HDF5 = None
 
-# try:
-#     OPENMC_NUCLEAR_DATA = Path(os.environ["NDMANAGER_CHAIN"]).absolute()
-# except KeyError:
-#     OPENMC_NUCLEAR_DATA = None
+try:
+    NDMANAGER_CHAINS = Path(os.environ["NDMANAGER_CHAINS"]).absolute()
+except KeyError:
+    NDMANAGER_CHAINS = None
 
 try:
     NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"]).absolute()
@@ -376,18 +376,30 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {
 }
 
 OPENMC_CHAINS = {
-    "endfb71" : {
-        "thermal": "https://anl.box.com/shared/static/os1u896bwsbopurpgas72bi6aij2zzdc.xml",
-        "fast": "https://anl.box.com/shared/static/9058zje1gm0ekd93hja542su50pccvj0.xml"
+    "endfb71/thermal": {
+        "url": "https://anl.box.com/shared/static/os1u896bwsbopurpgas72bi6aij2zzdc.xml",
+        "size": 27657141,
     },
-    "endfb8" : {
-        "thermal": "https://anl.box.com/shared/static/nyezmyuofd4eqt6wzd626lqth7wvpprr.xml",
-        "fast": "https://anl.box.com/shared/static/x3kp739hr5upmeqpbwx9zk9ep04fnmtg.xml"
+    "endfb71/fast": {
+        "url": "https://anl.box.com/shared/static/9058zje1gm0ekd93hja542su50pccvj0.xml",
+        "size": 27657870,
     },
-    "casl": {
-        "thermal": "https://anl.box.com/shared/static/3nvnasacm2b56716oh5hyndxdyauh5gs.xml",
-        "fast": "https://anl.box.com/shared/static/9fqbq87j0tx4m6vfl06pl4ccc0hwamg9.xml"
-    }
+    "endfb8/thermal": {
+        "url": "https://anl.box.com/shared/static/nyezmyuofd4eqt6wzd626lqth7wvpprr.xml",
+        "size": 27526672,
+    },
+    "endfb8/fast": {
+        "url": "https://anl.box.com/shared/static/x3kp739hr5upmeqpbwx9zk9ep04fnmtg.xml",
+        "size": 27527401,
+    },
+    "casl/thermal": {
+        "url": "https://anl.box.com/shared/static/3nvnasacm2b56716oh5hyndxdyauh5gs.xml",
+        "size": 981527,
+    },
+    "casl/fast": {
+        "url": "https://anl.box.com/shared/static/9fqbq87j0tx4m6vfl06pl4ccc0hwamg9.xml",
+        "size": 981581,
+    },
 }
 
 SUBLIBRARIES: Dict[str, str] = {
