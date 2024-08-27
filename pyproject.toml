@@ -15,7 +15,8 @@ dependencies = [
     'h5py',
     'pyyaml',
     'requests',
-    'beautifulsoup4'
+    'beautifulsoup4',
+    'tqdm'
 ]
 
 [project.optional-dependencies]

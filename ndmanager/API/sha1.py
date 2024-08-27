@@ -12,7 +12,7 @@ def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
     Args:
         libname (str): The name of the desired evaluation
         sub (str): The name of the ENDF6 sublibrary
-        nuclide (str): The name of the nuclide in the GNDS format. For TSL tapes, 
+        nuclide (str): The name of the nuclide in the GNDS format. For TSL tapes,
                        the name of the tape
 
     Returns:
