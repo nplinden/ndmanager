@@ -254,9 +254,9 @@ def install(args: ap.Namespace):
     for library in libraries:
         localsub = sorted(list(set(fetch_sublibrary_list(library)) & set(sublibraries)))
         for isub, sub in enumerate(localsub ):
-            if len(localsub ) == 1:
+            if len(localsub) == 1:
                 desc = f"{library} ─── {sub}"
-            if isub == 0:
+            elif isub == 0:
                 desc = f"{library} ┬── {sub}"
             elif isub == len(localsub) - 1:
                 desc = f"{''.ljust(len(library))} ╰── {sub}"
