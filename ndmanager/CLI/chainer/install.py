@@ -6,8 +6,8 @@ from contextlib import chdir
 import requests
 from tqdm import tqdm
 
-from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
 from ndmanager.CLI.chainer.module import chain_modulefile
+from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
 
 
 def install_parser(subparsers):
@@ -64,6 +64,4 @@ def install(args: ap.Namespace):
                         size = f.write(data)
                         pbar.update(size)
                 pbar.close()
-        chain_modulefile(chain, 
-                         OPENMC_CHAINS[chain]["info"], 
-                         p / f"{name}.xml")
+        chain_modulefile(chain, OPENMC_CHAINS[chain]["info"], p / f"{name}.xml")

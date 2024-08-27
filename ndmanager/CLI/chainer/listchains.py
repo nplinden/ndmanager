@@ -40,9 +40,7 @@ def listchains(args: ap.Namespace):
             check = " "
         s = f"{chain}"
         s = f"{s:<16} [{check}]: {info}"
-        s = textwrap.wrap(
-            s, initial_indent="", subsequent_indent=23 * " ", width=col
-        )
+        s = textwrap.wrap(s, initial_indent="", subsequent_indent=23 * " ", width=col)
         lst.append("\n".join(s))
     lst.append(header("Available Chains"))
 

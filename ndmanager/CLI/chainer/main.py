@@ -3,8 +3,8 @@
 import argparse as ap
 
 from ndmanager.CLI.chainer.build import build_parser
-from ndmanager.CLI.chainer.listchains import list_parser
 from ndmanager.CLI.chainer.install import install_parser
+from ndmanager.CLI.chainer.listchains import list_parser
 from ndmanager.CLI.chainer.remove import remove_parser
 
 

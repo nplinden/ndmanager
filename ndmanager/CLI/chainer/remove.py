@@ -22,6 +22,7 @@ def remove_parser(subparsers):
     )
     parser.set_defaults(func=remove)
 
+
 def remove(args: ap.Namespace):
     """Uninstall an OpenMC library
 

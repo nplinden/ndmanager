@@ -8,7 +8,7 @@ import openmc.deplete
 import yaml
 
 from ndmanager.CLI.chainer.module import chain_modulefile
-from ndmanager.data import NDMANAGER_MODULEPATH, NDMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH
 from ndmanager.utils import list_endf6
 
 

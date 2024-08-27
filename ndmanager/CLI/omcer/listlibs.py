@@ -3,7 +3,7 @@
 import os
 import textwrap
 
-from ndmanager.data import OPENMC_LIBS, NDMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS
 from ndmanager.format import get_terminal_size, header
 
 
@@ -27,7 +27,7 @@ def listlibs(*args):
     for xmlfile in NDMANAGER_HDF5.rglob("*.xml"):
         p = xmlfile.parent / xmlfile.stem
         xs.append(str(p.parent.relative_to(NDMANAGER_HDF5)))
-    
+
     lst = [header("Installable Libraries")]
     for family, dico in OPENMC_LIBS.items():
         for libname, libdict in dico.items():

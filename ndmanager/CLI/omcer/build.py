@@ -11,7 +11,7 @@ from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
-from ndmanager.data import NDMANAGER_MODULEPATH, NDMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH
 
 
 def get_temperatures(inputs):

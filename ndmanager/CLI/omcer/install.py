@@ -11,7 +11,7 @@ import requests
 from tqdm import tqdm
 
 from ndmanager.CLI.omcer.module import xs_modulefile
-from ndmanager.data import NDMANAGER_MODULEPATH, OPENMC_LIBS, NDMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH, OPENMC_LIBS
 
 
 def install_parser(subparsers):
