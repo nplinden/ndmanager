@@ -40,7 +40,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     add = tsl_params.get("add", {})
 
     basis_neutrons = TSL_NEUTRON[basis]
-    basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.dat")
+    basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.endf6")
     basis_paths = [p for p in basis_paths if p.name not in ommit]
 
     couples = []

@@ -2,12 +2,12 @@ FROM openmc/openmc
 
 WORKDIR /wrk
 
-RUN mkdir endf6 nuclear_data modulefiles
+RUN mkdir .ndmanager .ndmanager/endf6 .ndmanager/nuclear_data .ndmanager/modulefiles
 
-ENV NDMANAGER_ENDF6="/wrk/endf6"
+ENV NDMANAGER_ENDF6="/wrk/.ndmanager/endf6"
 
-ENV NDMANAGER_HDF5="/wrk/nuclear_data"
+ENV NDMANAGER_HDF5="/wrk/.ndmanager/hdf5"
 
-ENV NDMANAGER_MODULEPATH="/wrk/modulefiles"
+ENV NDMANAGER_MODULEPATH="/wrk/.ndmanager/modulefiles"
 
 RUN pip install git+https://github.com/nplinden/ndmanager.git
