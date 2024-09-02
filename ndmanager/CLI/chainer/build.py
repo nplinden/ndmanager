@@ -8,7 +8,8 @@ import openmc.deplete
 import yaml
 
 from ndmanager.CLI.chainer.module import chain_modulefile
-from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH
+from ndmanager.data import NDMANAGER_CHAINS, NDMANAGER_MODULEPATH
+from ndmanager.CLI.chainer.branching_ratios import branching_ratios
 from ndmanager.utils import list_endf6
 
 
@@ -43,7 +44,7 @@ def build(args: ap.Namespace):
     name = inputs["name"]
     hl = float(inputs.get("halflife", -1))
 
-    directory = NDMANAGER_HDF5 / "chains" / name
+    directory = NDMANAGER_CHAINS / name
     if directory.exists():
         shutil.rmtree(directory)
     directory.mkdir(parents=True)
@@ -52,7 +53,8 @@ def build(args: ap.Namespace):
         n = list(list_endf6("n", inputs["n"]).values())
         nfpy = list(list_endf6("nfpy", inputs["nfpy"]).values())
 
-        chain = openmc.deplete.Chain.from_endf(decay, nfpy, n)
+        reactions = list(openmc.deplete.chain.REACTIONS.keys())
+        chain = openmc.deplete.Chain.from_endf(decay, nfpy, n, reactions)
         if hl > 0.0:
             tokeep = [
                 nuc.name
@@ -61,12 +63,20 @@ def build(args: ap.Namespace):
             ]
             chain = chain.reduce(tokeep)
 
-        chain.export_to_xml(f"{name}.xml")
+        if "branching_ratios" in inputs:
+            ratios = branching_ratios[inputs["branching_ratios"]]
+            for reaction, br in ratios.items():
+                chain.set_branch_ratios(
+                    branch_ratios=br,
+                    reaction=reaction,
+                    strict=False
+                )
 
-        with open(f"{inputs['name']}.yml", "w", encoding="utf-8") as target:
+        chain.export_to_xml(f"chain.xml")
+
+        with open(f"chain.yml", "w", encoding="utf-8") as target:
             print("".join(lines), file=target)
 
     if NDMANAGER_MODULEPATH is not None:
-        name = f"chain/{inputs['name']}"
         description = inputs.get("description", "")
-        chain_modulefile(name, description, directory / "cross_sections.xml")
+        chain_modulefile(name, description, NDMANAGER_CHAINS / name)
