@@ -21,7 +21,7 @@ description: |
     Pt*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
             I use the ENDF-B/VIII.0 evaluation instead.
 name: endfb71
-temperatures: 250 294 600 900 973 1200
+temperatures: 250 294 600 900 1200 2500
 n:
     basis: endfb71
     ommit: C0

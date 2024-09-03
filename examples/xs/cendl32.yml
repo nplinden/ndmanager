@@ -1,0 +1,6 @@
+description: |
+  A library based on the CENDL-3.2 evaluations.
+name: cendl32
+temperatures: 250 294 600 900 1200 2500
+n:
+  basis: cendl32

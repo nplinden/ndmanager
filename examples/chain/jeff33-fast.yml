@@ -1,6 +1,7 @@
-name: jeff33
+name: jeff33/fast
 description: |
   A depletion chain based on the JEFF-3.3 evaluations.
+branching_ratios: sfr
 n:
   basis: jeff33
   ommit: C0
