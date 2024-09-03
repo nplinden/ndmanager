@@ -5,7 +5,7 @@ from typing import List
 import openmc
 import openmc.data
 
-from ndmanager.data import NDMANAGER_HDF5
+from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_CHAINS
 
 
 def set_ndl(libname: str):
@@ -29,7 +29,7 @@ def set_ndl(libname: str):
             raise FileNotFoundError(f"Invalid library name '{libname}'")
 
 
-def set_chain(libname: str):
+def set_chain(chain: str):
     """Set openmc.config["chain_file"] value to the path to the chain file of
     the desired library.
 
@@ -40,15 +40,12 @@ def set_chain(libname: str):
         FileNotFoundError: raised if the library is not installed.
     """
 
-    if libname[-4:] == ".xml":
-        openmc.config["chain_file"] = libname
+    if chain[-4:] == ".xml":
+        openmc.config["chain_file"] = chain
     else:
-        p = NDMANAGER_HDF5 / libname
+        p = NDMANAGER_CHAINS / f"{chain}.xml"
         if not p.exists():
-            raise FileNotFoundError(f"Invalid library name '{libname}'")
-        p = p / "chain.xml"
-        if not p.exists():
-            raise FileNotFoundError(f"No chain available for library '{libname}'")
+            raise FileNotFoundError(f"No chain available '{str(p)}'")
         openmc.config["chain_file"] = p
 
 
