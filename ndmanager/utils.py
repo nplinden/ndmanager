@@ -30,7 +30,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
 
     # Remove unwanted evaluations
     for nuclide in ommit:
-        basis_dict.pop(nuclide, None)
+        basis_dict.pop(Nuclide.from_name(nuclide).name, None)
 
     # Remove neutron evaluations if they are present.
     basis_dict.pop("n1", None)
