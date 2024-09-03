@@ -40,11 +40,11 @@ def build(args: ap.Namespace):
     with open(args.filename, encoding="utf-8") as f:
         inputs = yaml.safe_load(f)
         f.seek(0)
-        lines = f.readlines()
     name = inputs["name"]
     hl = float(inputs.get("halflife", -1))
 
-    directory = NDMANAGER_CHAINS / name
+    target = NDMANAGER_CHAINS / name
+    directory = target.parent
     if directory.exists():
         shutil.rmtree(directory)
     directory.mkdir(parents=True)
@@ -72,10 +72,7 @@ def build(args: ap.Namespace):
                     strict=False
                 )
 
-        chain.export_to_xml(f"chain.xml")
-
-        with open(f"chain.yml", "w", encoding="utf-8") as target:
-            print("".join(lines), file=target)
+    chain.export_to_xml(target)
 
     if NDMANAGER_MODULEPATH is not None:
         description = inputs.get("description", "")
