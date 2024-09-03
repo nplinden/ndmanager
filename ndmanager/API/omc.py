@@ -65,7 +65,7 @@ def set_nuclear_data(libname: str, chain: str = False):
     """
     set_ndl(libname)
     if chain:
-        set_chain(libname)
+        set_chain(chain)
 
 
 def check_nuclear_data(libpath: str, nuclides: List[str]):
