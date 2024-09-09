@@ -49,6 +49,9 @@ def build_parser(subparsers):
         "--dryrun", help="Do not perform NJOY runs", action="store_true"
     )
     parser.add_argument(
+        "--clean", help="Remove the library before building", action="store_false"
+    )
+    parser.add_argument(
         "--chain", help="Builds the depletion chain", action="store_true"
     )
     parser.set_defaults(func=build)
@@ -66,9 +69,9 @@ def build(args: ap.Namespace):
         lines = f.readlines()
 
     directory = NDMANAGER_HDF5 / inputs["name"]
-    if directory.exists():
+    if directory.exists() and args.clean:
         shutil.rmtree(directory)
-    directory.mkdir(parents=True)
+    directory.mkdir(parents=True, exist_ok=True)
     with chdir(directory):
         library = openmc.data.DataLibrary()
         temperatures = get_temperatures(inputs)

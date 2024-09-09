@@ -4,26 +4,32 @@ from pathlib import Path
 from typing import Dict, List
 
 import openmc.data
+from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.utils import list_endf6
 
 
-def process_neutron(directory: str, path: str, temperatures: List[int]):
+def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[int]):
     """Process a neutron evaluation to the OpenMC format for the desired
     temperatures
 
     Args:
         directory (str): Directory to save the file to
+        nuclide (str): Name of the nuclide
         path (str): Path to the neutron evaluation tape
         temperatures (List[int]): List of integer valued temperatures
     """
-
-    data = openmc.data.IncidentNeutron.from_njoy(path, temperatures=temperatures)
-    h5_file = directory / f"{data.name}.h5"
-
-    data.export_to_hdf5(h5_file, "w")
+    h5_file = directory / f"{nuclide}.h5"
+    temp = set(temperatures)
+    if h5_file.exists():
+        existing = IncidentNeutron.from_hdf5(h5_file)
+        existing_temperatures = set(existing.temperatures)
+        temp -= existing_temperatures 
+    
+    data = IncidentNeutron.from_njoy(path, temperatures=temp)
+    data.export_to_hdf5(h5_file)
 
 
 def generate_neutron(
@@ -44,7 +50,7 @@ def generate_neutron(
     neutron = list_endf6("n", n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, neutron[n], temperatures) for n in neutron]
+    args = [(dest, n, neutron[n], temperatures) for n in neutron]
     if dryrun:
         for arg in args:
             print(arg[0], str(arg[1]), str(arg[2]))
