@@ -48,7 +48,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
         nuclide = basis_neutrons[t.name]
         if nuclide in sub:
             nuclide = sub[nuclide]
-        couples.append((nuclide, t))
+        couples.append((neutrons[nuclide], t))
 
     for guestlib, _tsl in add.items():
         tsl = _tsl.split()
