@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Dict, List
 import h5py
+import argparse as ap
 
 import openmc.data
 from openmc.data import IncidentNeutron
@@ -14,7 +15,7 @@ from ndmanager.utils import list_endf6
 def _process_neutron(args):
     process_neutron(*args)
 
-def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[int]):
+def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[int], run_args: ap.Namespace):
     """Process a neutron evaluation to the OpenMC format for the desired
     temperatures
 
@@ -30,7 +31,7 @@ def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[
         existing = IncidentNeutron.from_hdf5(h5_file)
         existing_temperatures = set(existing.temperatures)
         temp -= existing_temperatures 
-    
+
     data = IncidentNeutron.from_njoy(path, temperatures=temp)
     data.export_to_hdf5(h5_file)
 
@@ -39,8 +40,7 @@ def generate_neutron(
     n_dict: Dict[str, str | Dict[str, str]],
     temperatures: List[int],
     library: openmc.data.DataLibrary,
-    processes: int,
-    dryrun: bool = False,
+    run_args: ap.Namespace
 ):
     """Generate a set of neutron HDF5 data files given a dictionnary from a
     YAML library description file
@@ -54,8 +54,8 @@ def generate_neutron(
     neutron = list_endf6("n", n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, neutron[n], temperatures) for n in neutron]
-    if dryrun:
+    args = [(dest, n, neutron[n], temperatures, run_args) for n in neutron]
+    if run_args.dryrun:
         for arg in args:
             print(arg[0], str(arg[1]), str(arg[2]))
     else:
@@ -65,6 +65,6 @@ def generate_neutron(
             _process_neutron,
             args,
             "neutron",
-            processes,
+            run_args.j,
             lambda x: Nuclide.from_name(x.stem).zam,
         )

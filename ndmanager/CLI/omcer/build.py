@@ -52,9 +52,6 @@ def build_parser(subparsers):
         "--clean", help="Remove the library before building", action="store_true"
     )
     parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
-    parser.add_argument(
-        "--chain", help="Builds the depletion chain", action="store_true"
-    )
     parser.set_defaults(func=build)
 
 
@@ -78,15 +75,15 @@ def build(args: ap.Namespace):
         temperatures = get_temperatures(inputs)
 
         if "n" in inputs:
-            generate_neutron(inputs["n"], temperatures, library, args.j, args.dryrun)
+            generate_neutron(inputs["n"], temperatures, library, args)
 
         if "tsl" in inputs:
-            generate_tsl(inputs["tsl"], inputs["n"], library, args.j, args.dryrun)
+            generate_tsl(inputs["tsl"], inputs["n"], library, args)
 
         if "photo" in inputs:
             photo = inputs["photo"]
             ard = inputs.get("ard", None)
-            generate_photon(photo, ard, library, args.j, args.dryrun)
+            generate_photon(photo, ard, library, args)
 
         library.export_to_xml("cross_sections.xml")
         with open(f"{inputs['name']}.yml", "w", encoding="utf-8") as target:

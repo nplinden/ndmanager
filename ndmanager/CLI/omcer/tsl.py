@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Dict
+import argparse as ap
 
 import openmc.data
 
@@ -13,7 +14,7 @@ from ndmanager.utils import list_endf6
 def _process_tsl(args):
     process_tsl(*args)
 
-def process_tsl(directory: str, neutron: str, thermal: str):
+def process_tsl(directory: str, neutron: str, thermal: str, run_args: ap.Namespace):
     """Process a TSL evaluations given a companion neutron evaluation
 
     Args:
@@ -68,8 +69,7 @@ def generate_tsl(
     tsl_params: Dict[str, str],
     neutron_params: Dict[str, str],
     library: openmc.data.DataLibrary,
-    processes: int,
-    dryrun: bool = False,
+    run_args: ap.Namespace
 ):
     """Generate a set of tsl HDF5 data files given tsl and neutron dictionnaries from a
     YAML library description file
@@ -85,8 +85,8 @@ def generate_tsl(
 
     dest = Path("tsl")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, t) for n, t in tsl]
-    if dryrun:
+    args = [(dest, n, t, run_args) for n, t in tsl]
+    if run_args.dryrun:
         for arg in args:
             print(arg[0], str(arg[1]), str(arg[2]))
     else:
@@ -96,5 +96,5 @@ def generate_tsl(
             _process_tsl,
             args,
             "TSL",
-            processes,
+            run_args.j,
         )

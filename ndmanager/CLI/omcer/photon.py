@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Dict
+import argparse as ap
 
 import openmc.data
 
@@ -35,8 +36,7 @@ def generate_photon(
     photo_dict: Dict[str, str | Dict[str, str]],
     ard_dict: Dict[str, str | Dict[str, str]],
     library: openmc.data.DataLibrary,
-    processes: int,
-    dryrun: bool = False,
+    run_args: ap.Namespace
 ):
     """Generate a set of photon HDF5 data files given photo-atomic and atomic relaxation
     parameters from a YAML library description file
@@ -52,7 +52,7 @@ def generate_photon(
     dest = Path("photon")
     dest.mkdir(parents=True, exist_ok=True)
     args = [(dest, photo[atom], ard.get(atom, None)) for atom in photo]
-    if dryrun:
+    if run_args.dryrun:
         for arg in args:
             print(arg[0], str(arg[1]), str(arg[2]))
     else:
@@ -62,6 +62,6 @@ def generate_photon(
             _process_photon,
             args,
             "photon",
-            processes,
+            run_args.j,
             lambda x: ATOMIC_SYMBOL[x.stem],
         )
