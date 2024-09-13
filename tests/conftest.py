@@ -32,7 +32,7 @@ temperatures: 273 500
     namespace = ap.Namespace(
         filename=str(p),
         dryrun=False,
-        clean=False,
+        clean=True,
         j=2
     )
     build(namespace)

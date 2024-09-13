@@ -3,6 +3,7 @@ from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 
 def test_nuclide(install_test):
+    # Testing the default constructor
     assert Nuclide(Z=6, A=12, M=0).Z == 6
     assert Nuclide(Z=6, A=12, M=0).element == "C"
     assert Nuclide(Z=6, A=12, M=0).A == 12
@@ -17,6 +18,7 @@ def test_nuclide(install_test):
     assert Nuclide(Z=95, A=242, M=1).name == "Am242_m1"
     assert Nuclide(Z=95, A=242, M=1).zam == 952421
 
+    # Testing the name constructor
     assert Nuclide.from_name("C12").Z == 6
     assert Nuclide.from_name("C12").element == "C"
     assert Nuclide.from_name("C12").A == 12
@@ -31,6 +33,7 @@ def test_nuclide(install_test):
     assert Nuclide.from_name("Am242_m1").name == "Am242_m1"
     assert Nuclide.from_name("Am242_m1").zam == 952421
 
+    # Testing the zam constructor
     assert Nuclide.from_zam(60120).Z == 6
     assert Nuclide.from_zam(60120).element == "C"
     assert Nuclide.from_zam(60120).A == 12
@@ -45,6 +48,7 @@ def test_nuclide(install_test):
     assert Nuclide.from_zam(952421).name == "Am242_m1"
     assert Nuclide.from_zam(952421).zam == 952421
 
+    # Testing the file constructor
     tape = get_endf6("test", "n", "C12")
     assert Nuclide.from_file(tape).Z == 6
     assert Nuclide.from_file(tape).element == "C"

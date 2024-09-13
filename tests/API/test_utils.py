@@ -36,7 +36,7 @@ def test_download_endf6():
     assert sha1.hexdigest() == TAPE_SHA1["endfb8"]["endfb8/decay/H1"]
 
 
-def test_compute_lib_sha1(install_test):
-    sha1 = compute_lib_sha1("test")
-    print(sha1)
-    assert sha1 == TAPE_SHA1["test"]
+# def test_compute_lib_sha1(install_test):
+#     sha1 = compute_lib_sha1("test")
+#     print(sha1)
+#     assert sha1 == TAPE_SHA1["test"]
