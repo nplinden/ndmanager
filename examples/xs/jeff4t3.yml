@@ -1,0 +1,14 @@
+description: |
+    This defines a library based on the JEFF-4T3 evaluations
+name: jeff4t3
+temperatures: 250 294 600 900 973 1200
+n:
+    basis: jeff4t3
+    add:
+        endfb8: Ta180
+tsl:
+    basis: endfb8
+photo:
+    basis: endfb8
+ard:
+    basis: endfb8
