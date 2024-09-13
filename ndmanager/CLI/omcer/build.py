@@ -49,7 +49,7 @@ def build_parser(subparsers):
         "--dryrun", help="Do not perform NJOY runs", action="store_true"
     )
     parser.add_argument(
-        "--clean", help="Remove the library before building", action="store_false"
+        "--clean", help="Remove the library before building", action="store_true"
     )
     parser.add_argument(
         "--chain", help="Builds the depletion chain", action="store_true"
