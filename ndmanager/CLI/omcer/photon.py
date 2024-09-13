@@ -8,7 +8,10 @@ import openmc.data
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.data import ATOMIC_SYMBOL
 from ndmanager.utils import list_endf6
+from ndmanager.API.endf6 import Endf6
 
+def _process_photon(args):
+    process_photon(*args)
 
 def process_photon(directory, photo, ard):
     """Process a photon evaluation to the OpenMC format
@@ -18,11 +21,13 @@ def process_photon(directory, photo, ard):
         photo (str): Path to a photo-atomic cross-section file
         ard (str): Path to an atomic relaxation data file
     """
+    h5_file = directory / f"{Endf6(photo).nuclide.element}.h5"
+    if h5_file.exists():
+        return
     data = openmc.data.IncidentPhoton.from_endf(
         photo,
         ard,
     )
-    h5_file = directory / f"{data.name}.h5"
     data.export_to_hdf5(h5_file, "w")
 
 
@@ -53,7 +58,7 @@ def generate_photon(
         process(
             dest,
             library,
-            process_photon,
+            _process_photon,
             args,
             "photon",
             lambda x: ATOMIC_SYMBOL[x.stem],

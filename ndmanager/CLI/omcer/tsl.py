@@ -10,6 +10,9 @@ from ndmanager.data import NDMANAGER_ENDF6, TSL_NEUTRON
 from ndmanager.utils import list_endf6
 
 
+def _process_tsl(args):
+    process_tsl(*args)
+
 def process_tsl(directory: str, neutron: str, thermal: str):
     """Process a TSL evaluations given a companion neutron evaluation
 
@@ -89,7 +92,7 @@ def generate_tsl(
         process(
             dest,
             library,
-            process_tsl,
+            _process_tsl,
             args,
             "TSL",
         )
