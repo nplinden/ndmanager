@@ -65,12 +65,15 @@ def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
         str: The content of the ENDF6 tape
     """
     source = ENDF6_LIBS[libname]["source"] + f"/{sub}/"
-    candidates = get_url_paths(source, ".zip")
-    n = Nuclide.from_name(nuclide)
-    candidates = [c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c]
+    if sub == "tsl":
+        url = source + f"/{nuclide}"
+    else:
+        candidates = get_url_paths(source, ".zip")
+        n = Nuclide.from_name(nuclide)
+        candidates = [c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c]
+        assert len(candidates) == 1
+        url = candidates[0]
 
-    assert len(candidates) == 1
-    url = candidates[0]
     with tempfile.TemporaryDirectory() as tmpdir:
         with chdir(tmpdir):
             content = requests.get(url, timeout=10).content
