@@ -8,7 +8,7 @@ import openmc.data
 from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_CHAINS
 
 
-def set_ndl(libname: str):
+def set_xs(libname: str):
     """Set openmc.config["cross_section"] value to the path to the
     cross_sections.xml file of the desired library.
 
