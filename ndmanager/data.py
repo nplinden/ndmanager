@@ -582,7 +582,7 @@ META_SYMBOL |= {v: k for k, v in META_SYMBOL.items()}
 
 TSL_NEUTRON: Dict[str, Dict[str, str]] = {
     "test": {
-        "tsl_0056_26-Fe-56.endf6": "Fe56",
+        "tsl_0037_H(CH2).endf6": "H1",
     },
     "jeff311": {
         "tsl_0001_H(H2O).endf6": "H1",

@@ -62,16 +62,16 @@ def install_parser(subparsers: ap._SubParsersAction):
 def download_test():
     """Download a minimal library for testing purposes"""
     target = NDMANAGER_ENDF6 / "test"
-    download_endf6("endfb8", "n", "Fe56", target / "n" / "Fe56.endf6")
+    download_endf6("endfb8", "n", "H1", target / "n" / "H1.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
-    download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
 
-    download_endf6("endfb8", "tsl", "Fe56", target / "tsl" / "tsl_0056_26-Fe-56.endf6")
+    download_endf6("endfb8", "tsl", "tsl_0037_H(CH2).zip", 
+                   target / "tsl" / "tsl_0037_H(CH2).endf6")
 
     download_endf6("endfb8", "photo", "C0", target / "photo" / "C0.endf6")
     download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")
-    download_endf6("endfb8", "photo", "Fe0", target / "photo" / "Fe0.endf6")
-    download_endf6("endfb8", "ard", "Fe0", target / "ard" / "Fe0.endf6")
+    download_endf6("endfb8", "photo", "H0", target / "photo" / "H0.endf6")
+    download_endf6("endfb8", "ard", "H0", target / "ard" / "H0.endf6")
 
 
 def download_single_file(library: str, sublibrary: str, url: str, zipname: str) -> None:
