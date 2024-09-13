@@ -5,6 +5,17 @@ from typing import Dict
 from ndmanager.API.utils import get_endf6
 from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
 
+def compute_file_sha1(filename: str) -> str:
+    BUF_SIZE = 65536
+    sha1 = hashlib.sha1()
+    with open(filename, "rb") as f:
+        while True:
+            data = f.read(BUF_SIZE)
+            if not data:
+                break
+            sha1.update(data)
+    return sha1.hexdigest()
+
 
 def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
     """Compute the SHA1 hash of a tape stored in the NDManager database
