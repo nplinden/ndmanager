@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Dict, List
+import h5py
 
 import openmc.data
 from openmc.data import IncidentNeutron
@@ -10,6 +11,8 @@ from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.utils import list_endf6
 
+def _process_neutron(args):
+    process_neutron(*args)
 
 def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[int]):
     """Process a neutron evaluation to the OpenMC format for the desired
@@ -58,7 +61,7 @@ def generate_neutron(
         process(
             dest,
             library,
-            process_neutron,
+            _process_neutron,
             args,
             "neutron",
             lambda x: Nuclide.from_name(x.stem).zam,
