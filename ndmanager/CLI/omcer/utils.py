@@ -18,6 +18,7 @@ def process(
     processor: Callable,
     args: Tuple,
     evaltype: str,
+    processes: int,
     key: Callable = lambda x: x,
 ):
     """Encapsulation fo the nuclear data processing capabilities of OpenMC
@@ -30,7 +31,7 @@ def process(
         evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
-    with Pool(30) as p:
+    with Pool(processes) as p:
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         list(tqdm(
             p.imap(processor, args),

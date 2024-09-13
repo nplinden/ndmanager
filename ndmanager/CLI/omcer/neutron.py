@@ -39,6 +39,7 @@ def generate_neutron(
     n_dict: Dict[str, str | Dict[str, str]],
     temperatures: List[int],
     library: openmc.data.DataLibrary,
+    processes: int,
     dryrun: bool = False,
 ):
     """Generate a set of neutron HDF5 data files given a dictionnary from a
@@ -64,5 +65,6 @@ def generate_neutron(
             _process_neutron,
             args,
             "neutron",
+            processes,
             lambda x: Nuclide.from_name(x.stem).zam,
         )

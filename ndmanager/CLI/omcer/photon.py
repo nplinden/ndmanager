@@ -35,6 +35,7 @@ def generate_photon(
     photo_dict: Dict[str, str | Dict[str, str]],
     ard_dict: Dict[str, str | Dict[str, str]],
     library: openmc.data.DataLibrary,
+    processes: int,
     dryrun: bool = False,
 ):
     """Generate a set of photon HDF5 data files given photo-atomic and atomic relaxation
@@ -61,5 +62,6 @@ def generate_photon(
             _process_photon,
             args,
             "photon",
+            processes,
             lambda x: ATOMIC_SYMBOL[x.stem],
         )

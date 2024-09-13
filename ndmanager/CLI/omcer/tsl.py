@@ -68,6 +68,7 @@ def generate_tsl(
     tsl_params: Dict[str, str],
     neutron_params: Dict[str, str],
     library: openmc.data.DataLibrary,
+    processes: int,
     dryrun: bool = False,
 ):
     """Generate a set of tsl HDF5 data files given tsl and neutron dictionnaries from a
@@ -95,4 +96,5 @@ def generate_tsl(
             _process_tsl,
             args,
             "TSL",
+            processes,
         )
