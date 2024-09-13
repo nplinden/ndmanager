@@ -64,6 +64,7 @@ def download_test():
     target = NDMANAGER_ENDF6 / "test"
     download_endf6("endfb8", "n", "H1", target / "n" / "H1.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
+    download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
 
     download_endf6("endfb8", "tsl", "tsl_0037_H(CH2).zip", 
                    target / "tsl" / "tsl_0037_H(CH2).endf6")

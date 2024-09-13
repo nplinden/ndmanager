@@ -109,7 +109,9 @@ def get_endf6(libname: str, sub: str, nuclide: str):
     p = p / sub
     if not p.exists():
         raise ValueError(f"No {sub} sublibrary available for '{libname}'")
-    p = p / f"{nuclide}.endf6"
+    p = p / f"{nuclide}"
+    if not p.suffix == ".endf6":
+        p = p.parent / (p.name + ".endf6")
     if not p.exists():
         raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
     return p
