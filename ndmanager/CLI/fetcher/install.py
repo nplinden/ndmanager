@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
-from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
+from ndmanager.API.iaea import download_endf6, fetch_sublibrary_list
 from ndmanager.data import (
     ENDF6_LIBS,
     IAEA_ROOT,
@@ -278,3 +278,18 @@ def install(args: ap.Namespace):
 
     for library, sublibrary, desc in to_download:
         download(library, sublibrary, args.j, desc)
+
+def fetch_lib_info(libname: str) -> str:
+    """Get the text of the 000-NSUB-index.htm file for a given library name
+
+    Args:
+        libname (str): The name of the desired evaluation
+
+    Returns:
+        str: The text of the 000-NSUB-index.htm file
+
+    """
+    fancyname = ENDF6_LIBS[libname]["fancyname"]
+    url = IAEA_ROOT + fancyname + "/000-NSUB-index.htm"
+    response = requests.get(url, timeout=10)
+    return BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
