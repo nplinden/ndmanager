@@ -10,11 +10,10 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.iaea import get_url_paths
 from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL, NDMANAGER_ENDF6
 
 
-def get_url_paths(url, ext=""):
+def get_url_paths(url: str, ext: str="") -> List[str]:
     """Get a list of file in a web directory given a file extension
 
     Args:
@@ -22,9 +21,9 @@ def get_url_paths(url, ext=""):
         ext (str, optional): The file extension. Defaults to "".
 
     Returns:
-        _type_: _description_
+        List: The list of file urls
     """
-    response = requests.get(url, timeout=10)
+    response = requests.get(url, timeout=9)
     if response.ok:
         response_text = response.text
     else:
