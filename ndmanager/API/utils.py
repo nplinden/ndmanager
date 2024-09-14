@@ -50,10 +50,6 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
     ommit = params.get("ommit", "").split()
     add = params.get("add", {})
 
-    for nuclide in ommit:
-        if nuclide in add:
-            raise ValueError("A nuclide can't be both ommited and added.")
-
     basis_paths = (NDMANAGER_ENDF6 / basis / sublibrary).glob("*.endf6")
     basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
 
