@@ -8,7 +8,7 @@ import openmc.data
 
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.data import NDMANAGER_ENDF6, TSL_NEUTRON
-from ndmanager.utils import list_endf6
+from ndmanager.API.utils import list_endf6
 
 
 def _process_tsl(args):

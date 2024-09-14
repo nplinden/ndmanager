@@ -10,7 +10,7 @@ from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
-from ndmanager.utils import list_endf6
+from ndmanager.API.utils import list_endf6
 
 
 def _process_neutron(args):

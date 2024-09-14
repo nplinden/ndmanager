@@ -8,7 +8,7 @@ from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
 
 
 def compute_file_sha1(filename: str) -> str:
-    BUF_SIZE = 65536
+    BUF_SIZE = 65536 # 64 kBi
     sha1 = hashlib.sha1()
     with open(filename, "rb") as f:
         while True:
@@ -33,16 +33,9 @@ def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
                         SHA1 has as value
 
     """
-    BUF_SIZE = 65536
     tape = get_endf6(libname, sub, nuclide)
-    sha1 = hashlib.sha1()
-    with open(tape, "rb") as f:
-        while True:
-            data = f.read(BUF_SIZE)
-            if not data:
-                break
-            sha1.update(data)
-    return {f"{libname}/{sub}/{nuclide}": sha1.hexdigest()}
+    sha1 = compute_file_sha1(tape)
+    return {f"{libname}/{sub}/{nuclide}": sha1}
 
 
 def compute_sublib_sha1(libname: str, sub: str) -> Dict[str, str]:
