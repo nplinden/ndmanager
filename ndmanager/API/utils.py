@@ -1,6 +1,6 @@
 """Some utility functions"""
-from ndmanager.data import NDMANAGER_ENDF6
 
+from ndmanager.data import NDMANAGER_ENDF6
 
 
 def get_endf6(libname: str, sub: str, nuclide: str):

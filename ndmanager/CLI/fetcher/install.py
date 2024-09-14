@@ -279,6 +279,7 @@ def install(args: ap.Namespace):
     for library, sublibrary, desc in to_download:
         download(library, sublibrary, args.j, desc)
 
+
 def fetch_lib_info(libname: str) -> str:
     """Get the text of the 000-NSUB-index.htm file for a given library name
 

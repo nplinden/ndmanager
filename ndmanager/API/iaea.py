@@ -1,4 +1,5 @@
 """Functions for interacting the the IAEA website"""
+
 import tempfile
 import zipfile
 from contextlib import chdir
@@ -11,6 +12,7 @@ from bs4 import BeautifulSoup
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.iaea import get_url_paths
 from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL, NDMANAGER_ENDF6
+
 
 def get_url_paths(url, ext=""):
     """Get a list of file in a web directory given a file extension
@@ -34,6 +36,7 @@ def get_url_paths(url, ext=""):
     parent = [url + f for f in files]
     return parent
 
+
 def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path | str):
     """Fetch an ENDF6 file from the IAEA website.
 
@@ -48,6 +51,7 @@ def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path | str)
     target.parent.mkdir(parents=True, exist_ok=True)
     with open(target, "w", encoding="utf-8", newline="") as f:
         print(content, file=f, end="")
+
 
 def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
     """Fetch an ENDF6 file from the IAEA website. If a filename is provided,
@@ -84,6 +88,7 @@ def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
             datafile = f"{zipname.rstrip('.zip')}.dat"
             with open(datafile, "r", encoding="utf-8", newline="") as f:
                 return f.read()
+
 
 def fetch_sublibrary_list(libname: str) -> List[str]:
     """Get the list of available sublibraries for a given library name

@@ -3,7 +3,7 @@
 from typing import List
 
 import openmc
-import openmc.data
+from openmc.data import DataLibrary
 
 from ndmanager.data import NDMANAGER_CHAINS, NDMANAGER_HDF5
 
@@ -65,22 +65,29 @@ def set_nuclear_data(libname: str, chain: str = False):
         set_chain(chain)
 
 
-def check_nuclear_data(libpath: str, nuclides: List[str]):
+def check_nuclear_data(libname: str, nuclides: str | List[str]):
     """Check that the OpenMC nuclear data library contains the desired nuclides.
 
     Args:
-        libpath (str): The path to the cross_sections.xml file
-        nuclides (List[str]): The nuclide of nuclides to check for
+        libname (str): The name of the library or a path to a cross_sections.xml file
+        nuclides (str | List[str]): The nuclide of nuclides to check for
 
     Raises:
         ValueError: _description_
     """
-    lib = openmc.data.DataLibrary.from_xml(libpath)
+    if libname[-4:] == ".xml":
+        lib = DataLibrary.from_xml(libname)
+    else:
+        lib = DataLibrary.from_xml(NDMANAGER_HDF5 / libname / "cross_sections.xml")
+    if isinstance(nuclides, str):
+        if lib.get_by_material(nuclides) is None:
+            return False
+        return True
+
     missing = []
     for nuclide in nuclides:
         if lib.get_by_material(nuclide) is None:
             missing.append(nuclide)
     if missing:
-        raise ValueError(
-            f"Nuclear Data Library lacks the following required nuclides: {missing}"
-        )
+        return False
+    return True

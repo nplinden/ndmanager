@@ -2,6 +2,7 @@ import pytest
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 
+
 def test_nuclide(install_test):
     # Testing the default constructor
     assert Nuclide(Z=6, A=12, M=0).Z == 6
