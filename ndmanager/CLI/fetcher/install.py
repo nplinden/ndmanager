@@ -7,6 +7,7 @@ import zipfile
 from contextlib import chdir
 from functools import reduce
 from multiprocessing import Pool
+import multiprocessing as mp
 from pathlib import Path
 from typing import Tuple
 
@@ -161,7 +162,7 @@ def download(
                     download_single_file(library, sublibrary, url, zipname)
             else:
                 args = [(library, sublibrary, url, zipname) for zipname in znames]
-                with Pool(processes) as p:
+                with mp.get_context("spawn").Pool() as p:
                     bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
                     r = list(
                         tqdm(

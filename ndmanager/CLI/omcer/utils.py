@@ -2,6 +2,7 @@
 
 import time
 from multiprocessing import Pool
+import multiprocessing as mp
 from pathlib import Path
 from typing import Callable, Tuple
 import h5py
@@ -31,7 +32,7 @@ def process(
         evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
-    with Pool(processes) as p:
+    with mp.get_context("spawn").Pool() as p:
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         list(tqdm(
             p.imap(processor, args),
