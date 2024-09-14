@@ -1,4 +1,5 @@
 """Some utility function to compute ENDF6 tape SHA1"""
+
 import hashlib
 from typing import Dict
 

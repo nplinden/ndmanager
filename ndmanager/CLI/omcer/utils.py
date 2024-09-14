@@ -34,14 +34,11 @@ def process(
     """
     with mp.get_context("spawn").Pool() as p:
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        list(tqdm(
-            p.imap(processor, args),
-            total=len(args),
-            bar_format=bar_format
-        ))
+        list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
 
     for path in sorted(dest.glob("*.h5"), key=key):
         library.register_file(path)
+
 
 def merge_neutron_file(sourcepath, targetpath):
     source = h5py.File(sourcepath, "r")
@@ -64,10 +61,7 @@ def merge_neutron_file(sourcepath, targetpath):
         source.copy(source[f"{nuclide}/kTs/{t}K"], target[f"{nuclide}/kTs/"])
 
         for reaction in source[f"{nuclide}/reactions"]:
-            source.copy(source[f"{nuclide}/reactions/{reaction}/{t}K"], 
-                        target[f"{nuclide}/reactions/{reaction}/"])
-    
-
-
-
-
+            source.copy(
+                source[f"{nuclide}/reactions/{reaction}/{t}K"],
+                target[f"{nuclide}/reactions/{reaction}/"],
+            )

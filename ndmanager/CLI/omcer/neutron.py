@@ -16,7 +16,14 @@ from ndmanager.utils import list_endf6
 def _process_neutron(args):
     process_neutron(*args)
 
-def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[int], run_args: ap.Namespace):
+
+def process_neutron(
+    directory: str,
+    nuclide: str,
+    path: str,
+    temperatures: List[int],
+    run_args: ap.Namespace,
+):
     """Process a neutron evaluation to the OpenMC format for the desired
     temperatures
 
@@ -31,7 +38,7 @@ def process_neutron(directory: str, nuclide: str, path: str, temperatures: List[
     if h5_file.exists():
         existing = IncidentNeutron.from_hdf5(h5_file)
         existing_temperatures = set(existing.temperatures)
-        temp -= existing_temperatures 
+        temp -= existing_temperatures
 
     data = IncidentNeutron.from_njoy(path, temperatures=temp)
     data.export_to_hdf5(h5_file)
@@ -41,7 +48,7 @@ def generate_neutron(
     n_dict: Dict[str, str | Dict[str, str]],
     temperatures: List[int],
     library: openmc.data.DataLibrary,
-    run_args: ap.Namespace
+    run_args: ap.Namespace,
 ):
     """Generate a set of neutron HDF5 data files given a dictionnary from a
     YAML library description file

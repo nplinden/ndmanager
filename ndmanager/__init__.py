@@ -1,4 +1,5 @@
 """The NDManager module"""
+
 from .API.endf6 import Endf6
 from .API.nuclide import Nuclide
 from .API.sha1 import compute_file_sha1

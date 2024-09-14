@@ -67,9 +67,7 @@ def build(args: ap.Namespace):
             ratios = branching_ratios[inputs["branching_ratios"]]
             for reaction, br in ratios.items():
                 chain.set_branch_ratios(
-                    branch_ratios=br,
-                    reaction=reaction,
-                    strict=False
+                    branch_ratios=br, reaction=reaction, strict=False
                 )
 
     chain.export_to_xml(target)

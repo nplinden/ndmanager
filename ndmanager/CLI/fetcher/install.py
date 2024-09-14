@@ -7,7 +7,6 @@ import tempfile
 import zipfile
 from contextlib import chdir
 from functools import reduce
-from multiprocessing import Pool
 from pathlib import Path
 from typing import Tuple
 
@@ -17,8 +16,12 @@ from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.utils import download_endf6, fetch_sublibrary_list
-from ndmanager.data import (ENDF6_LIBS, IAEA_ROOT, NDMANAGER_ENDF6,
-                            SUBLIBRARIES_SHORTLIST)
+from ndmanager.data import (
+    ENDF6_LIBS,
+    IAEA_ROOT,
+    NDMANAGER_ENDF6,
+    SUBLIBRARIES_SHORTLIST,
+)
 
 
 def install_parser(subparsers: ap._SubParsersAction):
@@ -67,8 +70,9 @@ def download_test():
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
     download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
 
-    download_endf6("endfb8", "tsl", "tsl_0037_H(CH2).zip", 
-                   target / "tsl" / "tsl_0037_H(CH2).endf6")
+    download_endf6(
+        "endfb8", "tsl", "tsl_0037_H(CH2).zip", target / "tsl" / "tsl_0037_H(CH2).endf6"
+    )
 
     download_endf6("endfb8", "photo", "C0", target / "photo" / "C0.endf6")
     download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")
@@ -255,7 +259,7 @@ def install(args: ap.Namespace):
     to_download = []
     for library in libraries:
         localsub = sorted(list(set(fetch_sublibrary_list(library)) & set(sublibraries)))
-        for isub, sub in enumerate(localsub ):
+        for isub, sub in enumerate(localsub):
             if len(localsub) == 1:
                 desc = f"{library} ─── {sub}"
             elif isub == 0:

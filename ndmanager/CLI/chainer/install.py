@@ -1,4 +1,5 @@
 """Definition and parser for the `ndc install` command"""
+
 import argparse as ap
 import tempfile
 from contextlib import chdir

@@ -70,7 +70,9 @@ def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
     else:
         candidates = get_url_paths(source, ".zip")
         n = Nuclide.from_name(nuclide)
-        candidates = [c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c]
+        candidates = [
+            c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c
+        ]
         assert len(candidates) == 1
         url = candidates[0]
 

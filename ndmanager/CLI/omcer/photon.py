@@ -15,6 +15,7 @@ from ndmanager.utils import list_endf6
 def _process_photon(args):
     process_photon(*args)
 
+
 def process_photon(directory, photo, ard):
     """Process a photon evaluation to the OpenMC format
 
@@ -37,7 +38,7 @@ def generate_photon(
     photo_dict: Dict[str, str | Dict[str, str]],
     ard_dict: Dict[str, str | Dict[str, str]],
     library: openmc.data.DataLibrary,
-    run_args: ap.Namespace
+    run_args: ap.Namespace,
 ):
     """Generate a set of photon HDF5 data files given photo-atomic and atomic relaxation
     parameters from a YAML library description file

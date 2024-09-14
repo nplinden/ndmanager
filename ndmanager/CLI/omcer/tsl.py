@@ -14,6 +14,7 @@ from ndmanager.utils import list_endf6
 def _process_tsl(args):
     process_tsl(*args)
 
+
 def process_tsl(directory: str, neutron: str, thermal: str, run_args: ap.Namespace):
     """Process a TSL evaluations given a companion neutron evaluation
 
@@ -69,7 +70,7 @@ def generate_tsl(
     tsl_params: Dict[str, str],
     neutron_params: Dict[str, str],
     library: openmc.data.DataLibrary,
-    run_args: ap.Namespace
+    run_args: ap.Namespace,
 ):
     """Generate a set of tsl HDF5 data files given tsl and neutron dictionnaries from a
     YAML library description file
