@@ -60,7 +60,7 @@ def set_nuclear_data(libname: str, chain: str = False):
     Raises:
         FileNotFoundError: raised if the library is not installed.
     """
-    set_ndl(libname)
+    set_xs(libname)
     if chain:
         set_chain(chain)
 

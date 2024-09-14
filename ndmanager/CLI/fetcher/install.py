@@ -168,7 +168,7 @@ def download(
                 args = [(library, sublibrary, url, zipname) for zipname in znames]
                 with mp.get_context("spawn").Pool() as p:
                     bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-                    r = list(
+                    list(
                         tqdm(
                             p.imap(download_single_file_map, args),
                             desc=desc,
