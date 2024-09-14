@@ -1,8 +1,8 @@
 """Some functions to process Thermal Scattering Law evaluations to the OpenMC format"""
 
+import argparse as ap
 from pathlib import Path
 from typing import Dict
-import argparse as ap
 
 import openmc.data
 

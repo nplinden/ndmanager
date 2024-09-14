@@ -5,7 +5,7 @@ from typing import List
 import openmc
 import openmc.data
 
-from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_CHAINS
+from ndmanager.data import NDMANAGER_CHAINS, NDMANAGER_HDF5
 
 
 def set_xs(libname: str):

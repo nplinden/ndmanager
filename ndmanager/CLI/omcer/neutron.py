@@ -1,16 +1,17 @@
 """Some functions to process neutron evaluations to the OpenMC format"""
 
+import argparse as ap
 from pathlib import Path
 from typing import Dict, List
-import h5py
-import argparse as ap
 
+import h5py
 import openmc.data
 from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.utils import list_endf6
+
 
 def _process_neutron(args):
     process_neutron(*args)

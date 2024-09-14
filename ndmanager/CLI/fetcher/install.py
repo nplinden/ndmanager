@@ -1,13 +1,13 @@
 """Definition and parser for the 'ndf install' command"""
 
 import argparse as ap
+import multiprocessing as mp
 import shutil
 import tempfile
 import zipfile
 from contextlib import chdir
 from functools import reduce
 from multiprocessing import Pool
-import multiprocessing as mp
 from pathlib import Path
 from typing import Tuple
 

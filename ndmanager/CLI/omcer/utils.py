@@ -1,14 +1,14 @@
 """A function that encapsulates nuclear data processing from OpenMC"""
 
+import multiprocessing as mp
 import time
 from multiprocessing import Pool
-import multiprocessing as mp
 from pathlib import Path
 from typing import Callable, Tuple
-import h5py
-from tqdm import tqdm
 
+import h5py
 import openmc.data
+from tqdm import tqdm
 
 from ndmanager.format import clear_line
 
