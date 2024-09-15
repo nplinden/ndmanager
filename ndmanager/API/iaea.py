@@ -13,7 +13,7 @@ from ndmanager.API.nuclide import Nuclide
 from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL, NDMANAGER_ENDF6
 
 
-def get_url_paths(url: str, ext: str="") -> List[str]:
+def get_url_paths(url: str, ext: str = "") -> List[str]:
     """Get a list of file in a web directory given a file extension
 
     Args:

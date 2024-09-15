@@ -1,9 +1,9 @@
-import pytest
 from pathlib import Path
-from tests.data import endf6_sha1
 
+import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
+from tests.data import endf6_sha1
 
 
 def test_install(install_test):

@@ -1,13 +1,8 @@
 import pytest
 
-from ndmanager.API.sha1 import (
-    compute_file_sha1,
-    compute_tape_sha1,
-    compute_sublib_sha1,
-    compute_lib_sha1,
-    compute_sha1,
-    check_tape_integrity
-)
+from ndmanager.API.sha1 import (check_tape_integrity, compute_file_sha1,
+                                compute_lib_sha1, compute_sha1,
+                                compute_sublib_sha1, compute_tape_sha1)
 from ndmanager.data import TAPE_SHA1
 
 
@@ -79,6 +74,7 @@ def test_compute_lib_sha1(install_test):
         == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
     )
 
+
 def test_compute_sha1(install_test):
     sha1 = compute_sha1("test", "n", "C12")
     assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
@@ -130,6 +126,7 @@ def test_compute_sha1(install_test):
     )
     with pytest.raises(ValueError):
         compute_sha1("test", nuclide="C0")
+
 
 def test_check_tape_integrity(install_test):
     assert check_tape_integrity("test", "n", "C12")

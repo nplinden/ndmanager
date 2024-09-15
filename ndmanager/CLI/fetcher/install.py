@@ -16,12 +16,8 @@ from tqdm import tqdm
 
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.iaea import download_endf6, fetch_sublibrary_list
-from ndmanager.data import (
-    ENDF6_LIBS,
-    IAEA_ROOT,
-    NDMANAGER_ENDF6,
-    SUBLIBRARIES_SHORTLIST,
-)
+from ndmanager.data import (ENDF6_LIBS, IAEA_ROOT, NDMANAGER_ENDF6,
+                            SUBLIBRARIES_SHORTLIST)
 
 
 def install_parser(subparsers: ap._SubParsersAction):

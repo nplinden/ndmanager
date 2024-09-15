@@ -1,15 +1,11 @@
-import pytest
-
-import requests
-from pathlib import Path
 import hashlib
+from pathlib import Path
 
-from ndmanager.API.iaea import (
-    get_url_paths,
-    download_endf6,
-    fetch_endf6,
-    fetch_sublibrary_list,
-)
+import pytest
+import requests
+
+from ndmanager.API.iaea import (download_endf6, fetch_endf6,
+                                fetch_sublibrary_list, get_url_paths)
 from ndmanager.data import TAPE_SHA1
 
 

@@ -7,10 +7,10 @@ from contextlib import chdir
 import openmc.deplete
 import yaml
 
+from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.chainer.branching_ratios import branching_ratios
 from ndmanager.CLI.chainer.module import chain_modulefile
 from ndmanager.data import NDMANAGER_CHAINS, NDMANAGER_MODULEPATH
-from ndmanager.API.utils import list_endf6
 
 
 def build_parser(subparsers: ap._SubParsersAction):

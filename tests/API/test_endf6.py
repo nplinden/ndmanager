@@ -1,4 +1,5 @@
 import pytest
+
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.utils import get_endf6
 
