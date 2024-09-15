@@ -43,8 +43,6 @@ class Nuclide:
 
         if not m:
             M = 0
-        elif not underscore:
-            M = META_SYMBOL[m]
         else:
             M = int(m.removeprefix("m"))
         return cls(Z, A, M)

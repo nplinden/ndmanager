@@ -2,6 +2,7 @@ import pytest
 from ndmanager.API.endf6 import Endf6
 from ndmanager.API.utils import get_endf6
 
+
 def test_endf6(install_test):
     for neutron in ["C12", "H1"]:
         tape = get_endf6("test", "n", neutron)
@@ -31,5 +32,5 @@ def test_endf6(install_test):
     evaluation = Endf6(tape)
 
     assert evaluation.filename == tape
-    assert evaluation.nuclide.name == "n137" # An anomaly of TSL files
+    assert evaluation.nuclide.name == "n137"  # An anomaly of TSL files
     assert evaluation.sublibrary == "tsl"

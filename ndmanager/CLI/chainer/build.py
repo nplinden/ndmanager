@@ -7,10 +7,10 @@ from contextlib import chdir
 import openmc.deplete
 import yaml
 
+from ndmanager.CLI.chainer.branching_ratios import branching_ratios
 from ndmanager.CLI.chainer.module import chain_modulefile
 from ndmanager.data import NDMANAGER_CHAINS, NDMANAGER_MODULEPATH
-from ndmanager.CLI.chainer.branching_ratios import branching_ratios
-from ndmanager.utils import list_endf6
+from ndmanager.API.utils import list_endf6
 
 
 def build_parser(subparsers: ap._SubParsersAction):
@@ -67,9 +67,7 @@ def build(args: ap.Namespace):
             ratios = branching_ratios[inputs["branching_ratios"]]
             for reaction, br in ratios.items():
                 chain.set_branch_ratios(
-                    branch_ratios=br,
-                    reaction=reaction,
-                    strict=False
+                    branch_ratios=br, reaction=reaction, strict=False
                 )
 
     chain.export_to_xml(target)

@@ -10,6 +10,7 @@ def install_test():
     namespace = ap.Namespace(libraries=["test"], sub=["n"], all=False)
     install(namespace)
 
+
 @pytest.fixture(scope="session")
 def build_test(install_test):
     data = """description: |
@@ -29,10 +30,5 @@ temperatures: 273 500
     p = Path("pytest-artifacts/test.yml")
     with open(p, "w") as f:
         print(data, file=f)
-    namespace = ap.Namespace(
-        filename=str(p),
-        dryrun=False,
-        clean=True,
-        j=2
-    )
+    namespace = ap.Namespace(filename=str(p), dryrun=False, clean=True, j=2)
     build(namespace)

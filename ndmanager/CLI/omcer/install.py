@@ -109,4 +109,6 @@ def install(args: ap.Namespace):
                 shutil.move(source, target)
 
         if NDMANAGER_MODULEPATH is not None:
-            xs_modulefile(f"xs/{family}-{lib}", dico["info"], target / "cross_sections.xml")
+            xs_modulefile(
+                f"xs/{family}-{lib}", dico["info"], target / "cross_sections.xml"
+            )

@@ -1,90 +1,9 @@
 """Some utility functions"""
-
-import tempfile
-import zipfile
-from contextlib import chdir
-from pathlib import Path
-from typing import List
-
-import requests
-from bs4 import BeautifulSoup
+from typing import Dict
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL, NDMANAGER_ENDF6
 
-
-def get_url_paths(url, ext=""):
-    """Get a list of file in a web directory given a file extension
-
-    Args:
-        url (str): The url of the web directory
-        ext (str, optional): The file extension. Defaults to "".
-
-    Returns:
-        _type_: _description_
-    """
-    response = requests.get(url, timeout=10)
-    if response.ok:
-        response_text = response.text
-    else:
-        return response.raise_for_status()
-    nodes = [
-        n.get("href") for n in BeautifulSoup(response_text, "html.parser").find_all("a")
-    ]
-    files = [n for n in nodes if n.endswith(ext)]
-    parent = [url + f for f in files]
-    return parent
-
-
-def download_endf6(libname: str, sub: str, nuclide: str, targetfile: Path | str):
-    """Fetch an ENDF6 file from the IAEA website.
-
-    Args:
-        libname (str): The library to download from
-        sub (str): The type of sublibrary to download
-        nuclide (str): The nuclide in the GNDS name format
-        targetfile (str | Path): The path of the file
-    """
-    content = fetch_endf6(libname, sub, nuclide)
-    target = Path(targetfile)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with open(target, "w", encoding="utf-8", newline="") as f:
-        print(content, file=f, end="")
-
-
-def fetch_endf6(libname: str, sub: str, nuclide: str) -> str | Path:
-    """Fetch an ENDF6 file from the IAEA website. If a filename is provided,
-    the tape will be saved to file, otherwise it will be return as a string.
-
-    Args:
-        libname (str): The library to download from
-        sub (str): The type of sublibrary to download
-        nuclide (str): The nuclide in the GNDS name format
-
-    Returns:
-        str: The content of the ENDF6 tape
-    """
-    source = ENDF6_LIBS[libname]["source"] + f"/{sub}/"
-    if sub == "tsl":
-        url = source + f"/{nuclide}"
-    else:
-        candidates = get_url_paths(source, ".zip")
-        n = Nuclide.from_name(nuclide)
-        candidates = [c for c in candidates if f"{n.element}-{n.A}{META_SYMBOL[n.M]}" in c]
-        assert len(candidates) == 1
-        url = candidates[0]
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with chdir(tmpdir):
-            content = requests.get(url, timeout=10).content
-            zipname = url.split("/")[-1]
-            with open(zipname, "wb") as f:
-                f.write(content)
-            with zipfile.ZipFile(zipname) as zf:
-                zf.extractall()
-            datafile = f"{zipname.rstrip('.zip')}.dat"
-            with open(datafile, "r", encoding="utf-8", newline="") as f:
-                return f.read()
+from ndmanager.data import NDMANAGER_ENDF6
 
 
 def get_endf6(libname: str, sub: str, nuclide: str):
@@ -116,39 +35,45 @@ def get_endf6(libname: str, sub: str, nuclide: str):
         raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
     return p
 
-
-def fetch_lib_info(libname: str) -> str:
-    """Get the text of the 000-NSUB-index.htm file for a given library name
-
-    Args:
-        libname (str): The name of the desired evaluation
-
-    Returns:
-        str: The text of the 000-NSUB-index.htm file
-
-    """
-    fancyname = ENDF6_LIBS[libname]["fancyname"]
-    url = IAEA_ROOT + fancyname + "/000-NSUB-index.htm"
-    response = requests.get(url, timeout=10)
-    return BeautifulSoup(response.text, "html.parser").find_all("pre")[0].text
-
-
-def fetch_sublibrary_list(libname: str) -> List[str]:
-    """Get the list of available sublibraries for a given library name
+def list_endf6(sublibrary: str, params: Dict[str, str]):
+    """List the paths to ENDF6 evaluations necessary to build the cross-sections
+    and depletion chains.
 
     Args:
-        libname (str): The name of the desired evaluation
+        sublibrary (str): The sublibrary type (n, decay, nfpy).
+        params (Dict[str, str]): The parameters in the form of a dictionnary.
 
     Returns:
-        List[str]: The list of available sublibraries for a given library name
-
+        Dict[str, Path]: A dictionnary that associates nuclide names to ENDF6 paths.
     """
-    fancyname = ENDF6_LIBS[libname]["fancyname"]
-    url = IAEA_ROOT + fancyname
+    basis = params["basis"]
+    ommit = params.get("ommit", "").split()
+    add = params.get("add", {})
 
-    r = requests.get(url, timeout=10)
-    a_tags = BeautifulSoup(r.text, "html.parser").find_all("a")
-    hrefs = [a.get("href") for a in a_tags if "-index.htm" in a.get("href")]
-    hrefs.remove("000-NSUB-index.htm")
-    subs = [s.split("-")[0] for s in hrefs]
-    return subs
+    basis_paths = (NDMANAGER_ENDF6 / basis / sublibrary).glob("*.endf6")
+    basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
+
+    # Remove unwanted evaluations
+    for nuclide in ommit:
+        basis_dict.pop(Nuclide.from_name(nuclide).name, None)
+
+    # Remove neutron evaluations if they are present.
+    basis_dict.pop("n1", None)
+    basis_dict.pop("nn1", None)
+    basis_dict.pop("N1", None)
+
+    # Add custom evaluations.
+    # Overwrite if the main library already provides them.
+    guest_dict = {}
+    for guestlib, _nuclides in add.items():
+        nuclides = _nuclides.split()
+        for nuclide in nuclides:
+            p = NDMANAGER_ENDF6 / guestlib / sublibrary / f"{nuclide}.endf6"
+            if not p.exists():
+                raise ValueError(
+                    f"Nuclide {nuclide} is not available in the {guestlib} library."
+                )
+            guest_dict[nuclide] = p
+        basis_dict |= guest_dict
+
+    return basis_dict

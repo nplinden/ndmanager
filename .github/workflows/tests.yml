@@ -1,0 +1,51 @@
+name: NDManager unit tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+env:
+    NDMANAGER_ENDF6: ${HOME}/.ndmanager/endf6
+    NDMANAGER_HDF5: ${HOME}/.ndmanager/hdf5
+
+jobs:
+    build:
+        runs-on: ubuntu-24.04
+        strategy:
+            matrix:
+                python-version: ["3.12"]
+        name: "Python ${{ matrix.python-version }}"
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with: 
+                python-version: ${{ matrix.python-version }}
+
+            - name: Installing NJOY
+              shell: bash
+              run: |
+                  echo "$HOME/NJOY2016/build" >> $GITHUB_PATH
+                  $GITHUB_WORKSPACE/tools/ci/install_njoy.sh
+             
+            - name: Installing OpenMC's python API
+              shell: bash
+              run: |
+                pip install git+https://github.com/openmc-dev/openmc.git@v0.15.0
+
+            - name: Installing NDManager
+              shell: bash
+              run: |
+                pip install '.[test]'
+
+            - name: Pytest
+              shell: bash
+              run: |
+                pytest tests
+
+                
+
+
