@@ -20,9 +20,6 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Greetings
-              run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-
             - name: Set up Python ${{ matrix.python-version }}
               uses: actions/setup-python@v5
               with: 
@@ -42,9 +39,9 @@ jobs:
             - name: Installing NDManager
               shell: bash
               run: |
-                pip install .
+                pip install '.[test]'
 
-            - name: Checks
+            - name: Visual checks
               shell: bash
               run: |
                 python --version
@@ -53,5 +50,12 @@ jobs:
                 ndf --help
                 ndf list
                 ndo list
+
+            - name: Pytest
+              shell: bash
+              run: |
+                pytest tests
+
+                
 
 
