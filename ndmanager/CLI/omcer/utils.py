@@ -1,8 +1,7 @@
 """A function that encapsulates nuclear data processing from OpenMC"""
 
+import argparse as ap
 import multiprocessing as mp
-import time
-from multiprocessing import Pool
 from pathlib import Path
 from typing import Callable, Tuple
 
@@ -10,16 +9,13 @@ import h5py
 import openmc.data
 from tqdm import tqdm
 
-from ndmanager.format import clear_line
-
 
 def process(
     dest: Path,
     library: openmc.data.DataLibrary,
     processor: Callable,
     args: Tuple,
-    evaltype: str,
-    processes: int,
+    run_args: ap.Namespace,
     key: Callable = lambda x: x,
 ):
     """Encapsulation fo the nuclear data processing capabilities of OpenMC
@@ -32,15 +28,27 @@ def process(
         evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
-    with mp.get_context("spawn").Pool() as p:
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
+
+    if run_args.dryrun:
+        for arg in args:
+            print(arg[0], str(arg[1]), str(arg[2]))
+    else:
+        with mp.get_context("spawn").Pool(processes=run_args.j) as p:
+            bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+            list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
 
     for path in sorted(dest.glob("*.h5"), key=key):
         library.register_file(path)
 
 
 def merge_neutron_file(sourcepath, targetpath):
+    """Merge two nuclear data file containing data for the same nuclide at
+    different temperatures.
+
+    Args:
+        sourcepath: Path to the source data file. This file will not be modified
+        targetpath: Path to the target data file. This file will be modified
+    """
     source = h5py.File(sourcepath, "r")
     target = h5py.File(targetpath, "a")
 

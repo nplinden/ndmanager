@@ -15,7 +15,7 @@ def _process_tsl(args):
     process_tsl(*args)
 
 
-def process_tsl(directory: str, neutron: str, thermal: str, run_args: ap.Namespace):
+def process_tsl(directory: str, neutron: str, thermal: str):
     """Process a TSL evaluations given a companion neutron evaluation
 
     Args:
@@ -79,23 +79,18 @@ def generate_tsl(
         tsl_params (Dict[str, str]): The tsl dictionnary from the YAML file
         neutron_params (Dict[str, str]): The neutron dictionnary from the YAML file
         library (openmc.data.DataLibrary): The library object
-        dryrun (bool, optional): If True, the generation won't be performed. Defaults to False.
+        run_args (ap.Namespace): Arguments for the process function
     """
     neutrons = list_endf6("n", neutron_params)
     tsl = list_tsl(tsl_params, neutrons)
 
     dest = Path("tsl")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, t, run_args) for n, t in tsl]
-    if run_args.dryrun:
-        for arg in args:
-            print(arg[0], str(arg[1]), str(arg[2]))
-    else:
-        process(
-            dest,
-            library,
-            _process_tsl,
-            args,
-            "TSL",
-            run_args.j,
-        )
+    args = [(dest, n, t) for n, t in tsl]
+    process(
+        dest,
+        library,
+        _process_tsl,
+        args,
+        run_args=run_args,
+    )

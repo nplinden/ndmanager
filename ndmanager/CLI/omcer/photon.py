@@ -47,23 +47,18 @@ def generate_photon(
         photo_dict (Dict[str, str  |  Dict[str, str]]): The photo-atomic parameters
         ard_dict (Dict[str, str  |  Dict[str, str]]): The atomic relaxation parameters
         library (openmc.data.DataLibrary): The library object
-        dryrun (bool, optional): If True, the generation won't be performed. Defaults to False.
+        run_args (ap.Namespace): Arguments for the process function
     """
     photo = list_endf6("photo", photo_dict)
     ard = list_endf6("ard", ard_dict)
     dest = Path("photon")
     dest.mkdir(parents=True, exist_ok=True)
     args = [(dest, photo[atom], ard.get(atom, None)) for atom in photo]
-    if run_args.dryrun:
-        for arg in args:
-            print(arg[0], str(arg[1]), str(arg[2]))
-    else:
-        process(
-            dest,
-            library,
-            _process_photon,
-            args,
-            "photon",
-            run_args.j,
-            lambda x: ATOMIC_SYMBOL[x.stem],
-        )
+    process(
+        dest,
+        library,
+        _process_photon,
+        args,
+        run_args=run_args,
+        key=lambda x: ATOMIC_SYMBOL[x.stem],
+    )

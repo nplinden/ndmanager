@@ -4,7 +4,7 @@
 import re
 from pathlib import Path
 
-from ndmanager.data import ATOMIC_SYMBOL, META_SYMBOL
+from ndmanager.data import ATOMIC_SYMBOL
 
 
 class Nuclide:
@@ -37,7 +37,7 @@ class Nuclide:
         Returns:
             Nuclide: The nuclide object
         """
-        element, A, underscore, m = cls.splitname_re.match(name).groups()
+        element, A, _, m = cls.splitname_re.match(name).groups()
         Z = ATOMIC_SYMBOL[element]
         A = int(A)
 

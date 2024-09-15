@@ -18,7 +18,7 @@ def listlibs_parser(subparsers):
     parser.set_defaults(func=listlibs)
 
 
-def listlibs(*args):
+def listlibs(_args):
     """List the OpenMC libaries available for download with NDManager"""
     col, _ = get_terminal_size()
 

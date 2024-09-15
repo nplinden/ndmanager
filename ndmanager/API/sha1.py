@@ -8,6 +8,11 @@ from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
 
 
 def compute_file_sha1(filename: str) -> str:
+    """Compute the SHA1 value of a file given its path.
+
+    Args:
+        Path to a file.
+    """
     BUF_SIZE = 65536  # 64 kBi
     sha1 = hashlib.sha1()
     with open(filename, "rb") as f:

@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL, NDMANAGER_ENDF6
+from ndmanager.data import ENDF6_LIBS, IAEA_ROOT, META_SYMBOL
 
 
 def get_url_paths(url: str, ext: str = "") -> List[str]:

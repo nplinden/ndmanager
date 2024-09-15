@@ -19,7 +19,7 @@ def list_parser(subparsers: ap._SubParsersAction):
     parser.set_defaults(func=listchains)
 
 
-def listchains(args: ap.Namespace):
+def listchains(_args: ap.Namespace):
     """List the available chains"""
     col, _ = get_terminal_size()
 

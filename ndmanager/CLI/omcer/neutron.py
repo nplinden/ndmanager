@@ -4,7 +4,6 @@ import argparse as ap
 from pathlib import Path
 from typing import Dict, List
 
-import h5py
 import openmc.data
 from openmc.data import IncidentNeutron
 
@@ -22,7 +21,6 @@ def process_neutron(
     nuclide: str,
     path: str,
     temperatures: List[int],
-    run_args: ap.Namespace,
 ):
     """Process a neutron evaluation to the OpenMC format for the desired
     temperatures
@@ -57,22 +55,17 @@ def generate_neutron(
         n_dict (Dict[str, str  |  Dict[str, str]]): The dictionary from the YAML file
         temperatures (List[int]): The desired temperatures
         library (openmc.data.DataLibrary): The library object
-        dryrun (bool, optional): If True, the generation won't be performed. Defaults to False.
+        run_args (ap.Namespace): Arguments for the process function
     """
     neutron = list_endf6("n", n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, neutron[n], temperatures, run_args) for n in neutron]
-    if run_args.dryrun:
-        for arg in args:
-            print(arg[0], str(arg[1]), str(arg[2]))
-    else:
-        process(
-            dest,
-            library,
-            _process_neutron,
-            args,
-            "neutron",
-            run_args.j,
-            lambda x: Nuclide.from_name(x.stem).zam,
-        )
+    args = [(dest, n, neutron[n], temperatures) for n in neutron]
+    process(
+        dest,
+        library,
+        _process_neutron,
+        args,
+        run_args=run_args,
+        key=lambda x: Nuclide.from_name(x.stem).zam,
+    )
