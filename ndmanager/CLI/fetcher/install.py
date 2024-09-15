@@ -8,7 +8,7 @@ import zipfile
 from contextlib import chdir
 from functools import reduce
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, List
 
 import requests
 from bs4 import BeautifulSoup
@@ -163,13 +163,12 @@ def download(
             else:
                 args = [(library, sublibrary, url, zipname) for zipname in znames]
                 with mp.get_context("spawn").Pool() as p:
-                    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
                     list(
                         tqdm(
                             p.imap(download_single_file_map, args),
                             desc=desc,
                             total=len(args),
-                            bar_format=bar_format,
+                            bar_format= "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]",
                         )
                     )
 
@@ -231,6 +230,19 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
             return True
     return False
 
+def get_sublibrary_list(args: ap.Namespace) -> List[str]:
+    """Compute the list of sublibraries to download.
+
+    Args:
+        args (ap.Namespace): The argparse object containing the command line argument
+    """
+    if args.sub is not None:
+        return args.sub
+    if args.all:
+        sublibraries = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in args.libraries]
+        return list(reduce(lambda x, y: x | y, sublibraries))
+    return SUBLIBRARIES_SHORTLIST
+
 
 def install(args: ap.Namespace):
     """Download a set of libraries/sublibraries from the IAEA website
@@ -244,13 +256,8 @@ def install(args: ap.Namespace):
         libraries.remove("test")
     if not libraries:
         return
-    if args.sub is not None:
-        sublibraries = args.sub
-    elif args.all:
-        sublibraries = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in libraries]
-        sublibraries = list(reduce(lambda x, y: x | y, sublibraries))
-    else:
-        sublibraries = SUBLIBRARIES_SHORTLIST
+
+    sublibraries = get_sublibrary_list(args)
 
     to_download = []
     for library in libraries:
