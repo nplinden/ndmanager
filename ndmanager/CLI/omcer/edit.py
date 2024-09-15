@@ -11,6 +11,30 @@ from h5py import File
 from ndmanager.data import NDMANAGER_HDF5
 
 
+def overwrite_one_temp(source: File, target: File, nuclide: str, mt: int, t: str):
+    """Substitute cross-section values for a given (nuclide, reaction, temperature) tuple
+    from a source HDF5 file in a target HDF5.
+
+    Args:
+        source (h5py.File): The opened source file
+        target (h5py.File): The opened target file
+        nuclide (str): The name of the nuclide
+        mt (int): The MT number of the reaction
+        t (str): The name of the temperature node
+    """
+    target_grid = target[f"{nuclide}/energy/{t:d}K"][...]
+    target_attrs = target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"].attrs
+
+    source_grid = source[f"{nuclide}/energy/{t:d}K"][...]
+    source_xs = source[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"][...]
+
+    replacement = np.interp(target_grid, source_grid, source_xs)
+    del target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"]
+    target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"] = replacement
+    for k, v in target_attrs.items():
+        target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"].attrs[k] = v
+
+
 def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
     """Substitute cross-section values for a given (nuclide, reaction) couple
     from a source HDF5 file in a target HDF5.
@@ -40,19 +64,7 @@ def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
                 )
 
         for t in target_temperatures:
-            target_grid = target[f"{nuclide}/energy/{t:d}K"][...]
-            target_attrs = target[
-                f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"
-            ].attrs
-
-            source_grid = source[f"{nuclide}/energy/{t:d}K"][...]
-            source_xs = source[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"][...]
-
-            replacement = np.interp(target_grid, source_grid, source_xs)
-            del target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"]
-            target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"] = replacement
-            for k, v in target_attrs.items():
-                target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"].attrs[k] = v
+            overwrite_one_temp(source, target, nuclide, mt, t)
 
 
 def find_negative(matpath: str, mt: int) -> Dict[str, Dict[str, str | List[str]]]:
