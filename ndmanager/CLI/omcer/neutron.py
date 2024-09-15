@@ -4,7 +4,6 @@ import argparse as ap
 from pathlib import Path
 from typing import Dict, List
 
-import h5py
 import openmc.data
 from openmc.data import IncidentNeutron
 
@@ -22,7 +21,6 @@ def process_neutron(
     nuclide: str,
     path: str,
     temperatures: List[int],
-    run_args: ap.Namespace,
 ):
     """Process a neutron evaluation to the OpenMC format for the desired
     temperatures
