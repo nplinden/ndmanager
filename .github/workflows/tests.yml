@@ -6,6 +6,10 @@ on:
     pull_request:
         branches: [main]
 
+env:
+    NDMANAGER_ENDF6: ${HOME}/.ndmanager/endf6
+    NDMANAGER_HDF5: ${HOME}/.ndmanager/hdf5
+
 jobs:
     build:
         runs-on: ubuntu-24.04
