@@ -15,7 +15,7 @@ def _process_tsl(args):
     process_tsl(*args)
 
 
-def process_tsl(directory: str, neutron: str, thermal: str, run_args: ap.Namespace):
+def process_tsl(directory: str, neutron: str, thermal: str):
     """Process a TSL evaluations given a companion neutron evaluation
 
     Args:
