@@ -32,8 +32,8 @@ def process(
         evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
-    with mp.get_context("spawn").Pool() as p:
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+    with mp.get_context("spawn").Pool(processes=processes) as p:
+        bar_format = "{evaltype:<6} {l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
 
     for path in sorted(dest.glob("*.h5"), key=key):
