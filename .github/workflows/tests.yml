@@ -2,7 +2,7 @@ name: NDManager unit tests
 
 on:
     push:
-        branches: [main, test]
+        branches: [main]
     pull_request:
         branches: [main]
 
