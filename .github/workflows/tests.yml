@@ -33,7 +33,7 @@ jobs:
             - name: Installing OpenMC's python API
               shell: bash
               run: |
-                pip install git+https://github.com/openmc-dev/openmc/tree/v0.15.0
+                pip install git+https://github.com/openmc-dev/openmc.git@v0.15.0
 
             - name: Checks
               shell: bash
