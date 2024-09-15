@@ -14,7 +14,11 @@ jobs:
                 python-version: ["3.12"]
         name: "Python ${{ matrix.python-version }}"
         steps:
-            - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+            - uses: actions/checkout@v4
+
+            - name: Greetings
+              run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+
             - name: NJOY
               shell: bash
               run: |
