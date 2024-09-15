@@ -79,7 +79,7 @@ def generate_tsl(
         tsl_params (Dict[str, str]): The tsl dictionnary from the YAML file
         neutron_params (Dict[str, str]): The neutron dictionnary from the YAML file
         library (openmc.data.DataLibrary): The library object
-        dryrun (bool, optional): If True, the generation won't be performed. Defaults to False.
+        run_args (ap.Namespace): Arguments for the process function
     """
     neutrons = list_endf6("n", neutron_params)
     tsl = list_tsl(tsl_params, neutrons)
@@ -87,15 +87,10 @@ def generate_tsl(
     dest = Path("tsl")
     dest.mkdir(parents=True, exist_ok=True)
     args = [(dest, n, t, run_args) for n, t in tsl]
-    if run_args.dryrun:
-        for arg in args:
-            print(arg[0], str(arg[1]), str(arg[2]))
-    else:
-        process(
-            dest,
-            library,
-            _process_tsl,
-            args,
-            "TSL",
-            run_args.j,
-        )
+    process(
+        dest,
+        library,
+        _process_tsl,
+        args,
+        run_args=run_args,
+    )

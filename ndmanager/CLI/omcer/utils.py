@@ -1,5 +1,6 @@
 """A function that encapsulates nuclear data processing from OpenMC"""
 
+import argparse as ap
 import multiprocessing as mp
 from pathlib import Path
 from typing import Callable, Tuple
@@ -14,7 +15,7 @@ def process(
     library: openmc.data.DataLibrary,
     processor: Callable,
     args: Tuple,
-    processes: int,
+    run_args: ap.Namespace,
     key: Callable = lambda x: x,
 ):
     """Encapsulation fo the nuclear data processing capabilities of OpenMC
@@ -27,9 +28,14 @@ def process(
         evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
-    with mp.get_context("spawn").Pool(processes=processes) as p:
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
+
+    if run_args.dryrun:
+        for arg in args:
+            print(arg[0], str(arg[1]), str(arg[2]))
+    else:
+        with mp.get_context("spawn").Pool(processes=run_args.j) as p:
+            bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+            list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
 
     for path in sorted(dest.glob("*.h5"), key=key):
         library.register_file(path)
