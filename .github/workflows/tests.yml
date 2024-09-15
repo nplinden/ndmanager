@@ -15,4 +15,10 @@ jobs:
         name: "Python ${{ matrix.python-version }}"
         steps:
             - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+            - name: NJOY
+              shell: bash
+              run: |
+                  echo "$HOME/NJOY2016/build" >> $GITHUB_PATH
+                  $GITHUB_WORKSPACE/tools/ci/install_njoy.sh
+             
 
