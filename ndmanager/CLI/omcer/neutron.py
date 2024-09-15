@@ -60,7 +60,7 @@ def generate_neutron(
     neutron = list_endf6("n", n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, neutron[n], temperatures, run_args) for n in neutron]
+    args = [(dest, n, neutron[n], temperatures) for n in neutron]
     process(
         dest,
         library,

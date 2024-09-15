@@ -86,7 +86,7 @@ def generate_tsl(
 
     dest = Path("tsl")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, t, run_args) for n, t in tsl]
+    args = [(dest, n, t) for n, t in tsl]
     process(
         dest,
         library,
