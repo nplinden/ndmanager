@@ -41,16 +41,6 @@ jobs:
               run: |
                 pip install '.[test]'
 
-            - name: Visual checks
-              shell: bash
-              run: |
-                python --version
-                which njoy
-                python -c "import openmc ; print(openmc.__version__)"
-                ndf --help
-                ndf list
-                ndo list
-
             - name: Pytest
               shell: bash
               run: |
