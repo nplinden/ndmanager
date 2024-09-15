@@ -1,4 +1,4 @@
 format:
-	black ndmanager && isort ndmanager
+	black ndmanager tests && isort ndmanager tests
 linter:
 	pylint ndmanager

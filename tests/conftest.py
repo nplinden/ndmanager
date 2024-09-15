@@ -1,6 +1,8 @@
-import pytest
 import argparse as ap
 from pathlib import Path
+
+import pytest
+
 from ndmanager.CLI.fetcher.install import install
 from ndmanager.CLI.omcer.build import build
 

@@ -1,5 +1,6 @@
 import pytest
-from ndmanager.format import clear_line, header, get_terminal_size, footer
+
+from ndmanager.format import clear_line, footer, get_terminal_size, header
 
 
 def test_get_terminal_size():

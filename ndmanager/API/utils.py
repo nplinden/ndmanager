@@ -1,8 +1,8 @@
 """Some utility functions"""
+
 from typing import Dict
 
 from ndmanager.API.nuclide import Nuclide
-
 from ndmanager.data import NDMANAGER_ENDF6
 
 
@@ -34,6 +34,7 @@ def get_endf6(libname: str, sub: str, nuclide: str):
     if not p.exists():
         raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
     return p
+
 
 def list_endf6(sublibrary: str, params: Dict[str, str]):
     """List the paths to ENDF6 evaluations necessary to build the cross-sections

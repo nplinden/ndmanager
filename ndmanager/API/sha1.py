@@ -8,7 +8,7 @@ from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
 
 
 def compute_file_sha1(filename: str) -> str:
-    BUF_SIZE = 65536 # 64 kBi
+    BUF_SIZE = 65536  # 64 kBi
     sha1 = hashlib.sha1()
     with open(filename, "rb") as f:
         while True:

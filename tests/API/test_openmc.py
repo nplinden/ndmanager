@@ -1,9 +1,10 @@
-import pytest
 import os
-import openmc
 from pathlib import Path
 
-from ndmanager.API.openmc import set_xs, set_nuclear_data, check_nuclear_data
+import openmc
+import pytest
+
+from ndmanager.API.openmc import check_nuclear_data, set_nuclear_data, set_xs
 
 
 def test_set_xs(build_test):

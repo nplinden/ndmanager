@@ -7,9 +7,9 @@ from typing import Dict
 import openmc.data
 
 from ndmanager.API.endf6 import Endf6
+from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.omcer.utils import process
 from ndmanager.data import ATOMIC_SYMBOL
-from ndmanager.API.utils import list_endf6
 
 
 def _process_photon(args):
