@@ -63,7 +63,6 @@ def generate_photon(
             library,
             _process_photon,
             args,
-            "photon",
-            run_args.j,
-            lambda x: ATOMIC_SYMBOL[x.stem],
+            processes=run_args.j,
+            key=lambda x: ATOMIC_SYMBOL[x.stem],
         )

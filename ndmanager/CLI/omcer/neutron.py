@@ -70,7 +70,6 @@ def generate_neutron(
             library,
             _process_neutron,
             args,
-            "neutron",
-            run_args.j,
-            lambda x: Nuclide.from_name(x.stem).zam,
+            processes=run_args.j,
+            key=lambda x: Nuclide.from_name(x.stem).zam,
         )

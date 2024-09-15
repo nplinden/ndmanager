@@ -8,6 +8,7 @@ import h5py
 import openmc.data
 from tqdm import tqdm
 
+
 def process(
     dest: Path,
     library: openmc.data.DataLibrary,
