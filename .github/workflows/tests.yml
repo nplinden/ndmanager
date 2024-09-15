@@ -24,10 +24,22 @@ jobs:
               with: 
                 python-version: ${{ matrix.python-version }}
 
-            - name: NJOY
+            - name: Installing NJOY
               shell: bash
               run: |
                   echo "$HOME/NJOY2016/build" >> $GITHUB_PATH
                   $GITHUB_WORKSPACE/tools/ci/install_njoy.sh
              
+            - name: Installing OpenMC's python API
+              shell: bash
+              run: |
+                pip install git+https://github.com/openmc-dev/openmc/tree/v0.15.0
+
+            - name: Checks
+              shell: bash
+              run: |
+                python --version
+                which njoy
+                python -c "import openmc ; print(openmc.__version__)"
+
 
