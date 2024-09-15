@@ -8,7 +8,7 @@ import zipfile
 from contextlib import chdir
 from functools import reduce
 from pathlib import Path
-from typing import Tuple, List
+from typing import List, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -168,7 +168,7 @@ def download(
                             p.imap(download_single_file_map, args),
                             desc=desc,
                             total=len(args),
-                            bar_format= "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]",
+                            bar_format="{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]",
                         )
                     )
 
@@ -229,6 +229,7 @@ def errata(library: str, sublibrary: str, tapename: str) -> bool:
                 print("".join(lines), file=f)
             return True
     return False
+
 
 def get_sublibrary_list(args: ap.Namespace) -> List[str]:
     """Compute the list of sublibraries to download.
