@@ -35,6 +35,11 @@ jobs:
               run: |
                 pip install git+https://github.com/openmc-dev/openmc.git@v0.15.0
 
+            - name: Installing NDManager
+              shell: bash
+              run: |
+                pip install .
+
             - name: Checks
               shell: bash
               run: |
