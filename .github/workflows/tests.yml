@@ -46,5 +46,8 @@ jobs:
                 python --version
                 which njoy
                 python -c "import openmc ; print(openmc.__version__)"
+                ndf --help
+                ndf list
+                ndo list
 
 
