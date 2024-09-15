@@ -1,17 +1,12 @@
 """A function that encapsulates nuclear data processing from OpenMC"""
 
 import multiprocessing as mp
-import time
-from multiprocessing import Pool
 from pathlib import Path
 from typing import Callable, Tuple
 
 import h5py
 import openmc.data
 from tqdm import tqdm
-
-from ndmanager.format import clear_line
-
 
 def process(
     dest: Path,
@@ -40,6 +35,13 @@ def process(
 
 
 def merge_neutron_file(sourcepath, targetpath):
+    """Merge two nuclear data file containing data for the same nuclide at
+    different temperatures.
+
+    Args:
+        sourcepath: Path to the source data file. This file will not be modified
+        targetpath: Path to the target data file. This file will be modified
+    """
     source = h5py.File(sourcepath, "r")
     target = h5py.File(targetpath, "a")
 
