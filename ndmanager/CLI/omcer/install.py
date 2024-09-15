@@ -70,20 +70,20 @@ def extract(tarname: str, total: int, family: str, lib: str):
         family (str): The name of the library's family
         lib (str): The library name
     """
-    tar = tarfile.open(tarname)
-    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-    pbar = tqdm(
-        desc=f"Extracting  {family}/{lib}",
-        total=int(total),
-        unit="iB",
-        unit_scale=True,
-        unit_divisor=1024,
-        bar_format=bar_format,
-    )
-    for item in tar:
-        tar.extract(item, ".")
-        pbar.update(item.size)
-    pbar.close()
+    with tarfile.open(tarname) as tar:
+        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+        pbar = tqdm(
+            desc=f"Extracting  {family}/{lib}",
+            total=int(total),
+            unit="iB",
+            unit_scale=True,
+            unit_divisor=1024,
+            bar_format=bar_format,
+        )
+        for item in tar:
+            tar.extract(item, ".")
+            pbar.update(item.size)
+        pbar.close()
 
 
 def install(args: ap.Namespace):
