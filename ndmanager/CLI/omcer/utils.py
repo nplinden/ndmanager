@@ -73,3 +73,20 @@ def merge_neutron_file(sourcepath, targetpath):
                 source[f"{nuclide}/reactions/{reaction}/{t}K"],
                 target[f"{nuclide}/reactions/{reaction}/"],
             )
+
+
+def get_temperatures(inputs):
+    """Turns YAML temperature field to a list of interger temperatures
+
+    Args:
+        inputs (Dict[str, int | float | str]): YAML temperature field
+
+    Returns:
+        List[int]: The list of integer temperatures
+    """
+    temperatures = inputs.get("temperatures", 293)
+    if isinstance(temperatures, (int, float)):
+        temperatures = [int(temperatures)]
+    else:
+        temperatures = [int(t) for t in temperatures.split()]
+    return temperatures

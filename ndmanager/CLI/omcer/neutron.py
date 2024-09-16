@@ -9,7 +9,7 @@ from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import list_endf6
-from ndmanager.CLI.omcer.utils import process
+from ndmanager.CLI.omcer.utils import get_temperatures, process, merge_neutron_file
 
 
 def _process_neutron(args):
@@ -31,20 +31,26 @@ def process_neutron(
         path (str): Path to the neutron evaluation tape
         temperatures (List[int]): List of integer valued temperatures
     """
-    h5_file = directory / f"{nuclide}.h5"
+    targetpath = directory / f"{nuclide}.h5"
     temp = set(temperatures)
-    if h5_file.exists():
-        existing = IncidentNeutron.from_hdf5(h5_file)
-        existing_temperatures = set(existing.temperatures)
-        temp -= existing_temperatures
-
-    data = IncidentNeutron.from_njoy(path, temperatures=temp)
-    data.export_to_hdf5(h5_file)
+    if targetpath.exists():
+        target = IncidentNeutron.from_hdf5(targetpath)
+        target_temp = {int(t[:-1]) for t in target.temperatures}
+        temp -= target_temp
+        if not temp:
+            return
+        sourcepath = directory / f"tmp_{nuclide}.h5"
+        source = IncidentNeutron.from_njoy(path, temperatures=temp)
+        source.export_to_hdf5(sourcepath, "w")
+        merge_neutron_file(sourcepath, targetpath)
+        sourcepath.unlink()
+    else:
+        data = IncidentNeutron.from_njoy(path, temperatures=temp)
+        data.export_to_hdf5(targetpath, "w")
 
 
 def generate_neutron(
     n_dict: Dict[str, str | Dict[str, str]],
-    temperatures: List[int],
     library: openmc.data.DataLibrary,
     run_args: ap.Namespace,
 ):
@@ -58,6 +64,7 @@ def generate_neutron(
         run_args (ap.Namespace): Arguments for the process function
     """
     neutron = list_endf6("n", n_dict)
+    temperatures = get_temperatures(n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
     args = [(dest, n, neutron[n], temperatures) for n in neutron]

@@ -21,13 +21,13 @@ name: test
 n:
   basis: test
   ommit: Am242_m1
+  temperatures: 273 500
 tsl:
   basis: test
 photo:
   basis: test
 ard:
   basis: test
-temperatures: 273 500
 """
     p = Path("pytest-artifacts/test.yml")
     with open(p, "w") as f:

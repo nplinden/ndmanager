@@ -14,23 +14,6 @@ from ndmanager.CLI.omcer.tsl import generate_tsl
 from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH
 
 
-def get_temperatures(inputs):
-    """Turns YAML temperature field to a list of interger temperatures
-
-    Args:
-        inputs (Dict[str, int | float | str]): YAML temperature field
-
-    Returns:
-        List[int]: The list of integer temperatures
-    """
-    temperatures = inputs.get("temperatures", 293)
-    if isinstance(temperatures, (int, float)):
-        temperatures = [int(temperatures)]
-    else:
-        temperatures = [int(t) for t in temperatures.split()]
-    return temperatures
-
-
 def build_parser(subparsers):
     """Add the parser for the 'ndo build' command to a subparser object
 
@@ -72,10 +55,9 @@ def build(args: ap.Namespace):
     directory.mkdir(parents=True, exist_ok=True)
     with chdir(directory):
         library = openmc.data.DataLibrary()
-        temperatures = get_temperatures(inputs)
 
         if "n" in inputs:
-            generate_neutron(inputs["n"], temperatures, library, args)
+            generate_neutron(inputs["n"], library, args)
 
         if "tsl" in inputs:
             generate_tsl(inputs["tsl"], inputs["n"], library, args)
