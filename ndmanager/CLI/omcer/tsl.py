@@ -42,6 +42,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     basis = tsl_params["basis"]
     sub = tsl_params.get("substitute", {})
     ommit = tsl_params.get("ommit", "").split()
+    temperatures = tsl_params.get("temperatures", {})
 
     basis_neutrons = TSL_NEUTRON[basis]
     basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.endf6")
@@ -49,7 +50,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
 
     couples = []
     for tsl in basis_paths:
-        temps = tsl_params["temperatures"].get(tsl.name, "")
+        temps = temperatures.get(tsl.name, "")
         if isinstance(temps, int):
             temps = [temps]
         else:
@@ -62,7 +63,7 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     for guestlib, _tsl in tsl_params.get("add", {}).items():
         tsl = _tsl.split()
         for t in tsl:
-            temps = tsl_params["temperatures"].get(tsl.name, "")
+            temps = temperatures.get(t, "")
             temps = [int(i) for i in temps.split()]
             gpath = NDMANAGER_ENDF6 / guestlib / "tsl" / t
             nuclide = TSL_NEUTRON[guestlib][t]
