@@ -9,7 +9,7 @@ from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import list_endf6
-from ndmanager.CLI.omcer.utils import process
+from ndmanager.CLI.omcer.utils import process, get_temperatures
 
 
 def _process_neutron(args):
@@ -39,12 +39,11 @@ def process_neutron(
         temp -= existing_temperatures
 
     data = IncidentNeutron.from_njoy(path, temperatures=temp)
-    data.export_to_hdf5(h5_file)
+    data.export_to_hdf5(h5_file, "w")
 
 
 def generate_neutron(
     n_dict: Dict[str, str | Dict[str, str]],
-    temperatures: List[int],
     library: openmc.data.DataLibrary,
     run_args: ap.Namespace,
 ):
@@ -58,6 +57,7 @@ def generate_neutron(
         run_args (ap.Namespace): Arguments for the process function
     """
     neutron = list_endf6("n", n_dict)
+    temperatures = get_temperatures(n_dict)
     dest = Path("neutron")
     dest.mkdir(parents=True, exist_ok=True)
     args = [(dest, n, neutron[n], temperatures) for n in neutron]

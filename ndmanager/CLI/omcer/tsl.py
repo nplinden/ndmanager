@@ -2,12 +2,12 @@
 
 import argparse as ap
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import openmc.data
 
 from ndmanager.API.utils import list_endf6
-from ndmanager.CLI.omcer.utils import process
+from ndmanager.CLI.omcer.utils import process, get_temperatures
 from ndmanager.data import NDMANAGER_ENDF6, TSL_NEUTRON
 
 
@@ -15,7 +15,7 @@ def _process_tsl(args):
     process_tsl(*args)
 
 
-def process_tsl(directory: str, neutron: str, thermal: str):
+def process_tsl(directory: str, neutron: str, thermal: str, temperatures: List[int]):
     """Process a TSL evaluations given a companion neutron evaluation
 
     Args:
@@ -24,9 +24,9 @@ def process_tsl(directory: str, neutron: str, thermal: str):
         thermal (str): Path to a tsl evaluation tape
     """
 
-    data = openmc.data.ThermalScattering.from_njoy(neutron, thermal)
+    data = openmc.data.ThermalScattering.from_njoy(neutron, thermal, temperatures)
     h5_file = directory / f"{data.name}.h5"
-    data.export_to_hdf5(h5_file)
+    data.export_to_hdf5(h5_file, "w")
 
 
 def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
@@ -42,26 +42,32 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     basis = tsl_params["basis"]
     sub = tsl_params.get("substitute", {})
     ommit = tsl_params.get("ommit", "").split()
-    add = tsl_params.get("add", {})
 
     basis_neutrons = TSL_NEUTRON[basis]
     basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.endf6")
     basis_paths = [p for p in basis_paths if p.name not in ommit]
 
     couples = []
-    for t in basis_paths:
-        nuclide = basis_neutrons[t.name]
+    for tsl in basis_paths:
+        temps = tsl_params["temperatures"].get(tsl.name, "")
+        if isinstance(temps, int):
+            temps = [temps]
+        else:
+            temps = [int(i) for i in temps.split()]
+        nuclide = basis_neutrons[tsl.name]
         if nuclide in sub:
             nuclide = sub[nuclide]
-        couples.append((neutrons[nuclide], t))
+        couples.append((neutrons[nuclide], tsl, temps))
 
-    for guestlib, _tsl in add.items():
+    for guestlib, _tsl in tsl_params.get("add", {}).items():
         tsl = _tsl.split()
         for t in tsl:
+            temps = tsl_params["temperatures"].get(tsl.name, "")
+            temps = [int(i) for i in temps.split()]
             gpath = NDMANAGER_ENDF6 / guestlib / "tsl" / t
             nuclide = TSL_NEUTRON[guestlib][t]
             nuclide = neutrons[sub.get(nuclide, nuclide)]
-            couples.append((nuclide, gpath))
+            couples.append((nuclide, gpath, temps))
 
     return couples
 
@@ -82,11 +88,11 @@ def generate_tsl(
         run_args (ap.Namespace): Arguments for the process function
     """
     neutrons = list_endf6("n", neutron_params)
-    tsl = list_tsl(tsl_params, neutrons)
+    tsls = list_tsl(tsl_params, neutrons)
 
     dest = Path("tsl")
     dest.mkdir(parents=True, exist_ok=True)
-    args = [(dest, n, t) for n, t in tsl]
+    args = [(dest, n, tsl, t) for n, tsl, t in tsls]
     process(
         dest,
         library,
