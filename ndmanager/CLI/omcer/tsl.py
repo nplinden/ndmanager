@@ -23,11 +23,17 @@ def process_tsl(directory: str, neutron: str, thermal: str, temperatures: List[i
         neutron (str): Path to a neutron evaluation tape
         thermal (str): Path to a tsl evaluation tape
     """
-
     data = openmc.data.ThermalScattering.from_njoy(neutron, thermal, temperatures)
     h5_file = directory / f"{data.name}.h5"
     data.export_to_hdf5(h5_file, "w")
 
+def get_temperatures(tapename, tsl_params):
+    node = tsl_params.get("temperatures", {})
+    if tapename not in node:
+        return None
+    if isinstance(node[tapename], str):
+        return [int(i) for i in node[tapename].split()]
+    return [node[tapename]]
 
 def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     """List the paths to ENDF6 tsl evaluations necessary to build the cross sections
@@ -42,7 +48,6 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     basis = tsl_params["basis"]
     sub = tsl_params.get("substitute", {})
     ommit = tsl_params.get("ommit", "").split()
-    temperatures = tsl_params.get("temperatures", {})
 
     basis_neutrons = TSL_NEUTRON[basis]
     basis_paths = (NDMANAGER_ENDF6 / basis / "tsl").glob("*.endf6")
@@ -50,25 +55,20 @@ def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
 
     couples = []
     for tsl in basis_paths:
-        temps = temperatures.get(tsl.name, "")
-        if isinstance(temps, int):
-            temps = [temps]
-        else:
-            temps = [int(i) for i in temps.split()]
         nuclide = basis_neutrons[tsl.name]
         if nuclide in sub:
             nuclide = sub[nuclide]
-        couples.append((neutrons[nuclide], tsl, temps))
+        temperatures = get_temperatures(tsl.name, tsl_params)
+        couples.append((neutrons[nuclide], tsl, temperatures))
 
     for guestlib, _tsl in tsl_params.get("add", {}).items():
         tsl = _tsl.split()
         for t in tsl:
-            temps = temperatures.get(t, "")
-            temps = [int(i) for i in temps.split()]
+            temperatures = get_temperatures(t, tsl_params)
             gpath = NDMANAGER_ENDF6 / guestlib / "tsl" / t
             nuclide = TSL_NEUTRON[guestlib][t]
             nuclide = neutrons[sub.get(nuclide, nuclide)]
-            couples.append((nuclide, gpath, temps))
+            couples.append((nuclide, gpath, temperatures))
 
     return couples
 
