@@ -2,6 +2,7 @@
 
 import argparse as ap
 import multiprocessing as mp
+import time
 from pathlib import Path
 from typing import Callable, Tuple
 
@@ -25,9 +26,16 @@ def process(
         library (openmc.data.DataLibrary): The library object
         processor (function): The function use to process the data
         args (Tuple): The list of arguments to pass to the processor
-        evaltype (str): The desired type of evaluation
         key (_type_, optional): The sort key for the cross_sections.xml file. Defaults to lambdax:x.
     """
+    if "neutron" in processor.__name__:
+        desc = "Neutron"
+    elif "tsl" in processor.__name__:
+        desc = "TSL    "
+    elif "photon" in processor.__name__:
+        desc = "Photon "
+    else:
+        desc = "       "
 
     if run_args.dryrun:
         for arg in args:
@@ -35,7 +43,17 @@ def process(
     else:
         with mp.get_context("spawn").Pool(processes=run_args.j) as p:
             bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-            list(tqdm(p.imap(processor, args), total=len(args), bar_format=bar_format))
+            pbar = tqdm(total=len(args), bar_format=bar_format, desc=desc)
+
+            def update_pbar(_):
+                pbar.update()
+
+            for arg in args:
+                p.apply_async(processor, args=(arg,), callback=update_pbar)
+
+            p.close()
+            p.join()
+            pbar.close()
 
     for path in sorted(dest.glob("*.h5"), key=key):
         library.register_file(path)

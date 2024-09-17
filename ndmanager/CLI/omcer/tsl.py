@@ -27,6 +27,7 @@ def process_tsl(directory: str, neutron: str, thermal: str, temperatures: List[i
     h5_file = directory / f"{data.name}.h5"
     data.export_to_hdf5(h5_file, "w")
 
+
 def get_temperatures(tapename, tsl_params):
     node = tsl_params.get("temperatures", {})
     if tapename not in node:
@@ -34,6 +35,7 @@ def get_temperatures(tapename, tsl_params):
     if isinstance(node[tapename], str):
         return [int(i) for i in node[tapename].split()]
     return [node[tapename]]
+
 
 def list_tsl(tsl_params: Dict[str, str], neutrons: Dict[str, Path]):
     """List the paths to ENDF6 tsl evaluations necessary to build the cross sections
