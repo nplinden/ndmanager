@@ -24,6 +24,8 @@ n:
   temperatures: 273 500
 tsl:
   basis: test
+  temperatures:
+    tsl_0037_H(CH2).endf6: 196
 photo:
   basis: test
 ard:
