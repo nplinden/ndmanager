@@ -37,14 +37,19 @@ class Nuclide:
         Returns:
             Nuclide: The nuclide object
         """
-        element, A, _, m = cls.splitname_re.match(name).groups()
-        Z = ATOMIC_SYMBOL[element]
-        A = int(A)
-
-        if not m:
-            M = 0
+        if name in ATOMIC_SYMBOL:
+            Z = ATOMIC_SYMBOL[name]
+            A = None
+            M = None
         else:
-            M = int(m.removeprefix("m"))
+            element, A, _, m = cls.splitname_re.match(name).groups()
+            Z = ATOMIC_SYMBOL[element]
+            A = int(A)
+
+            if not m:
+                M = 0
+            else:
+                M = int(m.removeprefix("m"))
         return cls(Z, A, M)
 
     @classmethod
@@ -80,7 +85,11 @@ class Nuclide:
             a = int(za % 1000)
             z = int(za // 1000)
             m = int(f.readline().split()[3])
-        return cls(z, a, m)
+            NSUB = int(f.readline()[46:56])
+        if NSUB in [3, 6] and a == 0 and m == 0:
+            return cls(z, None, None)
+        else:
+            return cls(z, a, m)
 
     @property
     def name(self) -> str:
@@ -89,10 +98,10 @@ class Nuclide:
         Returns:
             str: The name
         """
+        if self.A is None and self.M is None:
+            return self.element
         if self.M > 0:
             return f"{ATOMIC_SYMBOL[self.Z]}{self.A}_m{self.M}"
-        if self.A == 0:
-            return ATOMIC_SYMBOL[self.Z]
         return f"{ATOMIC_SYMBOL[self.Z]}{self.A}"
 
     @property
@@ -102,4 +111,6 @@ class Nuclide:
         Returns:
             int: The zam
         """
+        if self.A is None and self.M is None:
+            return 10_000 * self.Z
         return 10_000 * self.Z + 10 * self.A + self.M
