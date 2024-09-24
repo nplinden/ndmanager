@@ -92,6 +92,9 @@ def merge_neutron_file(sourcepath, targetpath):
                 target[f"{nuclide}/reactions/{reaction}/"],
             )
 
+        if "urr" in source:
+            source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
+
 
 def get_temperatures(inputs):
     """Turns YAML temperature field to a list of interger temperatures
