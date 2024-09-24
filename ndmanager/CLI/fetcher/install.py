@@ -101,6 +101,8 @@ def download_single_file(library: str, sublibrary: str, url: str, zipname: str) 
     tape = Endf6(filename)
     if tape.sublibrary == "tsl":
         name = target / filename.replace(".dat", ".endf6")
+    elif tape.sublibrary in ["photo", "ard"]:
+        name = target / f"{tape.nuclide.element}.endf6"
     elif tape.nuclide.A == 0:
         name = target / f"{tape.nuclide.name}0.endf6"
     else:
