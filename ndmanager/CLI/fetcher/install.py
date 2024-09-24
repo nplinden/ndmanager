@@ -101,13 +101,11 @@ def download_single_file(library: str, sublibrary: str, url: str, zipname: str) 
     tape = Endf6(filename)
     if tape.sublibrary == "tsl":
         name = target / filename.replace(".dat", ".endf6")
-        Path(filename).rename(name)
     elif tape.nuclide.A == 0:
         name = target / f"{tape.nuclide.name}0.endf6"
-        Path(filename).rename(name)
     else:
         name = target / f"{tape.nuclide.name}.endf6"
-        Path(filename).rename(name)
+    shutil.move(filename, name)
 
 
 def download_single_file_map(args: Tuple[str, str, str, str]) -> None:
