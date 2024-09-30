@@ -61,8 +61,6 @@ def build(args: ap.Namespace):
 
     warnings.showwarning = showwarning
 
-    warnings.warn("toto")
-
     header = f"NDManager {__version__}"
     print(header)
     print("".join(["-" for _ in header]))
