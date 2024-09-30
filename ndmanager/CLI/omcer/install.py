@@ -10,8 +10,7 @@ from pathlib import Path
 import requests
 from tqdm import tqdm
 
-from ndmanager.CLI.omcer.module import xs_modulefile
-from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH, OPENMC_LIBS
+from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS
 
 
 def install_parser(subparsers):
@@ -107,8 +106,3 @@ def install(args: ap.Namespace):
                 target.parent.mkdir(exist_ok=True, parents=True)
                 shutil.rmtree(target, ignore_errors=True)
                 shutil.move(source, target)
-
-        if NDMANAGER_MODULEPATH is not None:
-            xs_modulefile(
-                f"xs/{family}-{lib}", dico["info"], target / "cross_sections.xml"
-            )

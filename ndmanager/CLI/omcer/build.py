@@ -7,11 +7,10 @@ from contextlib import chdir
 import openmc.data
 import yaml
 
-from ndmanager.CLI.omcer.module import xs_modulefile
 from ndmanager.CLI.omcer.neutron import generate_neutron
 from ndmanager.CLI.omcer.photon import generate_photon
 from ndmanager.CLI.omcer.tsl import generate_tsl
-from ndmanager.data import NDMANAGER_HDF5, NDMANAGER_MODULEPATH
+from ndmanager.data import NDMANAGER_HDF5
 
 
 def build_parser(subparsers):
@@ -70,7 +69,3 @@ def build(args: ap.Namespace):
         library.export_to_xml("cross_sections.xml")
         with open(f"{inputs['name']}.yml", "w", encoding="utf-8") as target:
             print("".join(lines), file=target)
-
-    if NDMANAGER_MODULEPATH is not None:
-        name = f"xs/{inputs['name']}"
-        xs_modulefile(name, inputs["description"], directory / "cross_sections.xml")
