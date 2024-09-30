@@ -1,36 +1,37 @@
+summary: A library based on the JEFF-3.3 evaluations.
 description: |
-    This defines a library based on the JEFF-3.3 evaluations for
-    neutron cross-sections and thermal scattering laws, and on
-    ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
-    relaxation.
+  This defines a library based on the JEFF-3.3 evaluations for
+  neutron cross-sections and thermal scattering laws, and on
+  ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
+  relaxation.
 
-    Some evaluations from other libraries are used instead
-    or in addition to JEFF-3.3 evaluations:
-    C0:     JEFF-3.3 contains C0 and C13 isotopes of carbon. Since
-            using C0 can cause some issues running the same problem
-            with multiple libraries, I prefer to remove them and
-            use ENDF-B/VIII.0 carbon instead. Normally you would also
-            build TSL libraries using C0, I substitute it for C12.
-    C12:    See C0
-    C13:    See C0. The C13 evaluation of JEFF-3.3 is faulty anyway.
-    Ta180:  OpenMC wrongly defines natural Ta as containing Ta180
-            instead of Ta180M because ENDF-B/VIII.0 has no Ta180M
-            evaluation. Since JEFF-3.3 has no Ta180, materials
-            containing Ta will crash simulations.
-    O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
-            evaluation instead.
-name: testing
-temperatures: 250 294 600 900 1200 2500 973
+  Some evaluations from other libraries are used instead
+  or in addition to JEFF-3.3 evaluations:
+  C0:     JEFF-3.3 contains C0 and C13 isotopes of carbon. Since
+          using C0 can cause some issues running the same problem
+          with multiple libraries, I prefer to remove them and
+          use ENDF-B/VIII.0 carbon instead. Normally you would also
+          build TSL libraries using C0, I substitute it for C12.
+  C12:    See C0
+  C13:    See C0. The C13 evaluation of JEFF-3.3 is faulty anyway.
+  Ta180:  OpenMC wrongly defines natural Ta as containing Ta180
+          instead of Ta180M because ENDF-B/VIII.0 has no Ta180M
+          evaluation. Since JEFF-3.3 has no Ta180, materials
+          containing Ta will crash simulations.
+  O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
+          evaluation instead.
+name: jeff33
 n:
-    basis: jeff33
-    ommit: C0
-    add:
-        endfb8: Ta180 C12 C13 O17
+  basis: jeff33
+  temperatures: 250 294 600 900 1200 2500
+  ommit: C0
+  add:
+    endfb8: Ta180 C12 C13 O17
 tsl:
-    basis: jeff33
-    substitute:
-        C0: C12
+  basis: jeff33
+  substitute:
+    C0: C12
 photo:
-    basis: endfb8
+  basis: endfb8
 ard:
-    basis: endfb8
+  basis: endfb8

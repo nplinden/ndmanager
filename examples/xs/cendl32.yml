@@ -1,6 +1,9 @@
+summary: A library based on the CENDL-3.2 evaluations.
 description: |
   A library based on the CENDL-3.2 evaluations.
+  Default temperatures are chosen to match those provided by
+  libraries provided by the official OpenMC website.
 name: cendl32
-temperatures: 250 294 600 900 1200 2500
 n:
   basis: cendl32
+  temperatures: 250 294 600 900 1200 2500
