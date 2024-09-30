@@ -5,7 +5,6 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ndmanager"
 readme = "README.md"
-version = "0.3.3"
 authors = [{ name="Nicolas Linden", email="linden.nicolas@orange.fr"}]
 description = "Managing you nuclear data collection"
 classifiers = ["Programming Language :: Python :: 3.11"]
@@ -19,6 +18,8 @@ dependencies = [
     'tqdm',
     'loguru'
 ]
+dynamic = ["version"]
+
 
 [tool.setuptools.dynamic]
 version = {attr = "ndmanager.__version__"}
