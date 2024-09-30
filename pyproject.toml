@@ -19,6 +19,9 @@ dependencies = [
     'tqdm'
 ]
 
+[tool.setuptools.dynamic]
+version = {attr = "ndmanager.__version__"}
+
 [project.optional-dependencies]
 test = ["pytest", "pytest-env", "pytest-cov"]
 build = ["build", "twine"]
