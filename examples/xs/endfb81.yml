@@ -1,9 +1,12 @@
+summary: A library based on the ENDF-B/VIII.1 evaluations.
 description: |
   This defines a library based on the ENDF-B/VIII.1 evaluations.
+  Default temperatures are chosen to match those provided by
+  libraries provided by the official OpenMC website.
 name: endfb81
-temperatures: 250 294 600 900 1200 2500
 n:
   basis: endfb81
+  temperatures: 250 294 600 900 1200 2500
 tsl:
   basis: endfb8
 ard:

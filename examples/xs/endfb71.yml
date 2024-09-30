@@ -1,37 +1,40 @@
+summary: A library based on the ENDF-B/VII.1 evaluations.
 description: |
-    This defines a library based on the ENDF-B/VII.1 evaluations for
-    neutron cross-sections and thermal scattering laws, and on
-    ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
-    relaxation. It also fills the gap in naturally occuring nuclide
-    that don't have data in ENDF-B/VII.1 with ENDF-B/VIII.0
-    
-    C0:     ENDF-B/VII.1 only containes the C0 isotope of carbon. Since
-            using C0 can cause some issues running the same problem
-            with multiple libraries, I prefer to remove it and
-            use ENDF-B/VIII.0 carbon instead. Normally you would also
-            build TSL libraries using C0, I substitute it for C12.
-    O17:    Occurs naturaly but is absent from ENDF-B/VII.1. 
-            I use the ENDF-B/VIII.0 evaluation instead.
-    Ne*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
-            I use the ENDF-B/VIII.0 evaluation instead.
-    Yb*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
-            I use the ENDF-B/VIII.0 evaluation instead.
-    Os*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
-            I use the ENDF-B/VIII.0 evaluation instead.
-    Pt*:    Occurs naturaly but is absent from ENDF-B/VII.1. 
-            I use the ENDF-B/VIII.0 evaluation instead.
+  This defines a library based on the ENDF-B/VII.1 evaluations for
+  neutron cross-sections and thermal scattering laws, and on
+  ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
+  relaxation. It also fills the gap in naturally occuring nuclides
+  that don't have data in ENDF-B/VII.1 with ENDF-B/VIII.0.
+  Default temperatures are chosen to match those provided by
+  libraries provided by the official OpenMC website.
+  
+  C0:     ENDF-B/VII.1 only contains the C0 isotope of carbon. Since
+          using C0 can cause some issues running the same problem
+          with multiple libraries, I prefer to remove it and
+          use ENDF-B/VIII.0 carbon instead. Normally you would also
+          build TSL libraries using C0, I substitute it for C12.
+  O17:    Occurs naturally but is absent from ENDF-B/VII.1. 
+          I use the ENDF-B/VIII.0 evaluation instead.
+  Ne*:    Occurs naturally but is absent from ENDF-B/VII.1. 
+          I use the ENDF-B/VIII.0 evaluation instead.
+  Yb*:    Occurs naturally but is absent from ENDF-B/VII.1. 
+          I use the ENDF-B/VIII.0 evaluation instead.
+  Os*:    Occurs naturally but is absent from ENDF-B/VII.1. 
+          I use the ENDF-B/VIII.0 evaluation instead.
+  Pt*:    Occurs naturally but is absent from ENDF-B/VII.1. 
+          I use the ENDF-B/VIII.0 evaluation instead.
 name: endfb71
-temperatures: 250 294 600 900 1200 2500
 n:
-    basis: endfb71
-    ommit: C0
-    add:
-        endfb8: C12 C13 O18 Ne20 Ne21 Ne22 Yb168 Yb170 Yb171 Yb172 Yb173 Yb174 Yb176 Os184 Os186 Os187 Os188 Os189 Os190 Os192 Pt190 Pt192 Pt194 Pt195 Pt196 Pt198
+  basis: endfb71
+  ommit: C0
+  add:
+    endfb8: C12 C13 O18 Ne20 Ne21 Ne22 Yb168 Yb170 Yb171 Yb172 Yb173 Yb174 Yb176 Os184 Os186 Os187 Os188 Os189 Os190 Os192 Pt190 Pt192 Pt194 Pt195 Pt196 Pt198
+  temperatures: 250 294 600 900 1200 2500
 tsl:
-    basis: endfb71
-    substitute:
-        C0: C12
+  basis: endfb71
+  substitute:
+    C0: C12
 photo: 
-    basis: endfb8
+  basis: endfb8
 ard: 
-    basis: endfb8
+  basis: endfb8
