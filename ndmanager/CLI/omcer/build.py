@@ -67,5 +67,5 @@ def build(args: ap.Namespace):
             generate_photon(photo, ard, library, args)
 
         library.export_to_xml("cross_sections.xml")
-        with open(f"{inputs['name']}.yml", "w", encoding="utf-8") as target:
+        with open(f"input.yml", "w", encoding="utf-8") as target:
             print("".join(lines), file=target)

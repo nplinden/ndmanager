@@ -1,6 +1,7 @@
 """Definition and parser for the `ndo install` command"""
 
 import textwrap
+import yaml
 
 from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS
 from ndmanager.format import get_terminal_size, header
@@ -22,10 +23,10 @@ def listlibs(_args):
     """List the OpenMC libaries available for download with NDManager"""
     col, _ = get_terminal_size()
 
-    xs = []
+    xs = set()
     for xmlfile in NDMANAGER_HDF5.rglob("*.xml"):
         p = xmlfile.parent / xmlfile.stem
-        xs.append(str(p.parent.relative_to(NDMANAGER_HDF5)))
+        xs.add(str(p.parent.relative_to(NDMANAGER_HDF5)))
 
     lst = [header("Installable Libraries")]
     for family, dico in OPENMC_LIBS.items():
@@ -34,6 +35,7 @@ def listlibs(_args):
             fancyname = libdict["fancyname"]
             if name in xs:
                 check = "✓"
+                xs.remove(name)
             else:
                 check = " "
             s = f"{name}"
@@ -42,9 +44,11 @@ def listlibs(_args):
                 s, initial_indent="", subsequent_indent=38 * " ", width=col
             )
             lst.append("\n".join(s))
-    lst.append(header("Available Libraries"))
+    lst.append(header("Custom Libraries"))
+    for name in xs:
+        desc = yaml.safe_load(open(NDMANAGER_HDF5 / name / "input.yml")).get("summary", "")
+        s = f"{name:<16} {desc}"
+        s = textwrap.wrap(s, initial_indent="", subsequent_indent=21 * " ", width=col)
+        lst.append("\n".join(s))
 
-    s = " ".join([f"{i:<15}" for i in sorted(xs)])
-    s = textwrap.wrap(s, width=col)
-    lst.append("\n".join(s))
     print("\n".join(lst))
