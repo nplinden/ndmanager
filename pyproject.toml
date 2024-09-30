@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ndmanager"
 readme = "README.md"
-version = "0.3.1"
+version = "0.3.2"
 authors = [{ name="Nicolas Linden", email="linden.nicolas@orange.fr"}]
 description = "Managing you nuclear data collection"
 classifiers = ["Programming Language :: Python :: 3.11"]
