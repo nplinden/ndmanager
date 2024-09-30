@@ -31,11 +31,6 @@ try:
 except KeyError:
     NDMANAGER_CHAINS = None
 
-try:
-    NDMANAGER_MODULEPATH = Path(os.environ["NDMANAGER_MODULEPATH"]).absolute()
-except KeyError:
-    NDMANAGER_MODULEPATH = None
-
 USERAGENT = (
     '--user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:26.0)'
     ' Gecko/20100101 Firefox/26.0"'
