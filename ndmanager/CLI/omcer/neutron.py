@@ -3,6 +3,9 @@
 import argparse as ap
 from pathlib import Path
 from typing import Dict, List
+from loguru import logger
+import warnings
+import time
 
 import openmc.data
 from openmc.data import IncidentNeutron
@@ -32,14 +35,33 @@ def process_neutron(
         path (str): Path to the neutron evaluation tape
         temperatures (List[int]): List of integer valued temperatures
     """
+    loggerpath = directory / "logs" / f"{nuclide}.log"
+    logger.remove()
+    format = "{time:DD-MMM-YYYY HH:mm:ss}" "| {level:<8}" "| {message}"
+    logger.add(loggerpath, format=format, level="INFO")
+
+    def showwarning(message, *args, **kwargs):
+        logger.warning(message)
+
+    warnings.showwarning = showwarning
+
     targetpath = directory / f"{nuclide}.h5"
     temp = set(temperatures)
+    logger.info("PROCESS NEUTRON DATA")
+    logger.info(f"Nuclide: {nuclide}")
+    logger.info(f"Temperatures: {temp}")
+    t0 = time.time()
     if targetpath.exists():
+        logger.info(f"Processed file already exists at {targetpath}")
         target = IncidentNeutron.from_hdf5(targetpath)
         target_temp = {int(t[:-1]) for t in target.temperatures}
+        logger.info(f"Existing temperatures: {target_temp}")
+
         temp -= target_temp
         if not temp:
+            logger.info("No new processing is necessary, exiting")
             return
+        logger.info(f"New processing temperatures: {temp}")
         sourcepath = directory / f"tmp_{nuclide}.h5"
         source = IncidentNeutron.from_njoy(path, temperatures=temp)
         source.export_to_hdf5(sourcepath, "w")
@@ -48,6 +70,7 @@ def process_neutron(
     else:
         data = IncidentNeutron.from_njoy(path, temperatures=temp)
         data.export_to_hdf5(targetpath, "w")
+    logger.info(f"Processing time: {time.time() - t0:.1f}")
 
 
 def generate_neutron(
