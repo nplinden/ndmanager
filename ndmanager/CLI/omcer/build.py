@@ -52,14 +52,6 @@ def build(args: ap.Namespace):
         f.seek(0)
         lines = f.readlines()
 
-    logger.remove()
-    format = "{time:DD-MMM-YYYY HH:mm:ss}" "| {level:<8}" "| {message}"
-    logger.add(f"{inputs['name']}.log", format=format, level="WARNING")
-
-    def showwarning(message, *args, **kwargs):
-        logger.warning(message)
-
-    warnings.showwarning = showwarning
 
     header = f"NDManager {__version__}"
     print(header)
