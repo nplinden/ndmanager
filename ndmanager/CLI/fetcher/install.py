@@ -59,9 +59,9 @@ def install_parser(subparsers: ap._SubParsersAction):
     parser.set_defaults(func=install)
 
 
-def download_test():
+def download_foo():
     """Download a minimal library for testing purposes"""
-    target = NDMANAGER_ENDF6 / "test"
+    target = NDMANAGER_ENDF6 / "foo"
     download_endf6("endfb8", "n", "H1", target / "n" / "H1.endf6")
     download_endf6("endfb8", "n", "C12", target / "n" / "C12.endf6")
     download_endf6("endfb8", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
@@ -69,11 +69,36 @@ def download_test():
     download_endf6(
         "endfb8", "tsl", "tsl_0037_H(CH2).zip", target / "tsl" / "tsl_0037_H(CH2).endf6"
     )
+    download_endf6(
+        "endfb8", "tsl", "tsl_0002_para-H.zip", target / "tsl" / "tsl_0002_para-H.endf6"
+    )
 
-    download_endf6("endfb8", "photo", "C0", target / "photo" / "C0.endf6")
-    download_endf6("endfb8", "ard", "C0", target / "ard" / "C0.endf6")
-    download_endf6("endfb8", "photo", "H0", target / "photo" / "H0.endf6")
-    download_endf6("endfb8", "ard", "H0", target / "ard" / "H0.endf6")
+    download_endf6("endfb8", "photo", "C0", target / "photo" / "C.endf6")
+    download_endf6("endfb8", "ard", "C0", target / "ard" / "C.endf6")
+    download_endf6("endfb8", "photo", "H0", target / "photo" / "H.endf6")
+    download_endf6("endfb8", "ard", "H0", target / "ard" / "H.endf6")
+    download_endf6("endfb8", "photo", "Pu0", target / "photo" / "Pu.endf6")
+    download_endf6("endfb8", "ard", "Pu0", target / "ard" / "Pu.endf6")
+
+def download_bar():
+    """Download a minimal library for testing purposes"""
+    target = NDMANAGER_ENDF6 / "bar"
+    download_endf6("jendl5", "n", "H1", target / "n" / "H1.endf6")
+    download_endf6("jendl5", "n", "C12", target / "n" / "C12.endf6")
+    download_endf6("jendl5", "n", "Am242_m1", target / "n" / "Am242_m1.endf6")
+
+    download_endf6("jendl5", "n", "H1", target / "n" / "H1.endf6")
+    download_endf6(
+        "jendl5", "tsl", "tsl_ortho-H_0003.zip", target / "tsl" / "tsl_ortho-H_0003.endf6"
+    )
+    download_endf6(
+        "jendl5", "tsl", "tsl_para-H_0002.zip", target / "tsl" / "tsl_para-H_0002.endf6"
+    )
+
+    download_endf6("jendl5", "photo", "C0", target / "photo" / "C.endf6")
+    download_endf6("jendl5", "ard", "C0", target / "ard" / "C.endf6")
+    download_endf6("jendl5", "photo", "H0", target / "photo" / "H.endf6")
+    download_endf6("jendl5", "ard", "H0", target / "ard" / "H.endf6")
 
 
 def download_single_file(library: str, sublibrary: str, url: str, zipname: str) -> None:
@@ -252,9 +277,12 @@ def install(args: ap.Namespace):
         args (ap.Namespace): The argparse object containing the command line argument
     """
     libraries = args.libraries
-    if "test" in libraries:
-        download_test()
-        libraries.remove("test")
+    if "foo" in libraries:
+        download_foo()
+        libraries.remove("foo")
+    if "bar" in libraries:
+        download_bar()
+        libraries.remove("bar")
     if not libraries:
         return
 
