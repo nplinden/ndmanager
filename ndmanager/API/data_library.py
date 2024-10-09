@@ -33,9 +33,9 @@ class NDMLibrary(DataLibrary):
 
         self.root = NDMANAGER_HDF5 / self.name
 
-        self.neutron = NeutronLibrary(inputdict.get("neutron"), self.root)
-        self.photon = PhotonLibrary(inputdict.get("photon"), self.root)
-        self.tsl = TSLLibrary(inputdict.get("tsl"), self.neutron, self.root)
+        self.neutron = NeutronManager(inputdict.get("neutron"), self.root)
+        self.photon = PhotonManager(inputdict.get("photon"), self.root)
+        self.tsl = TSLManager(inputdict.get("tsl"), self.neutron, self.root)
 
 
     def process(self, j: int = 1, dryrun: bool = False, clean: bool = False):
@@ -67,9 +67,13 @@ class NDMLibrary(DataLibrary):
         shutil.copy(self.inputpath, self.root / "input.yml")
         
 
-class Endf6Library:
+class InputParser:
     def __init__(self, sublibdict: Dict) -> None:
         self.basis = sublibdict.get("basis", None)
+        self.reuse = sublibdict.get("reuse", None)
+        if self.basis is not None and self.reuse is not None:
+            raise NotImplementedError("Use of `reuse` alongside `basis` is not implemented")
+
         self.ommit = set(sublibdict.get("ommit", "").split())
         self.add = sublibdict.get("add", {})
 
@@ -95,7 +99,7 @@ class Endf6Library:
                 tapes[nuclide] = get_endf6(guestlib, sublibrary, nuclide)
         return tapes
 
-class BaseLibrary(list):
+class BaseManager(list):
     def register(self, library: DataLibrary):
         for particle in sorted(self, key=self.sorting_key):
             library.register_file(particle.path)
@@ -126,10 +130,10 @@ class BaseLibrary(list):
                 p.join()
                 pbar.close()
 
-class NeutronLibrary(Endf6Library, BaseLibrary):
+class NeutronManager(InputParser, BaseManager):
     sublibrary = "Neutron"
     def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
-        Endf6Library.__init__(self, neutrondict)
+        InputParser.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: Nuclide.from_name(x.target).zam
 
@@ -146,11 +150,11 @@ class NeutronLibrary(Endf6Library, BaseLibrary):
         for neutron in self:
             neutron.temperatures = temperatures
 
-class PhotonLibrary(Endf6Library, BaseLibrary):
+class PhotonManager(InputParser, BaseManager):
     sublibrary = "Photon"
 
     def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
-        Endf6Library.__init__(self, neutrondict)
+        InputParser.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: ATOMIC_SYMBOL[x.target]
 
@@ -162,11 +166,11 @@ class PhotonLibrary(Endf6Library, BaseLibrary):
             logpath = rootdir / f"photon/logs/{target}.log"
             self.append(HDF5Photon(target, path, logpath, photo, ard))
 
-class TSLLibrary(Endf6Library, BaseLibrary):
+class TSLManager(InputParser, BaseManager):
     sublibrary = "TSL"
 
-    def __init__(self, tsldict: Dict, neutron_library: NeutronLibrary, rootdir: Path) -> None:
-        Endf6Library.__init__(self, tsldict)
+    def __init__(self, tsldict: Dict, neutron_library: NeutronManager, rootdir: Path) -> None:
+        InputParser.__init__(self, tsldict)
 
         self.sorting_key = lambda x: x.tsl.name
 

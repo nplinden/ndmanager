@@ -4,7 +4,7 @@ description: |
   the 'foo' and 'bar' test ENDF6 libraries.
   This is intended to showcase the full extend of keyword options
   available to the ndo input files.
-name: test
+name: foo
 neutron:
   basis: foo
   temperatures: 273 400
