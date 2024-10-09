@@ -70,10 +70,6 @@ class NDMLibrary(DataLibrary):
 class InputParser:
     def __init__(self, sublibdict: Dict) -> None:
         self.basis = sublibdict.get("basis", None)
-        self.reuse = sublibdict.get("reuse", None)
-        if self.basis is not None and self.reuse is not None:
-            raise NotImplementedError("Use of `reuse` alongside `basis` is not implemented")
-
         self.ommit = set(sublibdict.get("ommit", "").split())
         self.add = sublibdict.get("add", {})
 
