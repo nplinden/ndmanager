@@ -11,9 +11,8 @@ import openmc.data
 from openmc.data import IncidentNeutron
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.utils import list_endf6
-from ndmanager.CLI.omcer.utils import (get_temperatures, merge_neutron_file,
-                                       process)
+from ndmanager.API.utils import list_endf6, merge_neutron_file
+from ndmanager.CLI.omcer.utils import get_temperatures, process
 
 
 def _process_neutron(args):
