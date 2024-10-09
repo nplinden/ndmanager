@@ -1,16 +1,27 @@
-summary: A test library
+summary: A test library used to showcase the capabilities of ndo
 description: |
-  A test library
+  This processed library relies on nuclear data evaluations from 
+  the 'foo' and 'bar' test ENDF6 libraries.
+  This is intended to showcase the full extend of keyword options
+  available to the ndo input files.
 name: test
-n:
-  basis: test
+neutron:
+  basis: foo
   temperatures: 273 400
   ommit: Am242_m1
+  add:
+    bar: H1
+photon:
+  basis: foo
+  ommit: Pu
+  add:
+    bar: H
 tsl:
-  basis: test
+  basis: foo
+  ommit: tsl_0002_para-H.endf6
+  add:
+    bar: 
+      tsl_para-H_0002.endf6: H1
   temperatures:
     tsl_0037_H(CH2).endf6: 196
-photo:
-  basis: test
-ard:
-  basis: test
+    tsl_para-H_0002.endf6: 20

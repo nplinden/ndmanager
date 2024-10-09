@@ -4,12 +4,10 @@ description: |
   Default temperatures are chosen to match those provided by
   libraries provided by the official OpenMC website.
 name: endfb81
-n:
+neutron:
   basis: endfb81
   temperatures: 250 294 600 900 1200 2500
+photon:
+  basis: endfb81
 tsl:
   basis: endfb8
-ard:
-  basis: endfb81
-photo:
-  basis: endfb81

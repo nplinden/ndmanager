@@ -3,17 +3,18 @@ import multiprocessing as mp
 import shutil
 from tqdm import tqdm
 from openmc.data import Evaluation, get_thermal_name, DataLibrary
+from pathlib import Path
+from typing import Dict
 
-from ndmanager.API.data_sublibrary import HDF5Neutron, HDF5Photon, HDF5TSL
+
+from ndmanager.API.data_sublibrary import HDF5Neutron, HDF5Photon, HDF5TSL, HDF5Sublibrary
 from ndmanager.data import TSL_NEUTRON, NDMANAGER_ENDF6, ATOMIC_SYMBOL, NDMANAGER_HDF5
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 
-def processor(particle):
+def processor(particle: HDF5Sublibrary):
     particle.process()
 
-def error_callback(e):
-    raise e
 
 def read_temperatures(from_yaml_node: int | str):
     if isinstance(from_yaml_node, int):
@@ -22,7 +23,7 @@ def read_temperatures(from_yaml_node: int | str):
         return [int(t) for t in from_yaml_node.split()]
 
 class NDMLibrary(DataLibrary):
-    def __init__(self, inputpath, runargs=None) -> None:
+    def __init__(self, inputpath: str | Path) -> None:
         super().__init__()
         self.inputpath = inputpath
         inputdict = yaml.safe_load(open(inputpath, "r"))
@@ -31,14 +32,22 @@ class NDMLibrary(DataLibrary):
         self.name = inputdict["name"]
 
         self.root = NDMANAGER_HDF5 / self.name
-        self.root.mkdir(parents=True, exist_ok=True)
 
         self.neutron = NeutronLibrary(inputdict.get("neutron"), self.root)
         self.photon = PhotonLibrary(inputdict.get("photon"), self.root)
         self.tsl = TSLLibrary(inputdict.get("tsl"), self.neutron, self.root)
 
 
-    def process(self, j, dryrun=False):
+    def process(self, j: int = 1, dryrun: bool = False, clean: bool = False):
+        if clean:
+            answer = input(f"This will delete {self.root} entirely, proceed? [y/n]")
+            if answer == "y":
+                shutil.rmtree(self.root)
+            else:
+                print("Exiting.")
+                return
+
+        self.root.mkdir(parents=True, exist_ok=True)
         if self.neutron:
             (self.root / "neutron/logs").mkdir(parents=True, exist_ok=True)
             self.neutron.process(j, dryrun)
@@ -59,12 +68,12 @@ class NDMLibrary(DataLibrary):
         
 
 class Endf6Library:
-    def __init__(self, sublibdict) -> None:
+    def __init__(self, sublibdict: Dict) -> None:
         self.basis = sublibdict.get("basis", None)
         self.ommit = set(sublibdict.get("ommit", "").split())
         self.add = sublibdict.get("add", {})
 
-    def list_endf6(self, sublibrary):
+    def list_endf6(self, sublibrary: str):
         tapes = {}
         if self.basis is not None:
             basis_paths = (NDMANAGER_ENDF6 / self.basis / sublibrary).glob("*.endf6")
@@ -87,11 +96,11 @@ class Endf6Library:
         return tapes
 
 class BaseLibrary(list):
-    def register(self, library):
+    def register(self, library: DataLibrary):
         for particle in sorted(self, key=self.sorting_key):
             library.register_file(particle.path)
 
-    def process(self, j=1, dryrun=False):
+    def process(self, j: int = 1, dryrun: bool = False):
         desc = f"{self.sublibrary:<8}"
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         if dryrun:
@@ -104,6 +113,8 @@ class BaseLibrary(list):
                 def update_pbar(_):
                     pbar.update()
 
+                def error_callback(e):
+                    raise e
 
                 for particle in self:
                     p.apply_async(processor, 
@@ -117,7 +128,7 @@ class BaseLibrary(list):
 
 class NeutronLibrary(Endf6Library, BaseLibrary):
     sublibrary = "Neutron"
-    def __init__(self, neutrondict, rootdir) -> None:
+    def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
         Endf6Library.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: Nuclide.from_name(x.target).zam
@@ -134,7 +145,7 @@ class NeutronLibrary(Endf6Library, BaseLibrary):
 class PhotonLibrary(Endf6Library, BaseLibrary):
     sublibrary = "Photon"
 
-    def __init__(self, neutrondict, rootdir) -> None:
+    def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
         Endf6Library.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: ATOMIC_SYMBOL[x.target]
@@ -150,7 +161,7 @@ class PhotonLibrary(Endf6Library, BaseLibrary):
 class TSLLibrary(Endf6Library, BaseLibrary):
     sublibrary = "TSL"
 
-    def __init__(self, tsldict, neutron_library, rootdir) -> None:
+    def __init__(self, tsldict: Dict, neutron_library: NeutronLibrary, rootdir: Path) -> None:
         Endf6Library.__init__(self, tsldict)
 
         self.sorting_key = lambda x: x.tsl.name
@@ -167,7 +178,7 @@ class TSLLibrary(Endf6Library, BaseLibrary):
 
         self.build_tsl(rootdir)
 
-    def build_tsl(self, rootdir):
+    def build_tsl(self, rootdir: Path):
         """List the paths to ENDF6 tsl evaluations necessary to build the cross sections
 
         Args:
@@ -203,6 +214,6 @@ class TSLLibrary(Endf6Library, BaseLibrary):
                 self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
 
     @staticmethod
-    def get_name(tape):
+    def get_name(tape: str | Path):
         e = Evaluation(tape)
         return get_thermal_name(e.target['zsymam'].strip())

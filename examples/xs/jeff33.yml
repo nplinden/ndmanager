@@ -20,18 +20,17 @@ description: |
           containing Ta will crash simulations.
   O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
           evaluation instead.
-name: jeff33
-n:
+name: test
+neutron:
   basis: jeff33
   temperatures: 250 294 600 900 1200 2500
   ommit: C0
   add:
     endfb8: Ta180 C12 C13 O17
+photon:
+  basis: endfb8
 tsl:
   basis: jeff33
-  substitute:
-    C0: C12
-photo:
-  basis: endfb8
-ard:
-  basis: endfb8
+  add:
+    jeff33:
+      tsl_0031_Graphite.endf6: C12
