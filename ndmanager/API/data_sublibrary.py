@@ -60,7 +60,7 @@ class HDF5Neutron(HDF5Sublibrary):
             logger.info(f"New processing temperatures: {temperatures}")
             tmpfile = self.path.parent / f"tmp_{self.target}.h5"
 
-            source = IncidentNeutron.from_njoy(self.tape, temperatures=temperatures)
+            source = IncidentNeutron.from_njoy(self.neutron, temperatures=temperatures)
             source.export_to_hdf5(tmpfile, "w")
             merge_neutron_file(tmpfile, self.path)
             tmpfile.unlink()
@@ -82,9 +82,8 @@ class HDF5Photon(HDF5Sublibrary):
         t0 = time.time()
         if self.path.exists():
             return
-        else:
-            data = IncidentPhoton.from_endf(self.photo, self.ard)
-            data.export_to_hdf5(self.path, "w")
+        data = IncidentPhoton.from_endf(self.photo, self.ard)
+        data.export_to_hdf5(self.path, "w")
         logger.info(f"Processing time {time.time() - t0:.1f}")
 
 @dataclass
@@ -100,6 +99,8 @@ class HDF5TSL(HDF5Sublibrary):
         logger.info(f"TSL tape: {self.tsl}")
         logger.info(f"Temperatures: {self.temperatures}")
         t0 = time.time()
+        if self.path.exists():
+            return
         data = ThermalScattering.from_njoy(self.neutron, self.tsl, self.temperatures)
         assert self.path.name == f"{data.name}.h5"
         data.export_to_hdf5(self.path, "w")

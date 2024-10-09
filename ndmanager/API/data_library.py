@@ -39,7 +39,7 @@ class NDMLibrary(DataLibrary):
 
 
     def process(self, j: int = 1, dryrun: bool = False, clean: bool = False):
-        if clean:
+        if clean and self.root.exists():
             answer = input(f"This will delete {self.root} entirely, proceed? [y/n]")
             if answer == "y":
                 shutil.rmtree(self.root)
@@ -141,6 +141,10 @@ class NeutronLibrary(Endf6Library, BaseLibrary):
             path = rootdir / f"neutron/{target}.h5"
             logpath = rootdir / f"neutron/logs/{target}.log"
             self.append(HDF5Neutron(target, path, logpath, neutron, temperatures))
+    
+    def update_temperatures(self, temperatures):
+        for neutron in self:
+            neutron.temperatures = temperatures
 
 class PhotonLibrary(Endf6Library, BaseLibrary):
     sublibrary = "Photon"
