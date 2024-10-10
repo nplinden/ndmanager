@@ -1,6 +1,6 @@
 """The NDManager module"""
 
-__version__="0.3.3"
+__version__="0.3.3dev"
 
 from .API.endf6 import Endf6
 from .API.iaea import download_endf6, fetch_sublibrary_list
