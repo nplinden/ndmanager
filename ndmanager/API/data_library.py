@@ -48,36 +48,54 @@ class NDMLibrary(DataLibrary):
                 return
 
         self.root.mkdir(parents=True, exist_ok=True)
-        if self.neutron:
+        if self.neutron is not None:
             (self.root / "neutron/logs").mkdir(parents=True, exist_ok=True)
             self.neutron.process(j, dryrun)
-            self.neutron.register(self)
+            self.neutron.register(self, self.neutron.reuse)
 
-        if self.photon:
+        if self.photon is not None:
             (self.root / "photon/logs").mkdir(parents=True, exist_ok=True)
             self.photon.process(j, dryrun)
-            self.photon.register(self)
+            self.photon.register(self, self.photon.reuse)
 
-        if self.tsl:
+        if self.tsl is not None:
             (self.root / "tsl/logs").mkdir(parents=True, exist_ok=True)
             self.tsl.process(j, dryrun)
-            self.tsl.register(self)
+            self.tsl.register(self, self.tsl.reuse)
 
         self.export_to_xml(self.root / "cross_sections.xml")
         shutil.copy(self.inputpath, self.root / "input.yml")
         
 
 class InputParser:
+    cross_section_node_type = "abstract"
     def __init__(self, sublibdict: Dict) -> None:
-        self.base = sublibdict.get("base", None)
-        self.ommit = set(sublibdict.get("ommit", "").split())
-        self.add = sublibdict.get("add", {})
+        if sublibdict is None:
+            self.base = None
+            self.ommit = set()
+            self.add = {}
+            self.reuse = {}
+        else:
+            self.base = sublibdict.get("base", None)
+            self.ommit = set(sublibdict.get("ommit", "").split())
+            self.add = sublibdict.get("add", {})
+            if "reuse" in sublibdict:
+                guestpath = NDMANAGER_HDF5 / sublibdict["reuse"] / "cross_sections.xml"
+                guestlib = DataLibrary.from_xml(guestpath)
+                guestlib = [node for node in guestlib 
+                            if node["type"] == self.cross_section_node_type]
+                self.reuse = {g["materials"][0]: g["path"] for g in guestlib}
+            else:
+                self.reuse = {}
+
 
     def list_endf6(self, sublibrary: str):
         tapes = {}
         if self.base is not None:
             base_paths = (NDMANAGER_ENDF6 / self.base / sublibrary).glob("*.endf6")
-            tapes |= {Nuclide.from_file(p).name: p for p in base_paths}
+            all_tapes = {Nuclide.from_file(p).name: p for p in base_paths}
+            tapes |= {k: v for k, v in all_tapes.items() if k not in self.reuse}
+            
 
         # Remove unwanted evaluations
         for nuclide in self.ommit:
@@ -93,14 +111,19 @@ class InputParser:
         for guestlib, nuclides in self.add.items():
             for nuclide in nuclides.split():
                 tapes[nuclide] = get_endf6(guestlib, sublibrary, nuclide)
+                self.reuse.pop(nuclide)
         return tapes
 
 class BaseManager(list):
-    def register(self, library: DataLibrary):
+    def register(self, library: NDMLibrary, reuse: dict):
+        for path in reuse.values():
+            library.register_file(path)
         for particle in sorted(self, key=self.sorting_key):
             library.register_file(particle.path)
 
     def process(self, j: int = 1, dryrun: bool = False):
+        if len(self) == 0:
+            return
         desc = f"{self.sublibrary:<8}"
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         if dryrun:
@@ -128,19 +151,25 @@ class BaseManager(list):
 
 class NeutronManager(InputParser, BaseManager):
     sublibrary = "Neutron"
+    cross_section_node_type = "neutron"
+
     def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
         InputParser.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: Nuclide.from_name(x.target).zam
 
         # Building HDF5Neutron objects
-        temperatures = neutrondict["temperatures"]
-        temperatures = set([int(t) for t in temperatures.split()])
-        self.tapes = self.list_endf6("n")
-        for target, neutron in self.tapes.items():
-            path = rootdir / f"neutron/{target}.h5"
-            logpath = rootdir / f"neutron/logs/{target}.log"
-            self.append(HDF5Neutron(target, path, logpath, neutron, temperatures))
+        if neutrondict is not None:
+            temperatures = neutrondict.get("temperatures", "")
+            temperatures = set([int(t) for t in temperatures.split()])
+            self.tapes = self.list_endf6("n")
+            for target, neutron in self.tapes.items():
+                path = rootdir / f"neutron/{target}.h5"
+                logpath = rootdir / f"neutron/logs/{target}.log"
+                self.append(HDF5Neutron(target, path, logpath, neutron, temperatures))
+        else:
+            temperatures = set()
+            self.tapes = {}
     
     def update_temperatures(self, temperatures):
         for neutron in self:
@@ -148,22 +177,28 @@ class NeutronManager(InputParser, BaseManager):
 
 class PhotonManager(InputParser, BaseManager):
     sublibrary = "Photon"
+    cross_section_node_type = "photon"
 
-    def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
-        InputParser.__init__(self, neutrondict)
+    def __init__(self, photondict: Dict, rootdir: Path) -> None:
+        InputParser.__init__(self, photondict)
 
         self.sorting_key = lambda x: ATOMIC_SYMBOL[x.target]
 
-        self.photo = self.list_endf6("photo")
-        self.ard = self.list_endf6("ard")
-        for target, photo in self.photo.items():
-            ard = self.ard.get(target, None) # ard data is optional
-            path = rootdir / f"photon/{target}.h5"
-            logpath = rootdir / f"photon/logs/{target}.log"
-            self.append(HDF5Photon(target, path, logpath, photo, ard))
+        if photondict is not None:
+            self.photo = self.list_endf6("photo")
+            self.ard = self.list_endf6("ard")
+            for target, photo in self.photo.items():
+                ard = self.ard.get(target, None) # ard data is optional
+                path = rootdir / f"photon/{target}.h5"
+                logpath = rootdir / f"photon/logs/{target}.log"
+                self.append(HDF5Photon(target, path, logpath, photo, ard))
+        else:
+            self.photo = {}
+            self.ard = {}
 
 class TSLManager(InputParser, BaseManager):
     sublibrary = "TSL"
+    cross_section_node_type = "thermal"
 
     def __init__(self, tsldict: Dict, neutron_library: NeutronManager, rootdir: Path) -> None:
         InputParser.__init__(self, tsldict)
@@ -171,16 +206,19 @@ class TSLManager(InputParser, BaseManager):
         self.sorting_key = lambda x: x.tsl.name
 
         self.neutron_library = neutron_library
+        
+        if tsldict is not None:
+            self.temperatures = tsldict.get("temperatures", {})
+            for tape, temperatures in self.temperatures.items():
+                self.temperatures[tape] = read_temperatures(temperatures)
 
-        self.temperatures = tsldict.get("temperatures", {})
-        for tape, temperatures in self.temperatures.items():
-            self.temperatures[tape] = read_temperatures(temperatures)
+            for library in self.add:
+                for tape in self.add[library]:
+                    self.ommit.add(tape)
 
-        for library in self.add:
-            for tape in self.add[library]:
-                self.ommit.add(tape)
-
-        self.build_tsl(rootdir)
+            self.build_tsl(rootdir)
+        else:
+            self.temperatures = set()
 
     def build_tsl(self, rootdir: Path):
         """List the paths to ENDF6 tsl evaluations necessary to build the cross sections
@@ -192,19 +230,20 @@ class TSLManager(InputParser, BaseManager):
         Returns:
             Dict[str, Path]: A dictionnary that associates nuclide names to couples of ENDF6 paths
         """
-        tsl_to_nuclide = TSL_NEUTRON[self.base]
-        tsl_paths = (NDMANAGER_ENDF6 / self.base / "tsl").glob("*.endf6")
+        if self.base is not None:
+            tsl_to_nuclide = TSL_NEUTRON[self.base]
+            tsl_paths = (NDMANAGER_ENDF6 / self.base / "tsl").glob("*.endf6")
 
-        # Base TSL-Neutron couples
-        for tsl in tsl_paths:
-            if tsl.name in self.ommit:
-                continue
-            target = tsl_to_nuclide[tsl.name]
-            path = rootdir / "tsl" / f"{self.get_name(tsl)}.h5"
-            logpath = rootdir / "tsl/logs" / f"{self.get_name(tsl)}.log"
-            neutron = self.neutron_library.tapes[target]
-            temperatures = self.temperatures.get(tsl.name, None)
-            self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
+            # Base TSL-Neutron couples
+            for tsl in tsl_paths:
+                if tsl.name in self.ommit:
+                    continue
+                target = tsl_to_nuclide[tsl.name]
+                path = rootdir / "tsl" / f"{self.get_name(tsl)}.h5"
+                logpath = rootdir / "tsl/logs" / f"{self.get_name(tsl)}.log"
+                neutron = self.neutron_library.tapes[target]
+                temperatures = self.temperatures.get(tsl.name, None)
+                self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
 
         # Additional TSL-Neutron couples
         for library in self.add:
