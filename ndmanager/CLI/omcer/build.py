@@ -2,17 +2,10 @@
 
 import argparse as ap
 import shutil
-from contextlib import chdir
 
-import openmc.data
 import yaml
-from loguru import logger
-import warnings
 
-from ndmanager.CLI.omcer.neutron import generate_neutron
-from ndmanager.CLI.omcer.photon import generate_photon
-from ndmanager.CLI.omcer.tsl import generate_tsl
-from ndmanager.data import NDMANAGER_HDF5
+from ndmanager.API.data_library import NDMLibrary
 from ndmanager import __version__
 
 
@@ -36,6 +29,12 @@ def build_parser(subparsers):
     parser.add_argument(
         "--clean", help="Remove the library before building", action="store_true"
     )
+    parser.add_argument("--temperatures", 
+                        "-T", 
+                        help="Override the temperature values in the input file", 
+                        nargs="+", 
+                        type=int,
+                        default=None)
     parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
     parser.set_defaults(func=build)
 
@@ -49,9 +48,6 @@ def build(args: ap.Namespace):
 
     with open(args.filename, encoding="utf-8") as f:
         inputs = yaml.safe_load(f)
-        f.seek(0)
-        lines = f.readlines()
-
 
     header = f"NDManager {__version__}"
     print(header)
@@ -59,26 +55,13 @@ def build(args: ap.Namespace):
     print(f"Building '{inputs['name']}' library")
     if "summary" in inputs:
         print(f"Summary: {inputs['summary']}")
+    if args.temperatures is not None:
+        print(f"Overriding input file temperatures with: {args.temperatures}")
     print()
-    
-    directory = NDMANAGER_HDF5 / inputs["name"]
-    if directory.exists() and args.clean:
-        shutil.rmtree(directory)
-    directory.mkdir(parents=True, exist_ok=True)
-    with chdir(directory):
-        library = openmc.data.DataLibrary()
 
-        if "n" in inputs:
-            generate_neutron(inputs["n"], library, args)
-
-        if "tsl" in inputs:
-            generate_tsl(inputs["tsl"], inputs["n"], library, args)
-
-        if "photo" in inputs:
-            photo = inputs["photo"]
-            ard = inputs.get("ard", None)
-            generate_photon(photo, ard, library, args)
-
-        library.export_to_xml("cross_sections.xml")
-        with open(f"input.yml", "w", encoding="utf-8") as target:
-            print("".join(lines), file=target)
+    lib = NDMLibrary(args.filename)
+    if args.temperatures is not None:
+        lib.neutron.update_temperatures(set(args.temperatures))
+    print(args.temperatures)
+    lib.process(args.j, args.dryrun, args.clean)
+    shutil.copy(args.filename, lib.root / "input.yml")

@@ -4,6 +4,6 @@ description: |
   Default temperatures are chosen to match those provided by
   libraries provided by the official OpenMC website.
 name: cendl32
-n:
+neutron:
   basis: cendl32
   temperatures: 250 294 600 900 1200 2500

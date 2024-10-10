@@ -1,4 +1,5 @@
 from pathlib import Path
+from itertools import chain
 
 import pytest
 
@@ -7,9 +8,8 @@ from tests.data import xs_sha1
 
 
 def test_build(build_test):
-    p = Path("pyproject-artifacts/hdf5")
-    for i in p.rglob("*"):
-        if not i.is_file():
-            continue
+    p = Path("pytest-artifacts/hdf5")
+    iterator = chain(p.rglob("*.h5"), p.rglob("*.xml"), p.rglob("*.yml"))
+    for i in iterator:
         sha1 = compute_file_sha1(i.absolute())
-        assert sha1 == xs_sha1[i]
+        assert sha1 == xs_sha1[str(i)]

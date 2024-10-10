@@ -16,7 +16,6 @@ dependencies = [
     'requests',
     'beautifulsoup4',
     'tqdm',
-    'loguru'
 ]
 dynamic = ["version"]
 

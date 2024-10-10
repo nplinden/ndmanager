@@ -4,12 +4,10 @@ description: |
   Default temperatures are chosen to match those provided by
   libraries provided by the official OpenMC website.
 name: jeff4t3
-n:
+neutron:
   basis: jeff4t3
   add:
     endfb8: Ta180
   temperatures: 250 294 600 900 1200 2500
-photo:
-  basis: endfb8
-ard:
+photon:
   basis: endfb8

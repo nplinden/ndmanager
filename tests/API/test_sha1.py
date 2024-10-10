@@ -15,125 +15,125 @@ def test_compute_file_sha1():
 
 
 def test_compute_tape_sha1(install_test):
-    sha1 = compute_tape_sha1("test", "n", "C12")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    sha1 = compute_tape_sha1("test", "n", "H1")
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    sha1 = compute_tape_sha1("test", "n", "Am242_m1")
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
+    sha1 = compute_tape_sha1("foo", "n", "C12")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    sha1 = compute_tape_sha1("foo", "n", "H1")
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    sha1 = compute_tape_sha1("foo", "n", "Am242_m1")
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
 
-    sha1 = compute_tape_sha1("test", "ard", "C0")
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    sha1 = compute_tape_sha1("test", "ard", "H0")
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
+    sha1 = compute_tape_sha1("foo", "ard", "C")
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    sha1 = compute_tape_sha1("foo", "ard", "H")
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
 
-    sha1 = compute_tape_sha1("test", "photo", "C0")
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    sha1 = compute_tape_sha1("test", "photo", "H0")
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
+    sha1 = compute_tape_sha1("foo", "photo", "C")
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    sha1 = compute_tape_sha1("foo", "photo", "H")
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
 
-    sha1 = compute_tape_sha1("test", "tsl", "tsl_0037_H(CH2)")
+    sha1 = compute_tape_sha1("foo", "tsl", "tsl_0037_H(CH2)")
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
 def test_compute_sublib_sha1(install_test):
-    sha1 = compute_sublib_sha1("test", "n")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
+    sha1 = compute_sublib_sha1("foo", "n")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
 
-    sha1 = compute_sublib_sha1("test", "ard")
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
+    sha1 = compute_sublib_sha1("foo", "ard")
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
 
-    sha1 = compute_sublib_sha1("test", "photo")
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
+    sha1 = compute_sublib_sha1("foo", "photo")
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
 
-    sha1 = compute_sublib_sha1("test", "tsl")
+    sha1 = compute_sublib_sha1("foo", "tsl")
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
 def test_compute_lib_sha1(install_test):
-    sha1 = compute_lib_sha1("test")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
+    sha1 = compute_lib_sha1("foo")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
 def test_compute_sha1(install_test):
-    sha1 = compute_sha1("test", "n", "C12")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    sha1 = compute_sha1("test", "n", "H1")
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    sha1 = compute_sha1("test", "n", "Am242_m1")
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
-    sha1 = compute_sha1("test", "ard", "C0")
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    sha1 = compute_sha1("test", "ard", "H0")
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
-    sha1 = compute_sha1("test", "photo", "C0")
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    sha1 = compute_sha1("test", "photo", "H0")
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
-    sha1 = compute_sha1("test", "tsl", "tsl_0037_H(CH2)")
+    sha1 = compute_sha1("foo", "n", "C12")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    sha1 = compute_sha1("foo", "n", "H1")
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    sha1 = compute_sha1("foo", "n", "Am242_m1")
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
+    sha1 = compute_sha1("foo", "ard", "C")
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    sha1 = compute_sha1("foo", "ard", "H")
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
+    sha1 = compute_sha1("foo", "photo", "C")
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    sha1 = compute_sha1("foo", "photo", "H")
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
+    sha1 = compute_sha1("foo", "tsl", "tsl_0037_H(CH2)")
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
-    sha1 = compute_sha1("test", "n")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
-    sha1 = compute_sha1("test", "ard")
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
-    sha1 = compute_sha1("test", "photo")
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
-    sha1 = compute_sha1("test", "tsl")
+    sha1 = compute_sha1("foo", "n")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
+    sha1 = compute_sha1("foo", "ard")
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
+    sha1 = compute_sha1("foo", "photo")
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
+    sha1 = compute_sha1("foo", "tsl")
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
-    sha1 = compute_sha1("test")
-    assert sha1["test/n/C12"] == TAPE_SHA1["test"]["test/n/C12"]
-    assert sha1["test/n/H1"] == TAPE_SHA1["test"]["test/n/H1"]
-    assert sha1["test/n/Am242_m1"] == TAPE_SHA1["test"]["test/n/Am242_m1"]
-    assert sha1["test/ard/C0"] == TAPE_SHA1["test"]["test/ard/C0"]
-    assert sha1["test/ard/H0"] == TAPE_SHA1["test"]["test/ard/H0"]
-    assert sha1["test/photo/C0"] == TAPE_SHA1["test"]["test/photo/C0"]
-    assert sha1["test/photo/H0"] == TAPE_SHA1["test"]["test/photo/H0"]
+    sha1 = compute_sha1("foo")
+    assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
+    assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
+    assert sha1["foo/n/Am242_m1"] == TAPE_SHA1["foo"]["foo/n/Am242_m1"]
+    assert sha1["foo/ard/C"] == TAPE_SHA1["foo"]["foo/ard/C"]
+    assert sha1["foo/ard/H"] == TAPE_SHA1["foo"]["foo/ard/H"]
+    assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
+    assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     assert (
-        sha1["test/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["test"]["test/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"]
+        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
     with pytest.raises(ValueError):
-        compute_sha1("test", nuclide="C0")
+        compute_sha1("foo", nuclide="C")
 
 
 def test_check_tape_integrity(install_test):
-    assert check_tape_integrity("test", "n", "C12")
-    assert check_tape_integrity("test", "n", "H1")
-    assert check_tape_integrity("test", "n", "Am242_m1")
-    assert check_tape_integrity("test", "ard", "C0")
-    assert check_tape_integrity("test", "ard", "H0")
-    assert check_tape_integrity("test", "photo", "C0")
-    assert check_tape_integrity("test", "photo", "H0")
-    assert check_tape_integrity("test", "tsl", "tsl_0037_H(CH2)")
+    assert check_tape_integrity("foo", "n", "C12")
+    assert check_tape_integrity("foo", "n", "H1")
+    assert check_tape_integrity("foo", "n", "Am242_m1")
+    assert check_tape_integrity("foo", "ard", "C")
+    assert check_tape_integrity("foo", "ard", "H")
+    assert check_tape_integrity("foo", "photo", "C")
+    assert check_tape_integrity("foo", "photo", "H")
+    assert check_tape_integrity("foo", "tsl", "tsl_0037_H(CH2)")
