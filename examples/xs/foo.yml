@@ -6,18 +6,18 @@ description: |
   available to the ndo input files.
 name: foo
 neutron:
-  basis: foo
+  base: foo
   temperatures: 273 400
   ommit: Am242_m1
   add:
     bar: H1
 photon:
-  basis: foo
+  base: foo
   ommit: Pu
   add:
     bar: H
 tsl:
-  basis: foo
+  base: foo
   ommit: tsl_0002_para-H.endf6
   add:
     bar: 

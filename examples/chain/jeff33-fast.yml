@@ -3,12 +3,12 @@ description: |
   A depletion chain based on the JEFF-3.3 evaluations.
 branching_ratios: sfr
 n:
-  basis: jeff33
+  base: jeff33
   ommit: C0
   add:
     endfb8: Ta180 C12 C13 O17
 decay: 
-  basis: jeff33
+  base: jeff33
 nfpy:
-  basis: jeff33
+  base: jeff33
 

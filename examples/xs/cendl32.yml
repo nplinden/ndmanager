@@ -5,5 +5,5 @@ description: |
   libraries provided by the official OpenMC website.
 name: cendl32
 neutron:
-  basis: cendl32
+  base: cendl32
   temperatures: 250 294 600 900 1200 2500

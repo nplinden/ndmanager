@@ -22,15 +22,15 @@ description: |
           evaluation instead.
 name: test
 neutron:
-  basis: jeff33
+  base: jeff33
   temperatures: 250 294 600 900 1200 2500
   ommit: C0
   add:
     endfb8: Ta180 C12 C13 O17
 photon:
-  basis: endfb8
+  base: endfb8
 tsl:
-  basis: jeff33
+  base: jeff33
   add:
     jeff33:
       tsl_0031_Graphite.endf6: C12

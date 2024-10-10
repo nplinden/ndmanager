@@ -48,21 +48,21 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
     Returns:
         Dict[str, Path]: A dictionnary that associates nuclide names to ENDF6 paths.
     """
-    basis = params["basis"]
+    base = params["base"]
     ommit = params.get("ommit", "").split()
     add = params.get("add", {})
 
-    basis_paths = (NDMANAGER_ENDF6 / basis / sublibrary).glob("*.endf6")
-    basis_dict = {Nuclide.from_file(p).name: p for p in basis_paths}
+    base_paths = (NDMANAGER_ENDF6 / base / sublibrary).glob("*.endf6")
+    base_dict = {Nuclide.from_file(p).name: p for p in base_paths}
 
     # Remove unwanted evaluations
     for nuclide in ommit:
-        basis_dict.pop(Nuclide.from_name(nuclide).name, None)
+        base_dict.pop(Nuclide.from_name(nuclide).name, None)
 
     # Remove neutron evaluations if they are present.
-    basis_dict.pop("n1", None)
-    basis_dict.pop("nn1", None)
-    basis_dict.pop("N1", None)
+    base_dict.pop("n1", None)
+    base_dict.pop("nn1", None)
+    base_dict.pop("N1", None)
 
     # Add custom evaluations.
     # Overwrite if the main library already provides them.
@@ -76,9 +76,9 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
                     f"Nuclide {nuclide} is not available in the {guestlib} library."
                 )
             guest_dict[nuclide] = p
-        basis_dict |= guest_dict
+        base_dict |= guest_dict
 
-    return basis_dict
+    return base_dict
 
 def merge_neutron_file(sourcepath, targetpath):
     """Merge two nuclear data file containing data for the same nuclide at

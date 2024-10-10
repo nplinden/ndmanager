@@ -69,15 +69,15 @@ class NDMLibrary(DataLibrary):
 
 class InputParser:
     def __init__(self, sublibdict: Dict) -> None:
-        self.basis = sublibdict.get("basis", None)
+        self.base = sublibdict.get("base", None)
         self.ommit = set(sublibdict.get("ommit", "").split())
         self.add = sublibdict.get("add", {})
 
     def list_endf6(self, sublibrary: str):
         tapes = {}
-        if self.basis is not None:
-            basis_paths = (NDMANAGER_ENDF6 / self.basis / sublibrary).glob("*.endf6")
-            tapes |= {Nuclide.from_file(p).name: p for p in basis_paths}
+        if self.base is not None:
+            base_paths = (NDMANAGER_ENDF6 / self.base / sublibrary).glob("*.endf6")
+            tapes |= {Nuclide.from_file(p).name: p for p in base_paths}
 
         # Remove unwanted evaluations
         for nuclide in self.ommit:
@@ -192,8 +192,8 @@ class TSLManager(InputParser, BaseManager):
         Returns:
             Dict[str, Path]: A dictionnary that associates nuclide names to couples of ENDF6 paths
         """
-        tsl_to_nuclide = TSL_NEUTRON[self.basis]
-        tsl_paths = (NDMANAGER_ENDF6 / self.basis / "tsl").glob("*.endf6")
+        tsl_to_nuclide = TSL_NEUTRON[self.base]
+        tsl_paths = (NDMANAGER_ENDF6 / self.base / "tsl").glob("*.endf6")
 
         # Base TSL-Neutron couples
         for tsl in tsl_paths:
