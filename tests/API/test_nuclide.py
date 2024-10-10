@@ -51,7 +51,7 @@ def test_nuclide(install_test):
     assert Nuclide.from_zam(952421).zam == 952421
 
     # Testing the file constructor
-    tape = get_endf6("test", "n", "C12")
+    tape = get_endf6("foo", "n", "C12")
     assert Nuclide.from_file(tape).Z == 6
     assert Nuclide.from_file(tape).element == "C"
     assert Nuclide.from_file(tape).A == 12
@@ -59,7 +59,7 @@ def test_nuclide(install_test):
     assert Nuclide.from_file(tape).name == "C12"
     assert Nuclide.from_file(tape).zam == 60120
 
-    tape = get_endf6("test", "n", "Am242_m1")
+    tape = get_endf6("foo", "n", "Am242_m1")
     assert Nuclide.from_file(tape).Z == 95
     assert Nuclide.from_file(tape).element == "Am"
     assert Nuclide.from_file(tape).A == 242

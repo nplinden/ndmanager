@@ -14,7 +14,7 @@ from ndmanager.SHA1.jeff311 import JEFF311_SHA1
 from ndmanager.SHA1.jendl5 import JENDL5_SHA1
 from ndmanager.SHA1.tendl19 import TENDL19_SHA1
 from ndmanager.SHA1.tendl23 import TENDL23_SHA1
-from ndmanager.SHA1.test import TEST_SHA1
+from ndmanager.SHA1.test import FOO_SHA1, BAR_SHA1
 
 try:
     NDMANAGER_ENDF6 = Path(os.environ["NDMANAGER_ENDF6"]).absolute()
@@ -751,5 +751,6 @@ TAPE_SHA1 = {
     "jendl5": JENDL5_SHA1,
     "tendl19": TENDL19_SHA1,
     "tendl23": TENDL23_SHA1,
-    "test": TEST_SHA1,
+    "foo": FOO_SHA1,
+    "bar": BAR_SHA1,
 }
