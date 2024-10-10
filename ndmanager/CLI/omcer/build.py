@@ -62,6 +62,6 @@ def build(args: ap.Namespace):
     lib = NDMLibrary(args.filename)
     if args.temperatures is not None:
         lib.neutron.update_temperatures(set(args.temperatures))
-    print(args.temperatures)
+        print(f"Custom temperatures: {args.temperatures}")
     lib.process(args.j, args.dryrun, args.clean)
     shutil.copy(args.filename, lib.root / "input.yml")
