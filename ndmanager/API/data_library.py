@@ -130,7 +130,7 @@ class InputParser:
         for guestlib, nuclides in self.add.items():
             for nuclide in nuclides.split():
                 tapes[nuclide] = get_endf6(guestlib, sublibrary, nuclide)
-                self.reuse.pop(nuclide)
+                self.reuse.pop(nuclide, None)
         return tapes
 
 class BaseManager(list):
