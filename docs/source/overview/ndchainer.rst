@@ -36,14 +36,14 @@ from a descriptive Yaml file, in a format similar to the one used by the NDOmcer
       to include only nuclide with a half-life higher than a day.
     halflife: 8.6e4
     n:
-      basis: jeff33
+      base: jeff33
       ommit: C0
       add:
         endfb8: Ta180 C12 C13 O17
     decay:
-      basis: jeff33
+      base: jeff33
     nfpy:
-      basis: jeff33
+      base: jeff33
 
 The Yaml file must contain a chain name and description, and can optionnaly
 include a ``halflife`` field which sets a minimum half-life under which
@@ -53,12 +53,12 @@ All subsequent field are related to the ENDF6 file sublibraries that will be use
 build the chain file: ``n`` for incident neutron data, ``decay`` for radioactive decay data,
 ``nfpy`` for neutron induced fission yield data.
 
-All of these field require a ``basis`` subfield to indicate a default source of ENDF6
+All of these field require a ``base`` subfield to indicate a default source of ENDF6
 tapes to use.
 Two additionnal subfields can be added:
 
 * ``ommit`` takes a list of nuclide that will be ommitted from the build.
-* ``add`` takes subfields with the name of other ENDF6 libraries, and a list of nuclides to add to the build. If the nuclides already exist in the basis ENDF6 library, they will be substituted.
+* ``add`` takes subfields with the name of other ENDF6 libraries, and a list of nuclides to add to the build. If the nuclides already exist in the base ENDF6 library, they will be substituted.
 
 Once the Yaml file is done, you can execute the build command:
 

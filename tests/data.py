@@ -6,7 +6,7 @@ xs_sha1 = {
     'pytest-artifacts/hdf5/foo/tsl/c_para_H.h5': 'dd86e8faf8b80c62fe51922a117798031ead6899',
     'pytest-artifacts/hdf5/foo/tsl/c_H_in_CH2.h5': '640a89df60ae680421ae0c4e17db8a3d760ccb1f',
     'pytest-artifacts/hdf5/foo/cross_sections.xml': 'aed87f2a0cd77669d5144f169a83a0667bd27d53',
-    'pytest-artifacts/hdf5/foo/input.yml': '4ccb2eb84bb3d40a2e56ce62ca5b59e0adb9975c',
+    'pytest-artifacts/hdf5/foo/input.yml': '9bdc8f8a29e2f9ad604f8adc12e8d0a9a24d9d3d',
 }
 
 endf6_sha1 = {

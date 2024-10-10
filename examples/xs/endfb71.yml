@@ -25,14 +25,14 @@ description: |
           I use the ENDF-B/VIII.0 evaluation instead.
 name: endfb71
 neutron:
-  basis: endfb71
+  base: endfb71
   ommit: C0
   add:
     endfb8: C12 C13 O18 Ne20 Ne21 Ne22 Yb168 Yb170 Yb171 Yb172 Yb173 Yb174 Yb176 Os184 Os186 Os187 Os188 Os189 Os190 Os192 Pt190 Pt192 Pt194 Pt195 Pt196 Pt198
   temperatures: 250 294 600 900 1200 2500
 photon:
-  basis: endfb8
+  base: endfb8
 tsl:
-  basis: endfb71
+  base: endfb71
   substitute:
     C0: C12

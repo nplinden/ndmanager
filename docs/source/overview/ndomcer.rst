@@ -81,18 +81,18 @@ Here is a sample Yaml file to build a JEFF-3.3 based library with some modificat
                 evaluation instead.
     temperatures: 250 294 600 900 973 1200
     n:
-        basis: jeff33
+        base: jeff33
         ommit: C0
         add:
             endfb8: Ta180 C12 C13 O17
     tsl:
-        basis: jeff33
+        base: jeff33
         substitute:
             C0: C12
     photo:
-        basis: endfb8
+        base: endfb8
     ard:
-        basis: endfb8
+        base: endfb8
 
 The file contains two metadata fields to give the target library a name
 and description, as well as a temperatures field.
@@ -100,12 +100,12 @@ All subsequent field are related to the ENDF6 file sublibraries that will be use
 build the HDF5 files: ``n`` for incident neutron data, ``tsl`` for thermal scattering law
 data, ``photo`` for photo-atomic data, and ``ard`` for atomic relaxation data.
 
-All of these field require a ``basis`` subfield to indicate a default source of ENDF6
+All of these field require a ``base`` subfield to indicate a default source of ENDF6
 tapes to use. For the ``n``, ``photo``, and ``ard`` fields, two additionnal subfields can be
 added:
 
 * ``ommit`` takes a list of nuclide that will be ommitted from the build.
-* ``add`` takes subfields with the name of other ENDF6 libraries, and a list of nuclides to add to the build. If the nuclides already exist in the basis ENDF6 library, they will be substituted.
+* ``add`` takes subfields with the name of other ENDF6 libraries, and a list of nuclides to add to the build. If the nuclides already exist in the base ENDF6 library, they will be substituted.
 
 To perform similar operations for thermal scattering, you will need to provide the full TSL
 tape names.

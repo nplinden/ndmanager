@@ -5,9 +5,9 @@ description: |
   libraries provided by the official OpenMC website.
 name: endfb81
 neutron:
-  basis: endfb81
+  base: endfb81
   temperatures: 250 294 600 900 1200 2500
 photon:
-  basis: endfb81
+  base: endfb81
 tsl:
-  basis: endfb8
+  base: endfb8
