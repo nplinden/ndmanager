@@ -1,5 +1,6 @@
 import yaml
 import multiprocessing as mp
+import h5py
 import shutil
 from tqdm import tqdm
 from openmc.data import Evaluation, get_thermal_name, DataLibrary
@@ -65,7 +66,25 @@ class NDMLibrary(DataLibrary):
 
         self.export_to_xml(self.root / "cross_sections.xml")
         shutil.copy(self.inputpath, self.root / "input.yml")
+
+        if not self.check_temperatures():
+            print("Reused and new neutron processed files used different temperature grids!")
         
+    def check_temperatures(self):
+        # Reused temperatures
+        temperature_sets = []
+        for path in self.neutron.reuse.values():
+            with h5py.File(path, "r") as f:
+                kTg = list(f.values())[0]['kTs']
+                temperatures = set([int(temp[:-1]) for temp in kTg])
+                if temperatures not in temperature_sets:
+                    temperature_sets.append(temperatures)
+
+        if len(temperature_sets) == 1 and self.neutron.temperatures in temperature_sets:
+            return True
+        return False
+
+
 
 class InputParser:
     cross_section_node_type = "abstract"
@@ -161,12 +180,12 @@ class NeutronManager(InputParser, BaseManager):
         # Building HDF5Neutron objects
         if neutrondict is not None:
             temperatures = neutrondict.get("temperatures", "")
-            temperatures = set([int(t) for t in temperatures.split()])
+            self.temperatures = set([int(t) for t in temperatures.split()])
             self.tapes = self.list_endf6("n")
             for target, neutron in self.tapes.items():
                 path = rootdir / f"neutron/{target}.h5"
                 logpath = rootdir / f"neutron/logs/{target}.log"
-                self.append(HDF5Neutron(target, path, logpath, neutron, temperatures))
+                self.append(HDF5Neutron(target, path, logpath, neutron, self.temperatures))
         else:
             temperatures = set()
             self.tapes = {}
