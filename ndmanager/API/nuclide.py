@@ -4,7 +4,7 @@
 import re
 from pathlib import Path
 
-from ndmanager.data import ATOMIC_SYMBOL
+from ndmanager.data import ATOMIC_SYMBOL, META_SYMBOL
 
 
 class Nuclide:
@@ -90,6 +90,19 @@ class Nuclide:
             return cls(z, None, None)
         else:
             return cls(z, a, m)
+
+    @classmethod
+    def from_iaea_name(cls, name: str) -> "Nuclide":
+        _, element, AM = name.split("-")
+        Z = ATOMIC_SYMBOL[element.capitalize()]
+        if AM.isdigit():
+            A = int(AM)
+            M = 0
+        else:
+            A = int(AM[:-1])
+            M = META_SYMBOL[AM[-1]]
+        return cls(Z, A, M)
+
 
     @property
     def name(self) -> str:
