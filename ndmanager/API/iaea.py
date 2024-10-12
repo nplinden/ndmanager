@@ -7,7 +7,8 @@ from contextlib import chdir
 from pathlib import Path
 from typing import List
 from tqdm import tqdm
-import multiprocessing as mp
+from dataclasses import dataclass, field
+from typing import Dict
 import re
 
 import requests
@@ -114,7 +115,7 @@ def fetch_sublibrary_list(libname: str) -> List[str]:
     return subs
 
 FORBIDDEN_NODES = ["Name", "Last modified", "Size", "Parent Directory", "Description"]
-class IAEA(dict):
+class IAEA:
     aliases = {'brond22': 'BROND-2-2',
         'brond31': 'BROND-3.1',
         'cendl31': 'CENDL-3.1',
@@ -142,167 +143,205 @@ class IAEA(dict):
         'tendl2021': 'TENDL-2021',
         'tendl2023': 'TENDL-2023'}
 
-    def __init__(self, cached=False):
-        p = Path.home() / ".config/ndmanager/IAEA_cache.json"
-        if not cached:
+    def __init__(self, p = None):
+        self.libraries = {}
+        # p = Path.home() / ".config/ndmanager/IAEA_cache.json"
+        if p is None:
             self.from_website()
-            p.parent.mkdir(exist_ok=True, parents=True)
-            with open(p, "w") as f:
-                json.dump(self, f, indent=2)
         else:
-            with open(p, "r") as f:
-                self |= json.load(f)
+            self.from_json(p)
 
     def __getitem__(self, key):
-        return super().__getitem__(self.aliases.get(key, key))
+        return self.libraries[self.aliases.get(key, key.rstrip("/"))]
 
     def __setitem__(self, key, value) -> None:
-        return super().__setitem__(self.aliases.get(key, key), value)
-
-    def to_json(self, path):
-        with open(path, "w") as f:
-            json.dump(self, f, indent=2)
+        self.libraries[self.aliases.get(key, key.rstrip("/"))] = value
 
     def from_website(self):
         root = requests.get(IAEA_ROOT)
         tags = BeautifulSoup(root.text, "html.parser").find_all("a")
         tags = [tag.get("href") for tag in tags if tag.text not in FORBIDDEN_NODES]
 
-        multi = False
-        if not multi:
-            for name in tags:
-                print(name)
-                val = IAEALibrary.from_website(name)
-                if val.valid:
-                    self[val.name.rstrip("/")] = val
-        else:
-            desc = f"Fetching data from iaea.org"
-            bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-            pbar = tqdm(total=len(tags), bar_format=bar_format, desc=desc)
-            def update_pbar(val):
-                if val.valid:
-                    self[val.name.rstrip("/")] = val
-                pbar.update()
-
-            def error_callback(e):
-                raise e
-            with mp.get_context("spawn").Pool() as p:
-                for name in tags:
-                    p.apply_async(IAEALibrary.from_website, args=(name,), callback=update_pbar, error_callback=error_callback)
-
-                p.close()
-                p.join()
-                pbar.close()
-
-class IAEALibrary(dict):
-    nsub_tags = {
-        "[G]": "g",
-        "[PHOTO]": "photo",
-        "[DECAY]": "decay",
-        "[S/FPY]": "sfpy",
-        "[ARD]": "ard",
-        "[N]": "n",
-        "[N]-MT": "nmt",
-        "[N/FPY]": "nfpy",
-        "[P/FPY]": "pfpy",
-        "[D/FPY]": "dfpy",
-        "[T/FPY]": "tfpy",
-        "[HE3/FP]": "he3fp",
-        "[HE4/FP]": "he4fp",
-        "[TSL]": "tsl",
-        "[Std]": "std",
-        "[E]": "e",
-        "[P]": "p",
-        "[D]": "d",
-        "[T]": "t",
-        "[HE3]": "he3",
-        "[HE4]": "he4",
-    }
-
-    def __init__(self):
-        super().__init__(self)
-        self.valid = None
-        self.fancyname = None
-        self.name = None
-        self.url = None
+        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+        pbar = tqdm(total=len(tags), bar_format=bar_format)
+        for name in tags:
+            # print(name)
+            pbar.set_description(f"{name:<25}")
+            val = IAEALibrary.from_website(name)
+            if val.valid:
+                self[val.name.rstrip("/")] = val
+            pbar.update()
+        pbar.close()
     
+    def to_json(self, p):
+        dico = {}
+        for libname, lib in self.libraries.items():
+            dico[libname] = lib.__dict__
+            sublibraries = dico[libname].pop("sublibraries")
+            dico[libname]["sublibraries"] = {}
+            for sublibname, sublib in sublibraries.items():
+                dico[libname]["sublibraries"] |= {sublibname: sublib.__dict__}
+        with open(p, "w") as f:
+            json.dump(dico, f, indent=2)
+
+    def from_json(self, path):
+        with open(path, "r") as f:
+            dictionnary = json.load(f)
+            for libname, lib in dictionnary.items():
+                raw_sublibraries = lib.pop("sublibraries")
+                obj_sublibraries = {}
+
+                for sublibname, sublib in raw_sublibraries.items():
+                    obj_sublibraries[sublibname] = IAEASublibrary(**sublib)
+
+                lib["sublibraries"] = obj_sublibraries
+                self.libraries[libname] = IAEALibrary(**lib)
+
+
+
+
+@dataclass
+class IAEALibrary:
+    name: str = ""
+    lib: str = ""
+    library: str = ""
+    url: str = ""
+    valid: bool = False
+    sublibraries: Dict[str, "IAEASublibrary"] = field(default_factory=dict)
+
     @classmethod
-    def from_website(cls, name):
-        library = cls()
-        library.name = name
-        library.url = IAEA_ROOT + name
-        r = requests.get(library.url)
+    def from_website(cls, node):
+        kwargs = {}
+        kwargs["name"] = node
+        kwargs["url"] = IAEA_ROOT + node
+        kwargs["sublibraries"] = {}
+
+        r = requests.get(IAEA_ROOT + node)
         tags = BeautifulSoup(r.text, "html.parser").find_all("a")
         tags = [tag.get("href") for tag in tags if tag.text not in FORBIDDEN_NODES]
         if "000-NSUB-index.htm" in tags:
-            library.valid = True
-            library.fancyname = name
-            library.fetch_nsub_index()
-        else:
-            library.valid = False
-        return library
+            cls.parse_index(kwargs)
+            kwargs["valid"] = True
+        return cls(**kwargs)
 
-    @classmethod
-    def from_dict(cls, dictionnary):
-        library = cls()
-        for key, value in dictionnary.items():
-            library[key] = IAEASublibrary.from_dict(value)
-        return library
 
-    def fetch_nsub_index(self):
-        url = self.url + "000-NSUB-index.htm" 
-        r = requests.get(url)
-        tags = BeautifulSoup(r.text, "html.parser").find_all("a")
-        for tag in tags:
-            nsub = self.nsub_tags[tag.text]
-            self[nsub] = IAEASublibrary.from_website(nsub, self.url, self.url + tag.get("href"))
+    def __getitem__(self, key):
+        return self.sublibraries[key]
 
-class IAEASublibrary(dict):
-    html_regex = re.compile(r'\d+\)')
-    def __init__(self) -> None:
-        super().__init__(self)
-        
+    def __setitem__(self, key, value):
+        self.sublibraries[key] = value
 
-    @classmethod
-    def from_website(cls, kind, root, url):
-        sublibrary = cls()
+    @staticmethod
+    def parse_index(kwargs):
+        nsub_tags = {
+            "[G]": "g",
+            "[PHOTO]": "photo",
+            "[DECAY]": "decay",
+            "[S/FPY]": "sfpy",
+            "[ARD]": "ard",
+            "[N]": "n",
+            "[N]-MT": "nmt",
+            "[N/FPY]": "nfpy",
+            "[P/FPY]": "pfpy",
+            "[D/FPY]": "dfpy",
+            "[T/FPY]": "tfpy",
+            "[HE3/FP]": "he3fp",
+            "[HE4/FP]": "he4fp",
+            "[TSL]": "tsl",
+            "[Std]": "std",
+            "[E]": "e",
+            "[P]": "p",
+            "[D]": "d",
+            "[T]": "t",
+            "[HE3]": "he3",
+            "[HE4]": "he4",
+        }
+        url = kwargs["url"] + "000-NSUB-index.htm" 
         r = requests.get(url)
         html = BeautifulSoup(r.text, "html.parser")
         tags = html.find_all("a")
+        for tag in tags:
+            kind = nsub_tags[tag.text]
+            kwargs["sublibraries"][kind] = IAEASublibrary.from_website(kwargs["url"], tag.get("href"))
         index = html.find_all("pre")[0].text.split("\n")
-        matnames = sublibrary.parse_matnames(index)
-
-        for matname, tag in zip(matnames, tags):
-            if kind == "tsl":
-                sublibrary[matname] = root + tag.get("href")
-            else:
-                try:
-                    nuclide = Nuclide.from_iaea_name(matname).name
-                    sublibrary[nuclide] = root + tag.get("href")
-                except (KeyError, ValueError):
-                    # If the element does not exist, mostly for evaluations with
-                    # a neutron target, e.g. 0-nn-1 in cendl32
-                    sublibrary[matname] = root + tag.get("href")
-        return sublibrary
-
-    @classmethod
-    def from_dict(cls, dictionnary):
-        return cls() | dictionnary
-
-    @classmethod
-    def parse_matnames(self, index):
-        matnames = []
         for line in index:
             splat = line.split()
             if len(splat) == 0:
                 continue
-            elif splat[0] == "#)":
+            if re.match(r" Lib:", line):
+                kwargs["lib"] = splat[1]
+            if re.match(r" Library:", line):
+                kwargs["library"] = " ".join(splat[1:])
+
+
+
+@dataclass
+class IAEASublibrary:
+    library_root: str
+    index_node: str
+    lib: str
+    library: str
+    nsub: int
+    sublibrary: str
+    urls: Dict[str, str]
+
+    @classmethod
+    def from_website(cls, root, node):
+        kwargs = {}
+        kwargs["library_root"] = root
+        kwargs["index_node"] = node
+        kwargs["urls"] = {}
+
+        url = root + node
+        r = requests.get(url)
+        html = BeautifulSoup(r.text, "html.parser")
+        tags = html.find_all("a")
+        index = html.find_all("pre")[0].text.split("\n")
+
+        materials = cls.parse_index(index, kwargs)
+
+        for matname, tag in zip(materials, tags):
+            if kwargs["nsub"] ==12:
+                # TSL file
+                kwargs["urls"][matname] = root + tag.get("href")
+            else:
+                try:
+                    nuclide = Nuclide.from_iaea_name(matname).name
+                    kwargs["urls"][nuclide] = root + tag.get("href")
+                except (KeyError, ValueError):
+                    # If the element does not exist, mostly for evaluations with
+                    # a neutron target, e.g. 0-nn-1 in cendl32
+                    kwargs["urls"][matname] = root + tag.get("href")
+        return cls(**kwargs)
+
+    def __getitem__(self, key):
+        return self.urls[key]
+
+    def __setitem__(self, key, value):
+        self.urls[key] = value
+
+    @staticmethod
+    def parse_index(index, kwargs):
+        materials = []
+        for line in index:
+            splat = line.split()
+            if len(splat) == 0:
+                continue
+            if re.match(r" Lib:", line):
+                kwargs["lib"] = splat[1]
+            if re.match(r" Library:", line):
+                kwargs["library"] = " ".join(splat[1:])
+            if re.match(r" Sub-library:", line):
+                kwargs["nsub"] = int(splat[1][5:])
+                kwargs["sublibrary"] = " ".join(splat[2:])
+            if splat[0] == "#)":
                 span = re.search(r"Material[ ]+", line).span()
-            if self.html_regex.match(splat[0]) is not None:
-                s = self.insert_separator(line, span[0])
-                s = self.insert_separator(s, span[1]+1)
-                matnames.append(s.split("$")[1].strip())
-        return matnames
+                continue
+            if re.match(r'\d+\)', splat[0]) is not None:
+                s = IAEASublibrary.insert_separator(line, span[0])
+                s = IAEASublibrary.insert_separator(s, span[1]+1)
+                materials.append(s.split("$")[1].strip())
+        return materials
 
     @staticmethod
     def insert_separator(string, pos):
