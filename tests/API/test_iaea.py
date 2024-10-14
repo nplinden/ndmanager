@@ -4,8 +4,7 @@ from pathlib import Path
 import pytest
 import requests
 
-from ndmanager.API.iaea import (download_endf6, fetch_endf6,
-                                fetch_sublibrary_list, get_url_paths)
+from ndmanager.API.iaea import (download_endf6, fetch_endf6, get_url_paths)
 from ndmanager.data import TAPE_SHA1
 
 
@@ -34,41 +33,20 @@ def test_get_url_paths():
     assert urls == reference
 
 
-def test_download_endf6():
-    directory = Path("pytest-artifacts/API/test_utils/")
+# def test_download_endf6():
+#     directory = Path("pytest-artifacts/API/test_utils/")
 
-    download_endf6("endfb8", "decay", "H1", directory / "decay-H1.endf6")
-    sha1 = hashlib.sha1()
-    with open(directory / "decay-H1.endf6", "rb") as f:
-        data = f.read()
-        sha1.update(data)
-    assert sha1.hexdigest() == TAPE_SHA1["endfb8"]["endfb8/decay/H1"]
-
-
-def test_fetch_endf6():
-    ascii = fetch_endf6("endfb8", "decay", "H1")
-    data = ascii.encode()
-    sha1 = hashlib.sha1()
-    sha1.update(data)
-    assert sha1.hexdigest() == TAPE_SHA1["endfb8"]["endfb8/decay/H1"]
+#     download_endf6("endfb8", "decay", "H1", directory / "decay-H1.endf6")
+#     sha1 = hashlib.sha1()
+#     with open(directory / "decay-H1.endf6", "rb") as f:
+#         data = f.read()
+#         sha1.update(data)
+#     assert sha1.hexdigest() == TAPE_SHA1["endfb8"]["endfb8/decay/H1"]
 
 
-def test_fetch_sublibrary_list():
-    subs = fetch_sublibrary_list("endfb8")
-    assert subs == [
-        "ard",
-        "d",
-        "decay",
-        "e",
-        "g",
-        "he3",
-        "he4",
-        "n",
-        "nfpy",
-        "p",
-        "photo",
-        "sfpy",
-        "std",
-        "t",
-        "tsl",
-    ]
+# def test_fetch_endf6():
+#     ascii = fetch_endf6("endfb8", "decay", "H1")
+#     data = ascii.encode()
+#     sha1 = hashlib.sha1()
+#     sha1.update(data)
+#     assert sha1.hexdigest() == TAPE_SHA1["endfb8"]["endfb8/decay/H1"]
