@@ -1,45 +1,63 @@
-"""Functions for interacting the the IAEA website"""
+"""A class to manage nuclear data libraries originating from the IAEA website"""
 
+import copy
 import json
 from pathlib import Path
-from tqdm import tqdm
-import copy
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
+from ndmanager.API.iaea.library import (FORBIDDEN_NODES, IAEALibrary,
+                                        IAEASublibrary)
 from ndmanager.data import IAEA_ROOT
-from ndmanager.API.iaea.library import IAEALibrary, IAEASublibrary, FORBIDDEN_NODES
+
 
 class IAEA:
-    aliases = {'brond22': 'BROND-2-2',
-        'brond31': 'BROND-3.1',
-        'cendl31': 'CENDL-3.1',
-        'cendl32': 'CENDL-3.2',
-        'endfb70': 'ENDF-B-VII.0',
-        'endfb71': 'ENDF-B-VII.1',
-        'endfb8': 'ENDF-B-VIII.0',
-        'endfb81': 'ENDF-B-VIII.1',
-        'fendl32b': 'FENDL-3.2b',
-        'jeff31': 'JEFF-3.1',
-        'jeff311': 'JEFF-3.1.1',
-        'jeff312': 'JEFF-3.1.2',
-        'jeff33': 'JEFF-3.3',
-        'jendl32': 'JENDL-3.2',
-        'jendl4': 'JENDL-4.0',
-        'jendl5': 'JENDL-5-Aug2023',
-        'tendl2008': 'TENDL-2008',
-        'tendl2009': 'TENDL-2009',
-        'tendl2010': 'TENDL-2010',
-        'tendl2011': 'TENDL-2011',
-        'tendl2012': 'TENDL-2012',
-        'tendl2015': 'TENDL-2015',
-        'tendl2017': 'TENDL-2017',
-        'tendl2019': 'TENDL-2019',
-        'tendl2021': 'TENDL-2021',
-        'tendl2023': 'TENDL-2023'}
+    """A class the manage IAEA's database of nuclear data libraries
 
-    def __init__(self, nocache=False):
+    Returns:
+        IAEA: An IAEA object
+    """
+
+    aliases = {
+        "brond22": "BROND-2-2",
+        "brond31": "BROND-3.1",
+        "cendl31": "CENDL-3.1",
+        "cendl32": "CENDL-3.2",
+        "endfb70": "ENDF-B-VII.0",
+        "endfb71": "ENDF-B-VII.1",
+        "endfb8": "ENDF-B-VIII.0",
+        "endfb81": "ENDF-B-VIII.1",
+        "fendl32b": "FENDL-3.2b",
+        "jeff31": "JEFF-3.1",
+        "jeff311": "JEFF-3.1.1",
+        "jeff312": "JEFF-3.1.2",
+        "jeff33": "JEFF-3.3",
+        "jendl32": "JENDL-3.2",
+        "jendl4": "JENDL-4.0",
+        "jendl5": "JENDL-5-Aug2023",
+        "tendl2008": "TENDL-2008",
+        "tendl2009": "TENDL-2009",
+        "tendl2010": "TENDL-2010",
+        "tendl2011": "TENDL-2011",
+        "tendl2012": "TENDL-2012",
+        "tendl2015": "TENDL-2015",
+        "tendl2017": "TENDL-2017",
+        "tendl2019": "TENDL-2019",
+        "tendl2021": "TENDL-2021",
+        "tendl2023": "TENDL-2023",
+    }
+
+    def __init__(self, nocache: bool = False) -> None:
+        """Initialize the database from parse IAEA's website of from
+        using a cached json file.
+
+        Args:
+            nocache (bool, optional): Force the constructor the ignore the cached
+                                      data. Defaults to False.
+        """
         self.libraries = {}
         p = Path.home() / ".config/ndmanager/IAEA_cache.json"
         if not p.exists() or nocache:
@@ -48,14 +66,29 @@ class IAEA:
         else:
             self.from_json(p)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> IAEALibrary:
+        """Define the [] get operator
+
+        Args:
+            key (str): Name of the desired library
+
+        Returns:
+            IAEALibrary: A library object
+        """
         return self.libraries[self.aliases.get(key, key)]
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: str, value: IAEALibrary) -> None:
+        """Define the [] set operator
+
+        Args:
+            key (str): Name of the new library
+            value (IAEALibrary): The library object
+        """
         self.libraries[self.aliases.get(key, key.rstrip("/"))] = value
 
-    def from_website(self):
-        root = requests.get(IAEA_ROOT)
+    def from_website(self) -> None:
+        """Parse the IAEA website to retrieve the database"""
+        root = requests.get(IAEA_ROOT, timeout=600)
         tags = BeautifulSoup(root.text, "html.parser").find_all("a")
         tags = [tag.get("href") for tag in tags if tag.text not in FORBIDDEN_NODES]
 
@@ -69,8 +102,12 @@ class IAEA:
             pbar.update()
         pbar.close()
 
-    
-    def to_json(self, p):
+    def to_json(self, p: str | Path) -> None:
+        """Export the database to the json format
+
+        Args:
+            p (str | Path): The path to write the database to
+        """
         libraries = copy.deepcopy(self.libraries)
         dico = {}
         for libname, lib in libraries.items():
@@ -79,11 +116,16 @@ class IAEA:
             dico[libname]["sublibraries"] = {}
             for sublibname, sublib in sublibraries.items():
                 dico[libname]["sublibraries"] |= {sublibname: sublib.__dict__}
-        with open(p, "w") as f:
+        with open(p, "w", encoding="utf-8") as f:
             json.dump(dico, f, indent=2)
 
-    def from_json(self, path):
-        with open(path, "r") as f:
+    def from_json(self, path: str | Path) -> None:
+        """ "Build the database from a json file
+
+        Args:
+            path (str | Path): The path to the json file
+        """
+        with open(path, "r", encoding="utf-8") as f:
             dictionnary = json.load(f)
             for libname, lib in dictionnary.items():
                 raw_sublibraries = lib.pop("sublibraries")
@@ -96,9 +138,19 @@ class IAEA:
                 self.libraries[libname] = IAEALibrary(**lib)
 
     @staticmethod
-    def is_cached():
-        return (Path.home() / ".config/ndmanager/IAEA_cache.json").exists()
-    
-    def keys(self):
-        return list(self.libraries.keys())
+    def is_cached() -> bool:
+        """Check that the cached database exists in the user's ~/.config/ndmanager
+        directory
 
+        Returns:
+            bool: Wether the cache file exists
+        """
+        return (Path.home() / ".config/ndmanager/IAEA_cache.json").exists()
+
+    def keys(self) -> List[str]:
+        """The list of available libraries in the database
+
+        Returns:
+            List[str]: List of libraries
+        """
+        return list(self.libraries.keys())

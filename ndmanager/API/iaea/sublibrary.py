@@ -82,7 +82,7 @@ class IAEASublibrary:
         """Define the [] get operator
 
         Args:
-            key (str): name of the desired material
+            key (str): Name of the desired material
 
         Returns:
             str: URL of the zip file

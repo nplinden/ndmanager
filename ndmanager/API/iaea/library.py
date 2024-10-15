@@ -80,7 +80,7 @@ class IAEALibrary:
         return list(self.sublibraries.keys())
 
     @staticmethod
-    def parse_index(kwargs: Dict[Any]):
+    def parse_index(kwargs: Dict[str, Any]):
         """Parse a library index from the IAEA website, e.g.
         https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm
 
