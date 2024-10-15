@@ -17,7 +17,7 @@ def cleanup_artifact_directory():
 
 
 @pytest.fixture(scope="session")
-def install_test():
+def iaea():
     namespace = ap.Namespace(libraries=["foo", "bar"], sub=["n"], all=False)
     install(namespace)
 

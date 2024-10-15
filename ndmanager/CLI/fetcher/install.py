@@ -19,12 +19,12 @@ class NdfInstallCommand:
             print("Initializing IAEA database...")
         self.iaea = IAEA()
 
-        if "foo" in args.libraries:
+        if "foo" in self.libraries:
             self.download_foo()
-            args.libraries.remove("foo")
-        if "bar" in args.libraries:
+            self.libraries.remove("foo")
+        if "bar" in self.libraries:
             self.download_bar()
-            args.libraries.remove("bar")
+            self.libraries.remove("bar")
 
         self.sublibraries = self.get_sublibrary_list()
         self.download()
@@ -56,45 +56,45 @@ class NdfInstallCommand:
         """Download a minimal library for testing purposes"""
         target = NDMANAGER_ENDF6 / "foo"
 
-        neutron = self.iaea["endfb80"]["n"]
-        neutron.download_endf6("H1", target / "n" / "H1.endf6")
-        neutron.download_endf6("C12", target / "n" / "C12.endf6")
-        neutron.download_endf6("Am242_m1", target / "n" / "Am242_m1.endf6")
+        neutron = self.iaea["endfb8"]["n"]
+        neutron.download_single("H1", target / "n" / "H1.endf6")
+        neutron.download_single("C12", target / "n" / "C12.endf6")
+        neutron.download_single("Am242_m1", target / "n" / "Am242_m1.endf6")
 
-        tsl = self.iaea["endfb80"]["tsl"]
-        tsl.download_endf6("6-H(CH2)", target / "tsl" / "tsl_0037_H(CH2).endf6")
-        tsl.download_endf6("1-Para-H", target / "tsl" /"tsl_0002_para-H.endf6")
+        tsl = self.iaea["endfb8"]["tsl"]
+        tsl.download_single("tsl_0037_H(CH2)", target / "tsl" / "tsl_0037_H(CH2).endf6")
+        tsl.download_single("tsl_0002_para-H", target / "tsl" /"tsl_0002_para-H.endf6")
 
-        photo = self.iaea["endfb80"]["photo"]
-        photo.download_endl("C0", target / "photo" / "C.endf6")
-        photo.download_endl("H0", target / "photo" / "H.endf6")
-        photo.download_endl("Pu", target / "photo" / "Pu.endf6")
+        photo = self.iaea["endfb8"]["photo"]
+        photo.download_single("C0", target / "photo" / "C.endf6")
+        photo.download_single("H0", target / "photo" / "H.endf6")
+        photo.download_single("Pu0", target / "photo" / "Pu.endf6")
 
-        photo = self.iaea["endfb80"]["ard"]
-        photo.download_endl("C0", target / "ard" / "C.endf6")
-        photo.download_endl("H0", target / "ard" / "H.endf6")
-        photo.download_endl("Pu", target / "ard" / "Pu.endf6")
+        photo = self.iaea["endfb8"]["ard"]
+        photo.download_single("C0", target / "ard" / "C.endf6")
+        photo.download_single("H0", target / "ard" / "H.endf6")
+        photo.download_single("Pu0", target / "ard" / "Pu.endf6")
 
     def download_bar(self):
         """Download a minimal library for testing purposes"""
         target = NDMANAGER_ENDF6 / "bar"
 
         neutron = self.iaea["jendl5"]["n"]
-        neutron.download_endf6("H1", target / "n" / "H1.endf6")
-        neutron.download_endf6("C12", target / "n" / "C12.endf6")
-        neutron.download_endf6("Am242_m1", target / "n" / "Am242_m1.endf6")
+        neutron.download_single("H1", target / "n" / "H1.endf6")
+        neutron.download_single("C12", target / "n" / "C12.endf6")
+        neutron.download_single("Am242_m1", target / "n" / "Am242_m1.endf6")
 
         tsl = self.iaea["jendl5"]["tsl"]
-        tsl.download_endf6("tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6")
-        tsl.download_endf6("tsl_para-H_0002.zip", target / "tsl" / "tsl_para-H_0002.endf6")
+        tsl.download_single("tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6")
+        tsl.download_single("tsl_para-H_0002", target / "tsl" / "tsl_para-H_0002.endf6")
 
         photo = self.iaea["jendl5"]["photo"]
-        photo.download_endf6("C0", target / "photo" / "C.endf6")
-        photo.download_endf6("H0", target / "photo" / "H.endf6")
+        photo.download_single("C0", target / "photo" / "C.endf6")
+        photo.download_single("H0", target / "photo" / "H.endf6")
 
         ard = self.iaea["jendl5"]["ard"]
-        ard.download_endf6("C0", target / "ard" / "C.endf6")
-        ard.download_endf6("H0", target / "ard" / "H.endf6")
+        ard.download_single("C0", target / "ard" / "C.endf6")
+        ard.download_single("H0", target / "ard" / "H.endf6")
 
     def download_errata(self):
         if "endfb8" in self.libraries:
