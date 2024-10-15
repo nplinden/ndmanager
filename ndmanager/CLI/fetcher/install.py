@@ -17,9 +17,7 @@ class NdfInstallCommand:
         self.libraries = set(args.libraries)
         if not IAEA.is_cached():
             print("Initializing IAEA database...")
-            self.iaea = IAEA()
-        else:
-            self.iaea = IAEA()
+        self.iaea = IAEA()
 
         if "foo" in args.libraries:
             self.download_foo()
