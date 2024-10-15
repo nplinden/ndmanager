@@ -23,6 +23,9 @@ class IAEASublibrary:
     Raises:
         ValueError: If an unknown name style is passed to IAEASublibrary.download
         e: Raise errors raised by parallel download of nuclear data files
+
+    Returns:
+        IAEASublibrary: The sublibrary instance
     """
 
     kind: str
