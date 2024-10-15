@@ -4,7 +4,7 @@ from ndmanager.API.endf6 import Endf6
 from ndmanager.API.utils import get_endf6
 
 
-def test_endf6(install_test):
+def test_endf6(install):
     for neutron in ["C12", "H1"]:
         tape = get_endf6("foo", "n", neutron)
         evaluation = Endf6(tape)

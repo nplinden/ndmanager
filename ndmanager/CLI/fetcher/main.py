@@ -2,10 +2,9 @@
 
 import argparse as ap
 
-from ndmanager.CLI.fetcher.info import info_parser
-from ndmanager.CLI.fetcher.install import install_parser
-from ndmanager.CLI.fetcher.listlibs import listlibs_parser
-from ndmanager.CLI.fetcher.remove import remove_parser
+from ndmanager.CLI.fetcher.install import NdfInstallCommand
+from ndmanager.CLI.fetcher.listlibs import NdfListCommand
+from ndmanager.CLI.fetcher.remove import NdfRemoveCommand
 
 
 def main() -> None:
@@ -16,10 +15,9 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
 
-    install_parser(subparsers)
-    listlibs_parser(subparsers)
-    info_parser(subparsers)
-    remove_parser(subparsers)
+    NdfInstallCommand.parser(subparsers)
+    NdfListCommand.parser(subparsers)
+    NdfRemoveCommand.parser(subparsers)
 
     args = parser.parse_args()
     if hasattr(args, "func"):

@@ -4,7 +4,8 @@ import hashlib
 from typing import Dict
 
 from ndmanager.API.utils import get_endf6
-from ndmanager.data import NDMANAGER_ENDF6, TAPE_SHA1
+from ndmanager.data import TAPE_SHA1
+from ndmanager.env import NDMANAGER_ENDF6
 
 
 def compute_file_sha1(filename: str) -> str:

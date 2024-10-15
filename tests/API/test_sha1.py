@@ -14,7 +14,7 @@ def test_compute_file_sha1():
     assert sha1 == "a006d52004f7e7f028e0e62486f217ced1a6a0d5"
 
 
-def test_compute_tape_sha1(install_test):
+def test_compute_tape_sha1(install):
     sha1 = compute_tape_sha1("foo", "n", "C12")
     assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
     sha1 = compute_tape_sha1("foo", "n", "H1")
@@ -39,7 +39,7 @@ def test_compute_tape_sha1(install_test):
     )
 
 
-def test_compute_sublib_sha1(install_test):
+def test_compute_sublib_sha1(install):
     sha1 = compute_sublib_sha1("foo", "n")
     assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
     assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
@@ -60,7 +60,7 @@ def test_compute_sublib_sha1(install_test):
     )
 
 
-def test_compute_lib_sha1(install_test):
+def test_compute_lib_sha1(install):
     sha1 = compute_lib_sha1("foo")
     assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
     assert sha1["foo/n/H1"] == TAPE_SHA1["foo"]["foo/n/H1"]
@@ -75,7 +75,7 @@ def test_compute_lib_sha1(install_test):
     )
 
 
-def test_compute_sha1(install_test):
+def test_compute_sha1(install):
     sha1 = compute_sha1("foo", "n", "C12")
     assert sha1["foo/n/C12"] == TAPE_SHA1["foo"]["foo/n/C12"]
     sha1 = compute_sha1("foo", "n", "H1")
@@ -128,7 +128,7 @@ def test_compute_sha1(install_test):
         compute_sha1("foo", nuclide="C")
 
 
-def test_check_tape_integrity(install_test):
+def test_check_tape_integrity(install):
     assert check_tape_integrity("foo", "n", "C12")
     assert check_tape_integrity("foo", "n", "H1")
     assert check_tape_integrity("foo", "n", "Am242_m1")
