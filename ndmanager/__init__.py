@@ -2,7 +2,7 @@
 
 __version__="0.3.3dev"
 
-from .API.iaea import IAEA
+from .API.iaea import IAEA, IAEALibrary, IAEASublibrary
 from .API.endf6 import Endf6
 from .API.nuclide import Nuclide
 from .API.sha1 import compute_file_sha1

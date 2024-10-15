@@ -85,8 +85,6 @@ class NDMLibrary(DataLibrary):
             return True
         return False
 
-
-
 class InputParser:
     cross_section_node_type = "abstract"
     def __init__(self, sublibdict: Dict) -> None:

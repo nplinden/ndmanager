@@ -138,7 +138,7 @@ class IAEA:
         Returns:
             bool: Wether the cache file exists
         """
-        return (Path.home() / ".config/ndmanager/IAEA_cache.json").exists()
+        return (NDMANAGER_CONFIG / "IAEA_cache.json").exists()
 
     def keys(self) -> List[str]:
         """The list of available libraries in the database

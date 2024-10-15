@@ -4,7 +4,8 @@ import shutil
 
 import pytest
 
-from ndmanager.CLI.fetcher.install import install
+from ndmanager import IAEA
+from ndmanager.CLI.fetcher.install import NdfInstallCommand
 from ndmanager.CLI.omcer.build import build
 
 
@@ -15,15 +16,24 @@ def cleanup_artifact_directory():
         shutil.rmtree(p)
     p.mkdir()
 
-
 @pytest.fixture(scope="session")
 def iaea():
-    namespace = ap.Namespace(libraries=["foo", "bar"], sub=["n"], all=False)
-    install(namespace)
+    return IAEA()
+
+@pytest.fixture(scope="session")
+def install():
+    args = ap.Namespace(libraries=["foo", "bar"],
+                        all=False,
+                        sub=None)
+    NdfInstallCommand(args)
+  
+@pytest.fixture(scope="session")
+def cached_iaea(iaea):
+    return IAEA(nocache=True)
 
 
 @pytest.fixture(scope="session")
-def build_test(install_test):
+def build_lib(install):
     data = """summary: A test library used to showcase the capabilities of ndo
 description: |
   This processed library relies on nuclear data evaluations from 

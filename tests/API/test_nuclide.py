@@ -4,7 +4,7 @@ from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 
 
-def test_nuclide(install_test):
+def test_nuclide(install):
     # Testing the default constructor
     assert Nuclide(Z=6, A=12, M=0).Z == 6
     assert Nuclide(Z=6, A=12, M=0).element == "C"
