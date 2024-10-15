@@ -4,7 +4,7 @@ from typing import Dict
 import h5py
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.data import NDMANAGER_ENDF6
+from ndmanager.env import NDMANAGER_ENDF6
 
 
 def get_endf6(libname: str, sub: str, nuclide: str):

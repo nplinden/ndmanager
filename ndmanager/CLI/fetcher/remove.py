@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import NDMANAGER_ENDF6
+from ndmanager.env import NDMANAGER_ENDF6
 
 class NdfRemoveCommand:
     def __init__(self, args: ap.Namespace) -> None:

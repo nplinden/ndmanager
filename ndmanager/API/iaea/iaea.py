@@ -12,6 +12,7 @@ from tqdm import tqdm
 from ndmanager.API.iaea.library import (FORBIDDEN_NODES, IAEALibrary,
                                         IAEASublibrary)
 from ndmanager.data import IAEA_ROOT
+from ndmanager.env import NDMANAGER_CONFIG
 
 
 class IAEA:
@@ -51,7 +52,7 @@ class IAEA:
                                       data. Defaults to False.
         """
         self.libraries = {}
-        p = Path.home() / ".config/ndmanager/IAEA_cache.json"
+        p = NDMANAGER_CONFIG / "IAEA_cache.json"
         if not p.exists() or nocache:
             self.from_website()
             self.to_json(p)

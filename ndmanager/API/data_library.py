@@ -9,7 +9,8 @@ from typing import Dict
 
 
 from ndmanager.API.data_sublibrary import HDF5Neutron, HDF5Photon, HDF5TSL, HDF5Sublibrary
-from ndmanager.data import TSL_NEUTRON, NDMANAGER_ENDF6, ATOMIC_SYMBOL, NDMANAGER_HDF5
+from ndmanager.data import TSL_NEUTRON, ATOMIC_SYMBOL
+from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 

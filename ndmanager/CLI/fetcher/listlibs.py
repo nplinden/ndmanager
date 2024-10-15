@@ -4,7 +4,7 @@ import argparse as ap
 import textwrap
 
 from ndmanager.API.iaea import IAEA
-from ndmanager.data import NDMANAGER_ENDF6
+from ndmanager.env import NDMANAGER_ENDF6
 from ndmanager.format import footer, get_terminal_size, header
 
 class NdfListCommand:

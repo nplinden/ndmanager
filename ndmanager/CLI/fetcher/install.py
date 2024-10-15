@@ -8,8 +8,8 @@ from typing import List
 import requests
 
 from ndmanager.API.iaea import IAEA
-from ndmanager.data import (ENDF6_LIBS, IAEA_ROOT, NDMANAGER_ENDF6,
-                            SUBLIBRARIES_SHORTLIST)
+from ndmanager.data import SUBLIBRARIES_SHORTLIST
+from ndmanager.env import NDMANAGER_ENDF6
 
 class NdfInstallCommand:
     def __init__(self, args: ap.Namespace) -> None:
@@ -30,11 +30,11 @@ class NdfInstallCommand:
         self.download()
         self.download_errata()
         
-    def get_sublibrary_list(self,) -> List[str]:
+    def get_sublibrary_list(self) -> List[str]:
         if self.args.sub is not None:
             return self.args.sub
         if self.args.all:
-            sublibraries = [set(ENDF6_LIBS[lib]["sublibraries"]) for lib in self.args.libraries]
+            sublibraries = [set(self.iaea[lib].keys()) for lib in self.args.libraries]
             return list(reduce(lambda x, y: x | y, sublibraries))
         return SUBLIBRARIES_SHORTLIST
 
