@@ -10,7 +10,8 @@ from pathlib import Path
 import requests
 from tqdm import tqdm
 
-from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS
+from ndmanager.data import OPENMC_LIBS
+from ndmanager.env import NDMANAGER_HDF5
 
 
 def install_parser(subparsers):

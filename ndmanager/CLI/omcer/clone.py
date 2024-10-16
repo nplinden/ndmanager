@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import NDMANAGER_HDF5
+from ndmanager.env import NDMANAGER_HDF5
 
 
 def clone_parser(subparsers):

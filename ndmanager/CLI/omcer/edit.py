@@ -8,7 +8,7 @@ from typing import Dict, List
 import numpy as np
 from h5py import File
 
-from ndmanager.data import NDMANAGER_HDF5
+from ndmanager.env import NDMANAGER_HDF5
 
 
 def overwrite_one_temp(source: File, target: File, nuclide: str, mt: int, t: str):
