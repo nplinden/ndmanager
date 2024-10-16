@@ -26,7 +26,8 @@ class NeutronManager(InputParser, BaseManager):
 
         self.sorting_key = lambda x: Nuclide.from_name(x.target).zam
 
-        self.temperatures: Set[int] = []
+        self.temperatures: Set[int] = set()
+        self.tapes: Dict[str, Path] = {}
         # Building HDF5Neutron objects
         if neutrondict is not None:
             temperatures = neutrondict.get("temperatures", "")
@@ -38,9 +39,6 @@ class NeutronManager(InputParser, BaseManager):
                 self.append(
                     HDF5Neutron(target, path, logpath, neutron, self.temperatures)
                 )
-        else:
-            temperatures = set()
-            self.tapes = {}
 
     def update_temperatures(self, temperatures: Set[int]) -> None:
         """Set new temperatures
@@ -48,5 +46,6 @@ class NeutronManager(InputParser, BaseManager):
         Args:
             temperatures (Set[int]): A set of temperatures
         """
+        self.temperatures = temperatures
         for neutron in self:
             neutron.temperatures = temperatures

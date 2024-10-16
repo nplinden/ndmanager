@@ -17,7 +17,7 @@ class HDF5Sublibrary:
     @abc.abstractmethod
     def process(self):
         """An HDF5Sublibrary should define a process method"""
-        return
+        pass
 
     def get_logger(self):
         """Create a new logger and return it

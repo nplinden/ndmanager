@@ -23,8 +23,6 @@ class BaseManager(list):
         Args:
             desc (str): Description for the tqdm bar
             j (int, optional): number of concurrent jobs to run. Defaults to 1.
-            dryrun (bool, optional): Does not perform the processing but prints
-                                     some logs. Defaults to False.
 
         Raises:
             e: Raised if one or more process fail
@@ -32,27 +30,23 @@ class BaseManager(list):
         if len(self) == 0:
             return
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        if dryrun:
-            for evaluation in self:
-                print(evaluation)
-        else:
-            with mp.get_context("spawn").Pool(j) as p:
-                pbar = tqdm(total=len(self), bar_format=bar_format, desc=desc)
+        with mp.get_context("spawn").Pool(j) as p:
+            pbar = tqdm(total=len(self), bar_format=bar_format, desc=desc)
 
-                def update_pbar(_):
-                    pbar.update()
+            def update_pbar(_):
+                pbar.update()
 
-                def error_callback(e):
-                    raise e
+            def error_callback(e):
+                raise e
 
-                for particle in self:
-                    p.apply_async(
-                        processor,
-                        args=(particle,),
-                        callback=update_pbar,
-                        error_callback=error_callback,
-                    )
+            for particle in self:
+                p.apply_async(
+                    processor,
+                    args=(particle,),
+                    callback=update_pbar,
+                    error_callback=error_callback,
+                )
 
-                p.close()
-                p.join()
-                pbar.close()
+            p.close()
+            p.join()
+            pbar.close()

@@ -2,7 +2,7 @@
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import Set
 
 from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 from ndmanager.API.utils import merge_neutron_file
@@ -14,7 +14,7 @@ class HDF5Neutron(HDF5Sublibrary):
     """A class to process an OpenMC HDF5 neutron data file"""
 
     neutron: Path
-    temperatures: List[int]
+    temperatures: Set[int]
 
     def process(self):
         """Process neutron ENDF6 file to HDF5 using OpenMC's API"""
