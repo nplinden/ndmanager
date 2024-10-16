@@ -20,13 +20,14 @@ class HDF5TSL(HDF5Sublibrary):
         """Process TSL ENDF6 file to HDF5 using OpenMC's API"""
         logger = self.get_logger()
         logger.info("PROCESS TSL DATA")
-        logger.info(f"Neutron tape: {self.neutron}")
-        logger.info(f"TSL tape: {self.tsl}")
-        logger.info(f"Temperatures: {self.temperatures}")
+        logger.info("Neutron tape: %s", self.neutron)
+        logger.info("TSL tape: %s", self.tsl)
+        _t = " ".join([str(t) for t in self.temperatures])
+        logger.info("Temperatures: %s", _t)
         t0 = time.time()
         if self.path.exists():
             return
         data = ThermalScattering.from_njoy(self.neutron, self.tsl, self.temperatures)
         assert self.path.name == f"{data.name}.h5"
         data.export_to_hdf5(self.path, "w")
-        logger.info(f"Processing time: {time.time() - t0:.1f}")
+        logger.info("Processing time: %.1f", time.time() - t0)

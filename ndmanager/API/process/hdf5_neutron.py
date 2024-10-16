@@ -20,21 +20,23 @@ class HDF5Neutron(HDF5Sublibrary):
         """Process neutron ENDF6 file to HDF5 using OpenMC's API"""
         logger = self.get_logger()
         logger.info("PROCESS NEUTRON DATA")
-        logger.info(f"Nuclide: {self.target}")
-        logger.info(f"Temperatures: {self.temperatures}")
+        logger.info("Nuclide: %s", self.target)
+        logger.info("Temperatures: %s", " ".join([str(t) for t in self.temperatures]))
 
         t0 = time.time()
         if self.path.exists():
-            logger.info(f"Processed file already exists at {self.path}")
+            logger.info("Processed file already exists at %s", self.path)
             target = IncidentNeutron.from_hdf5(self.path)
             target_temp = {int(t[:-1]) for t in target.temperatures}
-            logger.info(f"Existing temperatures: {target_temp}")
+            _t = " ".join([str(t) for t in target_temp])
+            logger.info("Existing temperatures: %s", _t)
 
             temperatures = self.temperatures - target_temp
             if not temperatures:
                 logger.info("No new processing is necessary, exiting")
                 return
-            logger.info(f"New processing temperatures: {temperatures}")
+            _t = " ".join([str(t) for t in temperatures])
+            logger.info("New processing temperatures: %s", _t)
             tmpfile = self.path.parent / f"tmp_{self.target}.h5"
 
             source = IncidentNeutron.from_njoy(self.neutron, temperatures=temperatures)
@@ -46,4 +48,4 @@ class HDF5Neutron(HDF5Sublibrary):
                 self.neutron, temperatures=self.temperatures
             )
             data.export_to_hdf5(self.path, "w")
-        logger.info(f"Processing time: {time.time() - t0:.1f}")
+        logger.info("Processing time: %.1f", time.time() - t0)

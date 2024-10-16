@@ -27,8 +27,8 @@ class HDF5Sublibrary:
         """
         logger = logging.getLogger(self.logpath.stem)
         handler = logging.FileHandler(self.logpath)
-        format = "%(asctime)s | %(levelname)-8s | %(message)s"
-        formatter = logging.Formatter(format, "%Y-%m-%d %H:%M:%S")
+        fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
+        formatter = logging.Formatter(fmt, "%Y-%m-%d %H:%M:%S")
         handler.setFormatter(formatter)
         logger.addHandler(handler)
         logger.setLevel("INFO")

@@ -19,10 +19,10 @@ class HDF5Photon(HDF5Sublibrary):
         logger = self.get_logger()
 
         logger.info("PROCESS PHOTON DATA")
-        logger.info(f"Atom: {self.target}")
+        logger.info("Atom: %s", self.target)
         t0 = time.time()
         if self.path.exists():
             return
         data = IncidentPhoton.from_endf(self.photo, self.ard)
         data.export_to_hdf5(self.path, "w")
-        logger.info(f"Processing time {time.time() - t0:.1f}")
+        logger.info("Processing time %.1f", time.time() - t0)

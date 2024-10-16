@@ -30,7 +30,7 @@ class NeutronManager(InputParser, BaseManager):
         # Building HDF5Neutron objects
         if neutrondict is not None:
             temperatures = neutrondict.get("temperatures", "")
-            self.temperatures = set([int(t) for t in temperatures.split()])
+            self.temperatures = {int(t) for t in temperatures.split()}
             self.tapes = self.list_endf6("n")
             for target, neutron in self.tapes.items():
                 path = rootdir / f"neutron/{target}.h5"

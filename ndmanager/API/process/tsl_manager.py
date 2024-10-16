@@ -23,8 +23,7 @@ def read_temperatures(from_yaml_node: int | str) -> List[int]:
     """
     if isinstance(from_yaml_node, int):
         return [from_yaml_node]
-    else:
-        return [int(t) for t in from_yaml_node.split()]
+    return [int(t) for t in from_yaml_node.split()]
 
 
 class TSLManager(InputParser, BaseManager):

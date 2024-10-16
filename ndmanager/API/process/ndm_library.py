@@ -22,7 +22,8 @@ class NDMLibrary(DataLibrary):
         """
         super().__init__()
         self.inputpath = inputpath
-        inputdict = yaml.safe_load(open(inputpath, "r"))
+        with open(inputpath, "r", encoding="utf-8") as f:
+            inputdict = yaml.safe_load(f)
         self.description = inputdict.get("description", "")
         self.summary = inputdict.get("summary", "")
         self.name = inputdict["name"]
