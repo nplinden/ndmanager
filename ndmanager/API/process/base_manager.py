@@ -6,16 +6,22 @@ from tqdm import tqdm
 
 
 def processor(particle: HDF5Sublibrary):
+    """Encapsulate the HDF5Sublibrary.process method in a function
+
+    Args:
+        particle (HDF5Sublibrary): The sublibrary object
+    """
     particle.process()
 
 
 class BaseManager(list):
     """A generic class for managing libraries generation"""
 
-    def process(self, j: int = 1, dryrun: bool = False):
+    def process(self, desc: str, j: int = 1, dryrun: bool = False):
         """Process the library using OpenMC's API
 
         Args:
+            desc (str): Description for the tqdm bar
             j (int, optional): number of concurrent jobs to run. Defaults to 1.
             dryrun (bool, optional): Does not perform the processing but prints
                                      some logs. Defaults to False.
@@ -25,7 +31,6 @@ class BaseManager(list):
         """
         if len(self) == 0:
             return
-        desc = f"{self.sublibrary:<8}"
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         if dryrun:
             for evaluation in self:

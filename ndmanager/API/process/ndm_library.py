@@ -54,17 +54,17 @@ class NDMLibrary(DataLibrary):
         self.root.mkdir(parents=True, exist_ok=True)
         if self.neutron is not None:
             (self.root / "neutron/logs").mkdir(parents=True, exist_ok=True)
-            self.neutron.process(j, dryrun)
+            self.neutron.process("Neutron", j, dryrun)
             self.register(self.neutron)
 
         if self.photon is not None:
             (self.root / "photon/logs").mkdir(parents=True, exist_ok=True)
-            self.photon.process(j, dryrun)
+            self.photon.process("Photon", j, dryrun)
             self.register(self.photon)
 
         if self.tsl is not None:
             (self.root / "tsl/logs").mkdir(parents=True, exist_ok=True)
-            self.tsl.process(j, dryrun)
+            self.tsl.process("TSL", j, dryrun)
             self.register(self.tsl)
 
         self.export_to_xml(self.root / "cross_sections.xml")
