@@ -38,23 +38,29 @@ class NDMLibrary(DataLibrary):
         if self.neutron is not None:
             (self.root / "neutron/logs").mkdir(parents=True, exist_ok=True)
             self.neutron.process(j, dryrun)
-            self.neutron.register(self, self.neutron.reuse)
+            self.register(self.neutron)
 
         if self.photon is not None:
             (self.root / "photon/logs").mkdir(parents=True, exist_ok=True)
             self.photon.process(j, dryrun)
-            self.photon.register(self, self.photon.reuse)
+            self.register(self.photon)
 
         if self.tsl is not None:
             (self.root / "tsl/logs").mkdir(parents=True, exist_ok=True)
             self.tsl.process(j, dryrun)
-            self.tsl.register(self, self.tsl.reuse)
+            self.register(self.tsl)
 
         self.export_to_xml(self.root / "cross_sections.xml")
         shutil.copy(self.inputpath, self.root / "input.yml")
 
         if not self.check_temperatures():
             print("Reused and new neutron processed files used different temperature grids!")
+
+    def register(self, manager: NeutronManager | PhotonManager | TSLManager):
+        for path in manager.reuse.values():
+            self.register_file(path)
+        for particle in sorted(manager, key=manager.sorting_key):
+            self.register_file(particle.path)
         
     def check_temperatures(self):
         # Reused temperatures

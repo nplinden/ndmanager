@@ -1,5 +1,5 @@
-from .input_parser import InputParser
 from .hdf5_sublibrary import HDF5Sublibrary
+from .input_parser import InputParser
 from .hdf5_neutron import HDF5Neutron
 from .hdf5_photon import HDF5Photon
 from .hdf5_tsl import HDF5TSL
