@@ -1,13 +1,16 @@
 """A class for managing neutron libraries generation"""
 from pathlib import Path
-from typing import Dict, Any, Set
+from typing import Any, Dict, Set
 
 from ndmanager.API.nuclide import Nuclide
-from ndmanager.API.process import BaseManager, HDF5Neutron, InputParser
+from ndmanager.API.process.base_manager import BaseManager
+from ndmanager.API.process.hdf5_neutron import HDF5Neutron
+from ndmanager.API.process.input_parser import InputParser
 
 
 class NeutronManager(InputParser, BaseManager):
     """A class for managing neutron libraries generation"""
+
     sublibrary: str = "Neutron"
     cross_section_node_type: str = "neutron"
 
@@ -32,11 +35,13 @@ class NeutronManager(InputParser, BaseManager):
             for target, neutron in self.tapes.items():
                 path = rootdir / f"neutron/{target}.h5"
                 logpath = rootdir / f"neutron/logs/{target}.log"
-                self.append(HDF5Neutron(target, path, logpath, neutron, self.temperatures))
+                self.append(
+                    HDF5Neutron(target, path, logpath, neutron, self.temperatures)
+                )
         else:
             temperatures = set()
             self.tapes = {}
-    
+
     def update_temperatures(self, temperatures: Set[int]) -> None:
         """Set new temperatures
 

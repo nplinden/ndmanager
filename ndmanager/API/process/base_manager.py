@@ -1,12 +1,13 @@
 """A generic class for managing libraries generation"""
 import multiprocessing as mp
-from tqdm import tqdm
-from typing import TYPE_CHECKING
 
-from ndmanager.API.process import HDF5Sublibrary
+from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
+from tqdm import tqdm
+
 
 def processor(particle: HDF5Sublibrary):
     particle.process()
+
 
 class BaseManager(list):
     """A generic class for managing libraries generation"""
@@ -40,10 +41,12 @@ class BaseManager(list):
                     raise e
 
                 for particle in self:
-                    p.apply_async(processor, 
-                                  args=(particle,), 
-                                  callback=update_pbar, 
-                                  error_callback=error_callback)
+                    p.apply_async(
+                        processor,
+                        args=(particle,),
+                        callback=update_pbar,
+                        error_callback=error_callback,
+                    )
 
                 p.close()
                 p.join()

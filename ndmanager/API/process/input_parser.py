@@ -1,16 +1,17 @@
 """A generic class to parse yml inputs of the omcer module"""
-from typing import Dict, Any
-
-from openmc.data import DataLibrary
+from typing import Any, Dict
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
+from openmc.data import DataLibrary
 
 
 class InputParser:
     """A generic class to parse yml inputs of the omcer module"""
+
     cross_section_node_type: str = "abstract"
+
     def __init__(self, sublibdict: Dict[Any]) -> None:
         """Parse the generic keywords in the input file
 
@@ -29,12 +30,14 @@ class InputParser:
             if "reuse" in sublibdict:
                 guestpath = NDMANAGER_HDF5 / sublibdict["reuse"] / "cross_sections.xml"
                 guestlib = DataLibrary.from_xml(guestpath)
-                guestlib = [node for node in guestlib 
-                            if node["type"] == self.cross_section_node_type]
+                guestlib = [
+                    node
+                    for node in guestlib
+                    if node["type"] == self.cross_section_node_type
+                ]
                 self.reuse = {g["materials"][0]: g["path"] for g in guestlib}
             else:
                 self.reuse = {}
-
 
     def list_endf6(self, sublibrary: str):
         """List the ENDF6 tapes asked by the input file
@@ -50,7 +53,6 @@ class InputParser:
             base_paths = (NDMANAGER_ENDF6 / self.base / sublibrary).glob("*.endf6")
             all_tapes = {Nuclide.from_file(p).name: p for p in base_paths}
             tapes |= {k: v for k, v in all_tapes.items() if k not in self.reuse}
-            
 
         # Remove unwanted evaluations
         for nuclide in self.ommit:

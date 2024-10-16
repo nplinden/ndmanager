@@ -9,6 +9,7 @@ from pathlib import Path
 @dataclass
 class HDF5Sublibrary:
     """A generic class to manage libraries of OpenMC HDF5 data files"""
+
     target: str
     path: Path
     logpath: Path
