@@ -1,5 +1,6 @@
+"""A class for managing TSL libraries generation"""
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Any
 
 from openmc.data import Evaluation, get_thermal_name
 
@@ -17,10 +18,19 @@ def read_temperatures(from_yaml_node: int | str):
         return [int(t) for t in from_yaml_node.split()]
 
 class TSLManager(InputParser, BaseManager):
-    sublibrary = "TSL"
-    cross_section_node_type = "thermal"
+    """A class for managing TSL libraries generation"""
+    sublibrary: str = "TSL"
+    cross_section_node_type: str = "thermal"
 
-    def __init__(self, tsldict: Dict, neutron_library: NeutronManager, rootdir: Path) -> None:
+    def __init__(self, tsldict: Dict[str, Any], neutron_library: NeutronManager, rootdir: Path) -> None:
+        """Create a TSL manager given an input tsl dictionnary, an neutron manager
+        and a path to a directory
+
+        Args:
+            tsldict (Dict[str, Any]): A TSL input dictionnary
+            neutron_library (NeutronManager): A neutron manager
+            rootdir (Path): A path to write the HDF5 files in
+        """
         InputParser.__init__(self, tsldict)
 
         self.sorting_key = lambda x: x.tsl.name
@@ -40,15 +50,11 @@ class TSLManager(InputParser, BaseManager):
         else:
             self.temperatures = set()
 
-    def build_tsl(self, rootdir: Path):
-        """List the paths to ENDF6 tsl evaluations necessary to build the cross sections
+    def build_tsl(self, rootdir: Path) -> None:
+        """Build the TSL HDF5 files
 
         Args:
-            tsl_params (Dict[str, str]): The parameters in the form of a dictionnary
-            neutrons (Dict[str, Path]): The list of the necessary neutron evaluation tapes
-
-        Returns:
-            Dict[str, Path]: A dictionnary that associates nuclide names to couples of ENDF6 paths
+            rootdir (Path): A path to write the HDF5 files in
         """
         if self.base is not None:
             tsl_to_nuclide = TSL_NEUTRON[self.base]
@@ -77,6 +83,14 @@ class TSLManager(InputParser, BaseManager):
                 self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
 
     @staticmethod
-    def get_name(tape: str | Path):
+    def get_name(tape: str | Path) -> str:
+        """Get the ZSYMAM value of an ENDF6 tape
+
+        Args:
+            tape (str | Path): Path to an ENDF6 tape
+
+        Returns:
+            str: The ZSYMAM value
+        """
         e = Evaluation(tape)
         return get_thermal_name(e.target['zsymam'].strip())

@@ -1,19 +1,29 @@
+"""A class for managing neutron libraries generation"""
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Any, Set
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.process import BaseManager, HDF5Neutron, InputParser
 
 
 class NeutronManager(InputParser, BaseManager):
-    sublibrary = "Neutron"
-    cross_section_node_type = "neutron"
+    """A class for managing neutron libraries generation"""
+    sublibrary: str = "Neutron"
+    cross_section_node_type: str = "neutron"
 
-    def __init__(self, neutrondict: Dict, rootdir: Path) -> None:
+    def __init__(self, neutrondict: Dict[str, Any], rootdir: Path) -> None:
+        """Create a neutron manager given an input neutron dictionnary
+        and a path to a directory
+
+        Args:
+            neutrondict (Dict[str, Any]): A neutron input dictionnary
+            rootdir (Path): A path to write the HDF5 files in
+        """
         InputParser.__init__(self, neutrondict)
 
         self.sorting_key = lambda x: Nuclide.from_name(x.target).zam
 
+        self.temperatures: Set[int] = []
         # Building HDF5Neutron objects
         if neutrondict is not None:
             temperatures = neutrondict.get("temperatures", "")
@@ -27,6 +37,11 @@ class NeutronManager(InputParser, BaseManager):
             temperatures = set()
             self.tapes = {}
     
-    def update_temperatures(self, temperatures):
+    def update_temperatures(self, temperatures: Set[int]) -> None:
+        """Set new temperatures
+
+        Args:
+            temperatures (Set[int]): A set of temperatures
+        """
         for neutron in self:
             neutron.temperatures = temperatures

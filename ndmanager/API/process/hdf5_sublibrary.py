@@ -1,3 +1,4 @@
+"""A generic class to manage libraries of OpenMC HDF5 data files"""
 import abc
 import logging
 import warnings
@@ -7,15 +8,22 @@ from pathlib import Path
 
 @dataclass
 class HDF5Sublibrary:
+    """A generic class to manage libraries of OpenMC HDF5 data files"""
     target: str
     path: Path
     logpath: Path
 
     @abc.abstractmethod
     def process(self):
+        """An HDF5Sublibrary should define a process method"""
         return
 
     def get_logger(self):
+        """Create a new logger and return it
+
+        Returns:
+            logging.Logger: The logger object
+        """
         logger = logging.getLogger(self.logpath.stem)
         handler = logging.FileHandler(self.logpath)
         format = "%(asctime)s | %(levelname)-8s | %(message)s"
@@ -29,4 +37,3 @@ class HDF5Sublibrary:
 
         warnings.showwarning = showwarning
         return logger
-

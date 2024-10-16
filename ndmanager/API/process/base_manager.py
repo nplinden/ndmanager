@@ -1,3 +1,4 @@
+"""A generic class for managing libraries generation"""
 import multiprocessing as mp
 from tqdm import tqdm
 from typing import TYPE_CHECKING
@@ -8,7 +9,19 @@ def processor(particle: HDF5Sublibrary):
     particle.process()
 
 class BaseManager(list):
+    """A generic class for managing libraries generation"""
+
     def process(self, j: int = 1, dryrun: bool = False):
+        """Process the library using OpenMC's API
+
+        Args:
+            j (int, optional): number of concurrent jobs to run. Defaults to 1.
+            dryrun (bool, optional): Does not perform the processing but prints
+                                     some logs. Defaults to False.
+
+        Raises:
+            e: Raised if one or more process fail
+        """
         if len(self) == 0:
             return
         desc = f"{self.sublibrary:<8}"

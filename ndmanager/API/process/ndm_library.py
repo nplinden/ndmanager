@@ -1,3 +1,4 @@
+"""Subclassing OpenMC's DataLibrary object for processing"""
 import shutil
 from pathlib import Path
 
@@ -10,7 +11,13 @@ from ndmanager.env import NDMANAGER_HDF5
 
 
 class NDMLibrary(DataLibrary):
+    """Subclassing OpenMC's DataLibrary object for processing"""
     def __init__(self, inputpath: str | Path) -> None:
+        """Create an NDMLibrary given a yaml input file
+
+        Args:
+            inputpath (str | Path): Path to a yaml input file
+        """
         super().__init__()
         self.inputpath = inputpath
         inputdict = yaml.safe_load(open(inputpath, "r"))
@@ -25,7 +32,16 @@ class NDMLibrary(DataLibrary):
         self.tsl = TSLManager(inputdict.get("tsl"), self.neutron, self.root)
 
 
-    def process(self, j: int = 1, dryrun: bool = False, clean: bool = False):
+    def process(self, j: int = 1, dryrun: bool = False, clean: bool = False) -> None:
+        """Process the NDManager library using OpenMC's API
+
+        Args:
+            j (int, optional): Number of concurrent jobs to run. Defaults to 1.
+            dryrun (bool, optional): Does not perform the processing but prints
+                                     some logs. Defaults to False.. Defaults to False.
+            clean (bool, optional): Delete the target directory before processing. 
+                                    Defaults to False.
+        """
         if clean and self.root.exists():
             answer = input(f"This will delete {self.root} entirely, proceed? [y/n]")
             if answer == "y":
@@ -56,13 +72,24 @@ class NDMLibrary(DataLibrary):
         if not self.check_temperatures():
             print("Reused and new neutron processed files used different temperature grids!")
 
-    def register(self, manager: NeutronManager | PhotonManager | TSLManager):
+    def register(self, manager: NeutronManager | PhotonManager | TSLManager) -> None:
+        """Register managers in the DataLibrary database
+
+        Args:
+            manager (NeutronManager | PhotonManager | TSLManager): _description_
+        """
         for path in manager.reuse.values():
             self.register_file(path)
         for particle in sorted(manager, key=manager.sorting_key):
             self.register_file(particle.path)
         
-    def check_temperatures(self):
+    def check_temperatures(self) -> bool:
+        """Check that the processing temperatures are identical to the
+        temperatures in the reused data files
+
+        Returns:
+            bool: Wether the temperatures are the same or not
+        """
         # Reused temperatures
         temperature_sets = []
         for path in self.neutron.reuse.values():

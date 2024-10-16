@@ -1,4 +1,5 @@
-from typing import Dict
+"""A generic class to parse yml inputs of the omcer module"""
+from typing import Dict, Any
 
 from openmc.data import DataLibrary
 
@@ -8,8 +9,14 @@ from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 
 
 class InputParser:
-    cross_section_node_type = "abstract"
-    def __init__(self, sublibdict: Dict) -> None:
+    """A generic class to parse yml inputs of the omcer module"""
+    cross_section_node_type: str = "abstract"
+    def __init__(self, sublibdict: Dict[Any]) -> None:
+        """Parse the generic keywords in the input file
+
+        Args:
+            sublibdict (Dict[Any]): The input dictionnary
+        """
         if sublibdict is None:
             self.base = None
             self.ommit = set()
@@ -30,6 +37,14 @@ class InputParser:
 
 
     def list_endf6(self, sublibrary: str):
+        """List the ENDF6 tapes asked by the input file
+
+        Args:
+            sublibrary (str): The type of sublibrary
+
+        Returns:
+            Dict[str, Path]: The dictionnary of tape paths
+        """
         tapes = {}
         if self.base is not None:
             base_paths = (NDMANAGER_ENDF6 / self.base / sublibrary).glob("*.endf6")
