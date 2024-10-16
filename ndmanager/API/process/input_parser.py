@@ -12,7 +12,7 @@ class InputParser:
 
     cross_section_node_type: str = "abstract"
 
-    def __init__(self, sublibdict: Dict[Any]) -> None:
+    def __init__(self, sublibdict: Dict[str, Any]) -> None:
         """Parse the generic keywords in the input file
 
         Args:
