@@ -1,10 +1,11 @@
-from openmc.data import DataLibrary
 from typing import Dict
 
+from openmc.data import DataLibrary
 
-from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
+from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
+
 
 class InputParser:
     cross_section_node_type = "abstract"

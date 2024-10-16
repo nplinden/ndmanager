@@ -1,8 +1,9 @@
-from pathlib import Path
-from dataclasses import dataclass
+import abc
 import logging
 import warnings
-import abc
+from dataclasses import dataclass
+from pathlib import Path
+
 
 @dataclass
 class HDF5Sublibrary:

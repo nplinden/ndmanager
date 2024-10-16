@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Dict
 
-
-from ndmanager.API.process import HDF5Neutron, InputParser, BaseManager
 from ndmanager.API.nuclide import Nuclide
+from ndmanager.API.process import BaseManager, HDF5Neutron, InputParser
+
 
 class NeutronManager(InputParser, BaseManager):
     sublibrary = "Neutron"

@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Dict
 
-
-from ndmanager.API.process import HDF5Photon, InputParser, BaseManager
+from ndmanager.API.process import BaseManager, HDF5Photon, InputParser
 from ndmanager.data import ATOMIC_SYMBOL
+
 
 class PhotonManager(InputParser, BaseManager):
     sublibrary = "Photon"

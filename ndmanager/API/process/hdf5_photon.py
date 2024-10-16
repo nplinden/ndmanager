@@ -1,9 +1,11 @@
-from pathlib import Path
-from dataclasses import dataclass
 import time
+from dataclasses import dataclass
+from pathlib import Path
+
 from openmc.data import IncidentPhoton
 
 from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
+
 
 @dataclass
 class HDF5Photon(HDF5Sublibrary):

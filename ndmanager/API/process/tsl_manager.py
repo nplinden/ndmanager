@@ -1,12 +1,13 @@
-from openmc.data import Evaluation, get_thermal_name
 from pathlib import Path
 from typing import Dict
 
+from openmc.data import Evaluation, get_thermal_name
 
-from ndmanager.API.process import HDF5TSL, InputParser, BaseManager, NeutronManager
+from ndmanager.API.process import (HDF5TSL, BaseManager, InputParser,
+                                   NeutronManager)
+from ndmanager.API.utils import get_endf6
 from ndmanager.data import TSL_NEUTRON
 from ndmanager.env import NDMANAGER_ENDF6
-from ndmanager.API.utils import get_endf6
 
 
 def read_temperatures(from_yaml_node: int | str):

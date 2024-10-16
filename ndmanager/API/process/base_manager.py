@@ -1,13 +1,15 @@
 import multiprocessing as mp
 from tqdm import tqdm
 
-from ndmanager.API.process import HDF5Sublibrary, NDMLibrary
+# from ndmanager.API.process import HDF5Sublibrary, NDMLibrary
 
-def processor(particle: HDF5Sublibrary):
+# def processor(particle: HDF5Sublibrary):
+def processor(particle):
     particle.process()
 
 class BaseManager(list):
-    def register(self, library: NDMLibrary, reuse: dict):
+    #def register(self, library: NDMLibrary, reuse: dict):
+    def register(self, library, reuse: dict):
         for path in reuse.values():
             library.register_file(path)
         for particle in sorted(self, key=self.sorting_key):
