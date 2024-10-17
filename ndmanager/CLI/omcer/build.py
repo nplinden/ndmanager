@@ -5,7 +5,7 @@ import shutil
 
 import yaml
 
-from ndmanager.API.data_library import NDMLibrary
+from ndmanager.API.process import NDMLibrary
 from ndmanager import __version__
 
 

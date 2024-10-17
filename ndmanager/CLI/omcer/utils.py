@@ -2,11 +2,9 @@
 
 import argparse as ap
 import multiprocessing as mp
-import time
 from pathlib import Path
 from typing import Callable, Tuple
 
-import h5py
 import openmc.data
 from tqdm import tqdm
 

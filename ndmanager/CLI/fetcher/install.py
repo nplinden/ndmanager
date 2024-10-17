@@ -130,5 +130,5 @@ class NdfInstallCommand:
         group.add_argument(
             "--all", "-a", action="store_true", help="Download all sublibraries."
         )
-        group.add_argument("-j", type=int, default=1, help="Number of concurent processes")
+        parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
         parser.set_defaults(func=cls)

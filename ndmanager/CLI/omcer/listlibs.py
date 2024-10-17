@@ -3,7 +3,8 @@
 import textwrap
 import yaml
 
-from ndmanager.data import NDMANAGER_HDF5, OPENMC_LIBS
+from ndmanager.data import OPENMC_LIBS
+from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.format import get_terminal_size, header
 
 
