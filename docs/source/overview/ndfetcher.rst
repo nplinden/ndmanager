@@ -8,7 +8,7 @@ The NDFetcher module provides the ``ndf`` command to manage your evaluated nucle
 data files in the ENDF6 format.
 The spirit of ``ndf`` is to be used as a kind of package manager for nuclear
 data libraries.
-For now the main source of ENDF6 files for NDFetcher is the
+The main source of ENDF6 files for NDFetcher is the
 `IAEA website <https://www-nds.iaea.org/public/download-endf/>`_, as it stores
 most ENDF6 data libraries using a common, easy to parse directory structure.
 
