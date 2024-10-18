@@ -9,7 +9,7 @@
 project = "NDManager"
 copyright = "2024, Nicolas Linden"
 author = "Nicolas Linden"
-release = "0.1.1"
+release = "0.4.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
