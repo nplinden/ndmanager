@@ -15,6 +15,7 @@ def test_photon_manager(install, build_lib):
     assert len(manager) == 0
 
     manager = PhotonManager(dico, p)
+    print(manager)
     assert len(manager) == 2
     assert manager.base == "foo"
     assert manager.ommit == {"Pu"}
