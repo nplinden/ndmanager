@@ -15,7 +15,7 @@ def test_photon_manager(install, build_lib):
     assert len(manager) == 0
 
     manager = PhotonManager(dico, p)
-    print(manager)
+    print(len(manager))
     assert len(manager) == 2
     assert manager.base == "foo"
     assert manager.ommit == {"Pu"}
@@ -31,14 +31,14 @@ def test_photon_manager(install, build_lib):
     for atom, path in manager.ard.items():
         assert Path(path).samefile(ard[atom])
 
-    C = manager[0]
+    C = [m for m in manager if m.target == "C"]
     assert C.target == "C"
     assert C.path == Path('pytest-artifacts/API/process/neutron_manager/photon/C.h5')
     assert C.logpath == Path('pytest-artifacts/API/process/neutron_manager/photon/logs/C.log')
     assert C.photo.samefile("pytest-artifacts/endf6/foo/photo/C.endf6")
     assert C.ard.samefile("pytest-artifacts/endf6/foo/ard/C.endf6")
 
-    H = manager[1]
+    H = [m for m in manager if m.target == "H"]
     assert H.target == "H"
     assert H.path == Path('pytest-artifacts/API/process/neutron_manager/photon/H.h5')
     assert H.logpath == Path('pytest-artifacts/API/process/neutron_manager/photon/logs/H.log')
