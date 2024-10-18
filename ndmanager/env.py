@@ -17,18 +17,18 @@ if "NDMANAGER_ENDF6" in os.environ:
 elif "NDMANAGER_ENDF6" in settings:
     NDMANAGER_ENDF6 = Path(settings["NDMANAGER_ENDF6"]).absolute()
 else:
-    NDMANAGER_ENDF6 = None
+    NDMANAGER_ENDF6 = NDMANAGER_CONFIG / "endf6"
 
 if "NDMANAGER_HDF5" in os.environ:
     NDMANAGER_HDF5 = Path(os.environ["NDMANAGER_HDF5"]).absolute()
 elif "NDMANAGER_HDF5" in settings:
     NDMANAGER_HDF5 = Path(settings["NDMANAGER_HDF5"]).absolute()
 else:
-    NDMANAGER_HDF5 = None
+    NDMANAGER_HDF5 = NDMANAGER_CONFIG / "hdf5"
 
 if "NDMANAGER_CHAINS" in os.environ:
     NDMANAGER_CHAINS = Path(os.environ["NDMANAGER_CHAINS"]).absolute()
 elif "NDMANAGER_CHAINS" in settings:
     NDMANAGER_CHAINS = Path(settings["NDMANAGER_CHAINS"]).absolute()
 else:
-    NDMANAGER_CHAINS = None
+    NDMANAGER_CHAINS = NDMANAGER_CONFIG / "chains"
