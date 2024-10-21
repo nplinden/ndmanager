@@ -1,6 +1,6 @@
 """The NDManager module"""
 
-__version__="0.4.0"
+__version__="0.4.1"
 
 from .API.iaea import IAEA, IAEALibrary, IAEASublibrary
 from .API.endf6 import Endf6
