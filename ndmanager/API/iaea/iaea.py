@@ -52,6 +52,8 @@ class IAEA:
                                       data. Defaults to False.
         """
         self.libraries = {}
+        if not NDMANAGER_CONFIG.exists():
+            NDMANAGER_CONFIG.mkdir(parents=True)
         p = NDMANAGER_CONFIG / "IAEA_cache.json"
         if not p.exists() or nocache:
             self.from_website()
