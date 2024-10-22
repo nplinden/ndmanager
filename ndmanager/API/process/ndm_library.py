@@ -103,6 +103,8 @@ class NDMLibrary(DataLibrary):
                 if temperatures not in temperature_sets:
                     temperature_sets.append(temperatures)
 
+        if len(self.neutron.reuse) == 0:
+            return True
         if len(temperature_sets) == 1 and self.neutron.temperatures in temperature_sets:
             return True
         return False
