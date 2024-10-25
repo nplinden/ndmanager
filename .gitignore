@@ -1,5 +1,6 @@
 # Project specific
 pytest-artifacts
+examples/xs/local
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
