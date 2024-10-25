@@ -34,6 +34,7 @@ Homepage = "https://github.com/nplinden/ndmanager"
 ndf = "ndmanager.CLI.fetcher.main:main"
 ndo = "ndmanager.CLI.omcer.main:main"
 ndc = "ndmanager.CLI.chainer.main:main"
+nds = "ndmanager.CLI.sampler.main:main"
 
 [tool.setuptools]
 packages = ['ndmanager',
