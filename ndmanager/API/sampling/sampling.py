@@ -1,9 +1,11 @@
 import yaml
+import logging
 import shutil
 import tempfile
 from contextlib import chdir
 import shlex
 from pathlib import Path
+from tqdm import tqdm
 
 import openmc.data
 from openmc.data import DataLibrary
@@ -17,16 +19,14 @@ class Sampling:
         self.nsmp = input_dict["nsmp"]
         self.name = input_dict["name"]
         self.reuse = input_dict["reuse"]
-        self.temperature = input_dict["samples"]["temperature"]
+        self.temperature = input_dict["temperature"]
 
         self.lib_nuc_couples = []
-        for library, nuclides in input_dict["samples"]["libraries"].items():
+        for library, nuclides in input_dict["samples"].items():
             for nuclide in nuclides.split():
                 self.lib_nuc_couples.append((library, nuclide))
 
         self.rootpath = NDMANAGER_SAMPLES / self.name
-        self.pendf_path = self.rootpath / "pendf"
-        self.xlsx_path = self.rootpath / "xlsx"
         self.xs_path = self.rootpath / "cross_sections"
 
     def create_dir(self, clean):
@@ -35,34 +35,45 @@ class Sampling:
         elif self.rootpath.exists() and clean:
             shutil.rmtree(self.rootpath)
         self.rootpath.mkdir(parents=True)
-        self.pendf_path.mkdir()
-        self.xlsx_path.mkdir()
         self.xs_path.mkdir()
 
 
     def sample(self, processes):
+        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+        pbar = tqdm(
+                total=len(self.lib_nuc_couples),
+                bar_format=bar_format,
+            )
         for library, nuclide in self.lib_nuc_couples:
-            tape = get_endf6(library, "n", nuclide)
+            pbar.set_description(f"Sampling {nuclide:8s}")
             target = self.rootpath / nuclide
             target.mkdir()
+            logging.basicConfig(filename=target /  "logs", 
+                                level=logging.INFO,
+                                format= "%(asctime)s [%(levelname)s]: %(message)s",
+                                datefmt= "%Y-%m-%d %H:%M:%S",
+                                force=True)
+            tape = get_endf6(library, "n", nuclide)
 
             with tempfile.TemporaryDirectory() as tmpdir:
                 with chdir(tmpdir):
-                    command = f"%s --mf 33 --samples %d --processes %d --temperatures 300  --acer "
-                    run(shlex.split(command % (tape, self.nsmp, processes)))
+                    command = (f"%s --mf 33 --samples %d --processes %d --temperatures %d"
+                                " --supressnjoy  --acer ")
+                    run(shlex.split(command % (tape, self.nsmp, processes, self.temperature)))
                     
                     for xsd in Path(".").glob("*.xsd"):
                         xsd.unlink()
                     for tape in Path(".").glob("*.tape"):
-                        shutil.move(tape, self.pendf_path)
+                        shutil.move(tape, target)
                     for xslx in Path(".").glob("*.xlsx"):
-                        shutil.move(xslx, self.xlsx_path)
+                        shutil.move(xslx, target)
 
                     for ace in Path(".").glob("*"):
-                        print(ace.name)
                         neutron = openmc.data.IncidentNeutron.from_ace(ace)
                         _, pertid = ace.name.split(".")[0].split("_")
                         neutron.export_to_hdf5(target / f"{pertid}.h5", "w")
+            pbar.update()
+        pbar.close()
         
         reuse_xml = NDMANAGER_HDF5 / self.reuse / "cross_sections.xml"
 
