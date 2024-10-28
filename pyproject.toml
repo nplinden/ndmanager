@@ -45,6 +45,7 @@ packages = ['ndmanager',
     'ndmanager.CLI.fetcher',
     'ndmanager.CLI.omcer',
     'ndmanager.CLI.chainer',
+    'ndmanager.CLI.sampler',
 ]
 
 [tool.pytest.ini_options]
