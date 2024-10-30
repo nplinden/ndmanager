@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 import yaml
 
 if "NDMANAGER_CONFIG" in os.environ:

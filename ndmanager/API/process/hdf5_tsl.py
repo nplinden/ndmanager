@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 from openmc.data import ThermalScattering
+
+from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 
 @dataclass

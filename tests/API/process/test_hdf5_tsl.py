@@ -1,9 +1,11 @@
-from ndmanager.API.process import HDF5TSL
-from ndmanager.API.sha1 import compute_file_sha1
 from pathlib import Path
 
+from ndmanager.API.process import HDF5TSL
+from ndmanager.API.sha1 import compute_file_sha1
+
+
 def test_hdf5_tsl(install):
-    p =  Path("pytest-artifacts/API/process/hdf5_tsl/foo/tsl")
+    p = Path("pytest-artifacts/API/process/hdf5_tsl/foo/tsl")
 
     (p / "logs").mkdir(parents=True, exist_ok=True)
 
@@ -13,7 +15,7 @@ def test_hdf5_tsl(install):
         "logpath": p / "logs/c_para_H.logs",
         "tsl": "pytest-artifacts/endf6/foo/tsl/tsl_0002_para-H.endf6",
         "neutron": "pytest-artifacts/endf6/foo/n/H1.endf6",
-        "temperatures": [20]
+        "temperatures": [20],
     }
 
     tsl = HDF5TSL(**kwargs)
@@ -27,4 +29,3 @@ def test_hdf5_tsl(install):
     tsl.process()
     sha1 = compute_file_sha1(p / "c_para_H.h5")
     assert sha1 == "cb72ddb6a7c89bbfbb68de343dcf50636bb391ca"
-

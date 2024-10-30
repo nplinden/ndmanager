@@ -15,6 +15,7 @@ NdfInstallCommand.parser(subparsers)
 NdfListCommand.parser(subparsers)
 NdfRemoveCommand.parser(subparsers)
 
+
 def main() -> None:
     """Entry point for the ndf command"""
     args = parser.parse_args()

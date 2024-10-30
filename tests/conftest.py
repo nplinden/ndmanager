@@ -1,6 +1,6 @@
 import argparse as ap
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -16,17 +16,18 @@ def cleanup_artifact_directory():
         shutil.rmtree(p)
     p.mkdir()
 
+
 @pytest.fixture(scope="session")
 def iaea():
     return IAEA()
 
+
 @pytest.fixture(scope="session")
 def install():
-    args = ap.Namespace(libraries=["foo", "bar"],
-                        all=False,
-                        sub=None)
+    args = ap.Namespace(libraries=["foo", "bar"], all=False, sub=None)
     NdfInstallCommand(args)
-  
+
+
 @pytest.fixture(scope="session")
 def cached_iaea(iaea):
     return IAEA(nocache=True)
@@ -65,5 +66,7 @@ tsl:
     p = Path("pytest-artifacts/test.yml")
     with open(p, "w") as f:
         print(data, file=f)
-    namespace = ap.Namespace(filename=str(p), dryrun=False, clean=False, j=2, temperatures=None)
+    namespace = ap.Namespace(
+        filename=str(p), dryrun=False, clean=False, j=2, temperatures=None
+    )
     build(namespace)

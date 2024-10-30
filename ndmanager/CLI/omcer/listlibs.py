@@ -1,6 +1,7 @@
 """Definition and parser for the `ndo install` command"""
 
 import textwrap
+
 import yaml
 
 from ndmanager.data import OPENMC_LIBS
@@ -47,7 +48,9 @@ def listlibs(_args):
             lst.append("\n".join(s))
     lst.append(header("Custom Libraries"))
     for name in xs:
-        desc = yaml.safe_load(open(NDMANAGER_HDF5 / name / "input.yml")).get("summary", "")
+        desc = yaml.safe_load(open(NDMANAGER_HDF5 / name / "input.yml")).get(
+            "summary", ""
+        )
         s = f"{name:<16} {desc}"
         s = textwrap.wrap(s, initial_indent="", subsequent_indent=21 * " ", width=col)
         lst.append("\n".join(s))

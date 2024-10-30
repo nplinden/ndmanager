@@ -7,6 +7,7 @@ from ndmanager.API.iaea import IAEA
 from ndmanager.env import NDMANAGER_ENDF6
 from ndmanager.format import footer, get_terminal_size, header
 
+
 class NdfListCommand:
     def __init__(self, args: ap.Namespace) -> None:
         self.args = args
@@ -17,9 +18,9 @@ class NdfListCommand:
         col, _ = get_terminal_size()
         self.lines = []
         self.lines.append(header("Available libraries"))
-        
+
         libnames = self.list_libraries()
-        for libname in  libnames:
+        for libname in libnames:
             libdata = self.iaea[libname]
             fancyname = libdata.name.rstrip("/")
             if (NDMANAGER_ENDF6 / libname).exists():
@@ -27,7 +28,9 @@ class NdfListCommand:
             else:
                 check = " "
             s = f"{libname:<20} {fancyname:<20} [{check}]: {libdata.library}"
-            s = textwrap.wrap(s, initial_indent="", subsequent_indent=47 * " ", width=col)
+            s = textwrap.wrap(
+                s, initial_indent="", subsequent_indent=47 * " ", width=col
+            )
             self.lines.append("\n".join(s))
 
         self.lines.append(footer())
@@ -40,11 +43,9 @@ class NdfListCommand:
                 sesalia = {v: k for k, v in self.iaea.aliases.items()}
                 libnames.append(sesalia.get(name, name))
         else:
-            for libname in  self.iaea.aliases:
+            for libname in self.iaea.aliases:
                 libnames.append(libname)
         return libnames
-        
-
 
     def list_all(self):
         sesalia = {v: k for k, v in self.aliases.items()}
@@ -57,11 +58,10 @@ class NdfListCommand:
             else:
                 check = " "
             s = f"{libname:<10} {fancyname:<15} [{check}]: {libdata.library}"
-            s = textwrap.wrap(s, initial_indent="", subsequent_indent=30 * " ", width=col)
+            s = textwrap.wrap(
+                s, initial_indent="", subsequent_indent=30 * " ", width=col
+            )
             self.lines.append("\n".join(s))
-
-
-
 
     @classmethod
     def parser(cls, subparsers):

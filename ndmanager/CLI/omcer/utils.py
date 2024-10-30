@@ -57,8 +57,6 @@ def process(
         library.register_file(path)
 
 
-
-
 def get_temperatures(inputs):
     """Turns YAML temperature field to a list of interger temperatures
 

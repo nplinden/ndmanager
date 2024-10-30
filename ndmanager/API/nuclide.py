@@ -103,7 +103,6 @@ class Nuclide:
             M = META_SYMBOL[AM[-1]]
         return cls(Z, A, M)
 
-
     @property
     def name(self) -> str:
         """Returns the name of the nuclide in the GNDS format

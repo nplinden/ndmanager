@@ -11,6 +11,7 @@ from ndmanager.API.iaea import IAEA
 from ndmanager.data import SUBLIBRARIES_SHORTLIST
 from ndmanager.env import NDMANAGER_ENDF6
 
+
 class NdfInstallCommand:
     def __init__(self, args: ap.Namespace) -> None:
         self.args = args
@@ -29,7 +30,7 @@ class NdfInstallCommand:
         self.sublibraries = self.get_sublibrary_list()
         self.download()
         self.download_errata()
-        
+
     def get_sublibrary_list(self) -> List[str]:
         if self.args.sub is not None:
             return self.args.sub
@@ -50,7 +51,9 @@ class NdfInstallCommand:
                 if sublibrary in ["photo", "ard"]:
                     sublibdata.download(targetdir, style="atom", processes=self.args.j)
                 else:
-                    sublibdata.download(targetdir, style="nuclide", processes=self.args.j)
+                    sublibdata.download(
+                        targetdir, style="nuclide", processes=self.args.j
+                    )
 
     def download_foo(self):
         """Download a minimal library for testing purposes"""
@@ -63,7 +66,7 @@ class NdfInstallCommand:
 
         tsl = self.iaea["endfb8"]["tsl"]
         tsl.download_single("tsl_0037_H(CH2)", target / "tsl" / "tsl_0037_H(CH2).endf6")
-        tsl.download_single("tsl_0002_para-H", target / "tsl" /"tsl_0002_para-H.endf6")
+        tsl.download_single("tsl_0002_para-H", target / "tsl" / "tsl_0002_para-H.endf6")
 
         photo = self.iaea["endfb8"]["photo"]
         photo.download_single("C0", target / "photo" / "C.endf6")
@@ -85,7 +88,9 @@ class NdfInstallCommand:
         neutron.download_single("Am242_m1", target / "n" / "Am242_m1.endf6")
 
         tsl = self.iaea["jendl5"]["tsl"]
-        tsl.download_single("tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6")
+        tsl.download_single(
+            "tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6"
+        )
         tsl.download_single("tsl_para-H_0002", target / "tsl" / "tsl_para-H_0002.endf6")
 
         photo = self.iaea["jendl5"]["photo"]
@@ -130,5 +135,7 @@ class NdfInstallCommand:
         group.add_argument(
             "--all", "-a", action="store_true", help="Download all sublibraries."
         )
-        parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
+        parser.add_argument(
+            "-j", type=int, default=1, help="Number of concurent processes"
+        )
         parser.set_defaults(func=cls)

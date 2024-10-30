@@ -4,11 +4,12 @@ from pathlib import Path
 
 import h5py
 import yaml
+from openmc.data import DataLibrary
+
 from ndmanager.API.process.neutron_manager import NeutronManager
 from ndmanager.API.process.photon_manager import PhotonManager
 from ndmanager.API.process.tsl_manager import TSLManager
 from ndmanager.env import NDMANAGER_HDF5
-from openmc.data import DataLibrary
 
 
 class NDMLibrary(DataLibrary):

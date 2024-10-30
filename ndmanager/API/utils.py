@@ -1,6 +1,7 @@
 """Some utility functions"""
 
 from typing import Dict
+
 import h5py
 
 from ndmanager.API.nuclide import Nuclide
@@ -79,6 +80,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
         base_dict |= guest_dict
 
     return base_dict
+
 
 def merge_neutron_file(sourcepath, targetpath):
     """Merge two nuclear data file containing data for the same nuclide at

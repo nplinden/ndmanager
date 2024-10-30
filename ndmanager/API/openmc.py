@@ -92,6 +92,7 @@ def check_nuclear_data(libname: str, nuclides: str | List[str]):
         return False
     return True
 
+
 def set_perturbed_xs(perturbed_library: str, ismp: int):
     """Set openmc.config["cross_section"] value to the path to the
     xml definition file of the desired sampled library.
@@ -110,23 +111,26 @@ def set_perturbed_xs(perturbed_library: str, ismp: int):
     else:
         raise FileNotFoundError(f"Invalid sampled library name '{perturbed_library}'")
 
+
 class PerturbationIterator:
     def __init__(self, perturbed_library) -> None:
         p = NDMANAGER_SAMPLES / perturbed_library / f"cross_sections"
         if not p.exists():
-            raise FileNotFoundError(f"Invalid sampled library name '{perturbed_library}'")
-        self.smps = sorted([path for path in p.glob("*.xml")], key=lambda x: int(x.stem))
+            raise FileNotFoundError(
+                f"Invalid sampled library name '{perturbed_library}'"
+            )
+        self.smps = sorted(
+            [path for path in p.glob("*.xml")], key=lambda x: int(x.stem)
+        )
         print(self.smps)
         self.ismp = -1
 
     def __next__(self):
         self.ismp += 1
         if self.ismp < len(self.smps):
-            openmc.config["cross_sections"] = self.smps[self.ismp] 
+            openmc.config["cross_sections"] = self.smps[self.ismp]
             return self.ismp
         raise StopIteration
 
     def __iter__(self):
         return self
-
-        
