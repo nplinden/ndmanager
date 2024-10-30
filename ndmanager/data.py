@@ -1,8 +1,6 @@
 # pylint: disable=line-too-long
 """Defining some data used throughout the code."""
 
-import os
-from pathlib import Path
 from typing import Dict, List
 
 from ndmanager.SHA1.cendl31 import CENDL31_SHA1

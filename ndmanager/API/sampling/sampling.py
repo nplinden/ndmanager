@@ -1,6 +1,7 @@
+"""Some classes and function to allow for the generation of pertured
+nuclear data libraries"""
 import logging
 import multiprocessing as mp
-import os
 import shutil
 import subprocess as sp
 import tempfile
@@ -12,8 +13,6 @@ import openmc.data
 import yaml
 from openmc.data import DataLibrary
 from sandy.endf6 import Endf6
-from sandy.samples import Samples
-from sandy.sampling import run
 from sandy.utils import get_seed
 from tqdm import tqdm
 
@@ -23,14 +22,29 @@ from ndmanager.env import NDMANAGER_HDF5, NDMANAGER_SAMPLES
 SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
 
 
-def ace_to_hdf5(ace, target):
+def ace_to_hdf5(ace: str, target: str) -> None:
+    """Convert an ace nuclear data file to an HDF5 nuclear data file
+
+    Args:
+        ace (str): The path to the ace file to convert
+        target (str): The path to the desired HDF5 file
+    """
     neutron = openmc.data.IncidentNeutron.from_ace(ace)
     _, pertid = ace.name.split(".")[0].split("_")
     neutron.export_to_hdf5(target / f"{pertid}.h5", "w")
 
 
 class Sampling:
-    def __init__(self, yaml_path):
+    """A class to read nds input file and create perturbed nuclear data
+    from it
+    """
+
+    def __init__(self, yaml_path: str):
+        """Instantiate a Sampling object given a path to a yaml input file
+
+        Args:
+            yaml_path (str): The path to the input file
+        """
         input_dict = yaml.safe_load(open(yaml_path, "r"))
         self.nsmp = input_dict["nsmp"]
         self.name = input_dict["name"]
@@ -52,7 +66,16 @@ class Sampling:
         self.rootpath = NDMANAGER_SAMPLES / self.name
         self.xs_path = self.rootpath / "cross_sections"
 
-    def create_dir(self, clean):
+    def create_dir(self, clean: bool):
+        """Create the required directories to prepare for data generation
+
+        Args:
+            clean (bool): If the directories exist, they will be deleted a recreated
+
+        Raises:
+            FileExistsError: If the directories exist and the `clean` argument is false,
+                             raise an error.
+        """
         if self.rootpath.exists() and not clean:
             raise FileExistsError(f"{self.name} sample directory already exists")
         elif self.rootpath.exists() and clean:

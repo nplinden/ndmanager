@@ -113,16 +113,23 @@ def set_perturbed_xs(perturbed_library: str, ismp: int):
 
 
 class PerturbationIterator:
-    def __init__(self, perturbed_library) -> None:
-        p = NDMANAGER_SAMPLES / perturbed_library / f"cross_sections"
+    """A class to iterate on cross_sections.xml file of perturbed data libraries"""
+
+    def __init__(self, perturbed_library: str) -> None:
+        """Initialize a perturbation iterator using the name of the perturbed library
+
+        Args:
+            perturbed_library (str): The name of the perturbed library
+
+        Raises:
+            FileNotFoundError: Raise an error if the library does not exist
+        """
+        p = NDMANAGER_SAMPLES / perturbed_library / "cross_sections"
         if not p.exists():
             raise FileNotFoundError(
                 f"Invalid sampled library name '{perturbed_library}'"
             )
-        self.smps = sorted(
-            [path for path in p.glob("*.xml")], key=lambda x: int(x.stem)
-        )
-        print(self.smps)
+        self.smps = sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
         self.ismp = -1
 
     def __next__(self):

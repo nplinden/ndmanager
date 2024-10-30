@@ -88,11 +88,19 @@ class Nuclide:
             NSUB = int(f.readline()[46:56])
         if NSUB in [3, 6] and a == 0 and m == 0:
             return cls(z, None, None)
-        else:
-            return cls(z, a, m)
+        return cls(z, a, m)
 
     @classmethod
     def from_iaea_name(cls, name: str) -> "Nuclide":
+        """Instanciate a nuclide using its name if the format used by the IAEA's website.
+        e.g. 048-Cd-115M
+
+        Args:
+            name (str): The name in the IAEA format
+
+        Returns:
+            Nuclide: The nuclide object
+        """
         _, element, AM = name.split("-")
         Z = ATOMIC_SYMBOL[element.capitalize()]
         if AM.isdigit():
