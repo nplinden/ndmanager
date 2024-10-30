@@ -7,7 +7,7 @@ from typing import Any, Dict, List
 import requests
 from bs4 import BeautifulSoup
 
-from ndmanager.API.iaea import IAEASublibrary
+from ndmanager.API.iaea.sublibrary import IAEASublibrary
 from ndmanager.data import IAEA_ROOT
 
 FORBIDDEN_NODES = ["Name", "Last modified", "Size", "Parent Directory", "Description"]
