@@ -1,3 +1,4 @@
+"""Definition and parser for the 'ndf sample' command"""
 import argparse as ap
 
 from ndmanager.API.sampling import Sampling

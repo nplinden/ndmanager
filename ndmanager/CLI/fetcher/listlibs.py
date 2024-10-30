@@ -60,23 +60,6 @@ class NdfListCommand:
                 libnames.append(libname)
         return libnames
 
-    def list_all(self):
-        """Generate the string list of libraries"""
-        sesalia = {v: k for k, v in self.aliases.items()}
-        for name in self.iaea.libraries.keys():
-            libname = sesalia.get(name, name)
-            libdata = self.iaea[libname]
-            fancyname = libdata.name.rstrip("/")
-            if (NDMANAGER_ENDF6 / libname).exists():
-                check = "✓"
-            else:
-                check = " "
-            s = f"{libname:<10} {fancyname:<15} [{check}]: {libdata.library}"
-            s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=30 * " ", width=col
-            )
-            self.lines.append("\n".join(s))
-
     @classmethod
     def parser(cls, subparsers):
         """Add the parser for the 'ndf list' command to a subparser object
