@@ -9,7 +9,7 @@ import yaml
 
 from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.chainer.branching_ratios import branching_ratios
-from ndmanager.data import NDMANAGER_CHAINS
+from ndmanager.env import NDMANAGER_CHAINS
 
 
 def build_parser(subparsers: ap._SubParsersAction):

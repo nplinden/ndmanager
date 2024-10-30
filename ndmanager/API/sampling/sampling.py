@@ -45,7 +45,8 @@ class Sampling:
         Args:
             yaml_path (str): The path to the input file
         """
-        input_dict = yaml.safe_load(open(yaml_path, "r"))
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            input_dict = yaml.safe_load(f)
         self.nsmp = input_dict["nsmp"]
         self.name = input_dict["name"]
         self.reuse = input_dict["reuse"]
@@ -83,7 +84,12 @@ class Sampling:
         self.rootpath.mkdir(parents=True)
         self.xs_path.mkdir()
 
-    def sample(self, processes):
+    def sample(self, processes: int):
+        """Generate perturbated nuclear data libraries using the sandy package
+
+        Args:
+            processes (int): The number of jobs to allocate
+        """
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         pbar = tqdm(
             total=len(self.tapes),
@@ -133,7 +139,14 @@ class Sampling:
                     library.register_file(h5path)
             library.export_to_xml(self.rootpath / f"cross_sections/{ismp}.xml")
 
-    def run(self, xs_file, matrix_file, processes):
+    def run(self, xs_file: str, matrix_file: str, processes: int):
+        """Run sandy to generate a perturbed library for a single nuclide
+
+        Args:
+            xs_file (str): The path to the endf6 to perturb
+            matrix_file (str): The path to the endf6 file containing the covariance matrices
+            processes (int): The number of jobs to allocate
+        """
         logging.getLogger().setLevel(logging.DEBUG)
 
         err_pendf = 0.01
@@ -143,18 +156,18 @@ class Sampling:
         njoy_output = sp.DEVNULL
 
         # ERRORR KEYWORDS
-        errorr_kws = dict(
-            verbose=False,
-            err=err_errorr,
-            xs=True,
-            nubar=False,
-            chi=False,
-            mubar=False,
-            groupr_kws=dict(nubar=False, chi=False, mubar=False, ign=2),
-            errorr_kws=dict(ign=2),
-            njoy_output=njoy_output,
-            errorr33_kws=dict(mt=None),
-        )
+        errorr_kws = {
+            "verbose": False,
+            "err": err_errorr,
+            "xs": True,
+            "nubar": False,
+            "chi": False,
+            "mubar": False,
+            "groupr_kws": {"nubar": False, "chi": False, "mubar": False, "ign": 2},
+            "errorr_kws": {"ign": 2},
+            "njoy_output": njoy_output,
+            "errorr33_kws": {"mt": None},
+        }
 
         smp_kws = {
             "seed31": self.seed31,
@@ -164,31 +177,31 @@ class Sampling:
         }
 
         matrix_tape = Endf6.from_file(matrix_file)
-        logging.info(f"Running ERRORR on: '{matrix_file}'")
+        logging.info("Running ERRORR on: '%s", matrix_file)
         smps = matrix_tape.get_perturbations(
             self.nsmp, njoy_kws=errorr_kws, smp_kws=smp_kws
         )
 
         # PENDF KEYWORDS
-        pendf_kws = dict(
-            verbose=False,
-            err=err_pendf,
-            minimal_processing=False,
-            njoy_output=njoy_output,
-        )
+        pendf_kws = {
+            "verbose": False,
+            "err": err_pendf,
+            "minimal_processing": False,
+            "njoy_output": njoy_output,
+        }
 
         # ACE KEYWORDS
-        ace_kws = dict(
-            verbose=False,
-            err=err_ace,
-            minimal_processing=False,
-            temperature=self.temperature,
-            purr=False,
-            njoy_output=njoy_output,
-        )
+        ace_kws = {
+            "verbose": False,
+            "err": err_ace,
+            "minimal_processing": False,
+            "temperature": self.temperature,
+            "purr": False,
+            "njoy_output": njoy_output,
+        }
 
         xs_tape = Endf6.from_file(xs_file)
-        logging.info(f"Applying perturbations on: '{matrix_file}'")
+        logging.info(f"Applying perturbations on: '%s'", matrix_file)
         xs_tape.apply_perturbations(
             smps,
             processes=processes,
@@ -199,5 +212,3 @@ class Sampling:
             ace_kws=ace_kws,
             verbose=False,
         )
-
-        return

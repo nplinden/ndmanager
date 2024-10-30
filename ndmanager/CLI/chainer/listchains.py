@@ -3,7 +3,8 @@
 import argparse as ap
 import textwrap
 
-from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
+from ndmanager.data import OPENMC_CHAINS
+from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.format import get_terminal_size, header
 
 

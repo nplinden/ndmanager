@@ -18,7 +18,7 @@ def processor(particle: HDF5Sublibrary):
 class BaseManager(list):
     """A generic class for managing libraries generation"""
 
-    def process(self, desc: str, j: int = 1, dryrun: bool = False):
+    def process(self, desc: str, j: int = 1):
         """Process the library using OpenMC's API
 
         Args:
