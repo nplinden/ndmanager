@@ -56,17 +56,17 @@ class NDMLibrary(DataLibrary):
         self.root.mkdir(parents=True, exist_ok=True)
         if self.neutron is not None:
             (self.root / "neutron/logs").mkdir(parents=True, exist_ok=True)
-            self.neutron.process("Neutron", j, dryrun)
+            self.neutron.process("Neutron", j)
             self.register(self.neutron)
 
         if self.photon is not None:
             (self.root / "photon/logs").mkdir(parents=True, exist_ok=True)
-            self.photon.process("Photon", j, dryrun)
+            self.photon.process("Photon", j)
             self.register(self.photon)
 
         if self.tsl is not None:
             (self.root / "tsl/logs").mkdir(parents=True, exist_ok=True)
-            self.tsl.process("TSL", j, dryrun)
+            self.tsl.process("TSL", j)
             self.register(self.tsl)
 
         self.export_to_xml(self.root / "cross_sections.xml")
@@ -100,7 +100,7 @@ class NDMLibrary(DataLibrary):
         for path in self.neutron.reuse.values():
             with h5py.File(path, "r") as f:
                 kTg = list(f.values())[0]["kTs"]
-                temperatures = set([int(temp[:-1]) for temp in kTg])
+                temperatures = {int(temp[:-1]) for temp in kTg}
                 if temperatures not in temperature_sets:
                     temperature_sets.append(temperatures)
 

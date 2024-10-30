@@ -201,7 +201,7 @@ class Sampling:
         }
 
         xs_tape = Endf6.from_file(xs_file)
-        logging.info(f"Applying perturbations on: '%s'", matrix_file)
+        logging.info("Applying perturbations on: '%s'", matrix_file)
         xs_tape.apply_perturbations(
             smps,
             processes=processes,

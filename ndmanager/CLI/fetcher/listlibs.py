@@ -9,7 +9,14 @@ from ndmanager.format import footer, get_terminal_size, header
 
 
 class NdfListCommand:
+    """Define the `ndf list` command"""
     def __init__(self, args: ap.Namespace) -> None:
+        """Execute the `nds list` command given an argparse namespace
+
+        Args:
+            args (ap.Namespace): An argparse namespace containing the `nds list`
+                                 arguments
+        """
         self.args = args
         if not IAEA.is_cached():
             print("Initializing IAEA database...")
@@ -37,6 +44,12 @@ class NdfListCommand:
         print("\n".join(self.lines))
 
     def list_libraries(self):
+        """Get the full names of the libraries to list,
+        taking aliases into account
+
+        Returns:
+            List[str]: The list of library names
+        """
         libnames = []
         if self.args.all:
             for name in self.iaea.libraries:
@@ -48,6 +61,7 @@ class NdfListCommand:
         return libnames
 
     def list_all(self):
+        """Generate the string list of libraries"""
         sesalia = {v: k for k, v in self.aliases.items()}
         for name in self.iaea.libraries.keys():
             libname = sesalia.get(name, name)

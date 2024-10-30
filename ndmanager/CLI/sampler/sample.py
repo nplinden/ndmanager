@@ -4,7 +4,14 @@ from ndmanager.API.sampling import Sampling
 
 
 class NdsSampleCommand:
+    """Define the `ndf sample` command"""
     def __init__(self, args: ap.Namespace) -> None:
+        """Execute the `nds sample` command given an argparse namespace
+
+        Args:
+            args (ap.Namespace): An argparse namespace containing the `nds sample`
+                                 arguments
+        """
         self.args = args
         self.sampler = Sampling(args.filename)
         self.sampler.create_dir(args.clean)
@@ -12,6 +19,11 @@ class NdsSampleCommand:
 
     @classmethod
     def parser(cls, subparsers):
+        """Add the parser for the 'ndf sample' command to a subparser object
+
+        Args:
+            subparsers (argparse._SubParsersAction): An argparse subparser object
+        """
         parser = subparsers.add_parser(
             "sample", help="Sample a data library given a YAML input file"
         )

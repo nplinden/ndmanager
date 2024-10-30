@@ -13,7 +13,14 @@ from ndmanager.env import NDMANAGER_ENDF6
 
 
 class NdfInstallCommand:
+    """Define the `ndf install` command"""
     def __init__(self, args: ap.Namespace) -> None:
+        """Execute the `nds install` command given an argparse namespace
+
+        Args:
+            args (ap.Namespace): An argparse namespace containing the `nds install`
+                                 arguments
+        """
         self.args = args
         self.libraries = set(args.libraries)
         if not IAEA.is_cached():
@@ -32,6 +39,11 @@ class NdfInstallCommand:
         self.download_errata()
 
     def get_sublibrary_list(self) -> List[str]:
+        """Get the list of sublibraries to download
+
+        Returns:
+            List[str]: The list of sublibraries
+        """
         if self.args.sub is not None:
             return self.args.sub
         if self.args.all:
@@ -40,6 +52,7 @@ class NdfInstallCommand:
         return SUBLIBRARIES_SHORTLIST
 
     def download(self):
+        """Download all the ENDF6 nuclear data file requested"""
         for library in self.libraries:
             libdata = self.iaea[library]
             for sublibrary in self.sublibraries:
@@ -102,6 +115,7 @@ class NdfInstallCommand:
         ard.download_single("H0", target / "ard" / "H.endf6")
 
     def download_errata(self):
+        """Manualy define some errata ENDF6 files to download"""
         if "endfb8" in self.libraries:
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
             tape = requests.get(url, timeout=600).text
@@ -111,6 +125,11 @@ class NdfInstallCommand:
 
     @classmethod
     def parser(cls, subparsers):
+        """Add the parser for the 'ndf install' command to a subparser object
+
+        Args:
+            subparsers (argparse._SubParsersAction): An argparse subparser object
+        """
         parser = subparsers.add_parser(
             "install",
             help="Download ENDF6 files from the IAEA website",
