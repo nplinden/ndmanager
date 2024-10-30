@@ -5,8 +5,8 @@ import shutil
 
 import yaml
 
-from ndmanager.API.process import NDMLibrary
 from ndmanager import __version__
+from ndmanager.API.process import NDMLibrary
 
 
 def build_parser(subparsers):
@@ -29,12 +29,14 @@ def build_parser(subparsers):
     parser.add_argument(
         "--clean", help="Remove the library before building", action="store_true"
     )
-    parser.add_argument("--temperatures", 
-                        "-T", 
-                        help="Override the temperature values in the input file", 
-                        nargs="+", 
-                        type=int,
-                        default=None)
+    parser.add_argument(
+        "--temperatures",
+        "-T",
+        help="Override the temperature values in the input file",
+        nargs="+",
+        type=int,
+        default=None,
+    )
     parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
     parser.set_defaults(func=build)
 

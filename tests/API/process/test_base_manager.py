@@ -1,5 +1,7 @@
-from ndmanager.API.process import BaseManager
 import pytest
+
+from ndmanager.API.process import BaseManager
+
 
 def test_base_manager():
     manager = BaseManager()

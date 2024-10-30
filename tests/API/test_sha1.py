@@ -34,8 +34,7 @@ def test_compute_tape_sha1(install):
 
     sha1 = compute_tape_sha1("foo", "tsl", "tsl_0037_H(CH2)")
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
@@ -55,8 +54,7 @@ def test_compute_sublib_sha1(install):
 
     sha1 = compute_sublib_sha1("foo", "tsl")
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
@@ -70,8 +68,7 @@ def test_compute_lib_sha1(install):
     assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
     assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
 
@@ -92,8 +89,7 @@ def test_compute_sha1(install):
     assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     sha1 = compute_sha1("foo", "tsl", "tsl_0037_H(CH2)")
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
     sha1 = compute_sha1("foo", "n")
@@ -108,8 +104,7 @@ def test_compute_sha1(install):
     assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     sha1 = compute_sha1("foo", "tsl")
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
 
     sha1 = compute_sha1("foo")
@@ -121,8 +116,7 @@ def test_compute_sha1(install):
     assert sha1["foo/photo/C"] == TAPE_SHA1["foo"]["foo/photo/C"]
     assert sha1["foo/photo/H"] == TAPE_SHA1["foo"]["foo/photo/H"]
     assert (
-        sha1["foo/tsl/tsl_0037_H(CH2)"]
-        == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
+        sha1["foo/tsl/tsl_0037_H(CH2)"] == TAPE_SHA1["foo"]["foo/tsl/tsl_0037_H(CH2)"]
     )
     with pytest.raises(ValueError):
         compute_sha1("foo", nuclide="C")

@@ -1,10 +1,11 @@
 """A generic class to parse yml inputs of the omcer module"""
 from typing import Any, Dict
 
+from openmc.data import DataLibrary
+
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
-from openmc.data import DataLibrary
 
 
 class InputParser:

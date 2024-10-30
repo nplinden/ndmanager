@@ -5,8 +5,16 @@ import shutil
 
 from ndmanager.env import NDMANAGER_SAMPLES
 
+
 class NdsRemoveCommand:
+    """Define the `nds remove` command"""
     def __init__(self, args: ap.Namespace) -> None:
+        """Execute the `nds remove` command given an argparse namespace
+
+        Args:
+            args (ap.Namespace): An argparse namespace containing the `nds remove`
+                                 arguments
+        """
         libraries = [NDMANAGER_SAMPLES / lib for lib in args.library]
         for library in libraries:
             if library.exists():
@@ -30,6 +38,3 @@ class NdsRemoveCommand:
             nargs="+",
         )
         parser.set_defaults(func=cls)
-
-
-

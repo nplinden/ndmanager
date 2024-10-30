@@ -1,13 +1,13 @@
-from pathlib import Path
-import shlex
 import argparse as ap
-import subprocess as sp
+import shlex
 import shutil
+import subprocess as sp
+from pathlib import Path
 
 import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
-from tests.data import endf6_sha1, IAEA_Medical_sha1
+from tests.data import IAEA_Medical_sha1, endf6_sha1
 
 
 def test_ndf_install_foo_bar(install):

@@ -1,6 +1,8 @@
-from ndmanager.API.process import NeutronManager
 from pathlib import Path
+
 import pytest
+
+from ndmanager.API.process import NeutronManager
 
 
 def test_neutron_manager(install, build_lib):
@@ -8,7 +10,7 @@ def test_neutron_manager(install, build_lib):
         "base": "foo",
         "temperatures": "273 400",
         "ommit": "Am242_m1",
-        "add": {"bar": "H1"}
+        "add": {"bar": "H1"},
     }
     p = Path("pytest-artifacts/API/process/neutron_manager/")
     manager = NeutronManager(None, p)
@@ -23,8 +25,10 @@ def test_neutron_manager(install, build_lib):
     assert manager.add == {"bar": "H1"}
     assert manager.reuse == {}
     assert manager.temperatures == {400, 273}
-    ref = {'C12': "pytest-artifacts/endf6/foo/n/C12.endf6",
-            'H1': 'pytest-artifacts/endf6/bar/n/H1.endf6'}
+    ref = {
+        "C12": "pytest-artifacts/endf6/foo/n/C12.endf6",
+        "H1": "pytest-artifacts/endf6/bar/n/H1.endf6",
+    }
     for nuclide, path in manager.tapes.items():
         assert Path(path).samefile(ref[nuclide])
     C12 = manager[0]
@@ -47,24 +51,20 @@ def test_neutron_manager(install, build_lib):
     H1 = manager[1]
     assert H1.temperatures == {600}
 
-    dico = {
-        "reuse": "foo",
-        "temperatures": "273 400",
-        "add": {"bar": "H1"}
-    }
+    dico = {"reuse": "foo", "temperatures": "273 400", "add": {"bar": "H1"}}
     p = Path("pytest-artifacts/API/process/neutron_manager/")
     manager = NeutronManager(dico, p)
     assert len(manager) == 1
     assert manager.base is None
     assert manager.ommit == set()
     assert manager.add == {"bar": "H1"}
-    ref = {'C12': "pytest-artifacts/hdf5/foo/neutron/C12.h5"}
+    ref = {"C12": "pytest-artifacts/hdf5/foo/neutron/C12.h5"}
     for nuclide, path in manager.reuse.items():
         print(path)
         print(ref[nuclide])
         assert Path(path).samefile(ref[nuclide])
     assert manager.temperatures == {400, 273}
-    ref = {'H1': 'pytest-artifacts/endf6/bar/n/H1.endf6'}
+    ref = {"H1": "pytest-artifacts/endf6/bar/n/H1.endf6"}
     for nuclide, path in manager.tapes.items():
         assert path.samefile(ref[nuclide])
 
@@ -74,4 +74,3 @@ def test_neutron_manager(install, build_lib):
     assert H1.logpath == p / "neutron/logs/H1.log"
     assert H1.neutron.samefile("pytest-artifacts/endf6/bar/n/H1.endf6")
     assert H1.temperatures == {400, 273}
-    

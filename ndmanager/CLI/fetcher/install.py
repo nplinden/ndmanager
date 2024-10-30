@@ -11,8 +11,16 @@ from ndmanager.API.iaea import IAEA
 from ndmanager.data import SUBLIBRARIES_SHORTLIST
 from ndmanager.env import NDMANAGER_ENDF6
 
+
 class NdfInstallCommand:
+    """Define the `ndf install` command"""
     def __init__(self, args: ap.Namespace) -> None:
+        """Execute the `nds install` command given an argparse namespace
+
+        Args:
+            args (ap.Namespace): An argparse namespace containing the `nds install`
+                                 arguments
+        """
         self.args = args
         self.libraries = set(args.libraries)
         if not IAEA.is_cached():
@@ -29,8 +37,13 @@ class NdfInstallCommand:
         self.sublibraries = self.get_sublibrary_list()
         self.download()
         self.download_errata()
-        
+
     def get_sublibrary_list(self) -> List[str]:
+        """Get the list of sublibraries to download
+
+        Returns:
+            List[str]: The list of sublibraries
+        """
         if self.args.sub is not None:
             return self.args.sub
         if self.args.all:
@@ -39,6 +52,7 @@ class NdfInstallCommand:
         return SUBLIBRARIES_SHORTLIST
 
     def download(self):
+        """Download all the ENDF6 nuclear data file requested"""
         for library in self.libraries:
             libdata = self.iaea[library]
             for sublibrary in self.sublibraries:
@@ -50,7 +64,9 @@ class NdfInstallCommand:
                 if sublibrary in ["photo", "ard"]:
                     sublibdata.download(targetdir, style="atom", processes=self.args.j)
                 else:
-                    sublibdata.download(targetdir, style="nuclide", processes=self.args.j)
+                    sublibdata.download(
+                        targetdir, style="nuclide", processes=self.args.j
+                    )
 
     def download_foo(self):
         """Download a minimal library for testing purposes"""
@@ -63,7 +79,7 @@ class NdfInstallCommand:
 
         tsl = self.iaea["endfb8"]["tsl"]
         tsl.download_single("tsl_0037_H(CH2)", target / "tsl" / "tsl_0037_H(CH2).endf6")
-        tsl.download_single("tsl_0002_para-H", target / "tsl" /"tsl_0002_para-H.endf6")
+        tsl.download_single("tsl_0002_para-H", target / "tsl" / "tsl_0002_para-H.endf6")
 
         photo = self.iaea["endfb8"]["photo"]
         photo.download_single("C0", target / "photo" / "C.endf6")
@@ -85,7 +101,9 @@ class NdfInstallCommand:
         neutron.download_single("Am242_m1", target / "n" / "Am242_m1.endf6")
 
         tsl = self.iaea["jendl5"]["tsl"]
-        tsl.download_single("tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6")
+        tsl.download_single(
+            "tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6"
+        )
         tsl.download_single("tsl_para-H_0002", target / "tsl" / "tsl_para-H_0002.endf6")
 
         photo = self.iaea["jendl5"]["photo"]
@@ -97,15 +115,21 @@ class NdfInstallCommand:
         ard.download_single("H0", target / "ard" / "H.endf6")
 
     def download_errata(self):
+        """Manualy define some errata ENDF6 files to download"""
         if "endfb8" in self.libraries:
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
             tape = requests.get(url, timeout=600).text
-            target = NDMANAGER_ENDF6 / f"endfb8/n/B10.endf6"
+            target = NDMANAGER_ENDF6 / "endfb8/n/B10.endf6"
             with open(target, "w", encoding="utf-8", newline="") as f:
                 f.write(tape)
 
     @classmethod
     def parser(cls, subparsers):
+        """Add the parser for the 'ndf install' command to a subparser object
+
+        Args:
+            subparsers (argparse._SubParsersAction): An argparse subparser object
+        """
         parser = subparsers.add_parser(
             "install",
             help="Download ENDF6 files from the IAEA website",
@@ -130,5 +154,7 @@ class NdfInstallCommand:
         group.add_argument(
             "--all", "-a", action="store_true", help="Download all sublibraries."
         )
-        parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
+        parser.add_argument(
+            "-j", type=int, default=1, help="Number of concurent processes"
+        )
         parser.set_defaults(func=cls)

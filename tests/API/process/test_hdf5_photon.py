@@ -1,9 +1,11 @@
-from ndmanager.API.process import HDF5Photon
-from ndmanager.API.sha1 import compute_file_sha1
 from pathlib import Path
 
+from ndmanager.API.process import HDF5Photon
+from ndmanager.API.sha1 import compute_file_sha1
+
+
 def test_hdf5_photon(install):
-    p =  Path("pytest-artifacts/API/process/hdf5_photon/foo/photon")
+    p = Path("pytest-artifacts/API/process/hdf5_photon/foo/photon")
 
     (p / "logs").mkdir(parents=True, exist_ok=True)
 
@@ -12,7 +14,7 @@ def test_hdf5_photon(install):
         "path": p / "H.h5",
         "logpath": p / "logs/H.logs",
         "photo": "pytest-artifacts/endf6/foo/photo/H.endf6",
-        "ard": "pytest-artifacts/endf6/foo/ard/H.endf6"
+        "ard": "pytest-artifacts/endf6/foo/ard/H.endf6",
     }
 
     photon = HDF5Photon(**kwargs)

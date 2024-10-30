@@ -9,8 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from ndmanager.API.iaea.library import (FORBIDDEN_NODES, IAEALibrary,
-                                        IAEASublibrary)
+from ndmanager.API.iaea.library import FORBIDDEN_NODES, IAEALibrary
+from ndmanager.API.iaea.sublibrary import IAEASublibrary
 from ndmanager.data import IAEA_ROOT
 from ndmanager.env import NDMANAGER_CONFIG
 

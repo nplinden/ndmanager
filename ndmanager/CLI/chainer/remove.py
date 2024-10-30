@@ -3,7 +3,7 @@
 import argparse as ap
 import shutil
 
-from ndmanager.data import NDMANAGER_CHAINS
+from ndmanager.env import NDMANAGER_CHAINS
 
 
 def remove_parser(subparsers):

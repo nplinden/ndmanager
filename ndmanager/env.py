@@ -1,5 +1,9 @@
+"""A module to retrieve user defined data to determine where to write the
+libraries
+"""
 import os
 from pathlib import Path
+
 import yaml
 
 if "NDMANAGER_CONFIG" in os.environ:
@@ -7,8 +11,9 @@ if "NDMANAGER_CONFIG" in os.environ:
 else:
     NDMANAGER_CONFIG = Path.home() / ".config/ndmanager/"
 
-if (settings_path := (NDMANAGER_CONFIG / "settings.yml")).exists():
-    settings = yaml.safe_load(open(settings_path, "r"))
+if (settings_path := NDMANAGER_CONFIG / "settings.yml").exists():
+    with open(settings_path, "r", encoding="utf-8") as f:
+        settings = yaml.safe_load(f)
 else:
     settings = {}
 

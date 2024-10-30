@@ -2,14 +2,15 @@
 from pathlib import Path
 from typing import Any, Dict, List
 
-from ndmanager.API.process.hdf5_tsl import HDF5TSL
+from openmc.data import Evaluation, get_thermal_name
+
 from ndmanager.API.process.base_manager import BaseManager
+from ndmanager.API.process.hdf5_tsl import HDF5TSL
 from ndmanager.API.process.input_parser import InputParser
 from ndmanager.API.process.neutron_manager import NeutronManager
 from ndmanager.API.utils import get_endf6
 from ndmanager.data import TSL_NEUTRON
 from ndmanager.env import NDMANAGER_ENDF6
-from openmc.data import Evaluation, get_thermal_name
 
 
 def read_temperatures(from_yaml_node: int | str) -> List[int]:

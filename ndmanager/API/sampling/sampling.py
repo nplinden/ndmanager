@@ -1,33 +1,52 @@
-import yaml
+"""Some classes and function to allow for the generation of pertured
+nuclear data libraries"""
 import logging
-import shutil
-import tempfile
-from contextlib import chdir
 import multiprocessing as mp
-from pathlib import Path
-from tqdm import tqdm
-from sandy.endf6 import Endf6
+import shutil
 import subprocess as sp
-import os
+import tempfile
 from collections import namedtuple
+from contextlib import chdir
+from pathlib import Path
 
 import openmc.data
+import yaml
 from openmc.data import DataLibrary
-from sandy.samples import Samples
+from sandy.endf6 import Endf6
 from sandy.utils import get_seed
-from sandy.sampling import run
-from ndmanager.env import NDMANAGER_SAMPLES, NDMANAGER_HDF5
+from tqdm import tqdm
+
 from ndmanager import get_endf6
+from ndmanager.env import NDMANAGER_HDF5, NDMANAGER_SAMPLES
 
 SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
 
-def ace_to_hdf5(ace, target):
+
+def ace_to_hdf5(ace: str, target: str) -> None:
+    """Convert an ace nuclear data file to an HDF5 nuclear data file
+
+    Args:
+        ace (str): The path to the ace file to convert
+        target (str): The path to the desired HDF5 file
+    """
     neutron = openmc.data.IncidentNeutron.from_ace(ace)
     _, pertid = ace.name.split(".")[0].split("_")
     neutron.export_to_hdf5(target / f"{pertid}.h5", "w")
+
+
 class Sampling:
-    def __init__(self, yaml_path):
-        input_dict = yaml.safe_load(open(yaml_path, "r"))
+    """A class to read nds input file and create perturbed nuclear data
+    from it
+    """
+
+    def __init__(self, yaml_path: str):
+        """Instantiate a Sampling object given a path to a yaml input file
+
+        Args:
+            yaml_path (str): The path to the input file
+        """
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            input_dict = yaml.safe_load(f)
         self.nsmp = input_dict["nsmp"]
         self.name = input_dict["name"]
         self.reuse = input_dict["reuse"]
@@ -48,7 +67,16 @@ class Sampling:
         self.rootpath = NDMANAGER_SAMPLES / self.name
         self.xs_path = self.rootpath / "cross_sections"
 
-    def create_dir(self, clean):
+    def create_dir(self, clean: bool):
+        """Create the required directories to prepare for data generation
+
+        Args:
+            clean (bool): If the directories exist, they will be deleted a recreated
+
+        Raises:
+            FileExistsError: If the directories exist and the `clean` argument is false,
+                             raise an error.
+        """
         if self.rootpath.exists() and not clean:
             raise FileExistsError(f"{self.name} sample directory already exists")
         elif self.rootpath.exists() and clean:
@@ -56,29 +84,35 @@ class Sampling:
         self.rootpath.mkdir(parents=True)
         self.xs_path.mkdir()
 
+    def sample(self, processes: int):
+        """Generate perturbated nuclear data libraries using the sandy package
 
-    def sample(self, processes):
+        Args:
+            processes (int): The number of jobs to allocate
+        """
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         pbar = tqdm(
-                total=len(self.tapes),
-                bar_format=bar_format,
-            )
+            total=len(self.tapes),
+            bar_format=bar_format,
+        )
         for nuclide, xs_lib, matrix_lib in self.tapes:
             pbar.set_description(f"Sampling {nuclide:8s}")
             target = self.rootpath / nuclide
             target.mkdir()
-            logging.basicConfig(filename=target /  "logs", 
-                                level=logging.INFO,
-                                format= "%(asctime)s [%(levelname)s]: %(message)s",
-                                datefmt= "%Y-%m-%d %H:%M:%S",
-                                force=True)
+            logging.basicConfig(
+                filename=target / "logs",
+                level=logging.INFO,
+                format="%(asctime)s [%(levelname)s]: %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+                force=True,
+            )
             xs_file = get_endf6(xs_lib, "n", nuclide)
             matrix_file = get_endf6(matrix_lib, "n", nuclide)
 
             with tempfile.TemporaryDirectory() as tmpdir:
                 with chdir(tmpdir):
                     self.run(xs_file, matrix_file, processes)
-                    
+
                     for xsd in Path(".").glob("*.xsd"):
                         xsd.unlink()
                     for tape in Path(".").glob("*.tape"):
@@ -88,15 +122,12 @@ class Sampling:
 
                     with mp.get_context("spawn").Pool(processes) as p:
                         for ace in Path(".").glob("*"):
-                            p.apply_async(
-                                ace_to_hdf5,
-                                args=(ace, target)
-                            )
+                            p.apply_async(ace_to_hdf5, args=(ace, target))
                         p.close()
                         p.join()
             pbar.update()
         pbar.close()
-        
+
         reuse_xml = NDMANAGER_HDF5 / self.reuse / "cross_sections.xml"
 
         for ismp in range(self.nsmp):
@@ -108,7 +139,14 @@ class Sampling:
                     library.register_file(h5path)
             library.export_to_xml(self.rootpath / f"cross_sections/{ismp}.xml")
 
-    def run(self, xs_file, matrix_file, processes):
+    def run(self, xs_file: str, matrix_file: str, processes: int):
+        """Run sandy to generate a perturbed library for a single nuclide
+
+        Args:
+            xs_file (str): The path to the endf6 to perturb
+            matrix_file (str): The path to the endf6 file containing the covariance matrices
+            processes (int): The number of jobs to allocate
+        """
         logging.getLogger().setLevel(logging.DEBUG)
 
         err_pendf = 0.01
@@ -118,18 +156,18 @@ class Sampling:
         njoy_output = sp.DEVNULL
 
         # ERRORR KEYWORDS
-        errorr_kws = dict(
-            verbose=False,
-            err=err_errorr,
-            xs=True,
-            nubar=False,
-            chi=False,
-            mubar=False,
-            groupr_kws=dict(nubar=False, chi=False, mubar=False, ign=2),
-            errorr_kws=dict(ign=2),
-            njoy_output=njoy_output,
-            errorr33_kws = dict(mt=None)
-        )
+        errorr_kws = {
+            "verbose": False,
+            "err": err_errorr,
+            "xs": True,
+            "nubar": False,
+            "chi": False,
+            "mubar": False,
+            "groupr_kws": {"nubar": False, "chi": False, "mubar": False, "ign": 2},
+            "errorr_kws": {"ign": 2},
+            "njoy_output": njoy_output,
+            "errorr33_kws": {"mt": None},
+        }
 
         smp_kws = {
             "seed31": self.seed31,
@@ -139,29 +177,31 @@ class Sampling:
         }
 
         matrix_tape = Endf6.from_file(matrix_file)
-        logging.info(f"Running ERRORR on: '{matrix_file}'")
-        smps = matrix_tape.get_perturbations(self.nsmp, njoy_kws=errorr_kws, smp_kws=smp_kws)
+        logging.info("Running ERRORR on: '%s", matrix_file)
+        smps = matrix_tape.get_perturbations(
+            self.nsmp, njoy_kws=errorr_kws, smp_kws=smp_kws
+        )
 
         # PENDF KEYWORDS
-        pendf_kws = dict(
-            verbose=False,
-            err=err_pendf,
-            minimal_processing=False,
-            njoy_output=njoy_output,
-            )
+        pendf_kws = {
+            "verbose": False,
+            "err": err_pendf,
+            "minimal_processing": False,
+            "njoy_output": njoy_output,
+        }
 
         # ACE KEYWORDS
-        ace_kws = dict(
-            verbose=False,
-            err=err_ace,
-            minimal_processing=False,
-            temperature=self.temperature,
-            purr=False,
-            njoy_output=njoy_output,
-            )
+        ace_kws = {
+            "verbose": False,
+            "err": err_ace,
+            "minimal_processing": False,
+            "temperature": self.temperature,
+            "purr": False,
+            "njoy_output": njoy_output,
+        }
 
-        xs_tape = Endf6.from_file(xs_file) 
-        logging.info(f"Applying perturbations on: '{matrix_file}'")
+        xs_tape = Endf6.from_file(xs_file)
+        logging.info("Applying perturbations on: '%s'", matrix_file)
         xs_tape.apply_perturbations(
             smps,
             processes=processes,
@@ -170,7 +210,5 @@ class Sampling:
             filename="{ZA}_{SMP}",
             njoy_kws=pendf_kws,
             ace_kws=ace_kws,
-            verbose=False
+            verbose=False,
         )
-
-        return

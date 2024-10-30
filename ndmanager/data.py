@@ -1,8 +1,6 @@
 # pylint: disable=line-too-long
 """Defining some data used throughout the code."""
 
-import os
-from pathlib import Path
 from typing import Dict, List
 
 from ndmanager.SHA1.cendl31 import CENDL31_SHA1
@@ -14,7 +12,7 @@ from ndmanager.SHA1.jeff311 import JEFF311_SHA1
 from ndmanager.SHA1.jendl5 import JENDL5_SHA1
 from ndmanager.SHA1.tendl19 import TENDL19_SHA1
 from ndmanager.SHA1.tendl23 import TENDL23_SHA1
-from ndmanager.SHA1.test import FOO_SHA1, BAR_SHA1
+from ndmanager.SHA1.test import BAR_SHA1, FOO_SHA1
 
 IAEA_ROOT = "https://www-nds.iaea.org/public/download-endf/"
 

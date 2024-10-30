@@ -7,7 +7,8 @@ from contextlib import chdir
 import requests
 from tqdm import tqdm
 
-from ndmanager.data import NDMANAGER_CHAINS, OPENMC_CHAINS
+from ndmanager.data import OPENMC_CHAINS
+from ndmanager.env import NDMANAGER_CHAINS
 
 
 def install_parser(subparsers):

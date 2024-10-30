@@ -1,8 +1,9 @@
 """A generic class for managing libraries generation"""
 import multiprocessing as mp
 
-from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 from tqdm import tqdm
+
+from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 
 def processor(particle: HDF5Sublibrary):
@@ -17,7 +18,7 @@ def processor(particle: HDF5Sublibrary):
 class BaseManager(list):
     """A generic class for managing libraries generation"""
 
-    def process(self, desc: str, j: int = 1, dryrun: bool = False):
+    def process(self, desc: str, j: int = 1):
         """Process the library using OpenMC's API
 
         Args:
