@@ -32,3 +32,10 @@ elif "NDMANAGER_CHAINS" in settings:
     NDMANAGER_CHAINS = Path(settings["NDMANAGER_CHAINS"]).absolute()
 else:
     NDMANAGER_CHAINS = NDMANAGER_CONFIG / "chains"
+
+if "NDMANAGER_SAMPLES" in os.environ:
+    NDMANAGER_SAMPLES = Path(os.environ["NDMANAGER_SAMPLES"]).absolute()
+elif "NDMANAGER_SAMPLES" in settings:
+    NDMANAGER_SAMPLES = Path(settings["NDMANAGER_SAMPLES"]).absolute()
+else:
+    NDMANAGER_SAMPLES = NDMANAGER_CONFIG / "samples"

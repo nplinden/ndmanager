@@ -1,0 +1,10 @@
+summary: Create sample for Pu nuclide in jeff33
+description: |
+  Create sample for Pu nuclide in jeff33
+name: jeff33-tendl2023-Cl35
+reuse: jeff33
+nsmp: 500
+temperature: 300
+kind: xs
+samples:
+  Cl35: jeff33 tendl2023

@@ -20,7 +20,7 @@ description: |
           containing Ta will crash simulations.
   O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
           evaluation instead.
-name: test
+name: jeff33
 neutron:
   base: jeff33
   temperatures: 250 294 600 900 1200 2500

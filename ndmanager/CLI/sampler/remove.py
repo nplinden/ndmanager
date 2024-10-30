@@ -1,26 +1,26 @@
-"""Definition and parser for the 'ndf remove' command"""
+"""Definition and parser for the 'nds remove' command"""
 
 import argparse as ap
 import shutil
 
-from ndmanager.env import NDMANAGER_ENDF6
+from ndmanager.env import NDMANAGER_SAMPLES
 
-class NdfRemoveCommand:
+class NdsRemoveCommand:
     def __init__(self, args: ap.Namespace) -> None:
-        libraries = [NDMANAGER_ENDF6 / lib for lib in args.library]
+        libraries = [NDMANAGER_SAMPLES / lib for lib in args.library]
         for library in libraries:
             if library.exists():
                 shutil.rmtree(library)
 
     @classmethod
     def parser(cls, subparsers):
-        """Add the parser for the 'ndf remove' command to a subparser object
+        """Add the parser for the 'nds remove' command to a subparser object
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
         parser = subparsers.add_parser(
-            "remove", help="Remove one or more installed ENDF6 libraries"
+            "remove", help="Remove one or more installed sampled libraries"
         )
         parser.add_argument(
             "library",
@@ -30,4 +30,6 @@ class NdfRemoveCommand:
             nargs="+",
         )
         parser.set_defaults(func=cls)
+
+
 
