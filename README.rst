@@ -24,7 +24,7 @@ Installation
 NDManager is available on `PyPI <https://pypi.org/project/ndmanager/>`__
 and can therefore be installed with ``pip``:
 
-.. code:: shell
+.. code-block:: console
 
    pip install ndmanager
 
@@ -40,7 +40,7 @@ NDManager also uses sandy to generate perturbed data files, currently
 the prefered version is ``v1.1`` and is not available on PyPI, you can
 install it manually with to following command:
 
-::
+.. code-block:: console
 
    pip install git+https://github.com/luca-fiorito-11/sandy.git@v1.1
 
@@ -83,7 +83,7 @@ Most of the libraries in this repo have a common directory structure
 making them easy to parse. You can list the available libraries using
 the ``ndf list`` command:
 
-.. code:: shell
+.. code-block:: console
 
    ndf list
    ----------------------------------------------------  Available libraries  ----------------------------------------------------
