@@ -26,7 +26,7 @@ and can therefore be installed with ``pip``:
 
 .. code-block:: console
 
-   pip install ndmanager
+   $ pip install ndmanager
 
 There are however a few caveats regarding the dependencies of NDManager.
 To build processed nuclear data files in the OpenMC HDF5 format, an
@@ -42,7 +42,7 @@ install it manually with to following command:
 
 .. code-block:: console
 
-   pip install git+https://github.com/luca-fiorito-11/sandy.git@v1.1
+   $ pip install git+https://github.com/luca-fiorito-11/sandy.git@v1.1
 
 Configuration
 -------------
@@ -85,7 +85,7 @@ the ``ndf list`` command:
 
 .. code-block:: console
 
-   ndf list
+   $ ndf list
    ----------------------------------------------------  Available libraries  ----------------------------------------------------
    brond22              BROND-2-2            [ ]: BROND-2 USSR evaluated neutron data library, issued in 1992
    brond31              BROND-3.1            [✓]: BROND-3.1 Russian evaluated neutron data library, issued in 2016
