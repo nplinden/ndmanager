@@ -1,6 +1,4 @@
----
-title: NDManager
----
+# NDManager
 
 [![Coverage
 Status](https://coveralls.io/repos/github/nplinden/ndmanager/badge.svg?branch=develop)](https://coveralls.io/github/nplinden/ndmanager?branch=develop)
@@ -20,7 +18,7 @@ format.
 Full documentation is available
 [here](https://ndmanager.readthedocs.io/en/latest/).
 
-# Installation
+## Installation
 
 NDManager is available on [PyPI](https://pypi.org/project/ndmanager/)
 and can therefore be installed with `pip`:
@@ -44,7 +42,7 @@ install it manually with to following command:
 $ pip install git+https://github.com/luca-fiorito-11/sandy.git@v1.1
 ```
 
-# Configuration
+## Configuration
 
 NDManager allows you to manage databases for different kinds of files:
 \* ENDF6 evaluation nuclear data files \* HDF5 processed nuclear data
@@ -66,9 +64,9 @@ NDMANAGER_SAMPLES: /path/to/samples
 
 If no path is set, the data will be stored in `$HOME/.config/ndmanager`
 
-# Using NDManager
+## Using NDManager
 
-## The Fetcher Module `ndf`
+### The Fetcher Module `ndf`
 
 The `ndf` module acts as a kind of package manager for evaluated nuclear
 data files. It uses the [IAEA
