@@ -45,8 +45,11 @@ $ pip install git+https://github.com/luca-fiorito-11/sandy.git@v1.1
 ## Configuration
 
 NDManager allows you to manage databases for different kinds of files:
-\* ENDF6 evaluation nuclear data files \* HDF5 processed nuclear data
-files \* XML depletion chain files \* HDF5 sampled nuclear data files
+
+* ENDF6 evaluation nuclear data files 
+* HDF5 processed nuclear data files 
+* XML depletion chain files 
+* HDF5 sampled nuclear data files
 
 The directories in which these databases will be stored can be specified
 using the following environment variables: `NDMANAGER_ENDF6`,
@@ -99,4 +102,21 @@ jendl5               JENDL-5-Aug2023      [ ]: JENDL-5 Japanese evaluated nuclea
 tendl2021            TENDL-2021           [ ]: TENDL-2021 TALYS-based Evaluated Nuclear Data Library, 2021
 tendl2023            TENDL-2023           [✓]: TENDL-2023 TALYS-based Evaluated Nuclear Data Library, 2023
 -------------------------------------------------------------------------------------------------------------------------------
+```
+
+The first time you run this command, the entire IAEA database will be parsed, this can take about a minute.
+Subsequent runs of the `ndf list` command will reuse the cached information so it should go much faster.
+
+By default the `list` command shows a subset of what is available on the website, and shows you a convenient short name in the first column.
+To get the entire list of available libraries you can add the `--all` tag to the command.
+
+You can then install any library you want with the `ndf install` command, providing a `-j` tag following by an integer allows you parallelize the process:
+
+```console
+$ ndf install jeff33 -j 10
+JEFF-3.3/n               : 100%|████████████████████████████████████████| 562/562 [00:12s]
+JEFF-3.3/decay           : 100%|████████████████████████████████████████| 3852/3852 [00:23s]
+JEFF-3.3/nfpy            : 100%|████████████████████████████████████████| 19/19 [00:00s]
+JEFF-3.3/sfpy            : 100%|████████████████████████████████████████| 3/3 [00:00s]
+JEFF-3.3/tsl             : 100%|████████████████████████████████████████| 20/20 [00:03s]
 ```
