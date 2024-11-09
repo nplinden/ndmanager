@@ -56,7 +56,7 @@ using the following environment variables: `NDMANAGER_ENDF6`,
 `NDMANAGER_HDF5`, `NDMANAGER_CHAINS`, `NDMANAGER_SAMPLES`.
 
 You can also define these paths in a YAML file located at
-`$HOME/.config/ndmanager`:
+`$HOME/.config/ndmanager/settings.yml`:
 
 ``` yaml
 NDMANAGER_ENDF6: /path/to/endf6
@@ -140,7 +140,7 @@ The ones you will probably care the most about are:
 * `ard` for atomic relaxation data, NSUB=6
 * `tsl` for thermal scattering laws, NSUB=12
 
-### The Omcer Model `ndo`
+### The Omcer Module `ndo`
 
 The Omcer module is your tool to manage processed nuclear data files in the OpenMC HDF5 format.
 
@@ -198,7 +198,7 @@ This will build the HDF5 file for all nuclides and create a `cross_sections.xml`
 Sometimes you may want to substitute a single nuclide from a library, for instance to check the impact of a new evaluation of your favorite nuclide.
 My favorite nuclide is Cl35, and it turns out that the cross-sections of Cl35 in JEFF-3.3 and JENDL-5.0 are very different in the fast domain.
 
-To check the impact of substituting the JENDL-5.0 cross-section in my JEFF-3.3, I can write the following input file:
+To check the impact of substituting the JENDL-5.0 cross-section in my JEFF-3.3 library, I can write the following input file:
 
 ```yaml
 summary: The JEFF-3.3 library with the JENDL-5.0 Cl35 data
@@ -218,3 +218,97 @@ photon:
 
 This will run NJOY to create a new processed file only for Cl35.
 The `cross_sections.xml` file will point to the jeff33 processed library for all other nuclides.
+
+To use your new library with OpenMC you can use NDManager's python API:
+
+```python
+from ndmanager.API.openmc import set_nuclear_data
+set_nuclear_data("jeff33")
+
+# Proceed with openmc stuff
+```
+
+In addition to creating your own libraries, you can download to ones provided by the [official OpenMC website](https://openmc.org/data-libraries/):
+
+```console
+$ ndo list
+--------------------------------------------------  Installable Libraries  ---------------------------------------------------
+official/endfb71 ENDF-B/VII.1    [ ]: Official OpenMC library based on ENDF-B/VII.1
+official/endfb8  ENDF-B/VIII.0   [ ]: Official OpenMC library based on ENDF-B/VIII.0
+official/jeff33  JEFF-3.3        [ ]: Official OpenMC library based on JEFF-3.3
+lanl/endfb70     ENDF-B/VII.0    [ ]: ENDF-B/VII.0 based library converted from ACE files distributed with MCNP5/6
+lanl/endfb71     ENDF-B/VII.1    [ ]: ENDF-B/VII.1 based library converted from ACE files distributed with MCNP5/6
+lanl/endfb8      ENDF-B.VIII.0   [ ]: ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National
+                                      lab (LANL)
+$ ndo install official/endfb8
+Downloading official/endfb8: 100%|████████████████████████████████████████| 3.15G/3.15G [02:03s]
+Extracting  official/endfb8: 100%|███████████████████████████████████████▉| 12.7G/12.7G [02:17s]
+```
+
+And then in a python script
+
+```python
+from ndmanager.API.openmc import set_nuclear_data
+set_nuclear_data("official/endfb8")
+
+# Proceed with openmc stuff
+```
+
+### The Chainer Module `ndc`
+
+The Chainer module work in a very similar way to the Omcer module.
+Here's what a typical `ndc` input file looks like:
+
+```yaml
+name: jeff33/fast
+description: |
+  A depletion chain based on the JEFF-3.3 evaluations.
+branching_ratios: sfr
+n:
+  base: jeff33
+  ommit: C0
+  add:
+    endfb8: Ta180 C12 C13 O17
+decay: 
+  base: jeff33
+nfpy:
+  base: jeff33
+```
+
+You can run the `ndc build` command to generate the XML chain file.
+To use the generated chains you can use NDManager's python API:
+
+```python
+from ndmanager.API.openmc import set_chain
+set_chain("jeff33/fast")
+
+# Proceed with openmc stuff
+```
+
+To set both the cross-section files and the chain file at the same time:
+
+```python
+from ndmanager.API.openmc import set_nuclear_data
+set_nuclear_data("jeff33", "jeff33/fast")
+
+# Proceed with openmc stuff
+```
+ Finally, you can download the official chain from the OpenMC website:
+
+ ```console
+ $ ndc list
+ ----------------------------------------  Installable Chains  ----------------------------------------
+endfb71/thermal  [ ]: A chain based on the ENDF-B/VII.1 evaluation with thermal capture branching
+                       ratios
+endfb71/fast     [ ]: A chain based on the ENDF-B/VII.1 evaluation with fast capture branching ratios
+endfb8/thermal   [ ]: A chain based on the ENDF-B/VIII.0 evaluation with thermal capture branching
+                       ratios
+endfb8/fast      [ ]: A chain based on the ENDF-B/VIII.0 evaluation with thermal capture branching
+                       ratios
+casl/thermal     [ ]: A simplified chain as described by https://doi.org/10.2172/1256820 with thermal
+                       capture branching ratios
+casl/fast        [ ]: A simplified chain as described by https://doi.org/10.2172/1256820 with fast
+                       capture branching ratios
+ $ ndc install endfb8/fast
+ Downloading endfb8/fast    : 100%|████████████████████████████████████████| 26.3M/26.3M [00:01s]
+```
