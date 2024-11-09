@@ -69,6 +69,8 @@ If no path is set, the data will be stored in `$HOME/.config/ndmanager`
 
 ## Using NDManager
 
+The following sections give a quick overview of the main features of NDManager's modules.
+
 ### The Fetcher Module `ndf`
 
 The `ndf` module acts as a kind of package manager for evaluated nuclear
@@ -110,7 +112,7 @@ Subsequent runs of the `ndf list` command will reuse the cached information so i
 By default the `list` command shows a subset of what is available on the website, and shows you a convenient short name in the first column.
 To get the entire list of available libraries you can add the `--all` tag to the command.
 
-You can then install any library you want with the `ndf install` command, providing a `-j` tag following by an integer allows you parallelize the process:
+You can then install any library you want with the `ndf install` command, providing a `-j` tag followed by an integer allows you parallelize the process:
 
 ```console
 $ ndf install jeff33 -j 10
@@ -120,3 +122,20 @@ JEFF-3.3/nfpy            : 100%|████████████████
 JEFF-3.3/sfpy            : 100%|████████████████████████████████████████| 3/3 [00:00s]
 JEFF-3.3/tsl             : 100%|████████████████████████████████████████| 20/20 [00:03s]
 ```
+
+The `ndf remove` will help you uninstall libraries you don't need anymore.
+
+You can use NDManager to get the path to an ENDF6 tape installed using `ndf`:
+
+```python
+import ndmanager
+tape = ndmanager.get_endf6("jeff33", "n", "Pu239")
+```
+
+The second argument refers to the sublibraries.
+The ones you will probably care the most about are: 
+
+* `n` for incident neutron data, NSUB=10 
+* `photo` for photoatomic interaction, NSUB=3
+* `ard` for atomic relaxation data, NSUB=6
+* `tsl` for thermal scattering laws, NSUB=12
