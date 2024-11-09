@@ -123,9 +123,9 @@ JEFF-3.3/sfpy            : 100%|████████████████
 JEFF-3.3/tsl             : 100%|████████████████████████████████████████| 20/20 [00:03s]
 ```
 
-The `ndf remove` will help you uninstall libraries you don't need anymore.
+The `ndf remove` command will help you uninstall libraries you don't need anymore.
 
-You can use NDManager to get the path to an ENDF6 tape installed using `ndf`:
+You can use NDManager's python API to get the path to an ENDF6 tape installed using `ndf`:
 
 ```python
 import ndmanager
@@ -139,3 +139,82 @@ The ones you will probably care the most about are:
 * `photo` for photoatomic interaction, NSUB=3
 * `ard` for atomic relaxation data, NSUB=6
 * `tsl` for thermal scattering laws, NSUB=12
+
+### The Omcer Model `ndo`
+
+The Omcer module is your tool to manage processed nuclear data files in the OpenMC HDF5 format.
+
+```yaml
+# jeff33.yml
+summary: A library based on the JEFF-3.3 evaluations.
+description: |
+  This defines a library based on the JEFF-3.3 evaluations for
+  neutron cross-sections and thermal scattering laws, and on
+  ENDF-B/VIII.0 for gamma photoatomic reactions and atomic
+  relaxation.
+
+  Some evaluations from other libraries are used instead
+  or in addition to JEFF-3.3 evaluations:
+  C0:     JEFF-3.3 contains C0 and C13 isotopes of carbon. Since
+          using C0 can cause some issues running the same problem
+          with multiple libraries, I prefer to remove them and
+          use ENDF-B/VIII.0 carbon instead. Normally you would also
+          build TSL libraries using C0, I substitute it for C12.
+  C12:    See C0
+  C13:    See C0. 
+  Ta180:  OpenMC wrongly defines natural Ta as containing Ta180
+          instead of Ta180M because ENDF-B/VIII.0 has no Ta180M
+          evaluation. Since JEFF-3.3 has no Ta180, materials
+          containing Ta will crash simulations.
+  O17:    The O17 evaluation of JEFF-3.3 is faulty. I use the ENDF-B/VIII.0
+          evaluation instead.
+name: jeff33 # The name of the future HDF5 library
+neutron:
+  base: jeff33 # The ENDF6 library to use the tapes from by default
+  temperatures: 250 294 600 900 1200 2500
+  ommit: C0 # The C0 tape from the base library will be ignored
+  add: # If added nuclides already exist in the base library, they will be replaced
+    endfb8: Ta180 C12 C13 O17
+photon: # The base library need at least photoatomic tapes, ard tapes are optionnal
+  base: endfb8
+tsl:
+  base: jeff33
+  add:
+    jeff33:
+      tsl_0031_Graphite.endf6: C12 # Here I specify that the graphite TSL laws must be 
+                                   # built using the C12 incident neutron file, specified
+                                   # in the "neutron" section as coming from endf8
+```
+
+Running the `ndo build` command on this file will build your library, once again the `-j` tag allows you
+to parallelize the process:
+
+```console
+$ ndo build jeff33.yml -j 40
+```
+
+This will build the HDF5 file for all nuclides and create a `cross_sections.xml` file that you can provide to OpenMC to use the library.
+
+Sometimes you may want to substitute a single nuclide from a library, for instance to check the impact of a new evaluation of your favorite nuclide.
+My favorite nuclide is Cl35, and it turns out that the cross-sections of Cl35 in JEFF-3.3 and JENDL-5.0 are very different in the fast domain.
+
+To check the impact of substituting the JENDL-5.0 cross-section in my JEFF-3.3, I can write the following input file:
+
+```yaml
+summary: The JEFF-3.3 library with the JENDL-5.0 Cl35 data
+description: |
+    This library reuses the cross-sections available in the jeff33 processed nuclear
+    data library available in the NDManager database, and substitute the Cl35 file with
+    a new one created from the JENDL-5.0 ENDF6 tape.
+name: jeff33-jendl5-Cl35
+neutron:
+    reuse: jeff33 # This needs to be the name of an HDF5 library installed with Omcer
+    temperatures: 250 294 600 900 1200 2500
+    add:
+        jendl5: Cl35
+photon:
+    reuse: jeff33
+```
+
+This will run NJOY to create a new processed file only for Cl35.
+The `cross_sections.xml` file will point to the jeff33 processed library for all other nuclides.
