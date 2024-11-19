@@ -1,2 +1,2 @@
 """A collection of classes for nuclear data sampling with sandy"""
-from .sampling import Sampling
+from .pendf_sampling import Sampling

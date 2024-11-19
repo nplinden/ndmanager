@@ -44,3 +44,10 @@ elif "NDMANAGER_SAMPLES" in settings:
     NDMANAGER_SAMPLES = Path(settings["NDMANAGER_SAMPLES"]).absolute()
 else:
     NDMANAGER_SAMPLES = NDMANAGER_CONFIG / "samples"
+
+if "NDMANAGER_COV" in os.environ:
+    NDMANAGER_COV = Path(os.environ["NDMANAGER_COV"]).absolute()
+elif "NDMANAGER_COV" in settings:
+    NDMANAGER_COV = Path(settings["NDMANAGER_COV"]).absolute()
+else:
+    NDMANAGER_COV = NDMANAGER_CONFIG / "cov"
