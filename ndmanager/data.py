@@ -47,8 +47,8 @@ IGN_MAPPING = {
     "UKAEA-1067": 31,
     "UKAEA-1102": 32,
     "UKAEA-142": 33,
-    "LANL-618": 34
-    }
+    "LANL-618": 34,
+}
 
 IGN_MAPPING |= {v: k for k, v in IGN_MAPPING.items()}
 

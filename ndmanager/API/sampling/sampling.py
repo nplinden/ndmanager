@@ -1,13 +1,16 @@
-from collections import namedtuple
-import shutil
-from ndmanager.env import NDMANAGER_HDF5, NDMANAGER_SAMPLES
-from sandy.utils import get_seed
 import logging
-from openmc.data import DataLibrary
+import shutil
+from collections import namedtuple
+
 import yaml
+from openmc.data import DataLibrary
+from sandy.utils import get_seed
 from tqdm import tqdm
 
+from ndmanager.env import NDMANAGER_HDF5, NDMANAGER_SAMPLES
+
 SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
+
 
 class Sampling:
     def __init__(self, yaml_path: dict) -> None:

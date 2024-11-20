@@ -1,11 +1,14 @@
-import sandy
-import scipy.sparse
+import logging
+from itertools import product
+
 import h5py
 import numpy as np
-import ndmanager
 import pandas as pd
-from itertools import product
-import logging
+import sandy
+import scipy.sparse
+
+import ndmanager
+
 
 class CovMatrix(sandy.CategoryCov):
     def __init__(self, nuclide, data):
@@ -27,11 +30,12 @@ class CovMatrix(sandy.CategoryCov):
     def export_to_hdf5(self, path):
         if path is None:
             path = f"{self.nuclide}.h5"
-        corr  = self.get_corr()
+        corr = self.get_corr()
         _, mts, energies = corr.data.index.levels
         with h5py.File(path, "w") as f:
-            e = np.concatenate([energies.left.to_numpy()[None, :], 
-                                energies.right.to_numpy()[None, :]])
+            e = np.concatenate(
+                [energies.left.to_numpy()[None, :], energies.right.to_numpy()[None, :]]
+            )
             f[f"{self.nuclide}/ENERGIES"] = e
             matcov = corr.data[self.nuclide].loc[self.nuclide]
             for colmt in mts:
@@ -48,17 +52,16 @@ class CovMatrix(sandy.CategoryCov):
 
     def get_corr(self):
         cov = self.data.values
-        with np.errstate(divide='ignore', invalid='ignore'):
+        with np.errstate(divide="ignore", invalid="ignore"):
             coeff = np.true_divide(1, self.get_std().values)
-            coeff[~ np.isfinite(coeff)] = 0   # -inf inf NaN
+            coeff[~np.isfinite(coeff)] = 0  # -inf inf NaN
         corr = np.multiply(np.multiply(cov, coeff).T, coeff)
-        df =  pd.DataFrame(
+        df = pd.DataFrame(
             corr,
             index=self.data.index,
             columns=self.data.columns,
-            )
+        )
         return self.__class__(self.nuclide, df)
-
 
     @classmethod
     def from_hdf5(cls, path):
@@ -68,9 +71,9 @@ class CovMatrix(sandy.CategoryCov):
             energies = f[f"{nuclide}/ENERGIES"][...]
             intervals = [pd.Interval(left, right) for left, right in zip(*energies)]
             index = pd.MultiIndex.from_tuples(
-                list(product([nuclide], mts, intervals)),
-                names=["MAT", "MT", "E"])
-            df = pd.DataFrame(0., index=index, columns=index)
+                list(product([nuclide], mts, intervals)), names=["MAT", "MT", "E"]
+            )
+            df = pd.DataFrame(0.0, index=index, columns=index)
             for colmt, rowmt in product(mts, mts):
                 colstd = f[f"{nuclide}/reactions/{colmt}/STD"][...]
                 rowstd = f[f"{nuclide}/reactions/{rowmt}/STD"][...]
@@ -79,5 +82,7 @@ class CovMatrix(sandy.CategoryCov):
                 indptr = f[f"{nuclide}/reactions/{colmt}/{rowmt}/INDPTR"][...]
                 shape = f[f"{nuclide}/reactions/{colmt}/{rowmt}/SHAPE"]
                 csr = scipy.sparse.csr_array((data, indices, indptr), shape)
-                df.loc[(nuclide, rowmt), (nuclide, colmt)] = csr.toarray() * np.outer(rowstd, colstd)
+                df.loc[(nuclide, rowmt), (nuclide, colmt)] = csr.toarray() * np.outer(
+                    rowstd, colstd
+                )
             return cls(nuclide, df)

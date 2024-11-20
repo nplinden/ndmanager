@@ -12,8 +12,8 @@ import openmc.data
 from sandy.endf6 import Endf6
 
 from ndmanager import get_endf6
-from ndmanager.API.sampling.sampling import Sampling, SampleTapes
-from ndmanager.data import IGN_MAPPING 
+from ndmanager.API.sampling.sampling import SampleTapes, Sampling
+from ndmanager.data import IGN_MAPPING
 
 
 def ace_to_hdf5(ace: str, target: str) -> None:
@@ -96,7 +96,12 @@ class PendfSampling(Sampling):
             "nubar": False,
             "chi": False,
             "mubar": False,
-            "groupr_kws": {"nubar": False, "chi": False, "mubar": False, "ign": ign_value},
+            "groupr_kws": {
+                "nubar": False,
+                "chi": False,
+                "mubar": False,
+                "ign": ign_value,
+            },
             "errorr_kws": {"ign": ign_value},
             "njoy_output": njoy_output,
             "errorr33_kws": {"mt": None},

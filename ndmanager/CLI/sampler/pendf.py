@@ -6,6 +6,7 @@ from ndmanager.API.sampling.pendf_sampling import PendfSampling
 
 class NdsPendfCommand:
     """Define the `nds pendf` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
         """Execute the `nds pendf` command given an argparse namespace
 

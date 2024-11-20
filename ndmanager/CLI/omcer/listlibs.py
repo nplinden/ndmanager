@@ -49,7 +49,7 @@ def listlibs(_args):
     lst.append(header("Custom Libraries"))
     for name in xs:
         with open(NDMANAGER_HDF5 / name / "input.yml", "r", encoding="ytf-8") as f:
-            desc = yaml.safe_load(f).get( "summary", "")
+            desc = yaml.safe_load(f).get("summary", "")
         s = f"{name:<16} {desc}"
         s = textwrap.wrap(s, initial_indent="", subsequent_indent=21 * " ", width=col)
         lst.append("\n".join(s))

@@ -8,6 +8,7 @@ from ndmanager.env import NDMANAGER_SAMPLES
 
 class NdsRemoveCommand:
     """Define the `nds remove` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
         """Execute the `nds remove` command given an argparse namespace
 

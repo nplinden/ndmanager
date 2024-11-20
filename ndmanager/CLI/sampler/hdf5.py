@@ -6,6 +6,7 @@ from ndmanager.API.sampling.hdf5_sampling import HDF5Sampling
 
 class NdsHdf5Sampling:
     """Define the `nds hdf5` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
         """Execute the `nds pendf` command given an argparse namespace
 
@@ -17,7 +18,6 @@ class NdsHdf5Sampling:
         self.sampler = HDF5Sampling(args.filename)
         self.sampler.create_dir(args.clean)
         self.sampler.sample(1)
-
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction):
@@ -44,4 +44,3 @@ class NdsHdf5Sampling:
             "-j", type=int, default=1, help="Number of concurent processes"
         )
         parser.set_defaults(func=cls)
-
