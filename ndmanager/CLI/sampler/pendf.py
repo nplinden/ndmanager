@@ -1,4 +1,5 @@
 """Definition and parser for the 'ndf pendf' command"""
+
 import argparse as ap
 
 from ndmanager.API.sampling.pendf_sampling import PendfSampling

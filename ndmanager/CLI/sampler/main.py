@@ -1,4 +1,5 @@
 """The entry point for the `nds` command"""
+
 import argparse as ap
 
 from ndmanager.CLI.sampler.covmatrix import NdsCovCommand

@@ -1,6 +1,7 @@
 """A module to retrieve user defined data to determine where to write the
 libraries
 """
+
 import os
 from pathlib import Path
 

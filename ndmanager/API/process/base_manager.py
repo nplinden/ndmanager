@@ -1,4 +1,5 @@
 """A generic class for managing libraries generation"""
+
 import multiprocessing as mp
 
 from tqdm import tqdm

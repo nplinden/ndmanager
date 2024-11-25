@@ -89,16 +89,13 @@ class CovMatrix(sandy.CategoryCov):
             return cls(nuclide, df)
 
     def submatrix(self, mts):
-        df = (self.data.loc[self.nuclide][self.nuclide]
-              .loc[mts][mts])
+        df = self.data.loc[self.nuclide][self.nuclide].loc[mts][mts]
         df = pd.concat({self.nuclide: df}, names=["MAT"])
         df = pd.concat({self.nuclide: df}, names=["MAT"], axis=1)
         return CovMatrix(self.nuclide, df)
 
     def plot_block(self, mtleft, mtright, path=None, ax=None):
-        data = (self.get_corr()
-              .data.loc[self.nuclide][self.nuclide]
-              .loc[mtleft][mtright])
+        data = self.get_corr().data.loc[self.nuclide][self.nuclide].loc[mtleft][mtright]
 
         if path is None and ax is None:
             raise ValueError("either the path or ax argument must be provided")
@@ -106,13 +103,15 @@ class CovMatrix(sandy.CategoryCov):
         if ax is None:
             fig, ax = plt.subplots(1, 1)
             save = True
-        
+
         # data = self.get_corr().data.loc[self.nuclide][self.nuclide]
         matrix = data.to_numpy()
         energies = [i.left for i in data.index] + [data.index[-1].right]
         energies = np.array(energies)
 
-        ax.pcolormesh(energies, energies, matrix, cmap="RdBu", vmin=-1, vmax=1, norm=None)
+        ax.pcolormesh(
+            energies, energies, matrix, cmap="RdBu", vmin=-1, vmax=1, norm=None
+        )
         ax.set_aspect("equal")
         ax.set_xscale("log")
         ax.set_yscale("log")
@@ -127,12 +126,10 @@ class CovMatrix(sandy.CategoryCov):
     def plot(self, path):
         data = self.get_corr().data.loc[self.nuclide][self.nuclide]
         reactions = sorted(list(set(data.index.get_level_values(0))))
-        
-        fig, axes = plt.subplots(len(reactions), 
-                                 len(reactions), 
-                                 sharex=True, 
-                                 sharey=True,
-                                 figsize=(7, 7))
+
+        fig, axes = plt.subplots(
+            len(reactions), len(reactions), sharex=True, sharey=True, figsize=(7, 7)
+        )
 
         for ileft, mtleft in enumerate(reactions):
             for iright, mtright in enumerate(reactions):

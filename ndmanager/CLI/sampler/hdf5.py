@@ -1,4 +1,5 @@
 """Definition and parser for the 'ndf hdf5' command"""
+
 import argparse as ap
 
 from ndmanager.API.sampling.hdf5_sampling import HDF5Sampling

@@ -1,4 +1,5 @@
 """A class to process an OpenMC HDF5 photon data file"""
+
 import time
 from dataclasses import dataclass
 from pathlib import Path

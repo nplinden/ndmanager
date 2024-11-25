@@ -1,5 +1,6 @@
 """Some classes and function to allow for the generation of pertured
 nuclear data libraries"""
+
 import logging
 import multiprocessing as mp
 import shutil
@@ -30,8 +31,8 @@ def ace_to_hdf5(ace: str, target: str) -> None:
 
 class PendfSampling(Sampling):
     """A class to read nds input file and create perturbed nuclear data
-    from it. 
-    This class perturbates 0K PENDF files and runs NJOY to perform 
+    from it.
+    This class perturbates 0K PENDF files and runs NJOY to perform
     temperature treatment and conversion to the ACE format.
     """
 
@@ -44,7 +45,7 @@ class PendfSampling(Sampling):
         super().__init__(yaml_path)
 
     def sample_one_nuclide(self, tape: SampleTapes, processes: int) -> None:
-        """Manages the Sandy run for a given 3-tuple of nuclide name, cross-section 
+        """Manages the Sandy run for a given 3-tuple of nuclide name, cross-section
         library name and covariance library name.
 
         Args:
@@ -74,7 +75,9 @@ class PendfSampling(Sampling):
                     p.close()
                     p.join()
 
-    def run_sandy(self, xs_file: str, matrix_file: str, processes: int, ign: str) -> None:
+    def run_sandy(
+        self, xs_file: str, matrix_file: str, processes: int, ign: str
+    ) -> None:
         """Run sandy to generate a perturbed library for a single nuclide
 
         Args:

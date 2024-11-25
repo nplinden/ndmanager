@@ -1,4 +1,5 @@
 """A generic class to parse yml inputs of the omcer module"""
+
 from typing import Any, Dict
 
 from openmc.data import DataLibrary
