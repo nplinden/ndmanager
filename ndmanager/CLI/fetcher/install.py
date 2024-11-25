@@ -14,6 +14,7 @@ from ndmanager.env import NDMANAGER_ENDF6
 
 class NdfInstallCommand:
     """Define the `ndf install` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
         """Execute the `nds install` command given an argparse namespace
 

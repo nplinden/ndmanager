@@ -2,7 +2,7 @@ from pathlib import Path, PosixPath
 
 import pytest
 
-from ndmanager.API.process import PhotonManager
+from ndmanager.API.process.photon_manager import PhotonManager
 
 
 def test_photon_manager(install, build_lib):

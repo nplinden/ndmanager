@@ -1,8 +1,13 @@
 import pytest
 
-from ndmanager.API.sha1 import (check_tape_integrity, compute_file_sha1,
-                                compute_lib_sha1, compute_sha1,
-                                compute_sublib_sha1, compute_tape_sha1)
+from ndmanager.API.sha1 import (
+    check_tape_integrity,
+    compute_file_sha1,
+    compute_lib_sha1,
+    compute_sha1,
+    compute_sublib_sha1,
+    compute_tape_sha1,
+)
 from ndmanager.data import TAPE_SHA1
 
 

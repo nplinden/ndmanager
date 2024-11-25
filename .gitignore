@@ -1,6 +1,8 @@
 # Project specific
 pytest-artifacts
 examples/xs/local
+uv.lock
+dependencies
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

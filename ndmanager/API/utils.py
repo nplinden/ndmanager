@@ -1,13 +1,14 @@
 """Some utility functions"""
 
-from typing import Dict
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Dict
 
 import h5py
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
+
 
 def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
     """Get the path to processed nuclear data library in the OpenMC HDF5 format.

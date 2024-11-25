@@ -1,4 +1,5 @@
 """A class for managing photon libraries generation"""
+
 from pathlib import Path
 from typing import Dict
 

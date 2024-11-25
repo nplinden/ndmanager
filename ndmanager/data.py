@@ -14,6 +14,44 @@ from ndmanager.SHA1.tendl19 import TENDL19_SHA1
 from ndmanager.SHA1.tendl23 import TENDL23_SHA1
 from ndmanager.SHA1.test import BAR_SHA1, FOO_SHA1
 
+IGN_MAPPING = {
+    "CSWEG-239": 2,
+    "LANL-30": 3,
+    "ANL-27": 4,
+    "RRD-50": 5,
+    "GAM-I-68": 6,
+    "GAM-II-100": 7,
+    "LASER-THERMOS-35": 8,
+    "EPRI-CPM-69": 9,
+    "LANL-187": 10,
+    "LANL-70": 11,
+    "SAND-II-620": 12,
+    "LANL-80": 13,
+    "EURLIB-100": 14,
+    "SAND-IIA-640": 15,
+    "VITAMIN-E-174": 16,
+    "VITAMIN-J-175": 17,
+    "XMAS-NEA-LANL": 18,
+    "ECCO-33": 19,
+    "ECCO-1968": 20,
+    "TRIPOLI-315": 21,
+    "XMAS-LWPC-172": 22,
+    "VIT-J-LWPC-175": 23,
+    "SHEM-CEA-281": 24,
+    "SHEM-EPM-295": 25,
+    "SHEM-CEA-EPM-361": 26,
+    "SHEM-EPM-315": 27,
+    "RAHAB-AECL-89": 28,
+    "CCFE-660": 29,
+    "UKAEA-1025": 30,
+    "UKAEA-1067": 31,
+    "UKAEA-1102": 32,
+    "UKAEA-142": 33,
+    "LANL-618": 34,
+}
+
+IGN_MAPPING |= {v: k for k, v in IGN_MAPPING.items()}
+
 IAEA_ROOT = "https://www-nds.iaea.org/public/download-endf/"
 
 OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {

@@ -1,4 +1,5 @@
 """Subclassing OpenMC's DataLibrary object for processing"""
+
 import shutil
 from pathlib import Path
 

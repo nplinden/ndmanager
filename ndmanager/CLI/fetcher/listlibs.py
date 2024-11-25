@@ -10,6 +10,7 @@ from ndmanager.format import footer, get_terminal_size, header
 
 class NdfListCommand:
     """Define the `ndf list` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
         """Execute the `nds list` command given an argparse namespace
 

@@ -1,4 +1,5 @@
 """A class for managing neutron libraries generation"""
+
 from pathlib import Path
 from typing import Any, Dict, Set
 

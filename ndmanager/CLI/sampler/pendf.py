@@ -1,32 +1,34 @@
-"""Definition and parser for the 'ndf sample' command"""
+"""Definition and parser for the 'ndf pendf' command"""
+
 import argparse as ap
 
-from ndmanager.API.sampling import Sampling
+from ndmanager.API.sampling.pendf_sampling import PendfSampling
 
 
-class NdsSampleCommand:
-    """Define the `ndf sample` command"""
+class NdsPendfCommand:
+    """Define the `nds pendf` command"""
+
     def __init__(self, args: ap.Namespace) -> None:
-        """Execute the `nds sample` command given an argparse namespace
+        """Execute the `nds pendf` command given an argparse namespace
 
         Args:
             args (ap.Namespace): An argparse namespace containing the `nds sample`
                                  arguments
         """
         self.args = args
-        self.sampler = Sampling(args.filename)
+        self.sampler = PendfSampling(args.filename)
         self.sampler.create_dir(args.clean)
         self.sampler.sample(args.j)
 
     @classmethod
-    def parser(cls, subparsers):
-        """Add the parser for the 'ndf sample' command to a subparser object
+    def parser(cls, subparsers: ap._SubParsersAction):
+        """Add the parser for the 'ndf pendf' command to a subparser object
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
         parser = subparsers.add_parser(
-            "sample", help="Sample a data library given a YAML input file"
+            "pendf", help="Sample a data library given a YAML input file"
         )
         parser.add_argument(
             "filename",

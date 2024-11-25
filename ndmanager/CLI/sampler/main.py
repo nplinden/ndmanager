@@ -1,13 +1,18 @@
 """The entry point for the `nds` command"""
+
 import argparse as ap
 
+from ndmanager.CLI.sampler.cov import NdsCovCommand
+from ndmanager.CLI.sampler.hdf5 import NdsHdf5Sampling
+from ndmanager.CLI.sampler.pendf import NdsPendfCommand
 from ndmanager.CLI.sampler.remove import NdsRemoveCommand
-from ndmanager.CLI.sampler.sample import NdsSampleCommand
 
 parser = ap.ArgumentParser(prog="nds", description="Sample your nuclear data")
 subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
-NdsSampleCommand.parser(subparsers)
+NdsPendfCommand.parser(subparsers)
 NdsRemoveCommand.parser(subparsers)
+NdsCovCommand.parser(subparsers)
+NdsHdf5Sampling.parser(subparsers)
 
 
 def main() -> None:

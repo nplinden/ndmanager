@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ndmanager.API.process import HDF5Neutron
+from ndmanager.API.process.hdf5_neutron import HDF5Neutron
 from ndmanager.API.sha1 import compute_file_sha1
 
 

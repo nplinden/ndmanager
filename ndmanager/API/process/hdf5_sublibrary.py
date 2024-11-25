@@ -1,4 +1,5 @@
 """A generic class to manage libraries of OpenMC HDF5 data files"""
+
 import abc
 import logging
 import warnings
@@ -17,7 +18,9 @@ class HDF5Sublibrary:
     @abc.abstractmethod
     def process(self):
         """An HDF5Sublibrary should define a process method"""
-        raise NotImplementedError("Can't use the process method directly on a HDF5Sublibrary object")
+        raise NotImplementedError(
+            "Can't use the process method directly on a HDF5Sublibrary object"
+        )
 
     def get_logger(self):
         """Create a new logger and return it
