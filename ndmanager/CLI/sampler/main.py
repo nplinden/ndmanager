@@ -2,7 +2,7 @@
 
 import argparse as ap
 
-from ndmanager.CLI.sampler.covmatrix import NdsCovCommand
+from ndmanager.CLI.sampler.cov import NdsCovCommand
 from ndmanager.CLI.sampler.hdf5 import NdsHdf5Sampling
 from ndmanager.CLI.sampler.pendf import NdsPendfCommand
 from ndmanager.CLI.sampler.remove import NdsRemoveCommand
