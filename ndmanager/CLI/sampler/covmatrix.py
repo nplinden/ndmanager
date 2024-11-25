@@ -84,7 +84,7 @@ def generate_matrices(library: str, ign: str, clean: bool, processes: int) -> No
             "This covariance library already exists"
             " use the --clean flag to overwrite."
         )
-    elif directory.exists() and clean:
+    if directory.exists() and clean:
         shutil.rmtree(directory)
     else:
         directory.mkdir(parents=True)
@@ -130,4 +130,4 @@ def generate_one_matrix(library: str, nuclide: str, ign_value: int, directory: P
         )
         matrix.export_to_hdf5(directory / f"{nuclide}.h5")
     except ValueError:
-        logger.warning(f"Can't generate covariance matrix for {nuclide}")
+        logger.warning("Can't generate covariance matrix for %s", nuclide)
