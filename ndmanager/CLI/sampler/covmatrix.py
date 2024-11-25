@@ -1,9 +1,12 @@
+"""Defining the `nds cov` command to build covariance matrices"""
+
 import argparse as ap
 import logging
 import multiprocessing as mp
 import shutil
 import subprocess as sp
 import warnings
+from pathlib import Path
 
 from ndmanager import get_endf6
 from ndmanager.API.iaea import IAEA
@@ -13,13 +16,23 @@ from ndmanager.env import NDMANAGER_COV
 
 
 class NdsCovCommand:
+    """This class defines the behaviour of the `nds cov` command."""
+
     def __init__(self, args: ap.Namespace) -> None:
-        self.args = args
+        """Given an argparse namespace, run the `nds cov` backend
+
+        Args:
+            args (ap.Namespace): The command line arguments
+        """
         generate_matrices(args.library, args.ign, args.clean, args.j)
-        return
 
     @classmethod
-    def parser(cls, subparsers: ap._SubParsersAction):
+    def parser(cls, subparsers: ap._SubParsersAction) -> None:
+        """Add the `nds cov` parser the the argparse subparsers object
+
+        Args:
+            subparsers (ap._SubParsersAction): A subparsers object
+        """
         parser = subparsers.add_parser(
             "cov", help="Build covariance matrices using Sandy"
         )
@@ -45,8 +58,20 @@ class NdsCovCommand:
         parser.set_defaults(func=cls)
 
 
-def generate_matrices(library: str, ign: str, clean: bool, processes: int):
-    failed = []
+def generate_matrices(library: str, ign: str, clean: bool, processes: int) -> None:
+    """Generate the requested covariance matrices
+
+    Args:
+        library (str): The name of the ENDF6 library
+        ign (str): The group structure using NJOY ids
+        clean (bool): Wether to delete the database entry if it exists
+        processes (int): The number of jobs to allocate
+
+    Raises:
+        FileExistsError: If the entry already exists and the clean argument
+                         is False.
+
+    """
     if ign.isdigit():
         ign_value = int(ign)
         ign_name = IGN_MAPPING[ign_value]
@@ -64,9 +89,6 @@ def generate_matrices(library: str, ign: str, clean: bool, processes: int):
     else:
         directory.mkdir(parents=True)
 
-    loggers = [logging.getLogger(name) for name in logging.root.manager.loggerDict]
-    print(loggers)
-
     with mp.get_context("spawn").Pool(processes) as p:
         for nuclide in IAEA()[library]["n"].keys():
             p.apply_async(
@@ -74,10 +96,18 @@ def generate_matrices(library: str, ign: str, clean: bool, processes: int):
             )
         p.close()
         p.join()
-    return failed
 
 
-def generate_one_matrix(library, nuclide, ign_value, directory):
+def generate_one_matrix(library: str, nuclide: str, ign_value: int, directory: Path):
+    """Generate a covariance matrix given an ENDF6 library name, a nuclide name,
+    a group structure using NJOY's ids, and a directory to write in.
+
+    Args:
+        library (str): The name of the ENDF6 library
+        nuclide (str): The name of the nuclide
+        ign_value (int): The NJOY group structure id
+        directory (Path): the directory to write in
+    """
     logpath = directory / "logs"
     logpath.mkdir(parents=True, exist_ok=True)
     logger = logging.getLogger(nuclide)
@@ -87,8 +117,6 @@ def generate_one_matrix(library, nuclide, ign_value, directory):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel("INFO")
-
-    logger.info("some info")
 
     def showwarning(message, *args, **kwargs):
         logger.warning(message)
@@ -102,4 +130,4 @@ def generate_one_matrix(library, nuclide, ign_value, directory):
         )
         matrix.export_to_hdf5(directory / f"{nuclide}.h5")
     except ValueError:
-        return
+        logger.warning(f"Can't generate covariance matrix for {nuclide}")

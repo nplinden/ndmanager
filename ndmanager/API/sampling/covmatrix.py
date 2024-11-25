@@ -1,11 +1,11 @@
 """A class to generate covariance matrix libraries"""
 
-from pathlib import Path
 from itertools import product
+from pathlib import Path
 from typing import List
-import matplotlib.pyplot as plt
 
 import h5py
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sandy
