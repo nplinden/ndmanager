@@ -10,8 +10,8 @@ initialize:
 clean:
 	rm -rf dependencies .venv
 format:
-	uv run ruff format
+	uv run ruff format ndmanager
 lint:
-	uv run ruff check
+	uv run ruff check ndmanager
 pylint:
 	uv run pylint ndmanager
