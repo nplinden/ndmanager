@@ -1,3 +1,7 @@
+"""
+Derive the Sampling class for sampling directly of OpenMC HDF5
+nuclear data file.
+"""
 import shutil
 
 import h5py
@@ -114,6 +118,9 @@ SUM_RULES = {
 
 
 class HDF5Sampling(Sampling):
+    """Derive the Sampling class for sampling directly of OpenMC HDF5
+    nuclear data file.
+    """
     def __init__(self, yaml_path: str):
         """Instantiate a Sampling object given a path to a yaml input file
 
@@ -123,31 +130,38 @@ class HDF5Sampling(Sampling):
         super().__init__(yaml_path)
 
     def sample_one_nuclide(self, tape: SampleTapes, processes):
+        """Create samples for a single nuclide
+
+        Args:
+            tape (SampleTapes): A named tuple containing the name of the
+                                nuclide, the base library, and the covariance
+                                library
+            processes (_type_): The number of processes to allocate
+        """
         nuclide = tape.nuclide
         matrix_lib, matrix_groups = tape.matrix_lib.split("@")
         covmatrix = CovMatrix.from_hdf5(
             NDMANAGER_COV / matrix_lib / matrix_groups / f"{nuclide}.h5"
         )
         _, mts, _ = covmatrix.data.index.levels
-        self.covmts = mts.to_numpy()
-        self.nominal_path = get_hdf5(tape.xs_lib, "neutron", nuclide)
-        self.groups = covmatrix.data.index.levels[2]
-        with h5py.File(self.nominal_path, "r") as f:
+        covmts = mts.to_numpy()
+        nominal_path = get_hdf5(tape.xs_lib, "neutron", nuclide)
+        with h5py.File(nominal_path, "r") as f:
             reactions = f[f"{nuclide}/reactions"]
-            self.hdf5_mts = [int(k.split("_")[-1]) for k in reactions.keys()]
+            hdf5_mts = [int(k.split("_")[-1]) for k in reactions.keys()]
 
-            self.energies = {}
+            energies = {}
             for temperature in f[f"{nuclide}/energy"]:
-                self.energies[temperature] = f[f"{nuclide}/energy/{temperature}"][...]
+                energies[temperature] = f[f"{nuclide}/energy/{temperature}"][...]
         samples = covmatrix.sampling(self.nsmp, to_excel=self.rootpath / "samples.xlsx")
 
         for n, s in samples.iterate_xs_samples():
             perturbed_path = self.rootpath / f"{nuclide}" / f"{n}.h5"
             perturbed_path.parent.mkdir(exist_ok=True, parents=True)
-            shutil.copy(self.nominal_path, perturbed_path)
+            shutil.copy(nominal_path, perturbed_path)
             with h5py.File(perturbed_path, "a") as f:
                 df = s[nuclide]
-                for T, E in self.energies.items():
+                for T, E in energies.items():
                     masks = []
                     for intrvl in df.index:
                         masks.append(
@@ -155,8 +169,8 @@ class HDF5Sampling(Sampling):
                                 (E > intrvl.left) & (E <= intrvl.right), E
                             ).mask
                         )
-                    for mt in self.covmts:
-                        if mt in self.hdf5_mts:
+                    for mt in covmts:
+                        if mt in hdf5_mts:
                             perturbation = np.ones_like(E)
                             values = df[mt]
                             for value, mask in zip(values, masks):
@@ -168,7 +182,7 @@ class HDF5Sampling(Sampling):
                                 dset[...] *= perturbation[threshold:]
                         if mt in SUM_RULES:
                             for sum_mt in SUM_RULES[mt]:
-                                if sum_mt in self.hdf5_mts:
+                                if sum_mt in hdf5_mts:
                                     perturbation = np.ones_like(E)
                                     values = df[mt]
                                     for value, mask in zip(values, masks):
