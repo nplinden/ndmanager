@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from ndmanager.API.process import NeutronManager
+from ndmanager.API.process.neutron_manager import NeutronManager
 
 
 def test_neutron_manager(install, build_lib):

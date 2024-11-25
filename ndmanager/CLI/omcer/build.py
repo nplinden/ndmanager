@@ -6,7 +6,7 @@ import shutil
 import yaml
 
 from ndmanager import __version__
-from ndmanager.API.process import NDMLibrary
+from ndmanager.API.process.ndm_library import NDMLibrary
 
 
 def build_parser(subparsers):

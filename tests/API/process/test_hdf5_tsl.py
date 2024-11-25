@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from ndmanager.API.process import HDF5TSL
+from ndmanager.API.process.hdf5_tsl import HDF5TSL
 from ndmanager.API.sha1 import compute_file_sha1
 
 
