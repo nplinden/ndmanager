@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
+from ndmanager.CLI.fetcher.main import parser
 from tests.data import IAEA_Medical_sha1, endf6_sha1
 
 
@@ -20,9 +21,15 @@ def test_ndf_install_foo_bar(install):
 
 
 def test_ndf_install():
+    cache = Path("pytest-artifacts/IAEA_cache.json")
+    if cache.exists():
+        cache.unlink()
+
     p = Path("pytest-artifacts/endf6/IAEA-Medical")
-    command = "ndf install IAEA-Medical --all"
-    sp.run(shlex.split(command))
+
+    command = "install IAEA-Medical --all"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
@@ -30,8 +37,9 @@ def test_ndf_install():
         assert sha1 == IAEA_Medical_sha1[str(i)]
     shutil.rmtree(p)
 
-    command = "ndf install IAEA-Medical --all -j 5"
-    sp.run(shlex.split(command))
+    command = "install IAEA-Medical --all -j 5"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
@@ -39,8 +47,9 @@ def test_ndf_install():
         assert sha1 == IAEA_Medical_sha1[str(i)]
     shutil.rmtree(p)
 
-    command = "ndf install IAEA-Medical --sub d"
-    sp.run(shlex.split(command))
+    command = "install IAEA-Medical --sub d"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
