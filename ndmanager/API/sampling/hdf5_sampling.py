@@ -2,6 +2,7 @@
 Derive the Sampling class for sampling directly of OpenMC HDF5
 nuclear data file.
 """
+
 import shutil
 
 import h5py
@@ -121,6 +122,7 @@ class HDF5Sampling(Sampling):
     """Derive the Sampling class for sampling directly of OpenMC HDF5
     nuclear data file.
     """
+
     def __init__(self, yaml_path: str):
         """Instantiate a Sampling object given a path to a yaml input file
 

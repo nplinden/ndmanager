@@ -1,5 +1,8 @@
-import logging
+"""A class to generate covariance matrix libraries"""
+
+from pathlib import Path
 from itertools import product
+from typing import List
 import matplotlib.pyplot as plt
 
 import h5py
@@ -12,12 +15,38 @@ import ndmanager
 
 
 class CovMatrix(sandy.CategoryCov):
-    def __init__(self, nuclide, data):
+    """A class to generate covariance matrix libraries"""
+
+    def __init__(self, nuclide: str, data: pd.DataFrame):
+        """Instantiate a covariance matrix using a nuclide name
+        and a dataframe containing covariances.
+
+        Args:
+            nuclide (str): The name of the nuclide
+            data (pd.DataFrame): The dataframe containing the covariances
+        """
         self.nuclide = nuclide
         super().__init__(data)
 
     @classmethod
-    def from_tape(cls, path, ign=3, kind=33, **kwargs):
+    def from_tape(
+        cls, path: str | Path, ign: int = 3, kind: int = 33, **kwargs
+    ) -> "CovMatrix":
+        """Build a covariance matrix from an ENDF6 file, provided and group structure
+        using NJOY's nomenclature.
+
+        Args:
+            path (str | Path): Path to an ENDF6 file
+            ign (int, optional): The group structure using NJOY's ids. Defaults to 3.
+            kind (int, optional): The kind of covariance matrix, only cross-sections
+                                  (kind=33) is available for now. Defaults to 33.
+
+        Raises:
+            ValueError: If the requested matrix does not exist in the tape.
+
+        Returns:
+            CovMatrix: The covariance matrix object.
+        """
         nuclide = ndmanager.Endf6(path).nuclide.name
         tape = sandy.endf6.Endf6.from_file(path)
         errorr = tape.get_errorr(errorr33_kws={"ign": ign}, **kwargs)
@@ -28,7 +57,12 @@ class CovMatrix(sandy.CategoryCov):
         data.index = data.index.set_levels([nuclide], level=0)
         return cls(nuclide, data)
 
-    def export_to_hdf5(self, path):
+    def export_to_hdf5(self, path: str | Path) -> None:
+        """Write the covariance matrix to an HDF5 format.
+
+        Args:
+            path (str | Path): The path to the HDF5 file to write.
+        """
         if path is None:
             path = f"{self.nuclide}.h5"
         corr = self.get_corr()
@@ -51,21 +85,16 @@ class CovMatrix(sandy.CategoryCov):
                     f[f"{self.nuclide}/reactions/{colmt}/{rowmt}/INDPTR"] = csr.indptr
                     f[f"{self.nuclide}/reactions/{colmt}/{rowmt}/SHAPE"] = csr.shape
 
-    def get_corr(self):
-        cov = self.data.values
-        with np.errstate(divide="ignore", invalid="ignore"):
-            coeff = np.true_divide(1, self.get_std().values)
-            coeff[~np.isfinite(coeff)] = 0  # -inf inf NaN
-        corr = np.multiply(np.multiply(cov, coeff).T, coeff)
-        df = pd.DataFrame(
-            corr,
-            index=self.data.index,
-            columns=self.data.columns,
-        )
-        return self.__class__(self.nuclide, df)
-
     @classmethod
-    def from_hdf5(cls, path):
+    def from_hdf5(cls, path: str | Path) -> "CovMatrix":
+        """Reads an HDF5 file to build a covariance matrix
+
+        Args:
+            path (str | Path): The path to the HDF5 file
+
+        Returns:
+            CovMatrix: A CovMatrix object
+        """
         with h5py.File(path) as f:
             nuclide = list(f.keys())[0]
             mts = sorted([int(k) for k in f[f"{nuclide}/reactions"].keys()])
@@ -88,23 +117,49 @@ class CovMatrix(sandy.CategoryCov):
                 )
             return cls(nuclide, df)
 
-    def submatrix(self, mts):
+    def submatrix(self, mts: List[int]) -> "CovMatrix":
+        """Extract a submatrix from the covariance matrix
+
+        Args:
+            mts (List[int]): The list of reactions to include in the matrix
+
+        Returns:
+            CovMatrix: A new CovMatrix object
+        """
         df = self.data.loc[self.nuclide][self.nuclide].loc[mts][mts]
         df = pd.concat({self.nuclide: df}, names=["MAT"])
         df = pd.concat({self.nuclide: df}, names=["MAT"], axis=1)
         return CovMatrix(self.nuclide, df)
 
-    def plot_block(self, mtleft, mtright, path=None, ax=None):
+    def plot_block(
+        self, mtleft: int, mtright: int, path: str | Path = None, ax: plt.Axes = None
+    ) -> None:
+        """Plot the block corresponding the to covariances between reactions `mtleft`
+        and `mtright`. If an Axes object is provided the matrix will be drawn on the ax.
+        If a path is provided a matplotlib figure and ax will be created and the matrix
+        will be saved to a file.
+
+        Args:
+            mtleft (int): The first reaction
+            mtright (int): The second reaction
+            path (str | Path, optional): The path to the plot file. Defaults to None.
+            ax (plt.Axes, optional): A matplotlib ax to plot on. Defaults to None.
+
+        Raises:
+            ValueError: If neither path of ax is provided
+            ValueError: If both path and ax are provided
+        """
         data = self.get_corr().data.loc[self.nuclide][self.nuclide].loc[mtleft][mtright]
 
         if path is None and ax is None:
-            raise ValueError("either the path or ax argument must be provided")
+            raise ValueError("Either the path or ax argument must be provided")
+        if path is not None and ax is not None:
+            raise ValueError("Only one of ax of path can be provided at the same time")
         save = False
         if ax is None:
             fig, ax = plt.subplots(1, 1)
             save = True
 
-        # data = self.get_corr().data.loc[self.nuclide][self.nuclide]
         matrix = data.to_numpy()
         energies = [i.left for i in data.index] + [data.index[-1].right]
         energies = np.array(energies)
@@ -123,7 +178,12 @@ class CovMatrix(sandy.CategoryCov):
             ax.set_title(f"{self.nuclide}[MT{mtleft}] × {self.nuclide}[MT{mtright}]")
             fig.savefig(path)
 
-    def plot(self, path):
+    def plot(self, path: str | Path) -> None:
+        """Plot the covariance matrix and save the result to a file
+
+        Args:
+            path (str | Path): The path to save the image at
+        """
         data = self.get_corr().data.loc[self.nuclide][self.nuclide]
         reactions = sorted(list(set(data.index.get_level_values(0))))
 

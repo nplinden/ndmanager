@@ -1,4 +1,5 @@
 """This defines the abstract Sampling class"""
+
 import logging
 import shutil
 from collections import namedtuple
@@ -15,6 +16,7 @@ SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
 
 class Sampling:
     """A class from which sampling procedures will inherit"""
+
     def __init__(self, yaml_path: dict) -> None:
         """Instantiate a Sampling object given a path to a yaml input file
 
