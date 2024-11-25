@@ -104,7 +104,7 @@ def test_download_single(sublibrary):
 
 
 def test_download(sublibrary):
-    target = Path("pytest-artifacts/IAEA-Medical")
+    target = Path("pytest-artifacts/IAEA-Medical/nuclide")
     sublibrary.download(target, "nuclide", 1)
 
     sha1 = compute_file_sha1(target / "Al27.endf6")
@@ -118,4 +118,20 @@ def test_download(sublibrary):
     sha1 = compute_file_sha1(target / "Ni0.endf6")
     assert sha1 == "1219aa9f5c858222ba0797201b7718a084f20efa"
     sha1 = compute_file_sha1(target / "Ti0.endf6")
+    assert sha1 == "b7ee2459ba5b8469399e68bbbe09ab5b85217b2b"
+
+    target = Path("pytest-artifacts/IAEA-Medical/atom")
+    sublibrary.download(target, "atom", 1)
+
+    sha1 = compute_file_sha1(target / "Al.endf6")
+    assert sha1 == "e086848a085222bf49865301052e453f9d45faaf"
+    sha1 = compute_file_sha1(target / "Fe.endf6")
+    assert sha1 == "6deb6a698128458d2016f8fe895ef7f6dc65ddf1"
+    sha1 = compute_file_sha1(target / "N.endf6")
+    assert sha1 == "819e80d471cae606106d28723722bd07e5af2a2d"
+    sha1 = compute_file_sha1(target / "Ne.endf6")
+    assert sha1 == "0ea2c387aa50b45539a32da43dc088d3f27aa558"
+    sha1 = compute_file_sha1(target / "Ni.endf6")
+    assert sha1 == "1219aa9f5c858222ba0797201b7718a084f20efa"
+    sha1 = compute_file_sha1(target / "Ti.endf6")
     assert sha1 == "b7ee2459ba5b8469399e68bbbe09ab5b85217b2b"
