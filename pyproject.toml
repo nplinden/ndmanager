@@ -16,6 +16,7 @@ dependencies = [
     'requests',
     'beautifulsoup4',
     'tqdm',
+    'matplotlib',
 ]
 dynamic = ["version"]
 

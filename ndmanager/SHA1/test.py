@@ -1,5 +1,6 @@
 # pylint: disable=too-many-lines
 """SHA1 values for the test tapes"""
+
 FOO_SHA1 = {
     "foo/photo/Pu": "f8f6cfadc0a4ea51313cb256dca22d242d54c2cf",
     "foo/photo/C": "a384c9fb865a0a9f812ec84242b68d84c27b698c",

@@ -50,7 +50,6 @@ def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
                     are different
     """
     with File(sourcefile, "r") as source, File(targetfile, "r+") as target:
-
         source_rgroup = source[f"{nuclide}/reactions/reaction_{mt:03d}/"]
         target_rgroup = source[f"{nuclide}/reactions/reaction_{mt:03d}/"]
 

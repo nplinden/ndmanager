@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name
 """A module that defines and ENDF6 class to manipulate ENDF6 tapes"""
+
 from pathlib import Path
 
 from ndmanager.API.nuclide import Nuclide
