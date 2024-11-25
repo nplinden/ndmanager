@@ -117,12 +117,7 @@ class PendfSampling(Sampling):
             "errorr33_kws": {"mt": None},
         }
 
-        smp_kws = {
-            "seed31": self.seed31,
-            "seed33": self.seed33,
-            "seed34": self.seed34,
-            "seed35": self.seed35,
-        }
+        smp_kws = self.seeds
 
         matrix_tape = Endf6.from_file(matrix_file)
         logging.info("Running ERRORR on: '%s", matrix_file)

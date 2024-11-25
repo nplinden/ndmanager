@@ -1,3 +1,4 @@
+"""This defines the abstract Sampling class"""
 import logging
 import shutil
 from collections import namedtuple
@@ -13,6 +14,7 @@ SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
 
 
 class Sampling:
+    """A class from which sampling procedures will inherit"""
     def __init__(self, yaml_path: dict) -> None:
         """Instantiate a Sampling object given a path to a yaml input file
 
@@ -25,10 +27,12 @@ class Sampling:
         self.name = input_dict["name"]
         self.reuse = input_dict["reuse"]
         self.temperature = input_dict["temperature"]
-        self.seed31 = get_seed()
-        self.seed33 = get_seed()
-        self.seed34 = get_seed()
-        self.seed35 = get_seed()
+        self.seeds = {
+            "seed31": get_seed(),
+            "seed33": get_seed(),
+            "seed34": get_seed(),
+            "seed35": get_seed(),
+        }
 
         self.tapes = []
         for nuclide, libraries_ in input_dict["samples"].items():
@@ -53,12 +57,13 @@ class Sampling:
         """
         if self.rootpath.exists() and not clean:
             raise FileExistsError(f"{self.name} sample directory already exists")
-        elif self.rootpath.exists() and clean:
+        if self.rootpath.exists() and clean:
             shutil.rmtree(self.rootpath)
         self.rootpath.mkdir(parents=True)
         self.xs_path.mkdir()
 
     def sample_one_nuclide(self, tape: SampleTapes, processes: int) -> None:
+        """Abstract method, must be implemented by daughter class"""
         raise NotImplementedError("This must be implemented in derived classes")
 
     def sample(self, processes: int):
