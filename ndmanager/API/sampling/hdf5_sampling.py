@@ -139,7 +139,7 @@ class HDF5Sampling(Sampling):
             self.energies = {}
             for temperature in f[f"{nuclide}/energy"]:
                 self.energies[temperature] = f[f"{nuclide}/energy/{temperature}"][...]
-        samples = covmatrix.sampling(self.nsmp, seed=1605844414)
+        samples = covmatrix.sampling(self.nsmp, to_excel=self.rootpath / "samples.xlsx")
 
         for n, s in samples.iterate_xs_samples():
             perturbed_path = self.rootpath / f"{nuclide}" / f"{n}.h5"
@@ -150,7 +150,6 @@ class HDF5Sampling(Sampling):
                 for T, E in self.energies.items():
                     masks = []
                     for intrvl in df.index:
-                        # masks.append(np.ma.masked_inside(E, intrvl.left, intrvl.right).mask)
                         masks.append(
                             np.ma.masked_where(
                                 (E > intrvl.left) & (E <= intrvl.right), E

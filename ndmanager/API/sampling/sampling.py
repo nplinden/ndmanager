@@ -58,7 +58,7 @@ class Sampling:
         self.rootpath.mkdir(parents=True)
         self.xs_path.mkdir()
 
-    def sample_one_nuclide(self, *args, **kwargs):
+    def sample_one_nuclide(self, tape: SampleTapes, processes: int) -> None:
         raise NotImplementedError("This must be implemented in derived classes")
 
     def sample(self, processes: int):

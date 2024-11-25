@@ -30,7 +30,9 @@ def ace_to_hdf5(ace: str, target: str) -> None:
 
 class PendfSampling(Sampling):
     """A class to read nds input file and create perturbed nuclear data
-    from it
+    from it. 
+    This class perturbates 0K PENDF files and runs NJOY to perform 
+    temperature treatment and conversion to the ACE format.
     """
 
     def __init__(self, yaml_path: str):
@@ -41,7 +43,15 @@ class PendfSampling(Sampling):
         """
         super().__init__(yaml_path)
 
-    def sample_one_nuclide(self, tape: SampleTapes, processes):
+    def sample_one_nuclide(self, tape: SampleTapes, processes: int) -> None:
+        """Manages the Sandy run for a given 3-tuple of nuclide name, cross-section 
+        library name and covariance library name.
+
+        Args:
+            tape (SampleTapes): A 3-tuple of nuclide name, cross-section library name,
+                                a covariance library name
+            processes (int): The number of processes to allocate
+        """
         target = self.rootpath / tape.nuclide
         matrix_lib, matrix_groups = tape.matrix_lib.split("@")
         matrix_file = get_endf6(matrix_lib, "n", tape.nuclide)
@@ -53,8 +63,8 @@ class PendfSampling(Sampling):
 
                 for xsd in Path(".").glob("*.xsd"):
                     xsd.unlink()
-                for tape in Path(".").glob("*.tape"):
-                    shutil.move(tape, target)
+                for t in Path(".").glob("*.tape"):
+                    shutil.move(t, target)
                 for xslx in Path(".").glob("*.xlsx"):
                     shutil.move(xslx, target)
 
@@ -63,30 +73,27 @@ class PendfSampling(Sampling):
                         p.apply_async(ace_to_hdf5, args=(ace, target))
                     p.close()
                     p.join()
-        return
 
-    def run_sandy(self, xs_file: str, matrix_file: str, processes: int, ign: str):
+    def run_sandy(self, xs_file: str, matrix_file: str, processes: int, ign: str) -> None:
         """Run sandy to generate a perturbed library for a single nuclide
 
         Args:
             xs_file (str): The path to the endf6 to perturb
             matrix_file (str): The path to the endf6 file containing the covariance matrices
             processes (int): The number of jobs to allocate
+            ign (str): The group structure to use for the covariance matrix. Can be provided
+                       as an ign number from NJOY or using its name
         """
         logging.getLogger().setLevel(logging.DEBUG)
 
         if ign.isdigit():
             ign_value = int(ign)
-            ign_name = IGN_MAPPING[ign_value]
         else:
-            ign_name = ign
-            ign_value = IGN_MAPPING[ign_name]
+            ign_value = IGN_MAPPING[ign]
 
         err_pendf = 0.001
         err_ace = 0.001
         err_errorr = 0.1
-
-        njoy_output = sp.DEVNULL
 
         # ERRORR KEYWORDS
         errorr_kws = {
@@ -103,7 +110,7 @@ class PendfSampling(Sampling):
                 "ign": ign_value,
             },
             "errorr_kws": {"ign": ign_value},
-            "njoy_output": njoy_output,
+            "njoy_output": sp.DEVNULL,
             "errorr33_kws": {"mt": None},
         }
 
@@ -116,7 +123,6 @@ class PendfSampling(Sampling):
 
         matrix_tape = Endf6.from_file(matrix_file)
         logging.info("Running ERRORR on: '%s", matrix_file)
-        print(self.seed33)
         smps = matrix_tape.get_perturbations(
             self.nsmp, njoy_kws=errorr_kws, smp_kws=smp_kws
         )
@@ -126,7 +132,7 @@ class PendfSampling(Sampling):
             "verbose": False,
             "err": err_pendf,
             "minimal_processing": False,
-            "njoy_output": njoy_output,
+            "njoy_output": sp.DEVNULL,
         }
 
         # ACE KEYWORDS
@@ -136,12 +142,11 @@ class PendfSampling(Sampling):
             "minimal_processing": False,
             "temperature": self.temperature,
             "purr": False,
-            "njoy_output": njoy_output,
+            "njoy_output": sp.DEVNULL,
         }
 
-        xs_tape = Endf6.from_file(xs_file)
         logging.info("Applying perturbations on: '%s'", matrix_file)
-        xs_tape.apply_perturbations(
+        Endf6.from_file(xs_file).apply_perturbations(
             smps,
             processes=processes,
             to_file=True,
