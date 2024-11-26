@@ -1,10 +1,15 @@
 import pytest
 import shlex
+from pathlib import Path
 from ndmanager.format import get_terminal_size
 from ndmanager.CLI.fetcher.main import parser
 
 
 def test_listlib(capsys):
+    cache = Path("pytest-artifacts/IAEA_cache.json")
+    if cache.exists():
+        cache.unlink()
+
     args = parser.parse_args(shlex.split("list"))
     args.func(args)
     captured = capsys.readouterr()
