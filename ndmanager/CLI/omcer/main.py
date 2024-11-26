@@ -2,12 +2,12 @@
 
 import argparse as ap
 
-from ndmanager.CLI.omcer.build import build_parser
-from ndmanager.CLI.omcer.clone import clone_parser
-from ndmanager.CLI.omcer.edit import sn301_parser
-from ndmanager.CLI.omcer.install import install_parser
-from ndmanager.CLI.omcer.listlibs import listlibs_parser
-from ndmanager.CLI.omcer.remove import remove_parser
+from ndmanager.CLI.omcer.build import NdoBuildCommand
+from ndmanager.CLI.omcer.clone import NdoCloneCommand
+from ndmanager.CLI.omcer.edit import NdoSn301Command
+from ndmanager.CLI.omcer.install import NdoInstallCommand
+from ndmanager.CLI.omcer.listlibs import NdoListCommand
+from ndmanager.CLI.omcer.remove import NdoRemoveCommand
 
 
 def main():
@@ -18,12 +18,12 @@ def main():
     )
     subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
 
-    clone_parser(subparsers)
-    listlibs_parser(subparsers)
-    install_parser(subparsers)
-    remove_parser(subparsers)
-    build_parser(subparsers)
-    sn301_parser(subparsers)
+    NdoCloneCommand.parser(subparsers)
+    NdoListCommand.parser(subparsers)
+    NdoInstallCommand.parser(subparsers)
+    NdoRemoveCommand.parser(subparsers)
+    NdoBuildCommand.parser(subparsers)
+    NdoSn301Command.parser(subparsers)
 
     args = parser.parse_args()
     if hasattr(args, "func"):
