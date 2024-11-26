@@ -6,7 +6,7 @@ import pytest
 
 from ndmanager import IAEA
 from ndmanager.CLI.fetcher.install import NdfInstallCommand
-from ndmanager.CLI.omcer.build import build
+from ndmanager.CLI.omcer.build import NdoBuildCommand
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -69,4 +69,4 @@ tsl:
     namespace = ap.Namespace(
         filename=str(p), dryrun=False, clean=False, j=2, temperatures=None
     )
-    build(namespace)
+    NdoBuildCommand.run(namespace)
