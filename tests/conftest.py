@@ -69,4 +69,4 @@ tsl:
     namespace = ap.Namespace(
         filename=str(p), dryrun=False, clean=False, j=2, temperatures=None
     )
-    NdoBuildCommand.run(namespace)
+    NdoBuildCommand(namespace)
