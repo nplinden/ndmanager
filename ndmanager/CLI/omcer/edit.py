@@ -9,7 +9,45 @@ import numpy as np
 from h5py import File
 
 from ndmanager.env import NDMANAGER_HDF5
+from ndmanager.CLI.parser import Command
 
+class NdoSn301Command(Command):
+    """Define the `ndo sn301` command"""
+
+    @classmethod
+    def parser(cls, subparsers: ap._SubParsersAction) -> None:
+        """Add the parser for the 'ndo sn301' command to a subparser object
+
+        Args:
+            subparsers (argparse._SubParsersAction): An argparse subparser object
+        """
+        parser = subparsers.add_parser(
+            "sn301", help="Substitute negative MT=301 cross-section in HDF5 library"
+        )
+        parser.add_argument("--target", "-t", type=str, help="The library to fix")
+        parser.add_argument(
+            "--sources",
+            "-s",
+            action="extend",
+            nargs="+",
+            type=str,
+            help="List of nuclear data libraries to choose from",
+        )
+        parser.add_argument(
+            "--dryrun", help="Do not perform the substitution", action="store_true"
+        )
+        parser.set_defaults(func=cls)
+
+    def run(self, args: ap.Namespace):
+        """Substitute negative MT301 cross section values in a target library,
+        from a set of source libaries
+
+        Args:
+            args (ap.Namespace): The argparse object containing the command line argument
+        """
+        target = NDMANAGER_HDF5 / args.target / "cross_sections.xml"
+        sources = [NDMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
+        replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)
 
 def overwrite_one_temp(source: File, target: File, nuclide: str, mt: int, t: str):
     """Substitute cross-section values for a given (nuclide, reaction, temperature) tuple
@@ -245,37 +283,3 @@ def replace_negatives_in_lib(
                 set_negative_to_zero(target, mt)
 
 
-def sn301_parser(subparsers):
-    """Add the parser for the 'ndo sn301' command to a subparser object
-
-    Args:
-        subparsers (argparse._SubParsersAction): An argparse subparser object
-    """
-    parser = subparsers.add_parser(
-        "sn301", help="Substitute negative MT=301 cross-section in HDF5 library"
-    )
-    parser.add_argument("--target", "-t", type=str, help="The library to fix")
-    parser.add_argument(
-        "--sources",
-        "-s",
-        action="extend",
-        nargs="+",
-        type=str,
-        help="List of nuclear data libraries to choose from",
-    )
-    parser.add_argument(
-        "--dryrun", help="Do not perform the substitution", action="store_true"
-    )
-    parser.set_defaults(func=sn301)
-
-
-def sn301(args: ap.Namespace):
-    """Substitute negative MT301 cross section values in a target library,
-    from a set of source libaries
-
-    Args:
-        args (ap.Namespace): The argparse object containing the command line argument
-    """
-    target = NDMANAGER_HDF5 / args.target / "cross_sections.xml"
-    sources = [NDMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
-    replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)
