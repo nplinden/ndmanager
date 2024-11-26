@@ -1,61 +1,43 @@
-import pytest
 import shlex
+import shutil
 from pathlib import Path
-from ndmanager.format import get_terminal_size
+
+import pytest
+
+from ndmanager.API.sha1 import compute_file_sha1
 from ndmanager.CLI.fetcher.main import parser
+from tests.data import IAEA_Medical_sha1, endf6_sha1, endfb8_sha1
 
 
-def test_listlib(capsys):
+def test_ndf_install_foo_bar(install):
+    p = Path("pytest-artifacts/endf6")
+    for i in p.rglob("*.endf6"):
+        if not i.is_file():
+            continue
+        sha1 = compute_file_sha1(i.absolute())
+        assert sha1 == endf6_sha1[str(i)]
+
+
+def test_ndf_install_remove(capsys):
     cache = Path("pytest-artifacts/IAEA_cache.json")
     if cache.exists():
         cache.unlink()
 
-    args = parser.parse_args(shlex.split("list"))
-    args.func(args)
-    captured = capsys.readouterr()
-    expected = ("Initializing IAEA database...\n"
-    "---------------------------------------------------------------  "
-    "Available libraries  --------------------------------------------"
-    "--------------------\nbrond22              BROND-2-2            ["
-    " ]: BROND-2 USSR evaluated neutron data library, issued in 1992\n"
-    "brond31              BROND-3.1            [ ]: BROND-3.1 Russian "
-    "evaluated neutron data library, issued in 2016\ncendl31          "
-    "    CENDL-3.1            [ ]: CENDL-3.1 Chinese evaluated neutron"
-    " data library, issued in 2009\ncendl32              CENDL-3.2     "
-    "       [ ]: CENDL-3.2 Chinese evaluated neutron data library, iss"
-    "ued in 2020\nendfb70              ENDF-B-VII.0         [ ]: ENDF/"
-    "B-VII.0 U.S. Evaluated Nuclear Data Library, issued in 2006\nendf"
-    "b71              ENDF-B-VII.1         [ ]: ENDF/B-VII.1 U.S. Eval"
-    "uated Nuclear Data Library, issued in 2011\nendfb8               "
-    "ENDF-B-VIII.0        [ ]: ENDF/B-VIII.0 U.S. Evaluated Nuclear Da"
-    "ta Library, issued in 2018\nendfb81              ENDF-B-VIII.1   "
-    "     [ ]: ENDF/B-VIII.1 U.S. Evaluated Nuclear Data Library, issu"
-    "ed in 2024\nfendl32b             FENDL-3.2b           [ ]: FENDL-"
-    "3.2b Fusion Evaluated Nuclear Data Library, 2022\njeff31         "
-    "      JEFF-3.1             [ ]: JEFF-3.1 Evaluated nuclear data l"
-    "ibrary of the OECD Nuclear Energy Agency\njeff311              JE"
-    "FF-3.1.1           [ ]: JEFF-3.1 Evaluated nuclear data library o"
-    "f the OECD Nuclear Energy Agency\njeff312              JEFF-3.1.2"
-    "           [ ]: JEFF-3.1.2 Evaluated nuclear data library of the "
-    "OECD Nuclear Energy Agency\njeff33               JEFF-3.3        "
-    "     [ ]: JEFF-3.3 Evaluated nuclear data library of the OECD Nuc"
-    "lear Energy Agency, 2017\njendl32              JENDL-3.2         "
-    "   [ ]: JENDL-3.2 Japanese evaluated nuclear data library, 1994\n"
-    "jendl4               JENDL-4.0            [ ]: JENDL-4.0 Japanese"
-    " evaluated nuclear data library, 2010\njendl5               JENDL"
-    "-5-Aug2023      [ ]: JENDL-5 Japanese evaluated nuclear data libr"
-    "ary, 2021\ntendl2021            TENDL-2021           [ ]: TENDL-2"
-    "021 TALYS-based Evaluated Nuclear Data Library, 2021\ntendl2023  "
-    "          TENDL-2023           [ ]: TENDL-2023 TALYS-based Evalua"
-    "ted Nuclear Data Library, 2023\n---------------------------------"
-    "-----------------------------------------------------------------"
-    "----------------------------------------------------\n")
-    assert captured.out == expected
+    p = Path("pytest-artifacts/endf6/IAEA-Medical")
 
+    command = "install IAEA-Medical --all"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
+    for i in p.rglob("*.endf6"):
+        if not i.is_file():
+            continue
+        sha1 = compute_file_sha1(i.absolute())
+        assert sha1 == IAEA_Medical_sha1[str(i)]
+    
     args = parser.parse_args(shlex.split("list --all"))
     args.func(args)
     captured = capsys.readouterr()
-    expected = (
+    expected = ("Initializing IAEA database...\n"
     "---------------------------------------------------------------  "
     "Available libraries  --------------------------------------------"
     "--------------------\nADS-2.0              ADS-2.0              ["
@@ -85,7 +67,7 @@ def test_listlib(capsys):
     "            FENDL-3.2            [ ]: FENDL-3.2 Fusion Evaluated "
     "Nuclear Data Library, 2021\nfendl32b             FENDL-3.2b      "
     "     [ ]: FENDL-3.2b Fusion Evaluated Nuclear Data Library, 2022\n"
-    "IAEA-Medical         IAEA-Medical         [ ]: IAEA-Medical Char"
+    "IAEA-Medical         IAEA-Medical         [✓]: IAEA-Medical Char"
     "ged-particle cross section database for medical radioisotope prod"
     "uction, 2001\nIAEA-PD-1999         IAEA-PD-1999         [ ]: IAEA"
     "-Photonuclear Data Library, 1999\nIAEA-PD-2019         IAEA-PD-20"
@@ -183,3 +165,88 @@ def test_listlib(capsys):
     "---------------------------------\n"
     )
     assert captured.out == expected
+
+    shutil.rmtree(p)
+
+    command = "install IAEA-Medical --all -j 5"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
+    for i in p.rglob("*.endf6"):
+        if not i.is_file():
+            continue
+        sha1 = compute_file_sha1(i.absolute())
+        assert sha1 == IAEA_Medical_sha1[str(i)]
+    shutil.rmtree(p)
+
+    command = "install IAEA-Medical --sub d ard"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
+    for i in p.rglob("*.endf6"):
+        if not i.is_file():
+            continue
+        sha1 = compute_file_sha1(i.absolute())
+        assert sha1 == IAEA_Medical_sha1[str(i)]
+    shutil.rmtree(p)
+
+    p = Path("pytest-artifacts/endf6/endfb8")
+    command = "install endfb8 --sub photo"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
+    for i in p.rglob("*.endf6"):
+        if not i.is_file():
+            continue
+        sha1 = compute_file_sha1(i.absolute())
+        assert sha1 == endfb8_sha1[str(i)]
+
+    command = "remove endfb8"
+    args = parser.parse_args(shlex.split(command))
+    args.func(args)
+    assert not p.exists()
+    
+def test_listlib(capsys):
+    cache = Path("pytest-artifacts/IAEA_cache.json")
+    if cache.exists():
+        cache.unlink()
+
+    args = parser.parse_args(shlex.split("list"))
+    args.func(args)
+    captured = capsys.readouterr()
+    expected = ("Initializing IAEA database...\n"
+    "---------------------------------------------------------------  "
+    "Available libraries  --------------------------------------------"
+    "--------------------\nbrond22              BROND-2-2            ["
+    " ]: BROND-2 USSR evaluated neutron data library, issued in 1992\n"
+    "brond31              BROND-3.1            [ ]: BROND-3.1 Russian "
+    "evaluated neutron data library, issued in 2016\ncendl31          "
+    "    CENDL-3.1            [ ]: CENDL-3.1 Chinese evaluated neutron"
+    " data library, issued in 2009\ncendl32              CENDL-3.2     "
+    "       [ ]: CENDL-3.2 Chinese evaluated neutron data library, iss"
+    "ued in 2020\nendfb70              ENDF-B-VII.0         [ ]: ENDF/"
+    "B-VII.0 U.S. Evaluated Nuclear Data Library, issued in 2006\nendf"
+    "b71              ENDF-B-VII.1         [ ]: ENDF/B-VII.1 U.S. Eval"
+    "uated Nuclear Data Library, issued in 2011\nendfb8               "
+    "ENDF-B-VIII.0        [ ]: ENDF/B-VIII.0 U.S. Evaluated Nuclear Da"
+    "ta Library, issued in 2018\nendfb81              ENDF-B-VIII.1   "
+    "     [ ]: ENDF/B-VIII.1 U.S. Evaluated Nuclear Data Library, issu"
+    "ed in 2024\nfendl32b             FENDL-3.2b           [ ]: FENDL-"
+    "3.2b Fusion Evaluated Nuclear Data Library, 2022\njeff31         "
+    "      JEFF-3.1             [ ]: JEFF-3.1 Evaluated nuclear data l"
+    "ibrary of the OECD Nuclear Energy Agency\njeff311              JE"
+    "FF-3.1.1           [ ]: JEFF-3.1 Evaluated nuclear data library o"
+    "f the OECD Nuclear Energy Agency\njeff312              JEFF-3.1.2"
+    "           [ ]: JEFF-3.1.2 Evaluated nuclear data library of the "
+    "OECD Nuclear Energy Agency\njeff33               JEFF-3.3        "
+    "     [ ]: JEFF-3.3 Evaluated nuclear data library of the OECD Nuc"
+    "lear Energy Agency, 2017\njendl32              JENDL-3.2         "
+    "   [ ]: JENDL-3.2 Japanese evaluated nuclear data library, 1994\n"
+    "jendl4               JENDL-4.0            [ ]: JENDL-4.0 Japanese"
+    " evaluated nuclear data library, 2010\njendl5               JENDL"
+    "-5-Aug2023      [ ]: JENDL-5 Japanese evaluated nuclear data libr"
+    "ary, 2021\ntendl2021            TENDL-2021           [ ]: TENDL-2"
+    "021 TALYS-based Evaluated Nuclear Data Library, 2021\ntendl2023  "
+    "          TENDL-2023           [ ]: TENDL-2023 TALYS-based Evalua"
+    "ted Nuclear Data Library, 2023\n---------------------------------"
+    "-----------------------------------------------------------------"
+    "----------------------------------------------------\n")
+    assert captured.out == expected
+
