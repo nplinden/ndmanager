@@ -31,14 +31,14 @@ def test_neutron_manager(install, build_lib):
     }
     for nuclide, path in manager.tapes.items():
         assert Path(path).samefile(ref[nuclide])
-    C12 = [n for n in manager if n.target=="C12"][0]
+    C12 = [n for n in manager if n.target == "C12"][0]
     assert C12.target == "C12"
     assert C12.path == p / "neutron/C12.h5"
     assert C12.logpath == p / "neutron/logs/C12.log"
     assert C12.neutron.samefile("pytest-artifacts/endf6/foo/n/C12.endf6")
     assert C12.temperatures == {400, 273}
 
-    H1 = [n for n in manager if n.target=="H1"][0]
+    H1 = [n for n in manager if n.target == "H1"][0]
     assert H1.target == "H1"
     assert H1.path == p / "neutron/H1.h5"
     assert H1.logpath == p / "neutron/logs/H1.log"

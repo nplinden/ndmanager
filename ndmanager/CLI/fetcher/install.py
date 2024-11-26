@@ -117,7 +117,7 @@ class NdfInstallCommand:
 
     def download_errata(self):
         """Manualy define some errata ENDF6 files to download"""
-        if "endfb8" in self.libraries:
+        if "endfb8" in self.libraries and "n" in self.sublibraries:
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
             tape = requests.get(url, timeout=600).text
             target = NDMANAGER_ENDF6 / "endfb8/n/B10.endf6"
