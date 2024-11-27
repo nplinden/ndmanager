@@ -1,8 +1,8 @@
 .. _ndchainer:
 
-===================
-NDChainer module
-===================
+=========
+NDChainer
+=========
 
 The NDChainer provides the ``ndc`` command to manage your chain files for
 use with OpenMC.
@@ -106,3 +106,4 @@ libraries:
 
 Loading a chain with ``module load`` will automatically set the
 required environment variables.
+

@@ -115,7 +115,7 @@ class IAEA:
             json.dump(dico, f, indent=2)
 
     def from_json(self, path: str | Path) -> None:
-        """ "Build the database from a json file
+        """Build the database from a json file
 
         Args:
             path (str | Path): The path to the json file
