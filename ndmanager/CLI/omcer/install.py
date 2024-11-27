@@ -106,7 +106,7 @@ def extract(tarname: str, total: int, family: str, lib: str):
             bar_format=bar_format,
         )
         for item in tar:
-            tar.extract(item, ".")
+            tar.extract(item, ".", filter="tar")
             pbar.update(item.size)
         pbar.close()
 
