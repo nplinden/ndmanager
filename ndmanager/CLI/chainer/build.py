@@ -4,12 +4,13 @@ import argparse as ap
 import shutil
 from contextlib import chdir
 
-import openmc.deplete
+from openmc.deplete.chain import Chain
 import yaml
 
 from ndmanager.API.utils import list_endf6
 from ndmanager.CLI.chainer.branching_ratios import branching_ratios
 from ndmanager.env import NDMANAGER_CHAINS
+from ndmanager.CLI.parser import Command
 
 REACTIONS = [
     "(n,2nd)",
@@ -98,48 +99,47 @@ REACTIONS = [
     "(n,5n2p)",
 ]
 
+class NdcBuildCommand(Command):
+    """Define the `ndc build` command"""
 
-def build_parser(subparsers: ap._SubParsersAction):
-    """Add the parser for the 'ndc build' command to a subparser object
+    @classmethod
+    def parser(cls, subparsers: ap._SubParsersAction) -> None:
+        """Add the parser for the 'ndc build' command to a subparser object
 
-    Args:
-        subparsers (argparse._SubParsersAction): An argparse subparser object
-    """
-    parser = subparsers.add_parser(
-        "build", help="Build an OpenMC depletion chain from a YAML input file"
-    )
-    parser.add_argument(
-        "filename",
-        type=str,
-        help="The name of the YAML file describing the target depletion chain",
-    )
-    parser.set_defaults(func=build)
+        Args:
+            subparsers (argparse._SubParsersAction): An argparse subparser object
+        """
+        parser = subparsers.add_parser(
+            "build", help="Build an OpenMC depletion chain from a YAML input file"
+        )
+        parser.add_argument(
+            "filename",
+            type=str,
+            help="The name of the YAML file describing the target depletion chain",
+        )
+        parser.set_defaults(func=cls)
 
+    def run(self, args: ap.Namespace) -> None:
+        """Build an OpenMC depletion chain from a YAML descriptive file
 
-def build(args: ap.Namespace):
-    """Build an OpenMC depletion chain from a YAML descriptive file
+        Args:
+            args (ap.Namespace): The argparse object containing the command line argument
+        """
 
-    Args:
-        args (ap.Namespace): The argparse object containing the command line argument
-    """
+        with open(args.filename, encoding="utf-8") as f:
+            inputs = yaml.safe_load(f)
+        name = inputs["name"]
+        hl = float(inputs.get("halflife", -1))
 
-    with open(args.filename, encoding="utf-8") as f:
-        inputs = yaml.safe_load(f)
-        f.seek(0)
-    name = inputs["name"]
-    hl = float(inputs.get("halflife", -1))
+        target = NDMANAGER_CHAINS / f"{name}.xml"
+        if target.exists():
+            raise FileExistsError("A chain with that name already exists")
 
-    target = NDMANAGER_CHAINS / name
-    directory = target.parent
-    if directory.exists():
-        shutil.rmtree(directory)
-    directory.mkdir(parents=True)
-    with chdir(directory):
         decay = list(list_endf6("decay", inputs["decay"]).values())
         n = list(list_endf6("n", inputs["n"]).values())
         nfpy = list(list_endf6("nfpy", inputs["nfpy"]).values())
 
-        chain = openmc.deplete.Chain.from_endf(decay, nfpy, n, REACTIONS)
+        chain = Chain.from_endf(decay, nfpy, n, REACTIONS)
         if hl > 0.0:
             tokeep = [
                 nuc.name
@@ -155,4 +155,4 @@ def build(args: ap.Namespace):
                     branch_ratios=br, reaction=reaction, strict=False
                 )
 
-    chain.export_to_xml(target)
+        chain.export_to_xml(target)

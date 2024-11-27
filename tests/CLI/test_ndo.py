@@ -1,5 +1,3 @@
-from pathlib import Path
-import os
 import shlex
 import pytest
 from ndmanager.CLI.omcer.main import parser
@@ -46,7 +44,11 @@ def test_ndo_list_install_remove(capsys, build_lib):
     "      A test library used to showcase the capabilities of ndo\n")
     assert captured.out == expected
 
+    with pytest.raises(ValueError):
+        run("clone toto coucou")
     run("clone lanl/endfb70 coucou")
+    with pytest.raises(ValueError):
+        run("clone lanl/endfb70 coucou")
     run("list")
     captured = capsys.readouterr()
     expected = ("-------------------------------------------------------------"

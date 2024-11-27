@@ -58,6 +58,7 @@ testpaths = [
 env = [
     "NDMANAGER_ENDF6=pytest-artifacts/endf6",
     "NDMANAGER_HDF5=pytest-artifacts/hdf5",
+    "NDMANAGER_CHAINS=pytest-artifacts/chains",
     "NDMANAGER_CONFIG=pytest-artifacts"
 ]
 
