@@ -10,21 +10,21 @@ from ndmanager.CLI.omcer.listlibs import NdoListCommand
 from ndmanager.CLI.omcer.remove import NdoRemoveCommand
 
 
+parser = ap.ArgumentParser(
+    prog="ndo",
+    description="Manage your OpenMC HDF5 nuclear data libraries",
+)
+subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
+
+NdoCloneCommand.parser(subparsers)
+NdoListCommand.parser(subparsers)
+NdoInstallCommand.parser(subparsers)
+NdoRemoveCommand.parser(subparsers)
+NdoBuildCommand.parser(subparsers)
+NdoSn301Command.parser(subparsers)
+
 def main():
     """Entry point for the ndo command"""
-    parser = ap.ArgumentParser(
-        prog="ndo",
-        description="Manage your OpenMC HDF5 nuclear data libraries",
-    )
-    subparsers = parser.add_subparsers(title="Commands", dest="command", required=True)
-
-    NdoCloneCommand.parser(subparsers)
-    NdoListCommand.parser(subparsers)
-    NdoInstallCommand.parser(subparsers)
-    NdoRemoveCommand.parser(subparsers)
-    NdoBuildCommand.parser(subparsers)
-    NdoSn301Command.parser(subparsers)
-
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
