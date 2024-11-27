@@ -1,8 +1,8 @@
 .. _ndfetcher:
 
-===================
-NDFetcher module
-===================
+=========
+NDFetcher
+=========
 
 The NDFetcher module provides the ``ndf`` command to manage your evaluated nuclear
 data files in the ENDF6 format.

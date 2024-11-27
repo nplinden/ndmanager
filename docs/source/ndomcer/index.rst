@@ -1,8 +1,8 @@
 .. _ndomcer:
 
-==============
-NDOmcer module
-==============
+=======
+NDOmcer
+=======
 
 The NDOmcer module provides the ``ndo`` command to manage you HDF5 OpenMC
 processed nuclear data files.
