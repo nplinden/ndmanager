@@ -16,7 +16,7 @@ tool to help you easily generate perturbed files in the OpenMC HDF5
 format.
 
 Full documentation is available
-[here](https://ndmanager.readthedocs.io/en/latest/).
+[here](https://ndmanager.readthedocs.io/en/develop/).
 
 ## Installation
 
