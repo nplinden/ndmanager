@@ -27,6 +27,13 @@ version = {attr = "ndmanager.__version__"}
 [project.optional-dependencies]
 test = ["pytest", "pytest-env", "pytest-cov"]
 build = ["build", "twine"]
+docs = [
+    "sphinx",
+    "pydata_sphinx_theme",
+    "sphinx_design",
+    "sphinx-autodoc-typehints",
+    "sphinx-copybutton"
+]
 
 [project.urls]
 Homepage = "https://github.com/nplinden/ndmanager"
