@@ -29,10 +29,11 @@ class NdoListCommand(Command):
         """List the OpenMC libaries available for download with NDManager"""
         col, _ = get_terminal_size()
 
-        xs = set()
+        xs = []
         for xmlfile in NDMANAGER_HDF5.rglob("*.xml"):
             p = xmlfile.parent / xmlfile.stem
-            xs.add(str(p.parent.relative_to(NDMANAGER_HDF5)))
+            xs.append(str(p.parent.relative_to(NDMANAGER_HDF5)))
+        xs = sorted(xs, key=str.lower)
 
         lst = [header("Installable Libraries")]
         for family, dico in OPENMC_LIBS.items():
