@@ -1,5 +1,3 @@
-from pathlib import Path
-import os
 import shlex
 import pytest
 from ndmanager.CLI.omcer.main import parser
