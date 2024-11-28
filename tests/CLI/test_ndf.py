@@ -5,9 +5,13 @@ from pathlib import Path
 import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
-from ndmanager.CLI.fetcher.main import parser
+from ndmanager.CLI.fetcher.main import ndf_parser
+from ndmanager.env import NDMANAGER_ENDF6
 from tests.data import IAEA_Medical_sha1, endf6_sha1, endfb8_sha1
 
+def ndf(command):
+    args = ndf_parser.parse_args(shlex.split(command))
+    args.func(args)
 
 def test_ndf_install_foo_bar(install):
     p = Path("pytest-artifacts/endf6")
@@ -25,17 +29,14 @@ def test_ndf_install_remove(capsys):
 
     p = Path("pytest-artifacts/endf6/IAEA-Medical")
 
-    command = "install IAEA-Medical --all"
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+    ndf("install IAEA-Medical --all")
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
         sha1 = compute_file_sha1(i.absolute())
         assert sha1 == IAEA_Medical_sha1[str(i)]
     
-    args = parser.parse_args(shlex.split("list --all"))
-    args.func(args)
+    ndf("list --all")
     captured = capsys.readouterr()
     expected = ("Initializing IAEA database...\n"
     "---------------------------------------------------------------  "
@@ -168,9 +169,7 @@ def test_ndf_install_remove(capsys):
 
     shutil.rmtree(p)
 
-    command = "install IAEA-Medical --all -j 5"
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+    ndf("install IAEA-Medical --all -j 5")
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
@@ -178,9 +177,7 @@ def test_ndf_install_remove(capsys):
         assert sha1 == IAEA_Medical_sha1[str(i)]
     shutil.rmtree(p)
 
-    command = "install IAEA-Medical --sub d ard"
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+    ndf("install IAEA-Medical --sub d ard")
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
@@ -189,18 +186,17 @@ def test_ndf_install_remove(capsys):
     shutil.rmtree(p)
 
     p = Path("pytest-artifacts/endf6/endfb8")
-    command = "install endfb8 --sub photo"
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+    ndf("install endfb8 --sub photo")
     for i in p.rglob("*.endf6"):
         if not i.is_file():
             continue
         sha1 = compute_file_sha1(i.absolute())
         assert sha1 == endfb8_sha1[str(i)]
 
-    command = "remove endfb8"
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+    ndf(f"install {NDMANAGER_ENDF6} --name endfb8-copy")
+    ndf("remove endfb8-copy")
+
+    ndf("remove endfb8")
     assert not p.exists()
     
 def test_listlib(capsys):
@@ -208,8 +204,7 @@ def test_listlib(capsys):
     if cache.exists():
         cache.unlink()
 
-    args = parser.parse_args(shlex.split("list"))
-    args.func(args)
+    ndf("list")
     captured = capsys.readouterr()
     expected = ("Initializing IAEA database...\n"
     "---------------------------------------------------------------  "
