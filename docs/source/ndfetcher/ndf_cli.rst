@@ -30,8 +30,8 @@ NDFetcher provides three commands:
 
 
 
-Listing
-+++++++
+Finding Your Favorite Library
++++++++++++++++++++++++++++++
 The ``ndf list`` command shows evaluated nuclear data libraries available for
 download:
 
@@ -57,9 +57,10 @@ the libraries are installed on your machine or not.
 
 By default, only the most common libraries are displayed, you can provides the `--all` flag to display
 all libraries available in the IAEA database.
+In total, 71 libraries are available.
 
-Installing
-++++++++++
+Installing a Library
+++++++++++++++++++++
 The ``ndf install`` allows you to download any of the nuclear data libraries listed by the
 ``ndf list`` command.
 It takes the shortened named of the libraries you want to install as argument.
@@ -127,8 +128,8 @@ From the resulting directory, simply run:
 You can now use the JEFF-4T3 library with NDManager seemlessly.
 
 
-Removing
-++++++++
+Removing a Library
+++++++++++++++++++
 
 The ``ndf remove`` command allows you to uninstall a library:
 
@@ -137,26 +138,3 @@ The ``ndf remove`` command allows you to uninstall a library:
     $ ndf remove endfb81
 
 It removes all installed sublibraries.
-
-Python API
-++++++++++
-
-NDManager provides some python API to interact with your database.
-
-.. code-block::
-
-    In [1]: from ndmanager import get_endf6
-       ...: get_endf6("endfb71", "n", "Pu239")
-    Out[1]: PosixPath('/Users/nlinden/.ndmanager/endf6/endfb71/n/Pu239.endf6')
-
-A typical use for this would be for loading the ENDF6 tape into an OpenMC
-``IncidentNeutron`` object:
-
-.. code-block::
-
-      In [1]: from ndmanager import get_endf6
-         ...: from openmc.data import IncidentNeutron
-         ...: tape = get_endf6("endfb8", "n", "Pu239")
-         ...: n = IncidentNeutron.from_endf(tape)
-
-
