@@ -193,7 +193,7 @@ def test_ndf_install_remove(capsys):
         sha1 = compute_file_sha1(i.absolute())
         assert sha1 == endfb8_sha1[str(i)]
 
-    ndf(f"install {NDMANAGER_ENDF6 / "endfb8"} --name endfb8-copy")
+    ndf(f"install {NDMANAGER_ENDF6 / 'endfb8'} --name endfb8-copy")
     ndf("remove endfb8-copy")
 
     ndf("remove endfb8")
