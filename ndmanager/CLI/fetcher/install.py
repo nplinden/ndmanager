@@ -4,10 +4,12 @@ import argparse as ap
 from functools import reduce
 from pathlib import Path
 from typing import List
+import shutil
 
 import requests
 
 from ndmanager.API.iaea import IAEA
+from ndmanager.API.endf6 import Endf6
 from ndmanager.data import SUBLIBRARIES_SHORTLIST
 from ndmanager.env import NDMANAGER_ENDF6
 
@@ -23,7 +25,13 @@ class NdfInstallCommand:
                                  arguments
         """
         self.args = args
-        self.libraries = set(args.libraries)
+        self.libraries = list(set(args.libraries))
+        if len(self.libraries) == 1 and args.name is not None:
+            libpath = Path(self.libraries[0])
+            if libpath.exists():
+                self.install_directory(libpath, args.name)
+                return
+                
         if not IAEA.is_cached():
             print("Initializing IAEA database...")
         self.iaea = IAEA()
@@ -124,6 +132,43 @@ class NdfInstallCommand:
             with open(target, "w", encoding="utf-8", newline="") as f:
                 f.write(tape)
 
+    def install_directory(self, libpath: str, libname: str) -> None:
+        """Automatically
+
+        Args:
+            libpath (str): The path to the directory where the ENDF6 tape are located
+            libname (str): The name to give to the library
+
+        Raises:
+            FileExistsError: If the library name is already taken
+        """
+        print(f"Installing the {libname} library...")
+        p = NDMANAGER_ENDF6 / libname
+        if p.exists():
+            raise FileExistsError(f"Library {libname} already exists")
+        p.mkdir(parents=True)
+
+        candidates = Path(libpath).rglob("*")
+        ntapes = 0
+        for candidate in candidates:
+            try:
+                e = Endf6(candidate)
+            except:
+                continue
+            if e.sublibrary == "tsl":
+                name = f"{e.sublibrary}/{candidate.stem}.endf6"
+            elif e.sublibrary in ["photo", "ard"]:
+                name = f"{e.sublibrary}/{e.nuclide.element}.endf6"
+            else:
+                name = f"{e.sublibrary}/{e.nuclide.name}.endf6"
+
+            if not (p / e.sublibrary).exists():
+                (p / e.sublibrary).mkdir()
+
+            ntapes += 1
+            shutil.copy(candidate, p / name)
+        print(f"Installed {ntapes} tapes at {p}")
+
     @classmethod
     def parser(cls, subparsers):
         """Add the parser for the 'ndf install' command to a subparser object
@@ -133,14 +178,14 @@ class NdfInstallCommand:
         """
         parser = subparsers.add_parser(
             "install",
-            help="Download ENDF6 files from the IAEA website",
+            help="Install an evaluated nuclear data library, from a local directory or the IAEA website",
         )
         parser.add_argument(
             "libraries",
             action="extend",
             nargs="+",
             type=str,
-            help="Set of nuclear data libraries to download",
+            help="Set of nuclear data libraries to install"
         )
 
         group = parser.add_mutually_exclusive_group()
@@ -153,9 +198,16 @@ class NdfInstallCommand:
             help="List of sublibraries libraries to download",
         )
         group.add_argument(
-            "--all", "-a", action="store_true", help="Download all sublibraries."
+            "--all", "-a", action="store_true", help="Download all sublibraries"
         )
         parser.add_argument(
             "-j", type=int, default=1, help="Number of concurent processes"
+        )
+        parser.add_argument(
+            "--name",
+            "-n",
+            type=str,
+            default=None,
+            help="The name to give to the library, local installation only",
         )
         parser.set_defaults(func=cls)

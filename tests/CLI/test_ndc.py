@@ -1,9 +1,5 @@
 import shlex
-import pytest
-from pathlib import Path
-import argparse as ap
 from ndmanager.CLI.chainer.main import parser
-from ndmanager.CLI.chainer.build import NdcBuildCommand
 
 def run(command):
     args = parser.parse_args(shlex.split(command))
