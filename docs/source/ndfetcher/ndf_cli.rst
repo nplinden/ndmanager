@@ -1,0 +1,149 @@
+.. ndf_cli:
+
+The ``ndf`` Command
+-------------------
+
+The NDFetcher module provides the ``ndf`` command to manage your evaluated nuclear
+data files in the ENDF6 format.
+The spirit of ``ndf`` is to be used as a kind of package manager for nuclear
+data libraries.
+The main source of ENDF6 files for NDFetcher is the
+`IAEA website <https://www-nds.iaea.org/public/download-endf/>`_, as it stores
+most ENDF6 data libraries using a common, easy to parse directory structure.
+
+NDFetcher provides three commands:
+
+.. code-block:: text
+
+   usage: ndf [-h] {install,list,remove} ...
+
+   Manage your ENDF6 format nuclear data libraries
+
+   options:
+     -h, --help            show this help message and exit
+
+   Commands:
+     {install,list,remove}
+       install             Download ENDF6 files from the IAEA website
+       list                List libraries compatible with NDManager
+       remove              Remove one or more installed ENDF6 libraries
+
+
+
+Listing
++++++++
+The ``ndf list`` command shows evaluated nuclear data libraries available for
+download:
+
+.. code-block::
+
+    $ ndf list
+    ---------------------------------------------------------------  Available libraries  ----------------------------------------------------------------
+    jeff33   JEFF-3.3        [✓]: Version 3.3 of the Joint Evaluated Fission and Fusion (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)
+    jeff311  JEFF-3.1.1      [✓]: Version 3.1.1 of the Joint Evaluated Fission and Fusion (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)
+    jendl5   JENDL-5-Aug2023 [ ]: Version 5 of the Japanese Evaluated Nuclear Data Library (JENDL)library distributed by JAEA
+    endfb71  ENDF-B-VII.1    [✓]: Version 7.1 of the ENDF-B data library distributed by the NNDC
+    endfb8   ENDF-B-VIII.0   [✓]: Version 8.0 of the ENDF-B data library distributed by the NNDC
+    tendl19  TENDL-2019      [ ]: 2019 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).
+    tendl23  TENDL-2023      [ ]: 2023 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).
+    cendl32  CENDL-3.2       [✓]: Version 3.2 of the Chinese Evaluated Nuclear Data Library (CENDL) distributed by the China Nuclear Data Center.
+    cendl31  CENDL-3.1       [✓]: Version 3.1 of the Chinese Evaluated Nuclear Data Library (CENDL) distributed by the China Nuclear Data Center.
+    ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+All libraries are shown with a shorthand name, used throughout ``ndmanager``, as well as a
+fancy name under which the libraries are stored on IAEA's website.
+``ndf list`` also provides a short description of the libraries as well as an indication whether
+the libraries are installed on your machine or not.
+
+By default, only the most common libraries are displayed, you can provides the `--all` flag to display
+all libraries available in the IAEA database.
+
+Installing
+++++++++++
+The ``ndf install`` allows you to download any of the nuclear data libraries listed by the
+``ndf list`` command.
+It takes the shortened named of the libraries you want to install as argument.
+
+By default, ``ndf`` will download a restricted number of sublibraries,
+shown in the following table:
+
++------------+----------------------------------------+---------+
+| Short name | Description                            | Default |
++============+========================================+=========+
+| n          | Incident-Neutron Data                  | Yes     |
++------------+----------------------------------------+---------+
+| decay      | Radioactive Decay Data                 | Yes     |
++------------+----------------------------------------+---------+
+| nfpy       | Neutron-Induced Fission Product Yields | Yes     |
++------------+----------------------------------------+---------+
+| sfpy       | Spontaneous Fission Product Yields     | Yes     |
++------------+----------------------------------------+---------+
+| tsl        | Thermal Neutron Scattering Data        | Yes     |
++------------+----------------------------------------+---------+
+| ard        | Atomic Relaxation Data                 | Yes     |
++------------+----------------------------------------+---------+
+| photo      | Photo-Atomic Interaction Data          | Yes     |
++------------+----------------------------------------+---------+
+| g          | Photo-Nuclear Data                     | No      |
++------------+----------------------------------------+---------+
+| e          | Electro-Atomic Interaction Data        | No      |
++------------+----------------------------------------+---------+
+| p          | Incident-Proton Data                   | No      |
++------------+----------------------------------------+---------+
+| d          | Incident-Deuteron Data                 | No      |
++------------+----------------------------------------+---------+
+| t          | Incident-Tritium Data                  | No      |
++------------+----------------------------------------+---------+
+| he4        | Incident-He4 Data                      | No      |
++------------+----------------------------------------+---------+
+| he3        | Incident-He3 Data                      | No      |
++------------+----------------------------------------+---------+
+
+To download all available sublibraries you can pass the ``--all`` or ``-a``
+flag to the ``ndf install`` command.
+To explicitely download a set of sublibraries, you can pass the ``--sub`` or
+``-s`` parameter and the list of sublibraries you wish to download.
+Note that the ``--sub`` flag should appear *after* the list of libraries.
+Finally, you can pass the ``-j`` flag with an integer to use multiple processes
+to download the libraries faster.
+
+.. code-block::
+
+    $ ndf install endfb81 -j 5 --sub photo ard
+    ENDF/B-VIII.1/photo      : 100%|████████████████████████████████████████| 100/100 [00:13s]
+    ENDF/B-VIII.1/ard        : 100%|████████████████████████████████████████| 100/100 [00:02s]
+
+
+Removing
+++++++++
+
+The ``ndf remove`` command allows you to uninstall a library:
+
+.. code-block::
+
+    $ ndf remove endfb81
+
+It removes all installed sublibraries.
+
+Python API
+++++++++++
+
+NDManager provides some python API to interact with your database.
+
+.. code-block::
+
+    In [1]: from ndmanager import get_endf6
+       ...: get_endf6("endfb71", "n", "Pu239")
+    Out[1]: PosixPath('/Users/nlinden/.ndmanager/endf6/endfb71/n/Pu239.endf6')
+
+A typical use for this would be for loading the ENDF6 tape into an OpenMC
+``IncidentNeutron`` object:
+
+.. code-block::
+
+      In [1]: from ndmanager import get_endf6
+         ...: from openmc.data import IncidentNeutron
+         ...: tape = get_endf6("endfb8", "n", "Pu239")
+         ...: n = IncidentNeutron.from_endf(tape)
+
+
