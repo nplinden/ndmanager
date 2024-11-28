@@ -113,6 +113,19 @@ to download the libraries faster.
     ENDF/B-VIII.1/photo      : 100%|████████████████████████████████████████| 100/100 [00:13s]
     ENDF/B-VIII.1/ard        : 100%|████████████████████████████████████████| 100/100 [00:02s]
 
+In addition to downloading nuclear data, the ``ndf install`` command allows you to install a custom
+made library stored on your machine for use with NDManager.
+For instance if your want to use the `JEFF-4T3 <https://www.oecd-nea.org/dbdata/jeff/jeff40/t4/>`_
+library published by the NEA, you can download it from the website and extract the zip archive.
+
+From the resulting directory, simply run:
+
+.. code-block::
+
+  $ ndf install . --name jeff4t3
+
+You can now use the JEFF-4T3 library with NDManager seemlessly.
+
 
 Removing
 ++++++++
