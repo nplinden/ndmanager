@@ -38,22 +38,34 @@ download:
 .. code-block::
 
     $ ndf list
-    ---------------------------------------------------------------  Available libraries  ----------------------------------------------------------------
-    jeff33   JEFF-3.3        [✓]: Version 3.3 of the Joint Evaluated Fission and Fusion (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)
-    jeff311  JEFF-3.1.1      [✓]: Version 3.1.1 of the Joint Evaluated Fission and Fusion (JEFF) library distributed by OECD's Nuclear Energy Agency (NEA)
-    jendl5   JENDL-5-Aug2023 [ ]: Version 5 of the Japanese Evaluated Nuclear Data Library (JENDL)library distributed by JAEA
-    endfb71  ENDF-B-VII.1    [✓]: Version 7.1 of the ENDF-B data library distributed by the NNDC
-    endfb8   ENDF-B-VIII.0   [✓]: Version 8.0 of the ENDF-B data library distributed by the NNDC
-    tendl19  TENDL-2019      [ ]: 2019 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).
-    tendl23  TENDL-2023      [ ]: 2023 release of the TENDL library distributed by the Paul Scherrer Institute (Switzerland).
-    cendl32  CENDL-3.2       [✓]: Version 3.2 of the Chinese Evaluated Nuclear Data Library (CENDL) distributed by the China Nuclear Data Center.
-    cendl31  CENDL-3.1       [✓]: Version 3.1 of the Chinese Evaluated Nuclear Data Library (CENDL) distributed by the China Nuclear Data Center.
-    ------------------------------------------------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------  Available libraries  ----------------------------------------------------
+    brond22              BROND-2-2            [ ]: BROND-2 USSR evaluated neutron data library, issued in 1992
+    brond31              BROND-3.1            [ ]: BROND-3.1 Russian evaluated neutron data library, issued in 2016
+    cendl31              CENDL-3.1            [ ]: CENDL-3.1 Chinese evaluated neutron data library, issued in 2009
+    cendl32              CENDL-3.2            [✓]: CENDL-3.2 Chinese evaluated neutron data library, issued in 2020
+    endfb70              ENDF-B-VII.0         [ ]: ENDF/B-VII.0 U.S. Evaluated Nuclear Data Library, issued in 2006
+    endfb71              ENDF-B-VII.1         [ ]: ENDF/B-VII.1 U.S. Evaluated Nuclear Data Library, issued in 2011
+    endfb8               ENDF-B-VIII.0        [✓]: ENDF/B-VIII.0 U.S. Evaluated Nuclear Data Library, issued in 2018
+    endfb81              ENDF-B-VIII.1        [ ]: ENDF/B-VIII.1 U.S. Evaluated Nuclear Data Library, issued in 2024
+    fendl32b             FENDL-3.2b           [ ]: FENDL-3.2b Fusion Evaluated Nuclear Data Library, 2022
+    jeff31               JEFF-3.1             [ ]: JEFF-3.1 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+    jeff311              JEFF-3.1.1           [ ]: JEFF-3.1 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+    jeff312              JEFF-3.1.2           [ ]: JEFF-3.1.2 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+    jeff33               JEFF-3.3             [✓]: JEFF-3.3 Evaluated nuclear data library of the OECD Nuclear Energy Agency, 2017
+    jendl32              JENDL-3.2            [ ]: JENDL-3.2 Japanese evaluated nuclear data library, 1994
+    jendl4               JENDL-4.0            [ ]: JENDL-4.0 Japanese evaluated nuclear data library, 2010
+    jendl5               JENDL-5-Aug2023      [ ]: JENDL-5 Japanese evaluated nuclear data library, 2021
+    tendl2021            TENDL-2021           [ ]: TENDL-2021 TALYS-based Evaluated Nuclear Data Library, 2021
+    tendl2023            TENDL-2023           [✓]: TENDL-2023 TALYS-based Evaluated Nuclear Data Library, 2023
+    -----------------------------------------------------  Custom Libraries  ------------------------------------------------------
+    bar             foo             jeff4t3
+
 
 All libraries are shown with a shorthand name, used throughout ``ndmanager``, as well as a
 fancy name under which the libraries are stored on IAEA's website.
 ``ndf list`` also provides a short description of the libraries as well as an indication whether
 the libraries are installed on your machine or not.
+It will also display any custom library you might have installed manually.
 
 By default, only the most common libraries are displayed, you can provides the `--all` flag to display
 all libraries available in the IAEA database.
