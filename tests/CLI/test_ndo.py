@@ -1,13 +1,10 @@
 import shlex
 import pytest
 from ndmanager.CLI.omcer.main import parser
-
-def run(command):
-    args = parser.parse_args(shlex.split(command))
-    args.func(args)
+from utils import ndo
 
 def test_ndo_list_install_remove(capsys, build_lib):
-    run("list")
+    ndo("list")
     captured = capsys.readouterr()
     expected = ("-------------------------------------------------------------"
     "-  Installable Libraries  -----------------------------------------------"
@@ -25,8 +22,8 @@ def test_ndo_list_install_remove(capsys, build_lib):
     "      A test library used to showcase the capabilities of ndo\n")
     assert captured.out == expected
 
-    run("install lanl/endfb70")
-    run("list")
+    ndo("install lanl/endfb70")
+    ndo("list")
     captured = capsys.readouterr()
     expected = ("-------------------------------------------------------------"
     "-  Installable Libraries  -----------------------------------------------"
@@ -45,11 +42,11 @@ def test_ndo_list_install_remove(capsys, build_lib):
     assert captured.out == expected
 
     with pytest.raises(ValueError):
-        run("clone toto coucou")
-    run("clone lanl/endfb70 coucou")
+        ndo("clone toto coucou")
+    ndo("clone lanl/endfb70 coucou")
     with pytest.raises(ValueError):
-        run("clone lanl/endfb70 coucou")
-    run("list")
+        ndo("clone lanl/endfb70 coucou")
+    ndo("list")
     captured = capsys.readouterr()
     expected = ("-------------------------------------------------------------"
     "-  Installable Libraries  -----------------------------------------------"
@@ -67,8 +64,8 @@ def test_ndo_list_install_remove(capsys, build_lib):
     "              A test library used to showcase the capabilities of ndo\n")
     assert captured.out == expected
 
-    run("remove lanl/endfb70 coucou")
-    run("list")
+    ndo("remove lanl/endfb70 coucou")
+    ndo("list")
     captured = capsys.readouterr()
     expected = ("-------------------------------------------------------------"
     "-  Installable Libraries  -----------------------------------------------"
