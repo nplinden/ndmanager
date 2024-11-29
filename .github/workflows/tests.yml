@@ -35,6 +35,12 @@ jobs:
               shell: bash
               run: |
                   $GITHUB_WORKSPACE/tools/ci/install_openmc.sh
+             
+            - name: Installing Sandy
+              shell: bash
+              run: |
+                  $GITHUB_WORKSPACE/tools/ci/install_sandy.sh
+
             - name: Installing NDManager
               shell: bash
               run: |
