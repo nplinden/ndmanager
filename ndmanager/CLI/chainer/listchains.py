@@ -45,7 +45,7 @@ class NdcListCommand(Command):
         for xmlfile in sorted(NDMANAGER_CHAINS.glob("*.xml"), key=lambda x: str.lower(str(x))):
             chains.append(xmlfile.stem)
 
-        lst.append(header("Available Chains"))
+        lst.append(header("Custom Chains"))
         s = " ".join([f"{i:<15}" for i in sorted(chains)])
         s = textwrap.wrap(s, width=col)
         lst.append("\n".join(s))

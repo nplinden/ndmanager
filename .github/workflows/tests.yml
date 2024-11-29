@@ -31,10 +31,16 @@ jobs:
                   echo "$HOME/NJOY2016/build" >> $GITHUB_PATH
                   $GITHUB_WORKSPACE/tools/ci/install_njoy.sh
              
-            - name: Installing OpenMC's python API
+            - name: Installing OpenMC
               shell: bash
               run: |
                   $GITHUB_WORKSPACE/tools/ci/install_openmc.sh
+             
+            - name: Installing Sandy
+              shell: bash
+              run: |
+                  $GITHUB_WORKSPACE/tools/ci/install_sandy.sh
+
             - name: Installing NDManager
               shell: bash
               run: |
