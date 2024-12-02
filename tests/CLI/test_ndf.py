@@ -1,4 +1,3 @@
-import shlex
 import shutil
 from pathlib import Path
 
