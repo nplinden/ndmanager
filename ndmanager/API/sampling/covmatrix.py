@@ -210,7 +210,7 @@ class CovMatrix(sandy.CategoryCov):
         fig.savefig(path)
 
     def get_corr(self) -> "CovMatrix":
-        """Extract correlation matrix
+        """Extract correlation matrix. Copied from Sandy
 
         Returns:
             CovMatrix: The correlation matrix

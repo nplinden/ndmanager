@@ -11,7 +11,7 @@ import numpy as np
 from ndmanager.API.sampling.covmatrix import CovMatrix
 from ndmanager.API.sampling.sampling import SampleTapes, Sampling
 from ndmanager.API.utils import get_hdf5
-from ndmanager.env import NDMANAGER_COV
+from ndmanager.env import NDMANAGER_COV, NDMANAGER_SAMPLES
 
 SUM_RULES = {
     1: [2, 3],
@@ -123,13 +123,16 @@ class HDF5Sampling(Sampling):
     nuclear data file.
     """
 
-    def __init__(self, yaml_path: str):
+    def __init__(self, yaml_path: str, clean: bool):
         """Instantiate a Sampling object given a path to a yaml input file
 
         Args:
             yaml_path (str): The path to the input file
+            clean (bool): Delete existing sampled library if it exists
         """
         super().__init__(yaml_path)
+        self.clean = clean
+        self.rootpath = NDMANAGER_SAMPLES / "HDF5" / self.name
 
     def sample_one_nuclide(self, tape: SampleTapes, processes):
         """Create samples for a single nuclide

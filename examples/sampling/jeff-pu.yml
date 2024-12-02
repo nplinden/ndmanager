@@ -1,10 +1,8 @@
-summary: Create sample for Pu239 nuclide in jeff33
-description: |
-  Create sample for Pu239 nuclide in jeff33
-name: jeff33-Pu240-HDF5
+summary: Sampling Pu239 using TENDL2023 Covariances and a JEFF-3.3 base
+name: jeff33-Pu240
 reuse: jeff33
-nsmp: 500
+nsmp: 10
 temperature: 600
 kind: xs
 samples:
-  Pu240: jeff33 tendl2023@ECCO-33
+  Pu239: jeff33 tendl2023@ECCO-33
