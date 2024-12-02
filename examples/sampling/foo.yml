@@ -1,0 +1,10 @@
+summary: Create sample for H1 nuclide in the foo library
+description: |
+  Create sample for H1 nuclide in the foo library
+name: foo-H1-HDF5
+reuse: foo
+nsmp: 1
+temperature: 600
+kind: xs
+samples:
+  H1: foo foo@ECCO-33
