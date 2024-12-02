@@ -1,6 +1,7 @@
 """Definition and parser for the 'ndf pendf' command"""
 
 import argparse as ap
+import shutil
 
 from ndmanager.API.sampling.pendf_sampling import PendfSampling
 
@@ -16,8 +17,8 @@ class NdsPendfCommand:
                                  arguments
         """
         self.args = args
-        self.sampler = PendfSampling(args.filename)
-        self.sampler.create_dir(args.clean)
+        self.sampler = PendfSampling(args.filename, args.clean)
+        shutil.copy(args.filename, self.sampler.rootpath / "input.yml")
         self.sampler.sample(args.j)
 
     @classmethod

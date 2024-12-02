@@ -12,7 +12,7 @@ from ndmanager import get_endf6
 from ndmanager.API.iaea import IAEA
 from ndmanager.API.sampling.covmatrix import CovMatrix
 from ndmanager.data import IGN_MAPPING
-from ndmanager.env import NDMANAGER_COV
+from ndmanager.env import NDMANAGER_COV, NDMANAGER_ENDF6
 
 
 class NdsCovCommand:
@@ -90,7 +90,8 @@ def generate_matrices(library: str, ign: str, clean: bool, processes: int) -> No
         directory.mkdir(parents=True)
 
     with mp.get_context("spawn").Pool(processes) as p:
-        for nuclide in IAEA()[library]["n"].keys():
+        for tape in (NDMANAGER_ENDF6 / library / "n").glob("*.endf6"):
+            nuclide = tape.stem
             p.apply_async(
                 generate_one_matrix, args=(library, nuclide, ign_value, directory)
             )

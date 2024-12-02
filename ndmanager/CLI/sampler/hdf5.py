@@ -1,6 +1,7 @@
 """Definition and parser for the 'ndf hdf5' command"""
 
 import argparse as ap
+import shutil
 
 from ndmanager.API.sampling.hdf5_sampling import HDF5Sampling
 
@@ -16,8 +17,8 @@ class NdsHdf5Sampling:
                                  arguments
         """
         self.args = args
-        self.sampler = HDF5Sampling(args.filename)
-        self.sampler.create_dir(args.clean)
+        self.sampler = HDF5Sampling(args.filename, args.clean)
+        shutil.copy(args.filename, self.sampler.rootpath / "input.yml")
         self.sampler.sample(1)
 
     @classmethod

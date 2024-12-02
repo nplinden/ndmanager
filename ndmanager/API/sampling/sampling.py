@@ -3,6 +3,7 @@
 import logging
 import shutil
 from collections import namedtuple
+from pathlib import Path
 
 import yaml
 from openmc.data import DataLibrary
@@ -44,8 +45,33 @@ class Sampling:
             else:
                 self.tapes.append(SampleTapes(nuclide, libraries[0], libraries[1]))
 
-        self.rootpath = NDMANAGER_SAMPLES / self.name
-        self.xs_path = self.rootpath / "cross_sections"
+    @property
+    def xs_path(self) -> Path:
+        """Path to the cross_sections folder
+
+        Returns:
+            Path: The path to the cross_sections folder
+        """
+        return self.rootpath / "cross_sections"
+
+    @property
+    def rootpath(self) -> Path:
+        """Path to the sample folder
+
+        Returns:
+            Path: The path to the sample folder
+        """
+        return self._rootpath
+
+    @rootpath.setter
+    def rootpath(self, path: Path) -> None:
+        """Set the path to the sample folder
+
+        Args:
+            path (Path): The path to the sample folder
+        """
+        self._rootpath = Path(path)
+        self.create_dir(self.clean)
 
     def create_dir(self, clean: bool):
         """Create the required directories to prepare for data generation

@@ -208,3 +208,21 @@ class CovMatrix(sandy.CategoryCov):
         fig.suptitle(f"{self.nuclide} cross-section\ncovariances", fontsize=20)
         fig.subplots_adjust(wspace=0, hspace=0)
         fig.savefig(path)
+
+    def get_corr(self) -> "CovMatrix":
+        """Extract correlation matrix. Copied from Sandy
+
+        Returns:
+            CovMatrix: The correlation matrix
+        """
+        cov = self.data.values
+        with np.errstate(divide='ignore', invalid='ignore'):
+            coeff = np.true_divide(1, self.get_std().values)
+            coeff[~ np.isfinite(coeff)] = 0   # -inf inf NaN
+        corr = np.multiply(np.multiply(cov, coeff).T, coeff)
+        df =  pd.DataFrame(
+            corr,
+            index=self.data.index,
+            columns=self.data.columns,
+            )
+        return self.__class__(self.nuclide, df)

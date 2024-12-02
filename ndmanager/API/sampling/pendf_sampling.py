@@ -13,6 +13,7 @@ import openmc.data
 from sandy.endf6 import Endf6
 
 from ndmanager import get_endf6
+from ndmanager.env import NDMANAGER_SAMPLES
 from ndmanager.API.sampling.sampling import SampleTapes, Sampling
 from ndmanager.data import IGN_MAPPING
 
@@ -36,13 +37,16 @@ class PendfSampling(Sampling):
     temperature treatment and conversion to the ACE format.
     """
 
-    def __init__(self, yaml_path: str):
+    def __init__(self, yaml_path: str, clean: bool):
         """Instantiate a Sampling object given a path to a yaml input file
 
         Args:
             yaml_path (str): The path to the input file
+            clean (bool): Delete existing sampled library if it exists
         """
         super().__init__(yaml_path)
+        self.clean = clean
+        self.rootpath = NDMANAGER_SAMPLES / "PENDF" / self.name
 
     def sample_one_nuclide(self, tape: SampleTapes, processes: int) -> None:
         """Manages the Sandy run for a given 3-tuple of nuclide name, cross-section

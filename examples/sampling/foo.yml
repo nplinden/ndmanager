@@ -1,0 +1,9 @@
+summary: Sampling H1 cross sections
+name: H1-in-foo
+reuse: foo
+nsmp: 15
+temperature: 600
+kind: xs
+samples:
+  H1: foo foo@ECCO-33
+  C12: foo foo@ECCO-33
