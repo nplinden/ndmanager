@@ -171,3 +171,10 @@ endfb8_sha1 = {
     "pytest-artifacts/endf6/endfb8/photo/Re.endf6": "cffac3f7c7c736a8632dd0a1b5ee5989740ee95c",
     "pytest-artifacts/endf6/endfb8/photo/Na.endf6": "5b4eb07bdf39e4e073b07b32b4772c2a3e3db3a2",
 }
+
+cov_sha1 = {
+    "pytest-artifacts/cov/foo/ECCO-33/Am242_m1.h5": "9ec6082f0c0a7cb5bb90df6cb8ee6803ed4c3fe3",
+    "pytest-artifacts/cov/foo/ECCO-33/C12.h5": "b74f3b97c8464540d59ab235bcdaf824bfeae594",
+    "pytest-artifacts/cov/foo/ECCO-33/H1.h5": "c08596ab5a293fc6a381e3743de95402a4e9ae20",
+
+}

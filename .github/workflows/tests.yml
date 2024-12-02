@@ -9,6 +9,7 @@ on:
 env:
     NDMANAGER_ENDF6: ${HOME}/.ndmanager/endf6
     NDMANAGER_HDF5: ${HOME}/.ndmanager/hdf5
+    NJOY: ${HOME}/NJOY2016/build/njoy
 
 jobs:
     build:
