@@ -1,5 +1,3 @@
-import shlex
-from ndmanager.CLI.chainer.main import parser
 from utils import ndc
 
 

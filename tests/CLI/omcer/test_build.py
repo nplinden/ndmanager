@@ -1,7 +1,6 @@
 from itertools import chain
 from pathlib import Path
 
-import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
 from tests.data import xs_sha1

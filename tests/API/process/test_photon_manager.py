@@ -1,6 +1,4 @@
-from pathlib import Path, PosixPath
-
-import pytest
+from pathlib import Path
 
 from ndmanager.API.process.photon_manager import PhotonManager
 

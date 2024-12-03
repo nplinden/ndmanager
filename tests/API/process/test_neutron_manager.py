@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import pytest
-
 from ndmanager.API.process.neutron_manager import NeutronManager
 
 

@@ -1,6 +1,4 @@
-import shlex
 import pytest
-from ndmanager.CLI.omcer.main import parser
 from utils import ndo
 
 

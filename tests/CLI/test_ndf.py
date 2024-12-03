@@ -1,10 +1,8 @@
 import shutil
 from pathlib import Path
 
-import pytest
 
 from ndmanager.API.sha1 import compute_file_sha1
-from ndmanager.CLI.fetcher.main import parser
 from ndmanager.env import NDMANAGER_ENDF6
 from tests.data import IAEA_Medical_sha1, endf6_sha1, endfb8_sha1
 from utils import ndf

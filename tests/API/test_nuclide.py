@@ -1,5 +1,3 @@
-import pytest
-
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.utils import get_endf6
 

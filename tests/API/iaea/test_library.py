@@ -1,5 +1,3 @@
-import pytest
-
 from ndmanager.API.iaea import IAEALibrary, IAEASublibrary
 
 
@@ -11,7 +9,7 @@ def test_from_website():
         library.library
         == "ENDF/B-VIII.0 U.S. Evaluated Nuclear Data Library, issued in 2018"
     )
-    assert library.valid == True
+    assert library.valid
     assert library.url == "https://www-nds.iaea.org/public/download-endf/ENDF-B-VIII.0/"
     for sublib in library.sublibraries.values():
         assert isinstance(sublib, IAEASublibrary)
