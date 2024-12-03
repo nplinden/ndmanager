@@ -112,32 +112,24 @@ def set_perturbed_xs(perturbed_library: str, ismp: int):
         raise FileNotFoundError(f"Invalid sampled library name '{perturbed_library}'")
 
 
-class PerturbationIterator:
-    """A class to iterate on cross_sections.xml file of perturbed data libraries"""
+class PerturbationList(list):
+    """A class to list cross_sections.xml files of perturbed data libraries"""
 
-    def __init__(self, perturbed_library: str) -> None:
-        """Initialize a perturbation iterator using the name of the perturbed library
+    def __init__(self, perturbed_library: str, kind: str) -> None:
+        """Initialize a perturbation list using the name of the perturbed library
+        and the kind of library (HDF5 or PENDF)
 
         Args:
             perturbed_library (str): The name of the perturbed library
+            kind (str): The method used to produce the library (HDF5 or PENDF)
 
         Raises:
             FileNotFoundError: Raise an error if the library does not exist
         """
-        p = NDMANAGER_SAMPLES / perturbed_library / "cross_sections"
+        p = NDMANAGER_SAMPLES / kind / perturbed_library / "cross_sections"
         if not p.exists():
             raise FileNotFoundError(
                 f"Invalid sampled library name '{perturbed_library}'"
             )
-        self.smps = sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
-        self.ismp = -1
-
-    def __next__(self):
-        self.ismp += 1
-        if self.ismp < len(self.smps):
-            openmc.config["cross_sections"] = self.smps[self.ismp]
-            return self.ismp
-        raise StopIteration
-
-    def __iter__(self):
-        return self
+        self.toto = sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
+        self += sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
