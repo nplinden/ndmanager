@@ -99,6 +99,7 @@ REACTIONS = [
     "(n,5n2p)",
 ]
 
+
 class NdcBuildCommand(Command):
     """Define the `ndc build` command"""
 

@@ -31,7 +31,7 @@ class NdfInstallCommand:
             if libpath.exists():
                 self.install_directory(libpath, args.name)
                 return
-                
+
         if not IAEA.is_cached():
             print("Initializing IAEA database...")
         self.iaea = IAEA()
@@ -185,7 +185,7 @@ class NdfInstallCommand:
             action="extend",
             nargs="+",
             type=str,
-            help="Set of nuclear data libraries to install"
+            help="Set of nuclear data libraries to install",
         )
 
         group = parser.add_mutually_exclusive_group()

@@ -19,6 +19,7 @@ NdcInstallCommand.parser(subparsers)
 NdcListCommand.parser(subparsers)
 NdcRemoveCommand.parser(subparsers)
 
+
 def main():
     """Entry point for the ndc command"""
     args = parser.parse_args()

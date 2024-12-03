@@ -23,6 +23,7 @@ NdoRemoveCommand.parser(subparsers)
 NdoBuildCommand.parser(subparsers)
 NdoSn301Command.parser(subparsers)
 
+
 def main():
     """Entry point for the ndo command"""
     args = parser.parse_args()

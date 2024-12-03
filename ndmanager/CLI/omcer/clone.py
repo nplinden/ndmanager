@@ -6,6 +6,7 @@ import shutil
 from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
 
+
 class NdoCloneCommand(Command):
     """define the `ndo clone` command"""
 
@@ -16,7 +17,9 @@ class NdoCloneCommand(Command):
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
-        parser = subparsers.add_parser("clone", help="Clone an installed OpenMC library")
+        parser = subparsers.add_parser(
+            "clone", help="Clone an installed OpenMC library"
+        )
         parser.add_argument(
             "source",
             type=str,
@@ -28,7 +31,6 @@ class NdoCloneCommand(Command):
             help="Name for the new cloned library",
         )
         parser.set_defaults(func=cls)
-
 
     def run(self, args: ap.Namespace) -> None:
         """Clone an HDF5 library from the NDManager database

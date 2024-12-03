@@ -8,6 +8,7 @@ from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.format import get_terminal_size, header
 from ndmanager.CLI.parser import Command
 
+
 class NdcListCommand(Command):
     """Define the `ndc list` command"""
 
@@ -23,7 +24,6 @@ class NdcListCommand(Command):
         )
         parser.set_defaults(func=cls)
 
-
     def run(self, args: ap.Namespace) -> None:
         """List the available chains"""
         col, _ = get_terminal_size()
@@ -38,11 +38,15 @@ class NdcListCommand(Command):
 
             s = f"{chain}"
             s = f"{s:<16} [{check}]: {info}"
-            s = textwrap.wrap(s, initial_indent="", subsequent_indent=23 * " ", width=col)
+            s = textwrap.wrap(
+                s, initial_indent="", subsequent_indent=23 * " ", width=col
+            )
             lst.append("\n".join(s))
 
         chains = []
-        for xmlfile in sorted(NDMANAGER_CHAINS.glob("*.xml"), key=lambda x: str.lower(str(x))):
+        for xmlfile in sorted(
+            NDMANAGER_CHAINS.glob("*.xml"), key=lambda x: str.lower(str(x))
+        ):
             chains.append(xmlfile.stem)
 
         lst.append(header("Custom Chains"))

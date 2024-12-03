@@ -42,8 +42,10 @@ class NdfListCommand:
             self.lines.append("\n".join(s))
 
         self.lines.append(header("Custom Libraries"))
-        installed = sorted([lib.name for lib in NDMANAGER_ENDF6.glob("*") if lib.name not in libnames], 
-                           key=str.lower)
+        installed = sorted(
+            [lib.name for lib in NDMANAGER_ENDF6.glob("*") if lib.name not in libnames],
+            key=str.lower,
+        )
         s = " ".join([f"{i:<15}" for i in sorted(installed)])
         s = textwrap.wrap(s, width=col)
         self.lines.append("\n".join(s))

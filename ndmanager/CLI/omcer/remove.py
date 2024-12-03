@@ -6,6 +6,7 @@ import shutil
 from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
 
+
 class NdoRemoveCommand(Command):
     """Define the `ndo remove` command"""
 
@@ -16,7 +17,9 @@ class NdoRemoveCommand(Command):
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
-        parser = subparsers.add_parser("remove", help="Remove one or more OpenMC libraries")
+        parser = subparsers.add_parser(
+            "remove", help="Remove one or more OpenMC libraries"
+        )
         parser.add_argument(
             "library",
             type=str,

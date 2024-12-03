@@ -11,6 +11,7 @@ from ndmanager.data import OPENMC_CHAINS
 from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.CLI.parser import Command
 
+
 class NdcInstallCommand(Command):
     """Define the `ndc install` command"""
 
@@ -21,7 +22,9 @@ class NdcInstallCommand(Command):
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
-        parser = subparsers.add_parser("install", help="Install one or more OpenMC Chain")
+        parser = subparsers.add_parser(
+            "install", help="Install one or more OpenMC Chain"
+        )
         parser.add_argument(
             "chain",
             type=str,
@@ -30,7 +33,7 @@ class NdcInstallCommand(Command):
             nargs="+",
         )
         parser.set_defaults(func=cls)
-    
+
     def run(self, args: ap.Namespace) -> None:
         """Download and install a OpenMC chain file from the official website
 

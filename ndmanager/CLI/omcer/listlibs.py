@@ -10,6 +10,7 @@ from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.format import get_terminal_size, header
 from ndmanager.CLI.parser import Command
 
+
 class NdoListCommand(Command):
     """Define the `ndo list` command"""
 
@@ -60,6 +61,8 @@ class NdoListCommand(Command):
             else:
                 desc = ""
             s = f"{name:<16} {desc}"
-            s = textwrap.wrap(s, initial_indent="", subsequent_indent=21 * " ", width=col)
+            s = textwrap.wrap(
+                s, initial_indent="", subsequent_indent=21 * " ", width=col
+            )
             lst.append("\n".join(s))
         print("\n".join(lst))
