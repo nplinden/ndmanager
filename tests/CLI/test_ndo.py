@@ -1,5 +1,9 @@
 import pytest
-from utils import ndo
+from pathlib import Path
+from utils import ndo, ndf
+
+from ndmanager import IAEA
+from ndmanager.CLI.omcer.edit import find_negative
 
 
 def test_ndo_list_install_remove(capsys, build_lib):
@@ -89,3 +93,40 @@ def test_ndo_list_install_remove(capsys, build_lib):
         "      A test library used to showcase the capabilities of ndo\n"
     )
     assert captured.out == expected
+
+
+def test_sn301(install):
+    iaea = IAEA()
+    iaea["endfb8"]["n"].download_single("Mo98", "pytest-artifacts/endfb8-Mo/Mo98.endf6")
+    iaea["cendl32"]["n"].download_single(
+        "Mo98", "pytest-artifacts/cendl32-Mo/Mo98.endf6"
+    )
+    ndf("install pytest-artifacts/endfb8-Mo --name endfb8-Mo")
+    ndf("install pytest-artifacts/cendl32-Mo --name cendl32-Mo")
+
+    cendl32_input = """summary: For testing SN301
+description: For testing SN301
+name: cendl32-Mo
+neutron:
+  base: cendl32-Mo
+  temperatures: 273
+"""
+    p = Path("pytest-artifacts/cendl32_input.yml")
+    with open(p, "w") as f:
+        print(cendl32_input, file=f)
+    ndo(f"build {p}")
+
+    endfb8_input = """summary: For testing SN301
+description: For testing SN301
+name: endfb8-Mo
+neutron:
+  base: endfb8-Mo
+  temperatures: 273
+"""
+    p = Path("pytest-artifacts/endfb8_input.yml")
+    with open(p, "w") as f:
+        print(endfb8_input, file=f)
+    ndo(f"build {p}")
+    ndo("sn301 --target endfb8-Mo --sources cendl32-Mo")
+    empty = find_negative("pytest-artifacts/hdf5/endfb8-Mo/neutron/Mo98.h5", 301)
+    assert not empty

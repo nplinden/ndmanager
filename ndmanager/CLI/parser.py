@@ -19,7 +19,7 @@ class Command:
 
     @classmethod
     @abc.abstractmethod
-    def parser(self, subparsers: ap._SubParsersAction):
+    def parser(self, subparsers: ap._SubParsersAction):  # pragma: no cover
         """This should define a parser to add to the subparser list
 
         Args:
@@ -28,7 +28,7 @@ class Command:
         pass
 
     @abc.abstractmethod
-    def run(self, args: ap.Namespace) -> None:
+    def run(self, args: ap.Namespace) -> None:  # pragma: no cover
         """This should define what the command does based on the passed
         CLI arguments
 
