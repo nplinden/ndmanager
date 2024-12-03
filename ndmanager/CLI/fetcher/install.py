@@ -153,7 +153,7 @@ class NdfInstallCommand:
         for candidate in candidates:
             try:
                 e = Endf6(candidate)
-            except:
+            except (UnicodeDecodeError, ValueError, IsADirectoryError):
                 continue
             if e.sublibrary == "tsl":
                 name = f"{e.sublibrary}/{candidate.stem}.endf6"
