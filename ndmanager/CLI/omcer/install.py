@@ -14,6 +14,7 @@ from ndmanager.data import OPENMC_LIBS
 from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
 
+
 class NdoInstallCommand(Command):
     """Define the `ndo install` command"""
 
@@ -57,6 +58,7 @@ class NdoInstallCommand(Command):
                     target.parent.mkdir(exist_ok=True, parents=True)
                     shutil.rmtree(target, ignore_errors=True)
                     shutil.move(source, target)
+
 
 def download(url: str, tarname: str, family: str, lib: str):
     """Download an HDF5 OpenMC library from the official OpenMC website
@@ -109,4 +111,3 @@ def extract(tarname: str, total: int, family: str, lib: str):
             tar.extract(item, ".", filter="tar")
             pbar.update(item.size)
         pbar.close()
-

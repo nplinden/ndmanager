@@ -9,6 +9,7 @@ from ndmanager import __version__
 from ndmanager.API.process.ndm_library import NDMLibrary
 from ndmanager.CLI.parser import Command
 
+
 class NdoBuildCommand(Command):
     """define the `ndo build` command"""
 
@@ -41,9 +42,10 @@ class NdoBuildCommand(Command):
             type=int,
             default=None,
         )
-        parser.add_argument("-j", type=int, default=1, help="Number of concurent processes")
+        parser.add_argument(
+            "-j", type=int, default=1, help="Number of concurent processes"
+        )
         parser.set_defaults(func=cls)
-
 
     def run(self, args: ap.Namespace) -> None:
         """Build an OpenMC HDF5 nuclear data library from a YAML descriptive file

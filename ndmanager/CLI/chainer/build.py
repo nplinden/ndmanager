@@ -1,8 +1,6 @@
 """Definition and parser for the `ndc build` command"""
 
 import argparse as ap
-import shutil
-from contextlib import chdir
 
 from openmc.deplete.chain import Chain
 import yaml
@@ -98,6 +96,7 @@ REACTIONS = [
     "(n,3n2pa)",
     "(n,5n2p)",
 ]
+
 
 class NdcBuildCommand(Command):
     """Define the `ndc build` command"""

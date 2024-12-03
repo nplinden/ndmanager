@@ -1,11 +1,11 @@
-import shlex
-from ndmanager.CLI.chainer.main import parser
 from utils import ndc
+
 
 def test_ndc_list_install_remove(capsys):
     ndc("list")
     captured = capsys.readouterr()
-    expected = ("-----------------------------------------------------"
+    expected = (
+        "-----------------------------------------------------"
         "-----------  Installable Chains  ----------------------------"
         "------------------------------------\nendfb71-thermal  [ ]: A"
         " chain based on the ENDF-B/VII.1 evaluation with thermal capt"
@@ -21,13 +21,15 @@ def test_ndc_list_install_remove(capsys):
         "256820 with fast capture branching ratios\n------------------"
         "------------------------------------------------  Custom Chai"
         "ns  ---------------------------------------------------------"
-        "----------\n\n")
+        "----------\n\n"
+    )
     assert captured.out == expected
 
     ndc("install casl-fast")
     ndc("list")
     captured = capsys.readouterr()
-    expected = ("-----------------------------------------------------"
+    expected = (
+        "-----------------------------------------------------"
         "-----------  Installable Chains  ----------------------------"
         "------------------------------------\nendfb71-thermal  [ ]: A"
         " chain based on the ENDF-B/VII.1 evaluation with thermal capt"
@@ -43,13 +45,15 @@ def test_ndc_list_install_remove(capsys):
         "256820 with fast capture branching ratios\n------------------"
         "------------------------------------------------  Custom Chai"
         "ns  ---------------------------------------------------------"
-        "----------\n\n")
+        "----------\n\n"
+    )
     assert captured.out == expected
 
     ndc("remove casl-fast")
     ndc("list")
     captured = capsys.readouterr()
-    expected = ("-----------------------------------------------------"
+    expected = (
+        "-----------------------------------------------------"
         "-----------  Installable Chains  ----------------------------"
         "------------------------------------\nendfb71-thermal  [ ]: A"
         " chain based on the ENDF-B/VII.1 evaluation with thermal capt"
@@ -65,8 +69,10 @@ def test_ndc_list_install_remove(capsys):
         "256820 with fast capture branching ratios\n------------------"
         "------------------------------------------------  Custom Chai"
         "ns  ---------------------------------------------------------"
-        "----------\n\n")
+        "----------\n\n"
+    )
     assert captured.out == expected
+
 
 #     data = """name: jeff33-fast
 # description: |
@@ -77,7 +83,7 @@ def test_ndc_list_install_remove(capsys):
 #   ommit: C0
 #   add:
 #     endfb8: Ta180 C12 C13 O17
-# decay: 
+# decay:
 #   base: jeff33
 # nfpy:
 #   base: jeff33

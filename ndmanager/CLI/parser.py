@@ -5,9 +5,11 @@ import abc
 class Command:
     """A class that defines how command classes should look like.
     Command classes should both define a `parser` and `run` method."""
+
     __metaclass__ = abc.ABCMeta
+
     def __init__(self, args: ap.Namespace) -> None:
-        """When the class is called, simply run the 
+        """When the class is called, simply run the
         `run` command
 
         Args:

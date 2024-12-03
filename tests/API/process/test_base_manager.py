@@ -1,5 +1,3 @@
-import pytest
-
 from ndmanager.API.process.base_manager import BaseManager
 
 

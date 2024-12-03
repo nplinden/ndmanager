@@ -1,11 +1,11 @@
 """Definition and parser for the `ndo remove` command"""
 
 import argparse as ap
-import shutil
 
 from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.data import OPENMC_CHAINS
 from ndmanager.CLI.parser import Command
+
 
 class NdcRemoveCommand(Command):
     """Define the `ndc remove` command"""
@@ -26,7 +26,6 @@ class NdcRemoveCommand(Command):
             nargs="+",
         )
         parser.set_defaults(func=cls)
-
 
     def run(self, args: ap.Namespace) -> None:
         """Uninstall an OpenMC library

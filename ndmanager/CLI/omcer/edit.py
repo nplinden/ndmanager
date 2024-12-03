@@ -11,6 +11,7 @@ from h5py import File
 from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
 
+
 class NdoSn301Command(Command):
     """Define the `ndo sn301` command"""
 
@@ -48,6 +49,7 @@ class NdoSn301Command(Command):
         target = NDMANAGER_HDF5 / args.target / "cross_sections.xml"
         sources = [NDMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
         replace_negatives_in_lib(target, sources, 301, dryrun=args.dryrun, verbose=True)
+
 
 def overwrite_one_temp(source: File, target: File, nuclide: str, mt: int, t: str):
     """Substitute cross-section values for a given (nuclide, reaction, temperature) tuple
@@ -281,5 +283,3 @@ def replace_negatives_in_lib(
                 )
             if not dryrun:
                 set_negative_to_zero(target, mt)
-
-

@@ -1,5 +1,3 @@
-import pytest
-
 from ndmanager.API.iaea import IAEA, IAEALibrary
 from ndmanager.API.sha1 import compute_file_sha1
 from ndmanager.env import NDMANAGER_CONFIG

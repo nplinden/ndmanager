@@ -1,5 +1,3 @@
-import pytest
-
 from ndmanager.format import clear_line, footer, get_terminal_size, header
 
 
