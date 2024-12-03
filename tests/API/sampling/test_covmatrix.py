@@ -37,8 +37,3 @@ def test_covmatrix(install):
     p = Path("pytest-artifacts/H1-cov-MT2.png")
     matrix.plot_block(2, 2, p)
     assert p.exists()
-
-
-
-
-
