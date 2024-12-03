@@ -9,6 +9,7 @@ from ndmanager.env import NDMANAGER_ENDF6
 from tests.data import IAEA_Medical_sha1, endf6_sha1, endfb8_sha1
 from utils import ndf
 
+
 def test_ndf_install_foo_bar(install):
     p = Path("pytest-artifacts/endf6")
     for i in p.rglob("*.endf6"):
@@ -31,7 +32,7 @@ def test_ndf_install_remove(capsys):
             continue
         sha1 = compute_file_sha1(i.absolute())
         assert sha1 == IAEA_Medical_sha1[str(i)]
-    
+
     ndf("list --all")
     captured = capsys.readouterr()
     expected = (
@@ -203,7 +204,8 @@ def test_ndf_install_remove(capsys):
 
     ndf("remove endfb8")
     assert not p.exists()
-    
+
+
 def test_listlib(capsys):
     cache = Path("pytest-artifacts/IAEA_cache.json")
     if cache.exists():
@@ -212,7 +214,8 @@ def test_listlib(capsys):
     ndf("install IAEA-Medical --all")
     ndf("list")
     captured = capsys.readouterr()
-    expected = ("Initializing IAEA database...\n------------------------------"
+    expected = (
+        "Initializing IAEA database...\n------------------------------"
         "---------------------------------  Available libraries  -----"
         "-----------------------------------------------------------\n"
         "brond22              BROND-2-2            [ ]: BROND-2 USSR e"
@@ -251,6 +254,6 @@ def test_listlib(capsys):
         "brary, 2023\n------------------------------------------------"
         "-----------------  Custom Libraries  ------------------------"
         "-----------------------------------------\nIAEA-Medical    ba"
-        "r             foo\n")
+        "r             foo\n"
+    )
     assert captured.out == expected
-

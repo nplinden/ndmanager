@@ -15,6 +15,7 @@ def test_cov(build_lib):
         sha1 = compute_file_sha1(i.absolute())
         assert sha1 == cov_sha1[str(i)]
 
+
 def test_sample_build(build_lib, capsys):
     nds("cov foo --ign ECCO-33 --clean")
     in_yaml = """summary: Sampling H1 cross sections
@@ -35,19 +36,21 @@ samples:
 
     nds("list")
     captured = capsys.readouterr()
-    expected = ("Kind    Name       Base      Samples    Nuclides  De"
-                "scription\n------  ---------  ------  ---------  ---"
-                "-------  --------------------------\nHDF5    H1-in-f"
-                "oo  foo             2           2  Sampling H1 cross"
-                " sections\nPENDF   H1-in-foo  foo             2     "
-                "      2  Sampling H1 cross sections\n")
+    expected = (
+        "Kind    Name       Base      Samples    Nuclides  De"
+        "scription\n------  ---------  ------  ---------  ---"
+        "-------  --------------------------\nHDF5    H1-in-f"
+        "oo  foo             2           2  Sampling H1 cross"
+        " sections\nPENDF   H1-in-foo  foo             2     "
+        "      2  Sampling H1 cross sections\n"
+    )
     assert captured.out == expected
 
     perturbations = PerturbationList("H1-in-foo", "HDF5")
     for i, path in enumerate(perturbations):
-        assert path.samefile(f"pytest-artifacts/samples/HDF5/H1-in-foo/cross_sections/{i}.xml")
-
-
+        assert path.samefile(
+            f"pytest-artifacts/samples/HDF5/H1-in-foo/cross_sections/{i}.xml"
+        )
 
 
 def test_generate_one_matrix(install):
@@ -56,5 +59,3 @@ def test_generate_one_matrix(install):
     generate_one_matrix("foo", "H1", 3, p)
     sha1 = compute_file_sha1(p / "H1.h5")
     assert sha1 == "5e67acd460fdec289d9ba3d76b0a702941f04c49"
-
-
