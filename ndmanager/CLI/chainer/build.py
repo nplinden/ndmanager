@@ -1,8 +1,6 @@
 """Definition and parser for the `ndc build` command"""
 
 import argparse as ap
-import shutil
-from contextlib import chdir
 
 from openmc.deplete.chain import Chain
 import yaml

@@ -9,7 +9,6 @@ import warnings
 from pathlib import Path
 
 from ndmanager import get_endf6
-from ndmanager.API.iaea import IAEA
 from ndmanager.API.sampling.covmatrix import CovMatrix
 from ndmanager.data import IGN_MAPPING
 from ndmanager.env import NDMANAGER_COV, NDMANAGER_ENDF6

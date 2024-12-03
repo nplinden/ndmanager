@@ -1,7 +1,6 @@
 """Definition and parser for the `ndo remove` command"""
 
 import argparse as ap
-import shutil
 
 from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.data import OPENMC_CHAINS

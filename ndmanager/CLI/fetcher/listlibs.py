@@ -5,7 +5,7 @@ import textwrap
 
 from ndmanager.API.iaea import IAEA
 from ndmanager.env import NDMANAGER_ENDF6
-from ndmanager.format import footer, get_terminal_size, header
+from ndmanager.format import get_terminal_size, header
 
 
 class NdfListCommand:

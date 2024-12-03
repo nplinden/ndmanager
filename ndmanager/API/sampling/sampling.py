@@ -10,7 +10,7 @@ from openmc.data import DataLibrary
 from sandy.utils import get_seed
 from tqdm import tqdm
 
-from ndmanager.env import NDMANAGER_HDF5, NDMANAGER_SAMPLES
+from ndmanager.env import NDMANAGER_HDF5
 
 SampleTapes = namedtuple("SampleTapes", ["nuclide", "xs_lib", "matrix_lib"])
 

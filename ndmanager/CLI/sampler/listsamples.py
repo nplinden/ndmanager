@@ -6,9 +6,7 @@ import yaml
 from typing import Tuple
 from pathlib import Path
 
-from ndmanager.data import OPENMC_CHAINS
 from ndmanager.env import NDMANAGER_SAMPLES
-from ndmanager.format import get_terminal_size, header
 from ndmanager.CLI.parser import Command
 
 
