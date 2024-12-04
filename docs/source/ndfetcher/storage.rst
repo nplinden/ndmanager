@@ -1,4 +1,4 @@
-.. storage:
+.. _ndf_storage:
 
 Data Storage
 ------------

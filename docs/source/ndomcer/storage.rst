@@ -1,4 +1,4 @@
-.. _storage:
+.. _ndo_storage:
 
 Data Storage
 ------------

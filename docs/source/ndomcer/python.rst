@@ -1,4 +1,4 @@
-.. _python:
+.. _ndo_python:
 
 Python API
 ----------

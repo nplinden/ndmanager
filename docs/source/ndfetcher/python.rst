@@ -1,4 +1,4 @@
-.. python:
+.. _ndf_python:
 
 Python API
 ----------
