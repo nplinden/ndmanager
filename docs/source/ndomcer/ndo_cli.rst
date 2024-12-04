@@ -151,12 +151,9 @@ Dealing With Negative KERMA Values
 The NDOmcer provides a last command that fills a very specific purpose:
 fixing the issues of negative kerma (MT=301 reactions) for many isotopes
 in some evaluations.
-These negative kermas can cause unphysical results if you are trying to tally
-heating in a material than contains them.
+These negative kermas can cause unphysical results if you are trying to tally heating in a material than contains them.
 
-The ``ndo sn301`` (as in "substitute negative values for MT=301") takes a target
-library name that will be modified, and a list of source libraries from which MT=301 values
-will be taken
+The ``ndo sn301`` (as in "substitute negative values for MT=301") takes a target library name that will be modified, and a list of source libraries from which MT=301 values will be taken.
 These sources libraries will be searched one by one util a suitable MT=301 value is found.
 If none is found, the kerma will be set to zero.
 
