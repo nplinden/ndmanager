@@ -13,7 +13,7 @@ All data is stored in a directory defined by the ``NDMANAGER_HDF5``
 environment variable, which you can set in your ``.bashrc`` file or equivalent.
 
 Listing Installed and Installable libraries
--------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++
 
 The ``ndo list`` shows the OpenMC nuclear data libraries installed on your system as well
 the official libraries that you can download from the OpenMC website:
@@ -36,7 +36,7 @@ Here, you can see that I have installed three official libraries, and that I per
 an additionnal one based on CENDL-3.2.
 
 Installing Official Libraries
------------------------------
++++++++++++++++++++++++++++++
 
 The ``ndo install`` lets you download and install libraries from OpenMC's official website:
 
@@ -47,7 +47,7 @@ The ``ndo install`` lets you download and install libraries from OpenMC's offici
 This will download the library archive, extract it, and move the files to NDManager's database.
 
 Removing a Library
-------------------
+++++++++++++++++++
 
 If a library takes too much space on you disk you can simply remove it:
 
@@ -56,7 +56,7 @@ If a library takes too much space on you disk you can simply remove it:
    $ ndo remove lanl/endfb8
 
 Building Your Own Library
--------------------------
++++++++++++++++++++++++++
 
 The main purpose of the NDOmcer module is to build nuclear data libraries in the HDF5 format
 for use in OpenMC.
@@ -68,11 +68,14 @@ A valid ``ndo`` input file should contain the following information:
 * A ``description`` element giving a more verbose description of the library
 * A ``name`` element that will be used to refer to the built library
 * A ``neutron`` element with the following sub-elements
+
   * The ``base`` element should refer to an ENDF6 library installed with NDFetcher, this is the main source of the ENDF6 tapes for your library
   * The ``temperature`` element lists the temperatures for Doppler broadening
   * The ``ommit`` element lists the nuclide present in the ENDF6 library that you want to discard
   * The ``add`` element tells NDOmcer to use ENDF6 tapes from a library different that the base one. It contains keys named after the desired library, with a list of the desired nuclides
+
 * A ``photon`` element with the following sub-elements
+
   * The ``base`` element should refer to an ENDF6 library installed with NDFetcher, this is the main source of the ENDF6 tapes for your library
   * The ``ommit`` element lists the atoms present in the ENDF6 library that you want to discard
   * The ``add`` element tells NDOmcer to use ENDF6 tapes from a library different that the base one. It contains keys named after the desired library, with a list of the desired atoms
@@ -143,7 +146,7 @@ If the library name already exists and you just want to add new temperature to t
 
 
 Dealing With Negative KERMA Values
-----------------------------------
+++++++++++++++++++++++++++++++++++
 
 The NDOmcer provides a last command that fills a very specific purpose:
 fixing the issues of negative kerma (MT=301 reactions) for many isotopes
