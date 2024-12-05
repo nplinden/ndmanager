@@ -77,7 +77,7 @@ Here is a sample of what an ``nds hdf5`` input file looks like:
 
 This will create 10 perturbed libraries in which Pu239 cross-sections from JEFF-3.3 are perturbed using covariance matrices from TENDL-2023 on an ECCO-33 group structure, at a temperature of 600K.
 All other nuclide cross-sections are taken from the ``jeff33`` library installed with NDOmcer.
-The mapping to nominal cross-sections are done in the generated `cross_sections.xml` files rather than through the duplication of HDF5 files.
+The mapping to nominal cross-sections are done in the generated ``cross_sections.xml`` files rather than through the duplication of HDF5 files.
 
 Note that the input file is essentialy the same as the PENDF one.
 The main difference between the two method is that ``nds pendf`` generates covariance matrices on the fly using ERRORR whereas ``nds hdf5`` uses preprocessed matrices written on disk.
