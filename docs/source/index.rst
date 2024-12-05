@@ -40,7 +40,7 @@ A tool to manage your nuclear data libraries.
 
             Install and build depletion chain files for OpenMC
 
-        .. grid-item-card:: \ :octicon:`squirrel;2em` NDFetcher
+        .. grid-item-card:: \ :octicon:`squirrel;2em` NDSampler
             :text-align: center
             :link: ndsampler/index
             :link-type: doc

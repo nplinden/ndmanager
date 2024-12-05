@@ -17,6 +17,7 @@ dependencies = [
     'beautifulsoup4',
     'tqdm',
     'matplotlib',
+    'pandas'
 ]
 dynamic = ["version"]
 

@@ -63,7 +63,7 @@ A valid ``ndc`` input file contain the following information:
 
 * A ``name`` element which will be used to refer the chain with NDManager's API
 * A ``description`` element to give some context on the chain
-* A ``brancing_ratios`` element with a value of either ``sfr`` or ``pwr``, to set radiative capture branching ratios for fast or thermal problems. Values are taken from OpenMC's official website. `sfr <https://openmc.org/sfr-spectrum-capture-branching-ratios/>`_, `pwd <https://openmc.org/pwr-spectrum-capture-branching-ratios/>`_)
+* A ``branching_ratios`` element with a value of either ``sfr`` or ``pwr``, to set radiative capture branching ratios for fast or thermal problems. Values are taken from OpenMC's official website. `sfr <https://openmc.org/sfr-spectrum-capture-branching-ratios/>`_, `pwd <https://openmc.org/pwr-spectrum-capture-branching-ratios/>`_)
 * An optional ``halflife`` element with a floating point value. Nuclides with a shorter halflife than this value will be removed from the chain and branching ratios will be redirected accordingly
 * A ``n`` element for incident neutron files with the following sub-elements
 

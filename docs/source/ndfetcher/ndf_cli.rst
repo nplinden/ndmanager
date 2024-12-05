@@ -1,4 +1,4 @@
-.. ndf_cli:
+.. _ndf_cli:
 
 The ``ndf`` Command
 -------------------

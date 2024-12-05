@@ -131,5 +131,4 @@ class PerturbationList(list):
             raise FileNotFoundError(
                 f"Invalid sampled library name '{perturbed_library}'"
             )
-        self.toto = sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
         self += sorted(list(p.glob("*.xml")), key=lambda x: int(x.stem))
