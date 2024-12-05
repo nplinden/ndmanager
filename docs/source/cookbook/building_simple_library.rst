@@ -29,7 +29,7 @@ Once the installation is done, define what your library should look like in a YA
     tsl:
       base: endfb8
 
-Now run NDOmcer with :
+Now run NDOmcer with:
 
 .. code-block:: console
 

@@ -6,13 +6,20 @@ Fine Tuning an HDF5 Library
 Now let's build a more complicated library to display some of the capabilities of NDManager.
 We'll want to create a library based on the JEFF-3.3 evaluation.
 Since JEFF-3.3 does not publish photon evaluations, we'll use the ones from ENDF-B/VIII.0 instead.
-Finally we'll make a few tweak to the library:
+The first step is to download the JEFF-3.3 and ENDF-B/VIII.0:
+
+.. console-block:: console
+
+   $ ndf install jeff33 endfb8 -j 30
+
+We'll make a few tweak to the library in the ``neutron`` element of the input file:
 
 * To correctly simulate carbon inventory, we'll replace JEFF-3.3 natural ``C0`` nuclide with ``C12`` and ``C13`` from ENDF-B/VIII.0
 * The JEFF-3.3 evaluation of ``O17`` is faulty, let's use the one from ENDF-B/VIII.0 instead
-* OpenMC wrongly defines natural Ta as containing Ta180 instead of Ta180M because ENDF-B/VIII.0 has no Ta180M evaluation. Since JEFF-3.3 has no Ta180, materials containing Ta will crash simulations. Let's add the ENDF-B tape to the mix.
+* OpenMC wrongly defines natural tantalum as containing ``Ta180`` instead of ``Ta180M`` because ENDF-B/VIII.0 has no Ta180M evaluation. Since JEFF-3.3 has no Ta180, materials containing tantalum will crash simulations. Let's add the ENDF-B tape to the mix.
 
 Since we replaced natural carbon, TSL to incident neutron data mapping must be changed accordingly.
+This is done in the ``tsl`` element of the input file.
 
 .. code-block:: yaml
 
@@ -34,3 +41,9 @@ Since we replaced natural carbon, TSL to incident neutron data mapping must be c
       add:
         jeff33:
           tsl_0031_Graphite.endf6: C12
+
+Now run NDOmcer with:
+
+.. code-block:: console
+
+   $ ndo build jeff33.yml -j 30
