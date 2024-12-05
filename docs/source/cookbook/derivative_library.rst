@@ -5,17 +5,17 @@ Building a Derivative Library
 
 Sometimes you may want to investigate the effect of a single nuclide evaluation on a reactor model.
 For instance if you work on chloride molten salt, you may be aware that ``Cl35`` :math:`(n,\alpha)` cross-sections are not very well known above 1MeV, and this may have large consequence on the reactor's eigenvalue.
-`Tahara <https://www.tandfonline.com/doi/epdf/10.1080/00223131.2023.2282553?needAccess=true>`_ shows some comparison library comparisons for and MCSFR model.
+`Tahara <https://www.tandfonline.com/doi/epdf/10.1080/00223131.2023.2282553?needAccess=true>`_ shows some comparison library comparisons for an MCSFR model.
 
-To target ``Cl35`` specifically, you may want to run a calculation using your usual library like ENDF-B/VIII.0, and using a library using ENDF-B/VIII.0 for all nuclide except ``Cl35`` where you might use JENDL-5.0 or whatever you'd prefer.
-The first step is to install both libraries:
+To target ``Cl35`` specifically you may want to run a calculation your usual library (say, ``endfb8``), and using this same library all nuclide except ``Cl35`` where you might use JENDL-5.0 or whatever you'd prefer.
+The first step is to install JENDL-5.0:
 
 .. code-block:: console
 
-   $ ndf install endfb8 jendl5
+   $ ndf install jendl5
 
 To build library derivative of ENDF-B/VIII.0, you could create an NDOmcer input file to rebuild the entire thing, but this would mean that hundreds of cross-section files would be duplicated with no benefit.
-Instead, the smarter way of building the library would be to build only the new Cl35 HDF5 file, and write the ``cross_sections.xml`` file such that all other nuclide point to the ``endfb8`` library.
+Instead, the smarter way of building the library would be to build only the new ``Cl35.h5`` file, and write the ``cross_sections.xml`` file such that all other nuclide point to the ``endfb8`` library.
 
 To do this, you can replace the ``base`` element in NDOmcer's input file with a ``reuse`` element.
 This element should be associated with a library name already available to NDOmcer, such as the ``endfb8`` library we created in the first tutorial.
@@ -60,6 +60,4 @@ Looking at the library in your database should look something like this:
       └── logs
 
 With the ``cross_section.xml`` file referencing the ``endfb8`` library for most nuclides.
-
-
 

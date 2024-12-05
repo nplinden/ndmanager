@@ -11,3 +11,4 @@ This section give somes quick recipes for the most common uses of NDManager
 
     building_simple_library
     fine_tuning
+    derivative_library
