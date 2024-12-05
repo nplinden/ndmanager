@@ -79,11 +79,14 @@ A valid ``ndo`` input file should contain the following information:
   * The ``base`` element should refer to an ENDF6 library installed with NDFetcher, this is the main source of the ENDF6 tapes for your library
   * The ``ommit`` element lists the atoms present in the ENDF6 library that you want to discard
   * The ``add`` element tells NDOmcer to use ENDF6 tapes from a library different that the base one. It contains keys named after the desired library, with a list of the desired atoms
+
 * A ``tsl`` element with the following sub-elements
+
   * The ``base`` element should refer to an ENDF6 library installed with NDFetcher, this is the main source of the ENDF6 tapes for your library
   * The ``ommit`` element lists the TSL files present in the ENDF6 library that you want to discard, TSL files should be refered with their explicit names in the NDFetcher database
   * The ``add`` element tells NDOmcer to use ENDF6 tapes from a library different that the base one. It contains element named after the desired libraries. These elements contain element named after NDFetcher-installed TSL tapes. These elements contain the name of the nuclide to use to build the TSL file
   * The ``temperatures`` element contains the temperature at which to build the files. It contains element named after the desired file. These elements contain the list of temperatures to build (Available temperatures depend on the TSL tape's content)
+
 
 Here is a sample of what an ``ndo`` file to build a JEFF-3.3 based library looks like:
 

@@ -1,7 +1,7 @@
 summary: Sampling Pu239 using TENDL2023 Covariances and a JEFF-3.3 base
-name: jeff33-Pu240
+name: jeff33-Pu239
 reuse: jeff33
-nsmp: 10
+nsmp: 2
 temperature: 600
 kind: xs
 samples:
