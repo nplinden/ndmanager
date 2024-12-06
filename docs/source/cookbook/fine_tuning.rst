@@ -8,7 +8,7 @@ We'll want to create a library based on the JEFF-3.3 evaluation.
 Since JEFF-3.3 does not publish photon evaluations, we'll use the ones from ENDF-B/VIII.0 instead.
 The first step is to download the JEFF-3.3 and ENDF-B/VIII.0:
 
-.. console-block:: console
+.. code-block:: console
 
    $ ndf install jeff33 endfb8 -j 30
 
