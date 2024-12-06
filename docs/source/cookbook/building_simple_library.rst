@@ -10,7 +10,7 @@ The first step is downloading the corresponding tapes from the IAEA database, I 
 
    $ ndf install endfb8 -j 30
 
-Most of the time requirement for downloading the libraries is in the overhead or make the HTTP requests rather than actually receiving data, so using multiple processes is very beneficial.
+Most of the time requirement for downloading the libraries is in the overhead of making the HTTP requests rather than actually receiving data, so using multiple processes is very beneficial.
 
 Once the installation is done, define what your library should look like in a YAML file:
 
