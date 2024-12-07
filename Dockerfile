@@ -1,7 +1,6 @@
 FROM debian:bookworm
 
-WORKDIR /wrk
-
+WORKDIR /root
 RUN mkdir /ndmanager
 
 # Installing dependencies
@@ -49,7 +48,9 @@ RUN git clone --branch v1.1 https://github.com/luca-fiorito-11/sandy.git \
 # Install the develop version of NDManager
 RUN git clone https://github.com/nplinden/ndmanager.git \
     && cd ndmanager \
-    && /ve/bin/pip install .
+    && /ve/bin/pip install . \
+    && cd $HOME \
+    && rm -rf ndmanager
 
 # Define NDMANAGER environment variables
 ENV NDMANAGER_ENDF6="/ndmanager/endf6"
