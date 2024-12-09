@@ -82,7 +82,7 @@ class TSLManager(InputParser, BaseManager):
                 path = rootdir / "tsl" / f"{self.get_name(tsl)}.h5"
                 logpath = rootdir / "tsl/logs" / f"{self.get_name(tsl)}.log"
                 neutron = self.neutron_library.tapes[target]
-                temperatures = self.temperatures.get(tsl.name, None)
+                temperatures = self.temperatures.get(tsl.name, [])
                 self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
 
         # Additional TSL-Neutron couples
@@ -93,7 +93,7 @@ class TSLManager(InputParser, BaseManager):
                 path = rootdir / "tsl" / f"{self.get_name(tsl)}.h5"
                 logpath = rootdir / "tsl/logs" / f"{self.get_name(tsl)}.log"
                 neutron = self.neutron_library.tapes[target]
-                temperatures = self.temperatures.get(tapename, None)
+                temperatures = self.temperatures.get(tapename, [])
                 self.append(HDF5TSL(target, path, logpath, tsl, neutron, temperatures))
 
     @staticmethod

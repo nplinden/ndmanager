@@ -6,7 +6,7 @@ Fine Tuning an HDF5 Library
 Now let's build a more complicated library to display some of the capabilities of NDManager.
 We'll want to create a library based on the JEFF-3.3 evaluation.
 Since JEFF-3.3 does not publish photon evaluations, we'll use the ones from ENDF-B/VIII.0 instead.
-The first step is to download the JEFF-3.3 and ENDF-B/VIII.0:
+The first step is downloading the JEFF-3.3 and ENDF-B/VIII.0 evaluations if they are not already installed:
 
 .. code-block:: console
 
