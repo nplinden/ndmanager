@@ -29,7 +29,10 @@ class HDF5TSL(HDF5Sublibrary):
         t0 = time.time()
         if self.path.exists():
             return
-        data = ThermalScattering.from_njoy(self.neutron, self.tsl, self.temperatures)
+        if not self.temperatures:
+            data = ThermalScattering.from_njoy(self.neutron, self.tsl)
+        else:
+            data = ThermalScattering.from_njoy(self.neutron, self.tsl, self.temperatures)
         assert self.path.name == f"{data.name}.h5"
         data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)
