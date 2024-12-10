@@ -4,7 +4,6 @@ import hashlib
 from typing import Dict
 
 from ndmanager.API.utils import get_endf6
-from ndmanager.data import TAPE_SHA1
 from ndmanager.env import NDMANAGER_ENDF6
 
 
@@ -103,18 +102,3 @@ def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> Dict[str
             return compute_lib_sha1(libname)
         return compute_sublib_sha1(libname, sub)
     return compute_tape_sha1(libname, sub, nuclide)
-
-
-def check_tape_integrity(libname: str, sub: str, nuclide: str) -> bool:
-    """Checks that the installed tape SHA1 sum matches the reference one
-
-    Args:
-        libname (str): The name of the desired evaluation
-        sub (str): The name of the ENDF6 sublibrary
-        nuclide (str): The name of the nuclide in the GNDS format
-
-    Returns:
-        bool: Wether the tape is valid
-    """
-    sha1 = compute_tape_sha1(libname, sub, nuclide)[f"{libname}/{sub}/{nuclide}"]
-    return sha1 == TAPE_SHA1[libname][f"{libname}/{sub}/{nuclide}"]

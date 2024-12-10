@@ -3,17 +3,6 @@
 
 from typing import Dict, List
 
-from ndmanager.SHA1.cendl31 import CENDL31_SHA1
-from ndmanager.SHA1.cendl32 import CENDL32_SHA1
-from ndmanager.SHA1.endfb8 import ENDFB8_SHA1
-from ndmanager.SHA1.endfb71 import ENDFB71_SHA1
-from ndmanager.SHA1.jeff33 import JEFF33_SHA1
-from ndmanager.SHA1.jeff311 import JEFF311_SHA1
-from ndmanager.SHA1.jendl5 import JENDL5_SHA1
-from ndmanager.SHA1.tendl19 import TENDL19_SHA1
-from ndmanager.SHA1.tendl23 import TENDL23_SHA1
-from ndmanager.SHA1.test import BAR_SHA1, FOO_SHA1
-
 IGN_MAPPING = {
     "CSWEG-239": 2,
     "LANL-30": 3,
@@ -485,16 +474,3 @@ TSL_NEUTRON: Dict[str, Dict[str, str]] = {
     },
 }
 
-TAPE_SHA1 = {
-    "cendl31": CENDL31_SHA1,
-    "cendl32": CENDL32_SHA1,
-    "endfb71": ENDFB71_SHA1,
-    "endfb8": ENDFB8_SHA1,
-    "jeff311": JEFF311_SHA1,
-    "jeff33": JEFF33_SHA1,
-    "jendl5": JENDL5_SHA1,
-    "tendl19": TENDL19_SHA1,
-    "tendl23": TENDL23_SHA1,
-    "foo": FOO_SHA1,
-    "bar": BAR_SHA1,
-}
