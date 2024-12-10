@@ -52,7 +52,6 @@ packages = [
     'ndmanager.API.iaea',
     'ndmanager.API.process',
     'ndmanager.API.sampling',
-    'ndmanager.SHA1',
     'ndmanager.CLI',
     'ndmanager.CLI.fetcher',
     'ndmanager.CLI.omcer',

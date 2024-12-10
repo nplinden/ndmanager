@@ -177,3 +177,17 @@ cov_sha1 = {
     "pytest-artifacts/cov/foo/ECCO-33/C12.h5": "b74f3b97c8464540d59ab235bcdaf824bfeae594",
     "pytest-artifacts/cov/foo/ECCO-33/H1.h5": "c08596ab5a293fc6a381e3743de95402a4e9ae20",
 }
+
+foo_sha1 = {
+    "foo/photo/Pu": "f8f6cfadc0a4ea51313cb256dca22d242d54c2cf",
+    "foo/photo/C": "a384c9fb865a0a9f812ec84242b68d84c27b698c",
+    "foo/photo/H": "a72035d425898ee1eb5f727cd52ce041b5b8fbc9",
+    "foo/tsl/tsl_0037_H(CH2)": "d376d40451876d8d8f7a0d2d55d1dfb38428c266",
+    "foo/tsl/tsl_0002_para-H": "97081ac13e0222643432c257286ed913aec8ad60",
+    "foo/n/C12": "af075e8479d0bc26bcbb4c99084f7d048dd41f0a",
+    "foo/n/Am242_m1": "1c86a69fc496dcfb1a88c70c60fc8a986518ba47",
+    "foo/n/H1": "56b2841125aa995717bce934447a313e23b71a80",
+    "foo/ard/Pu": "f348e1d3a5cd4274151b638ea7be5ab4b03a98d5",
+    "foo/ard/C": "25baa0fa7074046cf29cdcafe655d301238c4e06",
+    "foo/ard/H": "04f484aabbcd488f65c3e95ff6b2ab660a0599cc",
+}
