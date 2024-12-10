@@ -1,3 +1,4 @@
+import ndmanager
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -9,7 +10,7 @@
 project = "NDManager"
 copyright = "2024, Nicolas Linden"
 author = "Nicolas Linden"
-release = "0.4.1"
+release = ndmanager.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
