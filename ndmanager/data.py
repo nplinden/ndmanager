@@ -473,4 +473,3 @@ TSL_NEUTRON: Dict[str, Dict[str, str]] = {
         "tsl_Zr(ZrH)_0058.endf6": "Zr90",
     },
 }
-

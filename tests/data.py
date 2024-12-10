@@ -191,4 +191,3 @@ foo_sha1 = {
     "foo/ard/C": "25baa0fa7074046cf29cdcafe655d301238c4e06",
     "foo/ard/H": "04f484aabbcd488f65c3e95ff6b2ab660a0599cc",
 }
-
