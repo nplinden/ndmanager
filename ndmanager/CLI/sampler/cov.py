@@ -8,7 +8,7 @@ import subprocess as sp
 import warnings
 from pathlib import Path
 
-from ndmanager import get_endf6
+from ndmanager.API.endf6 import get_endf6
 from ndmanager.API.sampling.covmatrix import CovMatrix
 from ndmanager.data import IGN_MAPPING
 from ndmanager.env import NDMANAGER_COV, NDMANAGER_ENDF6

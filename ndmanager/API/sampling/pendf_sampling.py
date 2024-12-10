@@ -12,9 +12,9 @@ from pathlib import Path
 import openmc.data
 from sandy.endf6 import Endf6
 
-from ndmanager import get_endf6
 from ndmanager.env import NDMANAGER_SAMPLES
 from ndmanager.API.sampling.sampling import SampleTapes, Sampling
+from ndmanager.API.endf6 import get_endf6
 from ndmanager.data import IGN_MAPPING
 
 

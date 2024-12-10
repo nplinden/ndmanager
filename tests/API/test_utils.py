@@ -1,6 +1,6 @@
 import pytest
 
-from ndmanager.API.utils import get_endf6, list_endf6
+from ndmanager.API.endf6 import get_endf6, list_endf6
 
 
 def test_get_endf6(install):

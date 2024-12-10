@@ -8,7 +8,7 @@ from typing import Set
 from openmc.data import IncidentNeutron
 
 from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
-from ndmanager.API.utils import merge_neutron_file
+from ndmanager.API.merge import merge_neutron_file
 
 
 @dataclass

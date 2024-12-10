@@ -3,7 +3,7 @@
 import hashlib
 from typing import Dict
 
-from ndmanager.API.utils import get_endf6
+from ndmanager.API.endf6 import get_endf6
 from ndmanager.env import NDMANAGER_ENDF6
 
 
