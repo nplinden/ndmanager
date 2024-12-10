@@ -26,6 +26,7 @@ class Endf6:
             NSUB = int(line[46:56])
         self.sublibrary = NSUB_IDS[NSUB]
 
+
 def get_endf6(libname: str, sub: str, nuclide: str):
     """Get the path to a ENDF6 tape stored in the NDManager database
 
@@ -98,4 +99,3 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
         base_dict |= guest_dict
 
     return base_dict
-

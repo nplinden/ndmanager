@@ -1,5 +1,6 @@
 import h5py
 
+
 def merge_neutron_file(sourcepath, targetpath):
     """Merge two nuclear data file containing data for the same nuclide at
     different temperatures.
@@ -35,4 +36,3 @@ def merge_neutron_file(sourcepath, targetpath):
 
         if "urr" in source[nuclide]:
             source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
-

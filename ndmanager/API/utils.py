@@ -36,4 +36,3 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
                 if library.attrib["type"] == sub:
                     return directory / library.attrib["path"]
     raise ValueError(f"Can't find {sub} xs for {nuclide} in the {libname} library")
-
