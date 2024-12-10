@@ -9,7 +9,7 @@ from ndmanager.API.process.base_manager import BaseManager
 from ndmanager.API.process.hdf5_tsl import HDF5TSL
 from ndmanager.API.process.input_parser import InputParser
 from ndmanager.API.process.neutron_manager import NeutronManager
-from ndmanager.API.utils import get_endf6
+from ndmanager.API.endf6 import get_endf6
 from ndmanager.data import TSL_NEUTRON
 from ndmanager.env import NDMANAGER_ENDF6
 
