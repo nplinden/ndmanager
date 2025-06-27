@@ -1,11 +1,11 @@
 """Definition and parser for the 'ndf list' command"""
 
 import argparse as ap
-import textwrap
+from rich.table import Table
+from rich import print
 
 from ndmanager.API.iaea import IAEA
 from ndmanager.env import NDMANAGER_ENDF6
-from ndmanager.format import get_terminal_size, header
 
 
 class NdfListCommand:
@@ -23,9 +23,14 @@ class NdfListCommand:
             print("Initializing IAEA database...")
         self.iaea = IAEA()
 
-        col, _ = get_terminal_size()
-        self.lines = []
-        self.lines.append(header("Available libraries"))
+        title = "Common Libraries from the IAEA Database\nhttps://www-nds.iaea.org/public/download-endf/"
+        if self.args.all:
+            title = "All Libraries from the IAEA Database\nhttps://www-nds.iaea.org/public/download-endf/"
+        table = Table(title=title)
+        table.add_column("Shorthand", justify="left")
+        table.add_column("IAEA Name", justify="left")
+        table.add_column("I.", justify="center", style="green")
+        table.add_column("Description", justify="left")
 
         libnames = self.list_libraries()
         for libname in libnames:
@@ -34,23 +39,22 @@ class NdfListCommand:
             if (NDMANAGER_ENDF6 / libname).exists():
                 check = "✓"
             else:
-                check = " "
-            s = f"{libname:<20} {fancyname:<20} [{check}]: {libdata.library}"
-            s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=47 * " ", width=col
-            )
-            self.lines.append("\n".join(s))
+                check = ""
 
-        self.lines.append(header("Custom Libraries"))
+            table.add_row(libname, fancyname, check, libdata.library)
+
         installed = sorted(
             [lib.name for lib in NDMANAGER_ENDF6.glob("*") if lib.name not in libnames],
             key=str.lower,
         )
-        s = " ".join([f"{i:<15}" for i in sorted(installed)])
-        s = textwrap.wrap(s, width=col)
-        self.lines.append("\n".join(s))
 
-        print("\n".join(self.lines))
+        custom = Table(title="Custom Installed Libraries", min_width=30)
+        custom.add_column("Library", justify="left")
+        for i in installed:
+            custom.add_row(i)
+
+        print(custom)
+        print(table)
 
     def list_libraries(self):
         """Get the full names of the libraries to list,

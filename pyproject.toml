@@ -18,6 +18,7 @@ dependencies = [
     'tqdm',
     'matplotlib',
     'pandas',
+    "rich>=14.0.0",
 ]
 dynamic = ["version"]
 
