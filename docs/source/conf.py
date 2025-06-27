@@ -16,14 +16,14 @@ release = ndmanager.__version__
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode',
-    'sphinx_autodoc_typehints',
-    'sphinx_design',
-    'sphinx_copybutton'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx_autodoc_typehints",
+    "sphinx_design",
+    "sphinx_copybutton",
 ]
 
 templates_path = ["_templates"]
