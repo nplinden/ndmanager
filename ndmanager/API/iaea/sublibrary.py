@@ -12,6 +12,7 @@ from typing import Any, Dict, List
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+from rich.progress import Progress
 
 from ndmanager.API.nuclide import Nuclide
 
@@ -212,8 +213,9 @@ class IAEASublibrary:
             ValueError: If an unknown name style is passed to IAEASublibrary.download
             e: Raise errors raised by parallel download of nuclear data files
         """
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        pbar = tqdm(total=len(self), bar_format=bar_format)
+        progress = Progress()
+        progress.start()
+        dl_task = progress.add_task(description="Downloading", total=len(self))
 
         targets = []
         nuclides = []
@@ -229,21 +231,21 @@ class IAEASublibrary:
 
         if processes == 1:
             for nuclide, target in zip(nuclides, targets):
-                description = f"{self.lib}/{self.kind}/{name}"
-                pbar.set_description(f"{description:<40}")
+                description = f"{self.lib}/{self.kind}/{nuclide:<8}"
+                progress.tasks[0].description = description
                 self.download_single(nuclide, target)
-                pbar.update()
-            pbar.close()
+                progress.update(dl_task, advance=1)
+            progress.stop()
         else:
 
             def error_callback(e):
                 raise e
 
             def update_pbar(_):
-                pbar.update()
+                progress.update(dl_task, advance=1)
 
             description = f"{self.lib}/{self.kind}"
-            pbar.set_description(f"{description:<25}")
+            progress.tasks[0].description = f"{description:<25}"
             with mp.get_context("spawn").Pool(processes) as p:
                 for nuclide, target in zip(nuclides, targets):
                     p.apply_async(
@@ -254,4 +256,4 @@ class IAEASublibrary:
                     )
                 p.close()
                 p.join()
-                pbar.close()
+                progress.stop()
