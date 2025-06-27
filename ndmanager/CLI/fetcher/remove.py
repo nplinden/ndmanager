@@ -11,7 +11,10 @@ class NdfRemoveCommand:
         libraries = [NDMANAGER_ENDF6 / lib for lib in args.library]
         for library in libraries:
             if library.exists():
+                print(f"Removing {library}...")
                 shutil.rmtree(library)
+            else:
+                print(f"Library {library.name} does not exist")
 
     @classmethod
     def parser(cls, subparsers):
