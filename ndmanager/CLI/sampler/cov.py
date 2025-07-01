@@ -80,8 +80,7 @@ def generate_matrices(library: str, ign: str, clean: bool, processes: int) -> No
     directory = NDMANAGER_COV / library / ign_name
     if directory.exists() and not clean:
         raise FileExistsError(
-            "This covariance library already exists"
-            " use the --clean flag to overwrite."
+            "This covariance library already exists use the --clean flag to overwrite."
         )
     if directory.exists() and clean:
         shutil.rmtree(directory)

@@ -10,31 +10,22 @@ description = "Managing you nuclear data collection"
 classifiers = ["Programming Language :: Python :: 3.11"]
 requires-python = ">=3.11"
 dependencies = [
-    'tabulate',
-    'h5py',
-    'pyyaml',
-    'requests',
-    'beautifulsoup4',
-    'tqdm',
-    'matplotlib',
-    'pandas',
+    "beautifulsoup4>=4.13.4",
+    "h5py>=3.14.0",
+    "matplotlib>=3.10.3",
+    "numpy>=2.3.1",
+    "openmc",
+    "pandas>=2.3.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.4",
+    "sandy>=1.1.0",
+    "tabulate>=0.9.0",
+    "tqdm>=4.67.1",
 ]
 dynamic = ["version"]
 
-
 [tool.setuptools.dynamic]
 version = { attr = "ndmanager.__version__" }
-
-[project.optional-dependencies]
-test = ["pytest", "pytest-env", "pytest-cov"]
-build = ["build", "twine"]
-docs = [
-    "sphinx",
-    "pydata_sphinx_theme",
-    "sphinx_design",
-    "sphinx-autodoc-typehints",
-    "sphinx-copybutton",
-]
 
 [project.urls]
 Homepage = "https://github.com/nplinden/ndmanager"
@@ -70,5 +61,20 @@ env = [
     "NDMANAGER_CONFIG=pytest-artifacts",
 ]
 
-[tool.pylint."messages control"]
-disable = ["invalid-name"]
+[tool.uv.sources]
+openmc = { path = "../openmc" }
+
+
+[dependency-groups]
+dev = [
+    "build>=1.2.2.post1",
+    "coverage>=7.9.1",
+    "pydata-sphinx-theme>=0.16.1",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-env>=1.1.5",
+    "sphinx>=8.2.3",
+    "sphinx-autodoc-typehints>=3.2.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-design>=0.6.1",
+]

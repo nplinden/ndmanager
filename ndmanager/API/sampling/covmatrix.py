@@ -226,3 +226,42 @@ class CovMatrix(sandy.CategoryCov):
             columns=self.data.columns,
         )
         return self.__class__(self.nuclide, df)
+
+    def correct_lognormal(self):
+        """Copied from sandy.cov.CategoryCov::correct_lognormal"""
+        C = self.data.copy()
+
+        # this condition limits covariances to max -100 %
+        mask = C.values < -1
+
+        if mask.any():
+            size = (mask.size - mask.diagonal().size) // 2
+            how_many_bad_values = mask.sum() // 2
+            smallest_bad_value = C[mask].min().min()
+
+            msg = f"""Condition COV + 1 > 0 for Lognormal sampling is not respected.
+    {how_many_bad_values}/{size} covariance coefficients are set to -1+eps.
+    The smallest covariance is {smallest_bad_value:.5f}
+    """
+            if "MT" in C.index.names:
+                bad_mts = (
+                    C.index[np.where(mask)[0]].get_level_values("MT").unique().tolist()
+                )
+                msg += f"The concerned MT numbers are {bad_mts}."
+
+            C[mask] = -1 + np.finfo(np.float64).eps
+
+        return self.__class__(self.nuclide, C)
+
+    def transform_lognormal(self):
+        """Copied from sandy.cov.CategoryCov::transform_lognormal"""
+        C = self.data.copy()
+        C = np.log(C + 1)
+        return self.__class__(self.nuclide, C)
+
+    def regularize(self, correction):
+        """Copied from sandy.cov.CategoryCov::regularize"""
+        C = self.data.copy()
+        D = np.diag(C.values.diagonal() * correction)
+        C += D
+        return self.__class__(self.nuclide, C)

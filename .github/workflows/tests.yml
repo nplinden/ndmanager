@@ -36,21 +36,16 @@ jobs:
               shell: bash
               run: |
                   $GITHUB_WORKSPACE/tools/ci/install_openmc.sh
-             
-            - name: Installing Sandy
-              shell: bash
-              run: |
-                  $GITHUB_WORKSPACE/tools/ci/install_sandy.sh
 
             - name: Installing NDManager
               shell: bash
               run: |
-                pip install '.[test]'
+                pip install --group dev .
 
             - name: Pytest
               shell: bash
               run: |
-                coverage run --source=ndmanager -m pytest tests/ 
+                python -m coverage run --source=ndmanager -m pytest tests/ 
 
             - name: Coveralls GitHub Action
               uses: coverallsapp/github-action@v2.3.4
