@@ -235,7 +235,7 @@ class CovMatrix(sandy.CategoryCov):
         mask = C.values < -1
 
         if mask.any():
-            size = ( mask.size - mask.diagonal().size ) // 2
+            size = (mask.size - mask.diagonal().size) // 2
             how_many_bad_values = mask.sum() // 2
             smallest_bad_value = C[mask].min().min()
 
@@ -244,7 +244,9 @@ class CovMatrix(sandy.CategoryCov):
     The smallest covariance is {smallest_bad_value:.5f}
     """
             if "MT" in C.index.names:
-                bad_mts = C.index[np.where(mask)[0]].get_level_values("MT").unique().tolist()
+                bad_mts = (
+                    C.index[np.where(mask)[0]].get_level_values("MT").unique().tolist()
+                )
                 msg += f"The concerned MT numbers are {bad_mts}."
 
             C[mask] = -1 + np.finfo(np.float64).eps
