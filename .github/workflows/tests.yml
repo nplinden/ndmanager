@@ -45,7 +45,7 @@ jobs:
             - name: Installing NDManager
               shell: bash
               run: |
-                pip install '.[test]'
+                pip install '.[dev]'
 
             - name: Pytest
               shell: bash
