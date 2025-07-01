@@ -65,9 +65,6 @@ env = [
 [tool.pylint."messages control"]
 disable = ["invalid-name"]
 
-[tool.uv.sources]
-openmc = { path = "../openmc" }
-
 [dependency-groups]
 dev = [
     "pydata-sphinx-theme>=0.16.1",
