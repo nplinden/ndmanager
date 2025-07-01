@@ -45,7 +45,7 @@ jobs:
             - name: Pytest
               shell: bash
               run: |
-                coverage run --source=ndmanager -m pytest tests/ 
+                python -m coverage run --source=ndmanager -m pytest tests/ 
 
             - name: Coveralls GitHub Action
               uses: coverallsapp/github-action@v2.3.4
