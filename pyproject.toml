@@ -14,7 +14,6 @@ dependencies = [
     "h5py>=3.14.0",
     "matplotlib>=3.10.3",
     "numpy>=2.3.1",
-    "openmc",
     "pandas>=2.3.0",
     "pyyaml>=6.0.2",
     "requests>=2.32.4",
