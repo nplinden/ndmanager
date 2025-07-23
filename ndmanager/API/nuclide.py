@@ -81,7 +81,8 @@ class Nuclide:
         """
         with open(filename, "r", encoding="utf-8") as f:
             f.readline()
-            za = float(f.readline().split()[0].replace("+", "e+"))
+            float_za = f.readline()[1:12].replace(" ", "").replace("+", "e+")
+            za = float(float_za)
             a = int(za % 1000)
             z = int(za // 1000)
             m = int(f.readline().split()[3])
