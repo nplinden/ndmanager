@@ -13,7 +13,7 @@ dependencies = [
     "beautifulsoup4>=4.13.4",
     "h5py>=3.14.0",
     "matplotlib>=3.10.3",
-    "numpy>=2.3.1",
+    "numpy<2.3",
     "pandas>=2.3.0",
     "pyyaml>=6.0.2",
     "requests>=2.32.4",
