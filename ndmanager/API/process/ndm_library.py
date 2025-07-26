@@ -5,7 +5,7 @@ from pathlib import Path
 
 import h5py
 import yaml
-from openmc.data import DataLibrary
+from ndmanager._vendor.omc_data import DataLibrary
 
 from ndmanager.API.process.neutron_manager import NeutronManager
 from ndmanager.API.process.photon_manager import PhotonManager

@@ -2,7 +2,7 @@
 
 from typing import Any, Dict
 
-from openmc.data import DataLibrary
+from ndmanager._vendor.omc_data import DataLibrary
 
 from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.endf6 import get_endf6
