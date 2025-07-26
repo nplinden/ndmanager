@@ -6,7 +6,7 @@ from collections import namedtuple
 from pathlib import Path
 
 import yaml
-from openmc.data import DataLibrary
+from ndmanager._vendor.omc_data import DataLibrary
 from sandy.utils import get_seed
 from tqdm import tqdm
 

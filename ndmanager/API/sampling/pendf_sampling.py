@@ -9,7 +9,7 @@ import tempfile
 from contextlib import chdir
 from pathlib import Path
 
-import openmc.data
+from ndmanager._vendor.omc_data import IncidentNeutron
 from sandy.endf6 import Endf6
 
 from ndmanager.env import NDMANAGER_SAMPLES
@@ -25,7 +25,7 @@ def ace_to_hdf5(ace: str, target: str) -> None:
         ace (str): The path to the ace file to convert
         target (str): The path to the desired HDF5 file
     """
-    neutron = openmc.data.IncidentNeutron.from_ace(ace)
+    neutron = IncidentNeutron.from_ace(ace)
     _, pertid = ace.name.split(".")[0].split("_")
     neutron.export_to_hdf5(target / f"{pertid}.h5", "w")
 

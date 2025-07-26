@@ -4,7 +4,6 @@ from utils import nds
 from tests.data import cov_sha1
 from ndmanager import compute_file_sha1
 from ndmanager.CLI.sampler.cov import generate_one_matrix
-from ndmanager.API.openmc import PerturbationList
 
 
 def test_cov(build_lib):
@@ -44,12 +43,6 @@ samples:
         "      2  Sampling H1 cross sections\n"
     )
     assert captured.out == expected
-
-    perturbations = PerturbationList("H1-in-foo", "HDF5")
-    for i, path in enumerate(perturbations):
-        assert path.samefile(
-            f"pytest-artifacts/samples/HDF5/H1-in-foo/cross_sections/{i}.xml"
-        )
 
 
 def test_generate_one_matrix(install):

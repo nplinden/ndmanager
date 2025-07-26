@@ -11,7 +11,9 @@ classifiers = ["Programming Language :: Python :: 3.11"]
 requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.13.4",
+    "endf>=0.1.4",
     "h5py>=3.14.0",
+    "lxml>=6.0.0",
     "matplotlib>=3.10.3",
     "numpy<2.3",
     "pandas>=2.3.0",

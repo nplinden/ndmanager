@@ -2,7 +2,7 @@
 
 import argparse as ap
 
-from openmc.deplete.chain import Chain
+from ndmanager._vendor.omc_data import Chain
 import yaml
 
 from ndmanager.API.endf6 import list_endf6

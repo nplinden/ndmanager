@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Any, Dict, List
 
-from openmc.data import Evaluation, get_thermal_name
+from ndmanager._vendor.omc_data import Evaluation, get_thermal_name
 
 from ndmanager.API.process.base_manager import BaseManager
 from ndmanager.API.process.hdf5_tsl import HDF5TSL
