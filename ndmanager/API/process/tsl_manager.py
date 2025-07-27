@@ -58,7 +58,7 @@ class TSLManager(InputParser, BaseManager):
 
             for library in self.add:
                 for tape in self.add[library]:
-                    self.ommit.add(tape)
+                    self.omit.add(tape)
 
             self.build_tsl(rootdir)
         else:
@@ -76,7 +76,7 @@ class TSLManager(InputParser, BaseManager):
 
             # Base TSL-Neutron couples
             for tsl in tsl_paths:
-                if tsl.name in self.ommit:
+                if tsl.name in self.omit:
                     continue
                 target = tsl_to_nuclide[tsl.name]
                 path = rootdir / "tsl" / f"{self.get_name(tsl)}.h5"

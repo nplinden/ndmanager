@@ -69,14 +69,14 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
         Dict[str, Path]: A dictionnary that associates nuclide names to ENDF6 paths.
     """
     base = params["base"]
-    ommit = params.get("ommit", "").split()
+    omit = params.get("omit", "").split()
     add = params.get("add", {})
 
     base_paths = (NDMANAGER_ENDF6 / base / sublibrary).glob("*.endf6")
     base_dict = {Nuclide.from_file(p).name: p for p in base_paths}
 
     # Remove unwanted evaluations
-    for nuclide in ommit:
+    for nuclide in omit:
         base_dict.pop(Nuclide.from_name(nuclide).name, None)
 
     # Remove neutron evaluations if they are present.

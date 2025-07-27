@@ -80,7 +80,7 @@ def test_ndc_list_install_remove(capsys):
 # branching_ratios: sfr
 # n:
 #   base: jeff33
-#   ommit: C0
+#   omit: C0
 #   add:
 #     endfb8: Ta180 C12 C13 O17
 # decay:
