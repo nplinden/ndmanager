@@ -68,7 +68,7 @@ A valid ``ndc`` input file contain the following information:
 * A ``n`` element for incident neutron files with the following sub-elements
 
   * The ``base`` element should refer to an ENDF6 library installed with NDFetcher, this is the main source of the ENDF6 tapes for your library
-  * The ``ommit`` element lists the nuclide present in the ENDF6 library that you want to discard
+  * The ``omit`` element lists the nuclide present in the ENDF6 library that you want to discard
   * The ``add`` element tells NDOmcer to use ENDF6 tapes from a library different that the base one. It contains keys named after the desired library, with a list of the desired nuclides
 
 * A ``decay`` element with keys similar to that of the ``n`` element
@@ -84,7 +84,7 @@ Here is a sample of what an ``ndc`` input file to build a JEFF-3.3 based chain s
   branching_ratios: sfr
   n:
     base: jeff33
-    ommit: C0
+    omit: C0
     add:
       endfb8: Ta180 C12 C13 O17
   decay:

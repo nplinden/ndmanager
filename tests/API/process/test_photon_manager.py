@@ -4,7 +4,7 @@ from ndmanager.API.process.photon_manager import PhotonManager
 
 
 def test_photon_manager(install, build_lib):
-    dico = {"base": "foo", "ommit": "Pu", "add": {"bar": "H"}}
+    dico = {"base": "foo", "omit": "Pu", "add": {"bar": "H"}}
     p = Path("pytest-artifacts/API/process/neutron_manager/")
     manager = PhotonManager(None, p)
     assert manager.photo == {}
@@ -15,7 +15,7 @@ def test_photon_manager(install, build_lib):
     print(len(manager))
     assert len(manager) == 2
     assert manager.base == "foo"
-    assert manager.ommit == {"Pu"}
+    assert manager.omit == {"Pu"}
     assert manager.add == {"bar": "H"}
     assert manager.reuse == {}
     photo = {

@@ -22,12 +22,12 @@ class InputParser:
         """
         if sublibdict is None:
             self.base = None
-            self.ommit = set()
+            self.omit = set()
             self.add = {}
             self.reuse = {}
         else:
             self.base = sublibdict.get("base", None)
-            self.ommit = set(sublibdict.get("ommit", "").split())
+            self.omit = set(sublibdict.get("omit", "").split())
             self.add = sublibdict.get("add", {})
             if "reuse" in sublibdict:
                 guestpath = NDMANAGER_HDF5 / sublibdict["reuse"] / "cross_sections.xml"
@@ -57,7 +57,7 @@ class InputParser:
             tapes |= {k: v for k, v in all_tapes.items() if k not in self.reuse}
 
         # Remove unwanted evaluations
-        for nuclide in self.ommit:
+        for nuclide in self.omit:
             tapes.pop(nuclide, None)
 
         # Remove neutron evaluations if they are present.

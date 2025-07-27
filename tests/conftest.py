@@ -45,17 +45,17 @@ name: foo
 neutron:
   base: foo
   temperatures: 273 400
-  ommit: Am242_m1
+  omit: Am242_m1
   add:
     bar: H1
 photon:
   base: foo
-  ommit: Pu
+  omit: Pu
   add:
     bar: H
 tsl:
   base: foo
-  ommit: tsl_0002_para-H.endf6
+  omit: tsl_0002_para-H.endf6
   add:
     bar: 
       tsl_para-H_0002.endf6: H1

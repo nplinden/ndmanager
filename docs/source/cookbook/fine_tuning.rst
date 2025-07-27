@@ -31,7 +31,7 @@ This is done in the ``tsl`` element of the input file.
     neutron:
       base: jeff33
       temperatures: 250 294 600 900 1200 2500
-      ommit: C0
+      omit: C0
       add:
         endfb8: Ta180 C12 C13 O17
     photon:

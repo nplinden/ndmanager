@@ -7,7 +7,7 @@ def test_neutron_manager(install, build_lib):
     dico = {
         "base": "foo",
         "temperatures": "273 400",
-        "ommit": "Am242_m1",
+        "omit": "Am242_m1",
         "add": {"bar": "H1"},
     }
     p = Path("pytest-artifacts/API/process/neutron_manager/")
@@ -19,7 +19,7 @@ def test_neutron_manager(install, build_lib):
     manager = NeutronManager(dico, p)
     assert len(manager) == 2
     assert manager.base == "foo"
-    assert manager.ommit == {"Am242_m1"}
+    assert manager.omit == {"Am242_m1"}
     assert manager.add == {"bar": "H1"}
     assert manager.reuse == {}
     assert manager.temperatures == {400, 273}
@@ -54,7 +54,7 @@ def test_neutron_manager(install, build_lib):
     manager = NeutronManager(dico, p)
     assert len(manager) == 1
     assert manager.base is None
-    assert manager.ommit == set()
+    assert manager.omit == set()
     assert manager.add == {"bar": "H1"}
     ref = {"C12": "pytest-artifacts/hdf5/foo/neutron/C12.h5"}
     for nuclide, path in manager.reuse.items():
