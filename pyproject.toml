@@ -62,15 +62,6 @@ env = [
     "NDMANAGER_CONFIG=pytest-artifacts",
 ]
 
-[dependency-groups]
-dev = [
-    "build>=1.2.2.post1",
-    "coverage>=7.9.1",
-    "pytest>=8.4.1",
-    "pytest-cov>=6.2.1",
-    "pytest-env>=1.1.5",
-]
-
 [project.optional-dependencies]
 docs = [
     "sphinx>=8.2.3",
@@ -78,4 +69,11 @@ docs = [
     "sphinx-copybutton>=0.5.2",
     "sphinx-design>=0.6.1",
     "pydata-sphinx-theme>=0.16.1",
+]
+dev = [
+    "build>=1.2.2.post1",
+    "coverage>=7.9.1",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-env>=1.1.5",
 ]
