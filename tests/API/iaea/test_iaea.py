@@ -2,7 +2,7 @@ from ndmanager.API.iaea import IAEA, IAEALibrary
 from ndmanager.API.sha1 import compute_file_sha1
 from ndmanager.env import NDMANAGER_CONFIG
 
-CACHE_SHA1 = "4011474e33ff944287932b53a441a8fef21e53c3"
+CACHE_SHA1 = "a7d5e5fef57358c602b3159303e7f8f06d99e50d"
 
 
 def test_iaea():
