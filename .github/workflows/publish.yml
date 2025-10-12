@@ -1,5 +1,7 @@
 name: Publish on PyPI
-on: push
+on:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -24,15 +26,13 @@ jobs:
         path: dist/
 
   publish-to-pypi:
-    name: >-
-      Publish NDManager 📦 to PyPI
-    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    name: Publish NDManager to PyPI
     needs:
     - build
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/ndmanager  # Replace <package-name> with your PyPI project name
+      url: https://pypi.org/p/ndmanager
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
     steps:
