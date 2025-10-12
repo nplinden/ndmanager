@@ -1,0 +1,78 @@
+Initializing IAEA database...
+---------------------------------------------------------------  Available libraries  ----------------------------------------------------------------
+ADS-2.0              ADS-2.0              [ ]: ADS-2.0 Accelerator driven systems nuclear data library, IAEA, 2008
+ADS-HE               ADS-HE               [ ]: ADS-HE High energy library for accelerator driven systems, IAEA, 2013
+brond22              BROND-2-2            [ ]: BROND-2 USSR evaluated neutron data library, issued in 1992
+brond31              BROND-3.1            [ ]: BROND-3.1 Russian evaluated neutron data library, issued in 2016
+CENDL-2              CENDL-2              [ ]: CENDL-2 Chinese evaluated neutron data library, issued in 1991
+cendl31              CENDL-3.1            [ ]: CENDL-3.1 Chinese evaluated neutron data library, issued in 2009
+cendl32              CENDL-3.2            [ ]: CENDL-3.2 Chinese evaluated neutron data library, issued in 2020
+EAF-2010             EAF-2010             [ ]: EAF-2010 European Activation File
+endfb70              ENDF-B-VII.0         [ ]: ENDF/B-VII.0 U.S. Evaluated Nuclear Data Library, issued in 2006
+endfb71              ENDF-B-VII.1         [ ]: ENDF/B-VII.1 U.S. Evaluated Nuclear Data Library, issued in 2011
+endfb8               ENDF-B-VIII.0        [ ]: ENDF/B-VIII.0 U.S. Evaluated Nuclear Data Library, issued in 2018
+endfb81              ENDF-B-VIII.1        [ ]: ENDF/B-VIII.1 U.S. Evaluated Nuclear Data Library, issued in 2024
+FENDL-2.1            FENDL-2.1            [ ]: FENDL/E-2.1 Fusion Evaluated Nuclear Data Library
+FENDL-3.1c           FENDL-3.1c           [ ]: FENDL-3.1c Fusion Evaluated Nuclear Data Library, 2017
+FENDL-3.2            FENDL-3.2            [ ]: FENDL-3.2 Fusion Evaluated Nuclear Data Library, 2021
+fendl32b             FENDL-3.2b           [ ]: FENDL-3.2b Fusion Evaluated Nuclear Data Library, 2022
+FENDL-3.2c           FENDL-3.2c           [ ]: FENDL-3.2c Fusion Evaluated Nuclear Data Library, 2025
+IAEA-Medical         IAEA-Medical         [✓]: IAEA-Medical Charged-particle cross section database for medical radioisotope production, 2001
+IAEA-PD-1999         IAEA-PD-1999         [ ]: IAEA-Photonuclear Data Library, 1999
+IAEA-PD-2019         IAEA-PD-2019         [ ]: IAEA-Photonuclear Data Library, 2019
+IAEA-Therapeutic     IAEA-Therapeutic     [ ]: IAEA-Therapeutic Cross section database for medical radioisotope production, 2003-2009
+IBA-Eval-2007        IBA-Eval-2007        [ ]: IBA-EVAL Differential charged-particle cross sections for ion beam analysis, 2006-2007
+IBA-Eval             IBA-Eval             [ ]: IBA-EVAL Differential charged-particle cross sections for ion beam analysis, 2013
+INDEN-Aug2023        INDEN-Aug2023        [ ]: INDEN-Aug2023 Library made by International Nuclear Data Evaluators Network (coord. by IAEA)
+INDEN-Feb2022        INDEN-Feb2022        [ ]: INDEN-Feb2022 Library made by International Nuclear Data Evaluators Network (coord. by IAEA)
+INDEN.0-beta         INDEN.0-beta         [ ]: INDEN-2020-beta Library made by International Nuclear Data Evaluators Network (coord. by IAEA)
+INDL-TSL             INDL-TSL             [ ]: INDL/TSL IAEA Nuclear Data Library / Thermal Scattering Law, 2006
+IRDF-2002            IRDF-2002            [ ]: IRDF-2002 Decay data + Dosimetry cross sections in pointwise ENDF-6 format
+IRDFF-II-aux         IRDFF-II-aux         [ ]: IRDFF-II auxilliary files, 2019
+IRDFF-II-b1          IRDFF-II-b1          [ ]: IRDFF International Reactor Dosimetry and Fusion File, ver-II, beta-1
+IRDFF-II             IRDFF-II             [ ]: IRDFF International Reactor Dosimetry, Fission and Fusion File, v-II, 2019
+IRDFF-v0             IRDFF-v0             [ ]: IRDFF International Reactor Dosimetry file for Fission and Fusion
+IRDFF-v1.01          IRDFF-v1.01          [ ]: IRDFF International Reactor Dosimetry file for Fission and Fusion
+IRDFF-v1.03          IRDFF-v1.03          [ ]: IRDFF International Reactor Dosimetry and Fusion File, ver-1.03
+IRDFF-v1.05          IRDFF-v1.05          [ ]: IRDFF International Reactor Dosimetry and Fusion File, ver-1.05
+IRDFF                IRDFF                [ ]: IRDFF International Reactor Dosimetry and Fusion File
+JEF-2.2              JEF-2.2              [ ]: JEF-2.2
+jeff311              JEFF-3.1.1           [ ]: JEFF-3.1 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+jeff312              JEFF-3.1.2           [ ]: JEFF-3.1.2 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+jeff31               JEFF-3.1             [ ]: JEFF-3.1 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+JEFF-3.2             JEFF-3.2             [ ]: JEFF-3.2 Evaluated nuclear data library of the OECD Nuclear Energy Agency
+JEFF-3.3-DPA         JEFF-3.3-DPA         [ ]: JEFF-3.3/DPA Atomic displacement (radiation damage) cross-sections
+jeff33               JEFF-3.3             [ ]: JEFF-3.3 Evaluated nuclear data library of the OECD Nuclear Energy Agency, 2017
+JEFF-4.0             JEFF-4.0             [ ]: JEFF-4.0 Evaluated nuclear data library of the OECD Nuclear Energy Agency, 2025
+jendl32              JENDL-3.2            [ ]: JENDL-3.2 Japanese evaluated nuclear data library, 1994
+JENDL-3.3            JENDL-3.3            [ ]: JENDL-3.3 Japanese evaluated nuclear data library
+JENDL-4.0-HE         JENDL-4.0-HE         [ ]: JENDL-4.0 High Energy File 2015, (neutron, proton)
+jendl4               JENDL-4.0            [ ]: JENDL-4.0 Japanese evaluated nuclear data library, 2010
+JENDL-4.0u2-20160106 JENDL-4.0u2-20160106 [ ]: JENDL-4.0 Japanese evaluated nuclear data library, 2010
+JENDL-5-Apr2022      JENDL-5-Apr2022      [ ]: JENDL-5 Japanese evaluated nuclear data library, 2021
+jendl5               JENDL-5-Aug2023      [ ]: JENDL-5 Japanese evaluated nuclear data library, 2021
+JENDL-5              JENDL-5              [ ]: JENDL-5 Japanese evaluated nuclear data library, 2021
+JENDL-AD-2017        JENDL-AD-2017        [ ]: JENDL Activation Cross Section File for Nuclear Decommissioning 2017
+JENDL-DEU-2020       JENDL-DEU-2020       [ ]: JENDL Deuteron Reaction Data File 2020 (JENDL/DEU-2020)
+JENDL-HE-2007        JENDL-HE-2007        [ ]: JENDL High Energy File 2007, (neutron, proton)
+JENDL-ImPACT-18      JENDL-ImPACT-18      [ ]: JENDL LLFP Transmutation Cross Section File (JENDL/ImPACT-2018)
+JENDL-PD-2016.1      JENDL-PD-2016.1      [ ]: JENDL Photonuclear Data File 2016 revision 1, 2020
+JENDL-PD-2016        JENDL-PD-2016        [ ]: JENDL Photonuclear Data File 2016
+MINKS-ACT            MINKS-ACT            [ ]: MINKS-ACT Minsk Actinides Library (Maslov et al.), 2011
+PADF-2007            PADF-2007            [ ]: PADF-2007 Proton Activation Data File, 2006-2007
+ROSFOND-2010         ROSFOND-2010         [ ]: ROSFOND Russian evaluated neutron data library, issued in 2008-2010
+ROSFOND              ROSFOND              [ ]: ROSFOND Russian evaluated neutron data library, issued in 2008
+TENDL-2008           TENDL-2008           [ ]: TENDL-2008 TALYS-based Evaluated Nuclear Data Library, 2008
+TENDL-2009           TENDL-2009           [ ]: TENDL-2009 TALYS-based Evaluated Nuclear Data Library, 2009
+TENDL-2010           TENDL-2010           [ ]: TENDL-2010 TALYS-based Evaluated Nuclear Data Library, 2010
+TENDL-2011           TENDL-2011           [ ]: TENDL-2011 TALYS-based Evaluated Nuclear Data Library, 2011
+TENDL-2012           TENDL-2012           [ ]: TENDL-2012 TALYS-based Evaluated Nuclear Data Library, 2012
+TENDL-2014           TENDL-2014           [ ]: TENDL-2014 TALYS-based Evaluated Nuclear Data Library, 2014
+TENDL-2015           TENDL-2015           [ ]: TENDL-2015 TALYS-based Evaluated Nuclear Data Library, 2015
+TENDL-2017           TENDL-2017           [ ]: TENDL-2017 TALYS-based Evaluated Nuclear Data Library, 2017
+TENDL-2019           TENDL-2019           [ ]: TENDL-2019 TALYS-based Evaluated Nuclear Data Library, 2019
+tendl2021            TENDL-2021           [ ]: TENDL-2021 TALYS-based Evaluated Nuclear Data Library, 2021
+tendl2023            TENDL-2023           [ ]: TENDL-2023 TALYS-based Evaluated Nuclear Data Library, 2023
+UKDD-12              UKDD-12              [ ]: UKDD-12 Decay Library, UK, 2012
+-----------------------------------------------------------------  Custom Libraries  -----------------------------------------------------------------
+bar             foo
