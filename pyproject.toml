@@ -37,20 +37,6 @@ ndo = "ndmanager.CLI.omcer.main:main"
 ndc = "ndmanager.CLI.chainer.main:main"
 nds = "ndmanager.CLI.sampler.main:main"
 
-[tool.setuptools]
-packages = [
-    'ndmanager',
-    'ndmanager.API',
-    'ndmanager.API.iaea',
-    'ndmanager.API.process',
-    'ndmanager.API.sampling',
-    'ndmanager.CLI',
-    'ndmanager.CLI.fetcher',
-    'ndmanager.CLI.omcer',
-    'ndmanager.CLI.chainer',
-    'ndmanager.CLI.sampler',
-]
-
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
