@@ -33,8 +33,7 @@ Homepage = "https://github.com/nplinden/ndmanager"
 [project.scripts]
 ndf = "ndmanager.CLI.ndf:ndf"
 ndo = "ndmanager.CLI.ndo:ndo"
-# ndo = "ndmanager.CLI.omcer.main:main"
-ndc = "ndmanager.CLI.chainer.main:main"
+ndc = "ndmanager.CLI.ndc:ndc"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

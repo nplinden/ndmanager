@@ -24,8 +24,6 @@ def ndf() -> None:
 @click.option("--all", "-a", "_all", is_flag=True, help="Show all libraries.")
 def list_command(*, _all: bool) -> None:
     """List available ENDF6 nuclear data libraries."""
-    if not IAEA.is_cached():
-        pass
     iaea = IAEA()
 
     names = list(iaea.libraries) if _all else list(iaea.aliases)

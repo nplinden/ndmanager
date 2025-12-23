@@ -12,7 +12,6 @@ from rich.progress import Progress, BarColumn, TextColumn, TimeRemainingColumn
 
 import requests
 from bs4 import BeautifulSoup
-from tqdm import tqdm
 
 from ndmanager.API.nuclide import Nuclide
 

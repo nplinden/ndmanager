@@ -1,4 +1,4 @@
-"""Entry point for the ndf command."""
+"""Entry point for the ndo command."""
 
 import shutil
 import tarfile
