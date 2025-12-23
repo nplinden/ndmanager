@@ -1,9 +1,6 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "ndmanager"
+version = "0.7.0"
 readme = "README.md"
 authors = [{ name = "Nicolas Linden", email = "nicolas@nlinden.com" }]
 description = "Managing you nuclear data collection"
@@ -11,6 +8,7 @@ classifiers = ["Programming Language :: Python :: 3.11"]
 requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.13.4",
+    "click>=8.3.1",
     "endf>=0.1.4",
     "h5py>=3.14.0",
     "lxml>=6.0.0",
@@ -19,21 +17,23 @@ dependencies = [
     "pandas>=2.3.0",
     "pyyaml>=6.0.2",
     "requests>=2.32.4",
+    "rich>=14.2.0",
     "sandy>=1.1.0",
     "tabulate>=0.9.0",
     "tqdm>=4.67.1",
 ]
-dynamic = ["version"]
 
-[tool.setuptools.dynamic]
-version = { attr = "ndmanager.__version__" }
+[build-system]
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
 
 [project.urls]
 Homepage = "https://github.com/nplinden/ndmanager"
 
 [project.scripts]
-ndf = "ndmanager.CLI.fetcher.main:main"
-ndo = "ndmanager.CLI.omcer.main:main"
+ndf = "ndmanager.CLI.ndf:ndf"
+ndo = "ndmanager.CLI.ndo:ndo"
+# ndo = "ndmanager.CLI.omcer.main:main"
 ndc = "ndmanager.CLI.chainer.main:main"
 
 [tool.pytest.ini_options]
@@ -65,7 +65,7 @@ docs = [
 
 [tool.ruff]
 line-length = 120
-exclude = ["ndmanager/_vendor"]
+exclude = ["src/ndmanager/_vendor"]
 
 [tool.ruff.lint]
 select = ["ALL"]

@@ -154,3 +154,16 @@ class IAEA:
 
         """
         return list(self.libraries.keys())
+
+    def get_alias(self, name: str) -> str:
+        """Get the alias of a library name.
+
+        Args:
+            name (str): The library name
+
+        Returns:
+            str: The alias of the library
+
+        """
+        sesalia = {v: k for k, v in self.aliases.items()}
+        return sesalia.get(name, name)

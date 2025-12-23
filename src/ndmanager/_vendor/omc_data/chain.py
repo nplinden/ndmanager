@@ -18,7 +18,7 @@ import lxml.etree as ET
 import scipy.sparse as sp
 
 import ndmanager._vendor.omc_data
-from ndmanager._vendor.omc_data import gnds_name, zam
+from ndmanager._vendor.omc_data.data import gnds_name, zam
 from ndmanager._vendor.omc_data.checkvalue import PathLike, check_greater_than, check_type
 from ndmanager._vendor.omc_data.exceptions import DataError
 

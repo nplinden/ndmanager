@@ -8,6 +8,7 @@ from contextlib import chdir
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Never
+from rich.progress import Progress, BarColumn, TextColumn, TimeRemainingColumn
 
 import requests
 from bs4 import BeautifulSoup
@@ -225,9 +226,6 @@ class IAEASublibrary:
             e: Raise errors raised by parallel download of nuclear data files
 
         """
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        pbar = tqdm(total=len(self), bar_format=bar_format)
-
         targets = []
         nuclides = []
         for nuclide in self.urls:
@@ -241,31 +239,36 @@ class IAEASublibrary:
             targets.append(Path(targetdir) / f"{name}.endf6")
             nuclides.append(nuclide)
 
-        if processes == 1:
-            for nuclide, target in zip(nuclides, targets, strict=False):
-                description = f"{self.lib}/{self.kind}/{name}"
-                pbar.set_description(f"{description:<40}")
-                self.download_single(nuclide, target)
-                pbar.update()
-            pbar.close()
-        else:
-
-            def error_callback(e: Exception) -> Never:
-                raise e
-
-            def update_pbar(*args) -> None:
-                pbar.update()
-
-            description = f"{self.lib}/{self.kind}"
-            pbar.set_description(f"{description:<25}")
-            with mp.get_context("spawn").Pool(processes) as p:
+        description_size = len(self.lib) + 6
+        description = f"{self.lib}/{self.kind}"
+        description = f"{description:<{description_size}}"
+        with Progress(
+            TextColumn("{task.description}"),
+            BarColumn(),
+            TextColumn("[magenta]{task.completed}/{task.total}"),  # <-- shows count
+            TimeRemainingColumn(),
+        ) as pbar:
+            if processes == 1:
+                task = pbar.add_task(description, total=len(nuclides))
                 for nuclide, target in zip(nuclides, targets, strict=False):
-                    p.apply_async(
-                        self.download_single,
-                        args=(nuclide, target),
-                        callback=update_pbar,
-                        error_callback=error_callback,
-                    )
-                p.close()
-                p.join()
-                pbar.close()
+                    self.download_single(nuclide, target)
+                    pbar.update(task, advance=1)
+            else:
+                task = pbar.add_task(description, total=len(nuclides))
+
+                def error_callback(e: Exception) -> Never:
+                    raise e
+
+                def update_pbar(*args) -> None:
+                    pbar.update(task, advance=1)
+
+                with mp.get_context("spawn").Pool(processes) as p:
+                    for nuclide, target in zip(nuclides, targets, strict=False):
+                        p.apply_async(
+                            self.download_single,
+                            args=(nuclide, target),
+                            callback=update_pbar,
+                            error_callback=error_callback,
+                        )
+                    p.close()
+                    p.join()

@@ -44,9 +44,13 @@ class HDF5Neutron(HDF5Sublibrary):
             merge_neutron_file(tmpfile, self.path)
             tmpfile.unlink()
         else:
+            if not self.temperatures:
+                msg = "No temperatures specified for processing"
+                raise ValueError(msg)
             data = IncidentNeutron.from_njoy(
                 self.neutron,
                 temperatures=self.temperatures,
+                input_filename="He3.njoy",
             )
             data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)
