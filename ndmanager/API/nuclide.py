@@ -14,8 +14,7 @@ class Nuclide:
     file2zam_re = re.compile(r"([A-Za-z][a-z]*)-(\d+)([A-Z]*)")
 
     def __init__(self, Z: int, A: int, M: int) -> None:
-        """Instanciate a nuclide using it atomic number, mass number and
-        metastable index.
+        """Instanciate a nuclide using it atomic number, mass number and metastable index.
 
         Args:
             Z (int): Atomic number
@@ -69,9 +68,9 @@ class Nuclide:
 
     @classmethod
     def from_file(cls, filename: str | Path) -> "Nuclide":
-        """Instanciate a nuclide using a path to an ENDF6 file, for files
-        containing multiple MAT numbers, only the first nuclide will be
-        returned.
+        """Instanciate a nuclide using a path to an ENDF6 file.
+
+        For files containing multiple MAT numbers, only the first nuclide will be returned.
 
         Args:
             filename (str): Path to an ENDF6 file
@@ -80,7 +79,7 @@ class Nuclide:
             Nuclide: The nuclide object
 
         """
-        with open(filename, encoding="utf-8") as f:
+        with Path(filename).open(encoding="utf-8") as f:
             f.readline()
             float_za = f.readline()[1:12].replace(" ", "").replace("+", "e+")
             za = float(float_za)
@@ -95,6 +94,7 @@ class Nuclide:
     @classmethod
     def from_iaea_name(cls, name: str) -> "Nuclide":
         """Instanciate a nuclide using its name if the format used by the IAEA's website.
+
         e.g. 048-Cd-115M.
 
         Args:

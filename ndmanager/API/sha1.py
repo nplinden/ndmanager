@@ -1,6 +1,7 @@
 """Some utility function to compute ENDF6 tape SHA1."""
 
 import hashlib
+from pathlib import Path
 
 from ndmanager.API.endf6 import get_endf6
 from ndmanager.env import NDMANAGER_ENDF6
@@ -10,12 +11,12 @@ def compute_file_sha1(filename: str) -> str:
     """Compute the SHA1 value of a file given its path.
 
     Args:
-        Path to a file.
+        filename (str): Path to a file.
 
     """
     BUF_SIZE = 65536  # 64 kBi
     sha1 = hashlib.sha1()
-    with open(filename, "rb") as f:
+    with Path(filename).open("rb") as f:
         while True:
             data = f.read(BUF_SIZE)
             if not data:
@@ -82,6 +83,7 @@ def compute_lib_sha1(libname: str) -> dict[str, str]:
 
 def compute_sha1(libname: str, sub: str | None = None, nuclide: str | None = None) -> dict[str, str]:
     """Compute the SHA1 hash of tapes in a library in the NDManager database.
+
     If a sublibrary is specified, only tapes in that sublibrary will be computed.
     If a nuclide is also specified, only the corresponding tape will be computed.
 

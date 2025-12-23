@@ -26,7 +26,7 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
     if not p.exists():
         msg = f"Library '{libname}' does not exist"
         raise ValueError(msg)
-    with open(p, encoding="utf-8") as f:
+    with p.open(encoding="utf-8") as f:
         root = ET.parse(f).getroot()
         dirnode = root.find("directory")
         directory = p.parent if dirnode is None else Path(dirnode.text)
