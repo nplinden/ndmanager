@@ -19,9 +19,10 @@ class NdoBuildCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "build", help="Build an OpenMC library from a YAML input file"
+            "build", help="Build an OpenMC library from a YAML input file",
         )
         parser.add_argument(
             "filename",
@@ -29,10 +30,10 @@ class NdoBuildCommand(Command):
             help="The name of the YAML file describing the target library",
         )
         parser.add_argument(
-            "--dryrun", help="Do not perform NJOY runs", action="store_true"
+            "--dryrun", help="Do not perform NJOY runs", action="store_true",
         )
         parser.add_argument(
-            "--clean", help="Remove the library before building", action="store_true"
+            "--clean", help="Remove the library before building", action="store_true",
         )
         parser.add_argument(
             "--temperatures",
@@ -43,7 +44,7 @@ class NdoBuildCommand(Command):
             default=None,
         )
         parser.add_argument(
-            "-j", type=int, default=1, help="Number of concurent processes"
+            "-j", type=int, default=1, help="Number of concurent processes",
         )
         parser.set_defaults(func=cls)
 
@@ -52,8 +53,8 @@ class NdoBuildCommand(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
-        """
 
+        """
         with open(args.filename, encoding="utf-8") as f:
             inputs = yaml.safe_load(f)
 

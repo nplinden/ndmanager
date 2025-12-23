@@ -17,6 +17,7 @@ class NdfListCommand:
         Args:
             args (ap.Namespace): An argparse namespace containing the `nds list`
                                  arguments
+
         """
         self.args = args
         if not IAEA.is_cached():
@@ -58,6 +59,7 @@ class NdfListCommand:
 
         Returns:
             List[str]: The list of library names
+
         """
         libnames = []
         if self.args.all:
@@ -75,6 +77,7 @@ class NdfListCommand:
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser("list", help="List libraries compatible with NDManager")
         parser.add_argument("--all", "-a", action="store_true", help="List all available libraries")

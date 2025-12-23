@@ -7,9 +7,9 @@ from contextlib import chdir
 import requests
 from tqdm import tqdm
 
+from ndmanager.CLI.parser import Command
 from ndmanager.data import OPENMC_CHAINS
 from ndmanager.env import NDMANAGER_CHAINS
-from ndmanager.CLI.parser import Command
 
 
 class NdcInstallCommand(Command):
@@ -21,9 +21,10 @@ class NdcInstallCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "install", help="Install one or more OpenMC Chain"
+            "install", help="Install one or more OpenMC Chain",
         )
         parser.add_argument(
             "chain",
@@ -42,6 +43,7 @@ class NdcInstallCommand(Command):
 
         Raises:
             KeyError: Raised if the requested chain names are not in the database
+
         """
         for chain in args.chain:
             if chain not in OPENMC_CHAINS:

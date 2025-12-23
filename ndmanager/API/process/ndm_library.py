@@ -5,8 +5,8 @@ from pathlib import Path
 
 import h5py
 import yaml
-from ndmanager._vendor.omc_data import DataLibrary
 
+from ndmanager._vendor.omc_data import DataLibrary
 from ndmanager.API.process.neutron_manager import NeutronManager
 from ndmanager.API.process.photon_manager import PhotonManager
 from ndmanager.API.process.tsl_manager import TSLManager
@@ -21,10 +21,11 @@ class NDMLibrary(DataLibrary):
 
         Args:
             inputpath (str | Path): Path to a yaml input file
+
         """
         super().__init__()
         self.inputpath = inputpath
-        with open(inputpath, "r", encoding="utf-8") as f:
+        with open(inputpath, encoding="utf-8") as f:
             inputdict = yaml.safe_load(f)
         self.description = inputdict.get("description", "")
         self.summary = inputdict.get("summary", "")
@@ -45,6 +46,7 @@ class NDMLibrary(DataLibrary):
                                      some logs. Defaults to False.. Defaults to False.
             clean (bool, optional): Delete the target directory before processing.
                                     Defaults to False.
+
         """
         if clean and self.root.exists():
             answer = input(f"This will delete {self.root} entirely, proceed? [y/n]")
@@ -75,7 +77,7 @@ class NDMLibrary(DataLibrary):
 
         if not self.check_temperatures():
             print(
-                "Reused and new neutron processed files used different temperature grids!"
+                "Reused and new neutron processed files used different temperature grids!",
             )
 
     def register(self, manager: NeutronManager | PhotonManager | TSLManager) -> None:
@@ -83,6 +85,7 @@ class NDMLibrary(DataLibrary):
 
         Args:
             manager (NeutronManager | PhotonManager | TSLManager): _description_
+
         """
         for path in manager.reuse.values():
             self.register_file(path)
@@ -95,6 +98,7 @@ class NDMLibrary(DataLibrary):
 
         Returns:
             bool: Wether the temperatures are the same or not
+
         """
         # Reused temperatures
         temperature_sets = []

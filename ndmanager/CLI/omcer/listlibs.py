@@ -5,10 +5,10 @@ import textwrap
 
 import yaml
 
+from ndmanager.CLI.parser import Command
 from ndmanager.data import OPENMC_LIBS
 from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.format import get_terminal_size, header
-from ndmanager.CLI.parser import Command
 
 
 class NdoListCommand(Command):
@@ -20,9 +20,10 @@ class NdoListCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "list", help="List libraries compatible with NDManager"
+            "list", help="List libraries compatible with NDManager",
         )
         parser.set_defaults(func=cls)
 
@@ -49,20 +50,20 @@ class NdoListCommand(Command):
                 s = f"{name}"
                 s = f"{s:<16} {fancyname:<15} [{check}]: {libdict['info']}"
                 s = textwrap.wrap(
-                    s, initial_indent="", subsequent_indent=38 * " ", width=col
+                    s, initial_indent="", subsequent_indent=38 * " ", width=col,
                 )
                 lst.append("\n".join(s))
         lst.append(header("Custom Libraries"))
         for name in xs:
             ymlfile = NDMANAGER_HDF5 / name / "input.yml"
             if ymlfile.exists():
-                with open(ymlfile, "r", encoding="utf-8") as f:
+                with open(ymlfile, encoding="utf-8") as f:
                     desc = yaml.safe_load(f).get("summary", "")
             else:
                 desc = ""
             s = f"{name:<16} {desc}"
             s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=21 * " ", width=col
+                s, initial_indent="", subsequent_indent=21 * " ", width=col,
             )
             lst.append("\n".join(s))
         print("\n".join(lst))

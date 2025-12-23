@@ -2,9 +2,9 @@
 
 import argparse as ap
 
-from ndmanager.env import NDMANAGER_CHAINS
-from ndmanager.data import OPENMC_CHAINS
 from ndmanager.CLI.parser import Command
+from ndmanager.data import OPENMC_CHAINS
+from ndmanager.env import NDMANAGER_CHAINS
 
 
 class NdcRemoveCommand(Command):
@@ -16,6 +16,7 @@ class NdcRemoveCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser("remove", help="Remove one or more OpenMC chain")
         parser.add_argument(
@@ -32,6 +33,7 @@ class NdcRemoveCommand(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
+
         """
         for chain in args.chains:
             if chain in OPENMC_CHAINS:

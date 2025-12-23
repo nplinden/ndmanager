@@ -1,19 +1,20 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterable, Callable
+from collections.abc import Callable, Iterable
 from functools import reduce
 from itertools import zip_longest
 from math import exp, log
-from numbers import Real, Integral
+from numbers import Integral, Real
 
 import numpy as np
 
-import ndmanager._vendor.omc_data.checkvalue as cv
 import ndmanager._vendor.omc_data
+import ndmanager._vendor.omc_data.checkvalue as cv
 from ndmanager._vendor.omc_data.mixin import EqualityMixin
+
 from .data import EV_PER_MEV
 
-INTERPOLATION_SCHEME = {1: 'histogram', 2: 'linear-linear', 3: 'linear-log',
-                        4: 'log-linear', 5: 'log-log'}
+INTERPOLATION_SCHEME = {1: "histogram", 2: "linear-linear", 3: "linear-log",
+                        4: "log-linear", 5: "log-log"}
 
 
 def sum_functions(funcs):
@@ -39,8 +40,8 @@ def sum_functions(funcs):
         if isinstance(f, Tabulated1D):
             xs.append(f.x)
             if not np.all(f.interpolation == 2):
-                raise ValueError('Only linear-linear tabulated functions '
-                                 'can be combined')
+                raise ValueError("Only linear-linear tabulated functions "
+                                 "can be combined")
 
     if xs:
         # Take the union of all energies (sorted)
@@ -49,20 +50,20 @@ def sum_functions(funcs):
         # Evaluate each function and add together
         y = sum(f(x) for f in funcs)
         return Tabulated1D(x, y)
-    else:
-        # If no tabulated functions are present, we need to combine the
-        # polynomials by adding their coefficients
-        coeffs = [sum(x) for x in zip_longest(*funcs, fillvalue=0.0)]
-        return Polynomial(coeffs)
+    # If no tabulated functions are present, we need to combine the
+    # polynomials by adding their coefficients
+    coeffs = [sum(x) for x in zip_longest(*funcs, fillvalue=0.0)]
+    return Polynomial(coeffs)
 
 
 class Function1D(EqualityMixin, ABC):
     """A function of one independent variable with HDF5 support."""
+
     @abstractmethod
     def __call__(self): pass
 
     @abstractmethod
-    def to_hdf5(self, group, name='xy'):
+    def to_hdf5(self, group, name="xy"):
         """Write function to an HDF5 group
 
         Parameters
@@ -73,7 +74,6 @@ class Function1D(EqualityMixin, ABC):
             Name of the dataset to create
 
         """
-        pass
 
     @classmethod
     def from_hdf5(cls, dataset):
@@ -91,10 +91,10 @@ class Function1D(EqualityMixin, ABC):
 
         """
         for subclass in cls.__subclasses__():
-            if dataset.attrs['type'].decode() == subclass.__name__:
+            if dataset.attrs["type"].decode() == subclass.__name__:
                 return subclass.from_hdf5(dataset)
         raise ValueError("Unrecognized Function1D class: '"
-                         + dataset.attrs['type'].decode() + "'")
+                         + dataset.attrs["type"].decode() + "'")
 
 
 class Tabulated1D(Function1D):
@@ -164,7 +164,7 @@ class Tabulated1D(Function1D):
         y = np.zeros_like(x)
 
         # Get indices for interpolation
-        idx = np.searchsorted(self.x, x, side='right') - 1
+        idx = np.searchsorted(self.x, x, side="right") - 1
 
         # Loop over interpolation regions
         for k in range(len(self.breakpoints)):
@@ -212,14 +212,14 @@ class Tabulated1D(Function1D):
     def _interpolate_scalar(self, x):
         if x <= self._x[0]:
             return self._y[0]
-        elif x >= self._x[-1]:
+        if x >= self._x[-1]:
             return self._y[-1]
 
         # Get the index for interpolation
-        idx = np.searchsorted(self._x, x, side='right') - 1
+        idx = np.searchsorted(self._x, x, side="right") - 1
 
         # Loop over interpolation regions
-        for b, p in zip(self.breakpoints, self.interpolation):
+        for b, p in zip(self.breakpoints, self.interpolation, strict=False):
             if idx < b - 1:
                 break
 
@@ -232,19 +232,19 @@ class Tabulated1D(Function1D):
             # Histogram
             return yi
 
-        elif p == 2:
+        if p == 2:
             # Linear-linear
             return yi + (x - xi)/(xi1 - xi)*(yi1 - yi)
 
-        elif p == 3:
+        if p == 3:
             # Linear-log
             return yi + log(x/xi)/log(xi1/xi)*(yi1 - yi)
 
-        elif p == 4:
+        if p == 4:
             # Log-linear
             return yi*exp((x - xi)/(xi1 - xi)*log(yi1/yi))
 
-        elif p == 5:
+        if p == 5:
             # Log-log
             return yi*exp(log(x/xi)/log(xi1/xi)*log(yi1/yi))
 
@@ -257,7 +257,7 @@ class Tabulated1D(Function1D):
 
     @x.setter
     def x(self, x):
-        cv.check_type('x values', x, Iterable, Real)
+        cv.check_type("x values", x, Iterable, Real)
         self._x = x
 
     @property
@@ -266,7 +266,7 @@ class Tabulated1D(Function1D):
 
     @y.setter
     def y(self, y):
-        cv.check_type('y values', y, Iterable, Real)
+        cv.check_type("y values", y, Iterable, Real)
         self._y = y
 
     @property
@@ -275,7 +275,7 @@ class Tabulated1D(Function1D):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_type('breakpoints', breakpoints, Iterable, Integral)
+        cv.check_type("breakpoints", breakpoints, Iterable, Integral)
         self._breakpoints = breakpoints
 
     @property
@@ -284,7 +284,7 @@ class Tabulated1D(Function1D):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_type('interpolation', interpolation, Iterable, Integral)
+        cv.check_type("interpolation", interpolation, Iterable, Integral)
         self._interpolation = interpolation
 
     @property
@@ -305,7 +305,6 @@ class Tabulated1D(Function1D):
             integrals from the bottom of the range to each tabulated point.
 
         """
-
         # Create output array
         partial_sum = np.zeros(len(self.x) - 1)
 
@@ -351,7 +350,7 @@ class Tabulated1D(Function1D):
 
         return np.concatenate(([0.], np.cumsum(partial_sum)))
 
-    def to_hdf5(self, group, name='xy'):
+    def to_hdf5(self, group, name="xy"):
         """Write tabulated function to an HDF5 group
 
         Parameters
@@ -364,9 +363,9 @@ class Tabulated1D(Function1D):
         """
         dataset = group.create_dataset(name, data=np.vstack(
             [self.x, self.y]))
-        dataset.attrs['type'] = np.bytes_(type(self).__name__)
-        dataset.attrs['breakpoints'] = self.breakpoints
-        dataset.attrs['interpolation'] = self.interpolation
+        dataset.attrs["type"] = np.bytes_(type(self).__name__)
+        dataset.attrs["breakpoints"] = self.breakpoints
+        dataset.attrs["interpolation"] = self.interpolation
 
     @classmethod
     def from_hdf5(cls, dataset):
@@ -383,14 +382,14 @@ class Tabulated1D(Function1D):
             Function read from dataset
 
         """
-        if dataset.attrs['type'].decode() != cls.__name__:
+        if dataset.attrs["type"].decode() != cls.__name__:
             raise ValueError("Expected an HDF5 attribute 'type' equal to '"
                              + cls.__name__ + "'")
 
         x = dataset[0, :]
         y = dataset[1, :]
-        breakpoints = dataset.attrs['breakpoints']
-        interpolation = dataset.attrs['interpolation']
+        breakpoints = dataset.attrs["breakpoints"]
+        interpolation = dataset.attrs["interpolation"]
         return cls(x, y, breakpoints, interpolation)
 
     @classmethod
@@ -413,7 +412,6 @@ class Tabulated1D(Function1D):
             Tabulated data object
 
         """
-
         # Get number of regions and pairs
         n_regions = int(ace.xss[idx])
         n_pairs = int(ace.xss[idx + 1 + 2*n_regions])
@@ -448,7 +446,8 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
         Polynomial coefficients in order of increasing degree
 
     """
-    def to_hdf5(self, group, name='xy'):
+
+    def to_hdf5(self, group, name="xy"):
         """Write polynomial function to an HDF5 group
 
         Parameters
@@ -460,7 +459,7 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
 
         """
         dataset = group.create_dataset(name, data=self.coef)
-        dataset.attrs['type'] = np.bytes_(type(self).__name__)
+        dataset.attrs["type"] = np.bytes_(type(self).__name__)
 
     @classmethod
     def from_hdf5(cls, dataset):
@@ -477,7 +476,7 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
             Function read from dataset
 
         """
-        if dataset.attrs['type'].decode() != cls.__name__:
+        if dataset.attrs["type"].decode() != cls.__name__:
             raise ValueError("Expected an HDF5 attribute 'type' equal to '"
                              + cls.__name__ + "'")
         return cls(dataset[()])
@@ -529,7 +528,7 @@ class Combination(EqualityMixin):
 
     @functions.setter
     def functions(self, functions):
-        cv.check_type('functions', functions, Iterable, Callable)
+        cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
     @property
@@ -538,9 +537,9 @@ class Combination(EqualityMixin):
 
     @operations.setter
     def operations(self, operations):
-        cv.check_type('operations', operations, Iterable, np.ufunc)
+        cv.check_type("operations", operations, Iterable, np.ufunc)
         length = len(self.functions) - 1
-        cv.check_length('operations', operations, length, length_max=length)
+        cv.check_length("operations", operations, length, length_max=length)
         self._operations = operations
 
 
@@ -575,10 +574,10 @@ class Sum(Function1D):
 
     @functions.setter
     def functions(self, functions):
-        cv.check_type('functions', functions, Iterable, Callable)
+        cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
-    def to_hdf5(self, group, name='xy'):
+    def to_hdf5(self, group, name="xy"):
         """Write sum of functions to an HDF5 group
 
         .. versionadded:: 0.13.1
@@ -592,10 +591,10 @@ class Sum(Function1D):
 
         """
         sum_group = group.create_group(name)
-        sum_group.attrs['type'] = np.bytes_(type(self).__name__)
-        sum_group.attrs['n'] = len(self.functions)
+        sum_group.attrs["type"] = np.bytes_(type(self).__name__)
+        sum_group.attrs["n"] = len(self.functions)
         for i, f in enumerate(self.functions):
-            f.to_hdf5(sum_group, f'func_{i+1}')
+            f.to_hdf5(sum_group, f"func_{i+1}")
 
     @classmethod
     def from_hdf5(cls, group):
@@ -614,9 +613,9 @@ class Sum(Function1D):
             Functions read from the group
 
         """
-        n = group.attrs['n']
+        n = group.attrs["n"]
         functions = [
-            Function1D.from_hdf5(group[f'func_{i+1}'])
+            Function1D.from_hdf5(group[f"func_{i+1}"])
             for i in range(n)
         ]
         return cls(functions)
@@ -657,8 +656,7 @@ class Regions1D(EqualityMixin):
             for j in range(len(i)):
                 ans[j] = self.functions[i[j]](x[j])
             return ans
-        else:
-            return self.functions[i](x)
+        return self.functions[i](x)
 
     @property
     def functions(self):
@@ -666,7 +664,7 @@ class Regions1D(EqualityMixin):
 
     @functions.setter
     def functions(self, functions):
-        cv.check_type('functions', functions, Iterable, Callable)
+        cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
     @property
@@ -675,7 +673,7 @@ class Regions1D(EqualityMixin):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_iterable_type('breakpoints', breakpoints, Real)
+        cv.check_iterable_type("breakpoints", breakpoints, Real)
         self._breakpoints = breakpoints
 
 
@@ -702,7 +700,6 @@ class ResonancesWithBackground(EqualityMixin):
 
     """
 
-
     def __init__(self, resonances, background, mt):
         self.resonances = resonances
         self.background = background
@@ -714,7 +711,7 @@ class ResonancesWithBackground(EqualityMixin):
 
     @background.setter
     def background(self, background):
-        cv.check_type('background cross section', background, Callable)
+        cv.check_type("background cross section", background, Callable)
         self._background = background
 
     @property
@@ -723,7 +720,7 @@ class ResonancesWithBackground(EqualityMixin):
 
     @mt.setter
     def mt(self, mt):
-        cv.check_type('MT value', mt, Integral)
+        cv.check_type("MT value", mt, Integral)
         self._mt = mt
 
     @property
@@ -732,6 +729,6 @@ class ResonancesWithBackground(EqualityMixin):
 
     @resonances.setter
     def resonances(self, resonances):
-        cv.check_type('resolved resonance parameters', resonances,
+        cv.check_type("resolved resonance parameters", resonances,
                       ndmanager._vendor.omc_data.Resonances)
         self._resonances = resonances

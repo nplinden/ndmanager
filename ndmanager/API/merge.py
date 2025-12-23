@@ -8,6 +8,7 @@ def merge_neutron_file(sourcepath, targetpath):
     Args:
         sourcepath: Path to the source data file. This file will not be modified
         targetpath: Path to the target data file. This file will be modified
+
     """
     source = h5py.File(sourcepath, "r")
     target = h5py.File(targetpath, "a")

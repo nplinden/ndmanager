@@ -33,9 +33,8 @@ def clean_indentation(element, level=0, spaces_per_level=2, trailing_indent=True
             clean_indentation(sub_element, level+1, spaces_per_level)
         if not sub_element.tail or not sub_element.tail.strip():
             sub_element.tail = i
-    else:
-        if trailing_indent and level and (not element.tail or not element.tail.strip()):
-            element.tail = i
+    elif trailing_indent and level and (not element.tail or not element.tail.strip()):
+        element.tail = i
 
 
 def get_text(elem, name, default=None):
@@ -58,9 +57,8 @@ def get_text(elem, name, default=None):
     """
     if name in elem.attrib:
         return elem.get(name, default)
-    else:
-        child = elem.find(name)
-        return child.text if child is not None else default
+    child = elem.find(name)
+    return child.text if child is not None else default
 
 
 def reorder_attributes(root):
@@ -97,6 +95,7 @@ def get_elem_tuple(elem, name, dtype=int):
     -------
     tuple of dtype
         Data read from the tuple
+
     """
     subelem = elem.find(name)
     if subelem is not None:

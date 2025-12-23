@@ -2,7 +2,7 @@
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,6 +19,7 @@ class IAEALibrary:
 
     Returns:
         IAEALibrary: The library instance
+
     """
 
     name: str = ""
@@ -26,7 +27,7 @@ class IAEALibrary:
     library: str = ""
     url: str = ""
     valid: bool = False
-    sublibraries: Dict[str, "IAEASublibrary"] = field(default_factory=dict)
+    sublibraries: dict[str, "IAEASublibrary"] = field(default_factory=dict)
 
     @classmethod
     def from_website(cls, node: str) -> "IAEALibrary":
@@ -37,6 +38,7 @@ class IAEALibrary:
 
         Returns:
             IAEALibrary: An IAEALibrary object
+
         """
         kwargs = {}
         kwargs["name"] = node
@@ -59,6 +61,7 @@ class IAEALibrary:
 
         Returns:
             IAEASublibrary: An IAEASublibrary object
+
         """
         return self.sublibraries[key]
 
@@ -68,24 +71,27 @@ class IAEALibrary:
         Args:
             key (str): name of the sublibrary
             value (IAEASublibrary): An IAEASublibrary object
+
         """
         self.sublibraries[key] = value
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """The list of sublibraries available in this library
 
         Returns:
             List[str]: The list of sublibraries
+
         """
         return list(self.sublibraries.keys())
 
     @staticmethod
-    def parse_index(kwargs: Dict[str, Any]):
+    def parse_index(kwargs: dict[str, Any]):
         """Parse a library index from the IAEA website, e.g.
         https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm
 
         Args:
             kwargs (Dict[Any]): The dictionnary of attributes
+
         """
         nsub_tags = {
             "[G]": "g",
@@ -117,7 +123,7 @@ class IAEALibrary:
         for tag in tags:
             kind = nsub_tags[tag.text]
             kwargs["sublibraries"][kind] = IAEASublibrary.from_website(
-                kwargs["url"], tag.get("href"), kind
+                kwargs["url"], tag.get("href"), kind,
             )
         index = html.find_all("pre")[0].text.split("\n")
         for line in index:

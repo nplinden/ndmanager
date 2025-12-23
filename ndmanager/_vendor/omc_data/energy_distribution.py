@@ -7,14 +7,16 @@ import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
 from ndmanager._vendor.omc_data.mixin import EqualityMixin
-from ndmanager._vendor.omc_data.univariate import Univariate, Tabular, Discrete, Mixture
+from ndmanager._vendor.omc_data.univariate import Discrete, Mixture, Tabular, Univariate
+
 from .data import EV_PER_MEV
 from .endf import get_tab1_record, get_tab2_record
-from .function import Tabulated1D, INTERPOLATION_SCHEME
+from .function import INTERPOLATION_SCHEME, Tabulated1D
 
 
 class EnergyDistribution(EqualityMixin, ABC):
     """Abstract superclass for all energy distributions."""
+
     def __init__(self):
         pass
 
@@ -37,23 +39,22 @@ class EnergyDistribution(EqualityMixin, ABC):
             Energy distribution
 
         """
-        energy_type = group.attrs['type'].decode()
-        if energy_type == 'maxwell':
+        energy_type = group.attrs["type"].decode()
+        if energy_type == "maxwell":
             return MaxwellEnergy.from_hdf5(group)
-        elif energy_type == 'evaporation':
+        if energy_type == "evaporation":
             return Evaporation.from_hdf5(group)
-        elif energy_type == 'watt':
+        if energy_type == "watt":
             return WattEnergy.from_hdf5(group)
-        elif energy_type == 'madland-nix':
+        if energy_type == "madland-nix":
             return MadlandNix.from_hdf5(group)
-        elif energy_type == 'discrete_photon':
+        if energy_type == "discrete_photon":
             return DiscretePhoton.from_hdf5(group)
-        elif energy_type == 'level':
+        if energy_type == "level":
             return LevelInelastic.from_hdf5(group)
-        elif energy_type == 'continuous':
+        if energy_type == "continuous":
             return ContinuousTabular.from_hdf5(group)
-        else:
-            raise ValueError(f"Unknown energy distribution type: {energy_type}")
+        raise ValueError(f"Unknown energy distribution type: {energy_type}")
 
     @staticmethod
     def from_endf(file_obj, params):
@@ -78,15 +79,15 @@ class EnergyDistribution(EqualityMixin, ABC):
         lf = params[3]
         if lf == 1:
             return ArbitraryTabulated.from_endf(file_obj, params)
-        elif lf == 5:
+        if lf == 5:
             return GeneralEvaporation.from_endf(file_obj, params)
-        elif lf == 7:
+        if lf == 7:
             return MaxwellEnergy.from_endf(file_obj, params)
-        elif lf == 9:
+        if lf == 9:
             return Evaporation.from_endf(file_obj, params)
-        elif lf == 11:
+        if lf == 11:
             return WattEnergy.from_endf(file_obj, params)
-        elif lf == 12:
+        if lf == 12:
             return MadlandNix.from_endf(file_obj, params)
 
 
@@ -254,7 +255,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     @theta.setter
     def theta(self, theta):
-        cv.check_type('Maxwell theta', theta, Tabulated1D)
+        cv.check_type("Maxwell theta", theta, Tabulated1D)
         self._theta = theta
 
     @property
@@ -263,7 +264,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     @u.setter
     def u(self, u):
-        cv.check_type('Maxwell restriction energy', u, Real)
+        cv.check_type("Maxwell restriction energy", u, Real)
         self._u = u
 
     def to_hdf5(self, group):
@@ -275,10 +276,9 @@ class MaxwellEnergy(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('maxwell')
-        group.attrs['u'] = self.u
-        self.theta.to_hdf5(group, 'theta')
+        group.attrs["type"] = np.bytes_("maxwell")
+        group.attrs["u"] = self.u
+        self.theta.to_hdf5(group, "theta")
 
     @classmethod
     def from_hdf5(cls, group):
@@ -295,8 +295,8 @@ class MaxwellEnergy(EnergyDistribution):
             Maxwell distribution
 
         """
-        theta = Tabulated1D.from_hdf5(group['theta'])
-        u = group.attrs['u']
+        theta = Tabulated1D.from_hdf5(group["theta"])
+        u = group.attrs["u"]
         return cls(theta, u)
 
     @classmethod
@@ -387,7 +387,7 @@ class Evaporation(EnergyDistribution):
 
     @theta.setter
     def theta(self, theta):
-        cv.check_type('Evaporation theta', theta, Tabulated1D)
+        cv.check_type("Evaporation theta", theta, Tabulated1D)
         self._theta = theta
 
     @property
@@ -396,7 +396,7 @@ class Evaporation(EnergyDistribution):
 
     @u.setter
     def u(self, u):
-        cv.check_type('Evaporation restriction energy', u, Real)
+        cv.check_type("Evaporation restriction energy", u, Real)
         self._u = u
 
     def to_hdf5(self, group):
@@ -408,10 +408,9 @@ class Evaporation(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('evaporation')
-        group.attrs['u'] = self.u
-        self.theta.to_hdf5(group, 'theta')
+        group.attrs["type"] = np.bytes_("evaporation")
+        group.attrs["u"] = self.u
+        self.theta.to_hdf5(group, "theta")
 
     @classmethod
     def from_hdf5(cls, group):
@@ -428,8 +427,8 @@ class Evaporation(EnergyDistribution):
             Evaporation spectrum
 
         """
-        theta = Tabulated1D.from_hdf5(group['theta'])
-        u = group.attrs['u']
+        theta = Tabulated1D.from_hdf5(group["theta"])
+        u = group.attrs["u"]
         return cls(theta, u)
 
     @classmethod
@@ -524,7 +523,7 @@ class WattEnergy(EnergyDistribution):
 
     @a.setter
     def a(self, a):
-        cv.check_type('Watt a', a, Tabulated1D)
+        cv.check_type("Watt a", a, Tabulated1D)
         self._a = a
 
     @property
@@ -533,7 +532,7 @@ class WattEnergy(EnergyDistribution):
 
     @b.setter
     def b(self, b):
-        cv.check_type('Watt b', b, Tabulated1D)
+        cv.check_type("Watt b", b, Tabulated1D)
         self._b = b
 
     @property
@@ -542,7 +541,7 @@ class WattEnergy(EnergyDistribution):
 
     @u.setter
     def u(self, u):
-        cv.check_type('Watt restriction energy', u, Real)
+        cv.check_type("Watt restriction energy", u, Real)
         self._u = u
 
     def to_hdf5(self, group):
@@ -554,11 +553,10 @@ class WattEnergy(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('watt')
-        group.attrs['u'] = self.u
-        self.a.to_hdf5(group, 'a')
-        self.b.to_hdf5(group, 'b')
+        group.attrs["type"] = np.bytes_("watt")
+        group.attrs["u"] = self.u
+        self.a.to_hdf5(group, "a")
+        self.b.to_hdf5(group, "b")
 
     @classmethod
     def from_hdf5(cls, group):
@@ -575,9 +573,9 @@ class WattEnergy(EnergyDistribution):
             Watt fission spectrum
 
         """
-        a = Tabulated1D.from_hdf5(group['a'])
-        b = Tabulated1D.from_hdf5(group['b'])
-        u = group.attrs['u']
+        a = Tabulated1D.from_hdf5(group["a"])
+        b = Tabulated1D.from_hdf5(group["b"])
+        u = group.attrs["u"]
         return cls(a, b, u)
 
     @classmethod
@@ -692,7 +690,7 @@ class MadlandNix(EnergyDistribution):
 
     @efl.setter
     def efl(self, efl):
-        name = 'Madland-Nix light fragment energy'
+        name = "Madland-Nix light fragment energy"
         cv.check_type(name, efl, Real)
         cv.check_greater_than(name, efl, 0.)
         self._efl = efl
@@ -703,7 +701,7 @@ class MadlandNix(EnergyDistribution):
 
     @efh.setter
     def efh(self, efh):
-        name = 'Madland-Nix heavy fragment energy'
+        name = "Madland-Nix heavy fragment energy"
         cv.check_type(name, efh, Real)
         cv.check_greater_than(name, efh, 0.)
         self._efh = efh
@@ -714,7 +712,7 @@ class MadlandNix(EnergyDistribution):
 
     @tm.setter
     def tm(self, tm):
-        cv.check_type('Madland-Nix maximum temperature', tm, Tabulated1D)
+        cv.check_type("Madland-Nix maximum temperature", tm, Tabulated1D)
         self._tm = tm
 
     def to_hdf5(self, group):
@@ -726,10 +724,9 @@ class MadlandNix(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('madland-nix')
-        group.attrs['efl'] = self.efl
-        group.attrs['efh'] = self.efh
+        group.attrs["type"] = np.bytes_("madland-nix")
+        group.attrs["efl"] = self.efl
+        group.attrs["efh"] = self.efh
         self.tm.to_hdf5(group)
 
     @classmethod
@@ -747,9 +744,9 @@ class MadlandNix(EnergyDistribution):
             Madland-Nix fission spectrum
 
         """
-        efl = group.attrs['efl']
-        efh = group.attrs['efh']
-        tm = Tabulated1D.from_hdf5(group['tm'])
+        efl = group.attrs["efl"]
+        efh = group.attrs["efh"]
+        tm = Tabulated1D.from_hdf5(group["tm"])
         return cls(efl, efh, tm)
 
     @classmethod
@@ -814,7 +811,7 @@ class DiscretePhoton(EnergyDistribution):
 
     @primary_flag.setter
     def primary_flag(self, primary_flag):
-        cv.check_type('discrete photon primary_flag', primary_flag, Integral)
+        cv.check_type("discrete photon primary_flag", primary_flag, Integral)
         self._primary_flag = primary_flag
 
     @property
@@ -823,7 +820,7 @@ class DiscretePhoton(EnergyDistribution):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('discrete photon energy', energy, Real)
+        cv.check_type("discrete photon energy", energy, Real)
         self._energy = energy
 
     @property
@@ -832,7 +829,7 @@ class DiscretePhoton(EnergyDistribution):
 
     @atomic_weight_ratio.setter
     def atomic_weight_ratio(self, atomic_weight_ratio):
-        cv.check_type('atomic weight ratio', atomic_weight_ratio, Real)
+        cv.check_type("atomic weight ratio", atomic_weight_ratio, Real)
         self._atomic_weight_ratio = atomic_weight_ratio
 
     def to_hdf5(self, group):
@@ -844,11 +841,10 @@ class DiscretePhoton(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('discrete_photon')
-        group.attrs['primary_flag'] = self.primary_flag
-        group.attrs['energy'] = self.energy
-        group.attrs['atomic_weight_ratio'] = self.atomic_weight_ratio
+        group.attrs["type"] = np.bytes_("discrete_photon")
+        group.attrs["primary_flag"] = self.primary_flag
+        group.attrs["energy"] = self.energy
+        group.attrs["atomic_weight_ratio"] = self.atomic_weight_ratio
 
     @classmethod
     def from_hdf5(cls, group):
@@ -865,9 +861,9 @@ class DiscretePhoton(EnergyDistribution):
             Discrete photon energy distribution
 
         """
-        primary_flag = group.attrs['primary_flag']
-        energy = group.attrs['energy']
-        awr = group.attrs['atomic_weight_ratio']
+        primary_flag = group.attrs["primary_flag"]
+        energy = group.attrs["energy"]
+        awr = group.attrs["atomic_weight_ratio"]
         return cls(primary_flag, energy, awr)
 
     @classmethod
@@ -922,7 +918,7 @@ class LevelInelastic(EnergyDistribution):
 
     @threshold.setter
     def threshold(self, threshold):
-        cv.check_type('level inelastic threhsold', threshold, Real)
+        cv.check_type("level inelastic threhsold", threshold, Real)
         self._threshold = threshold
 
     @property
@@ -931,7 +927,7 @@ class LevelInelastic(EnergyDistribution):
 
     @mass_ratio.setter
     def mass_ratio(self, mass_ratio):
-        cv.check_type('level inelastic mass ratio', mass_ratio, Real)
+        cv.check_type("level inelastic mass ratio", mass_ratio, Real)
         self._mass_ratio = mass_ratio
 
     def to_hdf5(self, group):
@@ -943,10 +939,9 @@ class LevelInelastic(EnergyDistribution):
             HDF5 group to write to
 
         """
-
-        group.attrs['type'] = np.bytes_('level')
-        group.attrs['threshold'] = self.threshold
-        group.attrs['mass_ratio'] = self.mass_ratio
+        group.attrs["type"] = np.bytes_("level")
+        group.attrs["threshold"] = self.threshold
+        group.attrs["mass_ratio"] = self.mass_ratio
 
     @classmethod
     def from_hdf5(cls, group):
@@ -963,8 +958,8 @@ class LevelInelastic(EnergyDistribution):
             Level inelastic scattering distribution
 
         """
-        threshold = group.attrs['threshold']
-        mass_ratio = group.attrs['mass_ratio']
+        threshold = group.attrs["threshold"]
+        mass_ratio = group.attrs["mass_ratio"]
         return cls(threshold, mass_ratio)
 
     @classmethod
@@ -1029,7 +1024,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_type('continuous tabular breakpoints', breakpoints,
+        cv.check_type("continuous tabular breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
 
@@ -1039,7 +1034,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_type('continuous tabular interpolation', interpolation,
+        cv.check_type("continuous tabular interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
 
@@ -1049,7 +1044,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('continuous tabular incoming energy', energy,
+        cv.check_type("continuous tabular incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
 
@@ -1059,7 +1054,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @energy_out.setter
     def energy_out(self, energy_out):
-        cv.check_type('continuous tabular outgoing energy', energy_out,
+        cv.check_type("continuous tabular outgoing energy", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
 
@@ -1072,11 +1067,10 @@ class ContinuousTabular(EnergyDistribution):
             HDF5 group to write to
 
         """
+        group.attrs["type"] = np.bytes_("continuous")
 
-        group.attrs['type'] = np.bytes_('continuous')
-
-        dset = group.create_dataset('energy', data=self.energy)
-        dset.attrs['interpolation'] = np.vstack((self.breakpoints,
+        dset = group.create_dataset("energy", data=self.energy)
+        dset.attrs["interpolation"] = np.vstack((self.breakpoints,
                                                  self.interpolation))
 
         # Determine total number of (E,p) pairs and create array
@@ -1097,7 +1091,7 @@ class ContinuousTabular(EnergyDistribution):
             if isinstance(eout, Mixture):
                 discrete, continuous = eout.distribution
                 n_discrete_lines[i] = m = len(discrete)
-                interpolation[i] = 1 if continuous.interpolation == 'histogram' else 2
+                interpolation[i] = 1 if continuous.interpolation == "histogram" else 2
                 pairs[0, j:j+m] = discrete.x
                 pairs[1, j:j+m] = discrete.p
                 pairs[2, j:j+m] = discrete.c
@@ -1107,7 +1101,7 @@ class ContinuousTabular(EnergyDistribution):
             else:
                 if isinstance(eout, Tabular):
                     n_discrete_lines[i] = 0
-                    interpolation[i] = 1 if eout.interpolation == 'histogram' else 2
+                    interpolation[i] = 1 if eout.interpolation == "histogram" else 2
                 elif isinstance(eout, Discrete):
                     n_discrete_lines[i] = n
                     interpolation[i] = 1
@@ -1117,12 +1111,12 @@ class ContinuousTabular(EnergyDistribution):
             j += n
 
         # Create dataset for distributions
-        dset = group.create_dataset('distribution', data=pairs)
+        dset = group.create_dataset("distribution", data=pairs)
 
         # Write interpolation as attribute
-        dset.attrs['offsets'] = offsets
-        dset.attrs['interpolation'] = interpolation
-        dset.attrs['n_discrete_lines'] = n_discrete_lines
+        dset.attrs["offsets"] = offsets
+        dset.attrs["interpolation"] = interpolation
+        dset.attrs["n_discrete_lines"] = n_discrete_lines
 
     @classmethod
     def from_hdf5(cls, group):
@@ -1139,15 +1133,15 @@ class ContinuousTabular(EnergyDistribution):
             Continuous tabular energy distribution
 
         """
-        interp_data = group['energy'].attrs['interpolation']
+        interp_data = group["energy"].attrs["interpolation"]
         energy_breakpoints = interp_data[0, :]
         energy_interpolation = interp_data[1, :]
-        energy = group['energy'][()]
+        energy = group["energy"][()]
 
-        data = group['distribution']
-        offsets = data.attrs['offsets']
-        interpolation = data.attrs['interpolation']
-        n_discrete_lines = data.attrs['n_discrete_lines']
+        data = group["distribution"]
+        offsets = data.attrs["offsets"]
+        interpolation = data.attrs["interpolation"]
+        n_discrete_lines = data.attrs["n_discrete_lines"]
 
         energy_out = []
         n_energy = len(energy)

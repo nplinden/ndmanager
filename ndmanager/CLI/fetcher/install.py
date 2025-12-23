@@ -1,15 +1,14 @@
 """Definition and parser for the 'ndf install' command"""
 
 import argparse as ap
+import shutil
 from functools import reduce
 from pathlib import Path
-from typing import List
-import shutil
 
 import requests
 
-from ndmanager.API.iaea import IAEA
 from ndmanager.API.endf6 import Endf6
+from ndmanager.API.iaea import IAEA
 from ndmanager.data import SUBLIBRARIES_SHORTLIST
 from ndmanager.env import NDMANAGER_ENDF6
 
@@ -23,6 +22,7 @@ class NdfInstallCommand:
         Args:
             args (ap.Namespace): An argparse namespace containing the `nds install`
                                  arguments
+
         """
         self.args = args
         self.libraries = list(set(args.libraries))
@@ -47,11 +47,12 @@ class NdfInstallCommand:
         self.download()
         self.download_errata()
 
-    def get_sublibrary_list(self) -> List[str]:
+    def get_sublibrary_list(self) -> list[str]:
         """Get the list of sublibraries to download
 
         Returns:
             List[str]: The list of sublibraries
+
         """
         if self.args.sub is not None:
             return self.args.sub
@@ -74,7 +75,7 @@ class NdfInstallCommand:
                     sublibdata.download(targetdir, style="atom", processes=self.args.j)
                 else:
                     sublibdata.download(
-                        targetdir, style="nuclide", processes=self.args.j
+                        targetdir, style="nuclide", processes=self.args.j,
                     )
 
     def download_foo(self):
@@ -111,7 +112,7 @@ class NdfInstallCommand:
 
         tsl = self.iaea["jendl5"]["tsl"]
         tsl.download_single(
-            "tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6"
+            "tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6",
         )
         tsl.download_single("tsl_para-H_0002", target / "tsl" / "tsl_para-H_0002.endf6")
 
@@ -141,6 +142,7 @@ class NdfInstallCommand:
 
         Raises:
             FileExistsError: If the library name is already taken
+
         """
         print(f"Installing the {libname} library...")
         p = NDMANAGER_ENDF6 / libname
@@ -175,6 +177,7 @@ class NdfInstallCommand:
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
             "install",
@@ -198,10 +201,10 @@ class NdfInstallCommand:
             help="List of sublibraries libraries to download",
         )
         group.add_argument(
-            "--all", "-a", action="store_true", help="Download all sublibraries"
+            "--all", "-a", action="store_true", help="Download all sublibraries",
         )
         parser.add_argument(
-            "-j", type=int, default=1, help="Number of concurent processes"
+            "-j", type=int, default=1, help="Number of concurent processes",
         )
         parser.add_argument(
             "--name",

@@ -3,8 +3,8 @@
 import argparse as ap
 import shutil
 
-from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
+from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoRemoveCommand(Command):
@@ -16,9 +16,10 @@ class NdoRemoveCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "remove", help="Remove one or more OpenMC libraries"
+            "remove", help="Remove one or more OpenMC libraries",
         )
         parser.add_argument(
             "library",
@@ -34,6 +35,7 @@ class NdoRemoveCommand(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
+
         """
         libraries = [NDMANAGER_HDF5 / lib for lib in args.library]
         for library in libraries:

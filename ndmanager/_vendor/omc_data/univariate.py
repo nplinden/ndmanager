@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import math
 from abc import ABC, abstractmethod
 from collections import defaultdict
@@ -16,11 +17,11 @@ from ndmanager._vendor.omc_data._xml import get_text
 from ndmanager._vendor.omc_data.mixin import EqualityMixin
 
 _INTERPOLATION_SCHEMES = {
-    'histogram',
-    'linear-linear',
-    'linear-log',
-    'log-linear',
-    'log-log'
+    "histogram",
+    "linear-linear",
+    "linear-log",
+    "log-linear",
+    "log-log",
 }
 
 
@@ -31,9 +32,10 @@ class Univariate(EqualityMixin, ABC):
     specific probability distribution.
 
     """
+
     @abstractmethod
     def to_xml_element(self, element_name):
-        return ''
+        return ""
 
     @abstractmethod
     def __len__(self):
@@ -42,28 +44,28 @@ class Univariate(EqualityMixin, ABC):
     @classmethod
     @abstractmethod
     def from_xml_element(cls, elem):
-        distribution = get_text(elem, 'type')
-        if distribution == 'discrete':
+        distribution = get_text(elem, "type")
+        if distribution == "discrete":
             return Discrete.from_xml_element(elem)
-        elif distribution == 'uniform':
+        if distribution == "uniform":
             return Uniform.from_xml_element(elem)
-        elif distribution == 'powerlaw':
+        if distribution == "powerlaw":
             return PowerLaw.from_xml_element(elem)
-        elif distribution == 'maxwell':
+        if distribution == "maxwell":
             return Maxwell.from_xml_element(elem)
-        elif distribution == 'watt':
+        if distribution == "watt":
             return Watt.from_xml_element(elem)
-        elif distribution == 'normal':
+        if distribution == "normal":
             return Normal.from_xml_element(elem)
-        elif distribution == 'muir':
+        if distribution == "muir":
             # Support older files where Muir had its own class
-            params = [float(x) for x in get_text(elem, 'parameters').split()]
+            params = [float(x) for x in get_text(elem, "parameters").split()]
             return muir(*params)
-        elif distribution == 'tabular':
+        if distribution == "tabular":
             return Tabular.from_xml_element(elem)
-        elif distribution == 'legendre':
+        if distribution == "legendre":
             return Legendre.from_xml_element(elem)
-        elif distribution == 'mixture':
+        if distribution == "mixture":
             return Mixture.from_xml_element(elem)
 
     @abstractmethod
@@ -81,8 +83,8 @@ class Univariate(EqualityMixin, ABC):
         -------
         numpy.ndarray
             A 1-D array of sampled values
+
         """
-        pass
 
     def integral(self):
         """Return integral of distribution
@@ -93,6 +95,7 @@ class Univariate(EqualityMixin, ABC):
         -------
         float
             Integral of distribution
+
         """
         return 1.0
 
@@ -174,7 +177,7 @@ class Discrete(Univariate):
     def x(self, x):
         if isinstance(x, Real):
             x = [x]
-        cv.check_type('discrete values', x, Iterable, Real)
+        cv.check_type("discrete values", x, Iterable, Real)
         self._x = np.array(x, dtype=float)
 
     @property
@@ -185,9 +188,9 @@ class Discrete(Univariate):
     def p(self, p):
         if isinstance(p, Real):
             p = [p]
-        cv.check_type('discrete probabilities', p, Iterable, Real)
+        cv.check_type("discrete probabilities", p, Iterable, Real)
         for pk in p:
-            cv.check_greater_than('discrete probability', pk, 0.0, True)
+            cv.check_greater_than("discrete probability", pk, 0.0, True)
         self._p = np.array(p, dtype=float)
 
     def cdf(self):
@@ -221,7 +224,7 @@ class Discrete(Univariate):
         element.set("type", "discrete")
 
         params = ET.SubElement(element, "parameters")
-        params.text = ' '.join(map(str, self.x)) + ' ' + ' '.join(map(str, self.p))
+        params.text = " ".join(map(str, self.x)) + " " + " ".join(map(str, self.p))
 
         return element
 
@@ -240,7 +243,7 @@ class Discrete(Univariate):
             Discrete distribution generated from XML element
 
         """
-        params = [float(x) for x in get_text(elem, 'parameters').split()]
+        params = [float(x) for x in get_text(elem, "parameters").split()]
         x = params[:len(params)//2]
         p = params[len(params)//2:]
         return cls(x, p)
@@ -249,7 +252,7 @@ class Discrete(Univariate):
     def merge(
         cls,
         dists: Sequence[Discrete],
-        probs: Sequence[int]
+        probs: Sequence[int],
     ):
         """Merge multiple discrete distributions into a single distribution
 
@@ -274,8 +277,8 @@ class Discrete(Univariate):
         # Combine distributions accounting for duplicate x values
         x_merged = set()
         p_merged = defaultdict(float)
-        for dist, p_dist in zip(dists, probs):
-            for x, p in zip(dist.x, dist.p):
+        for dist, p_dist in zip(dists, probs, strict=False):
+            for x, p in zip(dist.x, dist.p, strict=False):
                 x_merged.add(x)
                 p_merged[x] += p*p_dist
 
@@ -293,6 +296,7 @@ class Discrete(Univariate):
         -------
         float
             Integral of discrete distribution
+
         """
         return np.sum(self.p)
 
@@ -333,10 +337,9 @@ class Discrete(Univariate):
             self.x = self.x[indices]
             self.p = self.p[indices]
             return self
-        else:
-            new_x = self.x[indices]
-            new_p = self.p[indices]
-            return type(self)(new_x, new_p)
+        new_x = self.x[indices]
+        new_p = self.p[indices]
+        return type(self)(new_x, new_p)
 
 
 def delta_function(value: float, intensity: float = 1.0) -> Discrete:
@@ -392,7 +395,7 @@ class Uniform(Univariate):
 
     @a.setter
     def a(self, a):
-        cv.check_type('Uniform a', a, Real)
+        cv.check_type("Uniform a", a, Real)
         self._a = a
 
     @property
@@ -401,12 +404,12 @@ class Uniform(Univariate):
 
     @b.setter
     def b(self, b):
-        cv.check_type('Uniform b', b, Real)
+        cv.check_type("Uniform b", b, Real)
         self._b = b
 
     def to_tabular(self):
         prob = 1./(self.b - self.a)
-        t = Tabular([self.a, self.b], [prob, prob], 'histogram')
+        t = Tabular([self.a, self.b], [prob, prob], "histogram")
         t.c = [0., 1.]
         return t
 
@@ -430,7 +433,7 @@ class Uniform(Univariate):
         """
         element = ET.Element(element_name)
         element.set("type", "uniform")
-        element.set("parameters", f'{self.a} {self.b}')
+        element.set("parameters", f"{self.a} {self.b}")
         return element
 
     @classmethod
@@ -448,7 +451,7 @@ class Uniform(Univariate):
             Uniform distribution generated from XML element
 
         """
-        params = get_text(elem, 'parameters').split()
+        params = get_text(elem, "parameters").split()
         return cls(*map(float, params))
 
 
@@ -494,7 +497,7 @@ class PowerLaw(Univariate):
 
     @a.setter
     def a(self, a):
-        cv.check_type('interval lower bound', a, Real)
+        cv.check_type("interval lower bound", a, Real)
         self._a = a
 
     @property
@@ -503,7 +506,7 @@ class PowerLaw(Univariate):
 
     @b.setter
     def b(self, b):
-        cv.check_type('interval upper bound', b, Real)
+        cv.check_type("interval upper bound", b, Real)
         self._b = b
 
     @property
@@ -512,7 +515,7 @@ class PowerLaw(Univariate):
 
     @n.setter
     def n(self, n):
-        cv.check_type('power law exponent', n, Real)
+        cv.check_type("power law exponent", n, Real)
         self._n = n
 
     def sample(self, n_samples=1, seed=None):
@@ -539,7 +542,7 @@ class PowerLaw(Univariate):
         """
         element = ET.Element(element_name)
         element.set("type", "powerlaw")
-        element.set("parameters", f'{self.a} {self.b} {self.n}')
+        element.set("parameters", f"{self.a} {self.b} {self.n}")
         return element
 
     @classmethod
@@ -557,7 +560,7 @@ class PowerLaw(Univariate):
             Distribution generated from XML element
 
         """
-        params = get_text(elem, 'parameters').split()
+        params = get_text(elem, "parameters").split()
         return cls(*map(float, params))
 
 
@@ -592,8 +595,8 @@ class Maxwell(Univariate):
 
     @theta.setter
     def theta(self, theta):
-        cv.check_type('Maxwell temperature', theta, Real)
-        cv.check_greater_than('Maxwell temperature', theta, 0.0)
+        cv.check_type("Maxwell temperature", theta, Real)
+        cv.check_greater_than("Maxwell temperature", theta, 0.0)
         self._theta = theta
 
     def sample(self, n_samples=1, seed=None):
@@ -642,7 +645,7 @@ class Maxwell(Univariate):
             Maxwellian distribution generated from XML element
 
         """
-        theta = float(get_text(elem, 'parameters'))
+        theta = float(get_text(elem, "parameters"))
         return cls(theta)
 
 
@@ -682,8 +685,8 @@ class Watt(Univariate):
 
     @a.setter
     def a(self, a):
-        cv.check_type('Watt a', a, Real)
-        cv.check_greater_than('Watt a', a, 0.0)
+        cv.check_type("Watt a", a, Real)
+        cv.check_greater_than("Watt a", a, 0.0)
         self._a = a
 
     @property
@@ -692,8 +695,8 @@ class Watt(Univariate):
 
     @b.setter
     def b(self, b):
-        cv.check_type('Watt b', b, Real)
-        cv.check_greater_than('Watt b', b, 0.0)
+        cv.check_type("Watt b", b, Real)
+        cv.check_greater_than("Watt b", b, 0.0)
         self._b = b
 
     def sample(self, n_samples=1, seed=None):
@@ -719,7 +722,7 @@ class Watt(Univariate):
         """
         element = ET.Element(element_name)
         element.set("type", "watt")
-        element.set("parameters", f'{self.a} {self.b}')
+        element.set("parameters", f"{self.a} {self.b}")
         return element
 
     @classmethod
@@ -737,7 +740,7 @@ class Watt(Univariate):
             Watt distribution generated from XML element
 
         """
-        params = get_text(elem, 'parameters').split()
+        params = get_text(elem, "parameters").split()
         return cls(*map(float, params))
 
 
@@ -761,6 +764,7 @@ class Normal(Univariate):
         Mean of the Normal distribution
     std_dev : float
         Standard deviation of the Normal distribution
+
     """
 
     def __init__(self, mean_value, std_dev):
@@ -776,7 +780,7 @@ class Normal(Univariate):
 
     @mean_value.setter
     def mean_value(self, mean_value):
-        cv.check_type('Normal mean_value', mean_value, Real)
+        cv.check_type("Normal mean_value", mean_value, Real)
         self._mean_value = mean_value
 
     @property
@@ -785,8 +789,8 @@ class Normal(Univariate):
 
     @std_dev.setter
     def std_dev(self, std_dev):
-        cv.check_type('Normal std_dev', std_dev, Real)
-        cv.check_greater_than('Normal std_dev', std_dev, 0.0)
+        cv.check_type("Normal std_dev", std_dev, Real)
+        cv.check_greater_than("Normal std_dev", std_dev, 0.0)
         self._std_dev = std_dev
 
     def sample(self, n_samples=1, seed=None):
@@ -809,7 +813,7 @@ class Normal(Univariate):
         """
         element = ET.Element(element_name)
         element.set("type", "normal")
-        element.set("parameters", f'{self.mean_value} {self.std_dev}')
+        element.set("parameters", f"{self.mean_value} {self.std_dev}")
         return element
 
     @classmethod
@@ -827,7 +831,7 @@ class Normal(Univariate):
             Normal distribution generated from XML element
 
         """
-        params = get_text(elem, 'parameters').split()
+        params = get_text(elem, "parameters").split()
         return cls(*map(float, params))
 
 
@@ -867,7 +871,7 @@ def Muir(*args, **kwargs):
     warn(
         "The Muir(...) class has been replaced by the muir(...) function and "
         "will be removed in a future version of OpenMC. Use muir(...) instead.",
-        FutureWarning
+        FutureWarning,
     )
     return muir(*args, **kwargs)
 
@@ -918,26 +922,26 @@ class Tabular(Univariate):
             self,
             x: Sequence[float],
             p: Sequence[float],
-            interpolation: str = 'linear-linear',
-            ignore_negative: bool = False
+            interpolation: str = "linear-linear",
+            ignore_negative: bool = False,
         ):
         self.interpolation = interpolation
 
-        cv.check_type('tabulated values', x, Iterable, Real)
-        cv.check_type('tabulated probabilities', p, Iterable, Real)
+        cv.check_type("tabulated values", x, Iterable, Real)
+        cv.check_type("tabulated probabilities", p, Iterable, Real)
 
         x = np.array(x, dtype=float)
         p = np.array(p, dtype=float)
 
         if p.size > x.size:
-            raise ValueError('Number of probabilities exceeds number of table values.')
-        if self.interpolation != 'histogram' and x.size != p.size:
-            raise ValueError(f'Tabulated values ({x.size}) and probabilities '
-                             f'({p.size}) should have the same length')
+            raise ValueError("Number of probabilities exceeds number of table values.")
+        if self.interpolation != "histogram" and x.size != p.size:
+            raise ValueError(f"Tabulated values ({x.size}) and probabilities "
+                             f"({p.size}) should have the same length")
 
         if not ignore_negative:
             for pk in p:
-                cv.check_greater_than('tabulated probability', pk, 0.0, True)
+                cv.check_greater_than("tabulated probability", pk, 0.0, True)
 
         self._x = x
         self._p = p
@@ -959,7 +963,7 @@ class Tabular(Univariate):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_value('interpolation', interpolation, _INTERPOLATION_SCHEMES)
+        cv.check_value("interpolation", interpolation, _INTERPOLATION_SCHEMES)
         self._interpolation = interpolation
 
     def cdf(self):
@@ -967,21 +971,21 @@ class Tabular(Univariate):
         x = self.x
         p = self.p
 
-        if self.interpolation == 'histogram':
+        if self.interpolation == "histogram":
             c[1:] = p[:x.size-1] * np.diff(x)
-        elif self.interpolation == 'linear-linear':
+        elif self.interpolation == "linear-linear":
             c[1:] = 0.5 * (p[:-1] + p[1:]) * np.diff(x)
         else:
-            raise NotImplementedError('Can only generate CDFs for tabular '
-                                      'distributions using histogram or '
-                                      'linear-linear interpolation')
+            raise NotImplementedError("Can only generate CDFs for tabular "
+                                      "distributions using histogram or "
+                                      "linear-linear interpolation")
 
 
         return np.cumsum(c)
 
     def mean(self):
         """Compute the mean of the tabular distribution"""
-        if self.interpolation == 'linear-linear':
+        if self.interpolation == "linear-linear":
             mean = 0.0
             for i in range(1, len(self.x)):
                 y_min = self.p[i-1]
@@ -996,15 +1000,15 @@ class Tabular(Univariate):
                 exp_val += 0.5 * y_min * (x_max**2 - x_min**2)
                 mean += exp_val
 
-        elif self.interpolation == 'histogram':
+        elif self.interpolation == "histogram":
             x_l = self.x[:-1]
             x_r = self.x[1:]
             p_l = self.p[:self.x.size-1]
             mean = (0.5 * (x_l + x_r) * (x_r - x_l) * p_l).sum()
         else:
-            raise NotImplementedError('Can only compute mean for tabular '
-                                      'distributions using histogram '
-                                      'or linear-linear interpolation.')
+            raise NotImplementedError("Can only compute mean for tabular "
+                                      "distributions using histogram "
+                                      "or linear-linear interpolation.")
 
         # Normalize for when integral of distribution is not 1
         mean /= self.integral()
@@ -1039,7 +1043,7 @@ class Tabular(Univariate):
         x_i = self.x[cdf_idx]
         p_i = p[cdf_idx]
 
-        if self.interpolation == 'histogram':
+        if self.interpolation == "histogram":
             # mask where probability is greater than zero
             pos_mask = p_i > 0.0
             # probabilities greater than zero are set proportional to the
@@ -1051,7 +1055,7 @@ class Tabular(Univariate):
 
             samples_out = p_i
 
-        elif self.interpolation == 'linear-linear':
+        elif self.interpolation == "linear-linear":
             # get variable and probability values for the
             # next entry
             x_i1 = self.x[cdf_idx + 1]
@@ -1069,9 +1073,9 @@ class Tabular(Univariate):
             samples_out = m
 
         else:
-            raise NotImplementedError('Can only sample tabular distributions '
-                                      'using histogram or '
-                                      'linear-linear interpolation')
+            raise NotImplementedError("Can only sample tabular distributions "
+                                      "using histogram or "
+                                      "linear-linear interpolation")
 
         assert all(samples_out < self.x[-1])
         return samples_out
@@ -1095,7 +1099,7 @@ class Tabular(Univariate):
         element.set("interpolation", self.interpolation)
 
         params = ET.SubElement(element, "parameters")
-        params.text = ' '.join(map(str, self.x)) + ' ' + ' '.join(map(str, self.p))
+        params.text = " ".join(map(str, self.x)) + " " + " ".join(map(str, self.p))
 
         return element
 
@@ -1114,8 +1118,8 @@ class Tabular(Univariate):
             Tabular distribution generated from XML element
 
         """
-        interpolation = get_text(elem, 'interpolation')
-        params = [float(x) for x in get_text(elem, 'parameters').split()]
+        interpolation = get_text(elem, "interpolation")
+        params = [float(x) for x in get_text(elem, "parameters").split()]
         m = (len(params) + 1)//2  # +1 for when len(params) is odd
         x = params[:m]
         p = params[m:]
@@ -1130,14 +1134,14 @@ class Tabular(Univariate):
         -------
         float
             Integral of tabular distrbution
+
         """
-        if self.interpolation == 'histogram':
+        if self.interpolation == "histogram":
             return np.sum(np.diff(self.x) * self.p[:self.x.size-1])
-        elif self.interpolation == 'linear-linear':
+        if self.interpolation == "linear-linear":
             return trapezoid(self.p, self.x)
-        else:
-            raise NotImplementedError(
-                f'integral() not supported for {self.inteprolation} interpolation')
+        raise NotImplementedError(
+            f"integral() not supported for {self.inteprolation} interpolation")
 
 
 class Legendre(Univariate):
@@ -1215,7 +1219,7 @@ class Mixture(Univariate):
     def __init__(
         self,
         probability: Sequence[float],
-        distribution: Sequence[Univariate]
+        distribution: Sequence[Univariate],
     ):
         self.probability = probability
         self.distribution = distribution
@@ -1229,10 +1233,10 @@ class Mixture(Univariate):
 
     @probability.setter
     def probability(self, probability):
-        cv.check_type('mixture distribution probabilities', probability,
+        cv.check_type("mixture distribution probabilities", probability,
                       Iterable, Real)
         for p in probability:
-            cv.check_greater_than('mixture distribution probabilities',
+            cv.check_greater_than("mixture distribution probabilities",
                                   p, 0.0, True)
         self._probability = np.array(probability, dtype=float)
 
@@ -1242,7 +1246,7 @@ class Mixture(Univariate):
 
     @distribution.setter
     def distribution(self, distribution):
-        cv.check_type('mixture distribution components', distribution,
+        cv.check_type("mixture distribution components", distribution,
                       Iterable, Univariate)
         self._distribution = distribution
 
@@ -1254,7 +1258,7 @@ class Mixture(Univariate):
 
         # Get probability of each distribution accounting for its intensity
         p = np.array([prob*dist.integral() for prob, dist in
-                      zip(self.probability, self.distribution)])
+                      zip(self.probability, self.distribution, strict=False)])
         p /= p.sum()
 
         # Sample from the distributions
@@ -1292,7 +1296,7 @@ class Mixture(Univariate):
         element = ET.Element(element_name)
         element.set("type", "mixture")
 
-        for p, d in zip(self.probability, self.distribution):
+        for p, d in zip(self.probability, self.distribution, strict=False):
           data = ET.SubElement(element, "pair")
           data.set("probability", str(p))
           data.append(d.to_xml_element("dist"))
@@ -1318,8 +1322,8 @@ class Mixture(Univariate):
         """
         probability = []
         distribution = []
-        for pair in elem.findall('pair'):
-            probability.append(float(get_text(pair, 'probability')))
+        for pair in elem.findall("pair"):
+            probability.append(float(get_text(pair, "probability")))
             distribution.append(Univariate.from_xml_element(pair.find("dist")))
 
         return cls(probability, distribution)
@@ -1333,10 +1337,11 @@ class Mixture(Univariate):
         -------
         float
             Integral of the distribution
+
         """
         return sum([
             p*dist.integral()
-            for p, dist in zip(self.probability, self.distribution)
+            for p, dist in zip(self.probability, self.distribution, strict=False)
         ])
 
     def clip(self, tolerance: float = 1e-6, inplace: bool = False) -> Mixture:
@@ -1367,7 +1372,7 @@ class Mixture(Univariate):
         # Determine indices for any distributions that contribute non-negligibly
         # to overall intensity
         intensities = [prob*dist.integral() for prob, dist in
-                       zip(self.probability, self.distribution)]
+                       zip(self.probability, self.distribution, strict=False)]
         indices = _intensity_clip(intensities, tolerance=tolerance)
 
         # Clip mixture of distributions
@@ -1401,7 +1406,7 @@ class Mixture(Univariate):
 
 def combine_distributions(
     dists: Sequence[Univariate],
-    probs: Sequence[float]
+    probs: Sequence[float],
 ):
     """Combine distributions with specified probabilities
 

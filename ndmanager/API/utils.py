@@ -20,11 +20,12 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
 
     Returns:
         Path: The path to the HDF5 file
+
     """
     p = NDMANAGER_HDF5 / libname / "cross_sections.xml"
     if not p.exists():
         raise ValueError(f"Library '{libname}' does not exist")
-    with open(p, "r", encoding="utf-8") as f:
+    with open(p, encoding="utf-8") as f:
         root = ET.parse(f).getroot()
         dirnode = root.find("directory")
         if dirnode is None:

@@ -19,7 +19,7 @@ class HDF5Sublibrary:
     def process(self):
         """An HDF5Sublibrary should define a process method"""
         raise NotImplementedError(
-            "Can't use the process method directly on a HDF5Sublibrary object"
+            "Can't use the process method directly on a HDF5Sublibrary object",
         )
 
     def get_logger(self):
@@ -27,6 +27,7 @@ class HDF5Sublibrary:
 
         Returns:
             logging.Logger: The logger object
+
         """
         logger = logging.getLogger(self.logpath.stem)
         handler = logging.FileHandler(self.logpath)

@@ -1,16 +1,17 @@
-from collections.abc import MutableSequence, Iterable
 import io
+from collections.abc import Iterable, MutableSequence
 
 import numpy as np
-from numpy.polynomial import Polynomial
 import pandas as pd
+from numpy.polynomial import Polynomial
 
 import ndmanager._vendor.omc_data.checkvalue as cv
+
 from .data import NEUTRON_MASS
-from .endf import get_head_record, get_cont_record, get_tab1_record, get_list_record
+from .endf import get_cont_record, get_head_record, get_list_record, get_tab1_record
+
 try:
-    from .reconstruct import wave_number, penetration_shift, reconstruct_mlbw, \
-        reconstruct_slbw, reconstruct_rm
+    from .reconstruct import penetration_shift, reconstruct_mlbw, reconstruct_rm, reconstruct_slbw, wave_number
     _reconstruct = True
 except ImportError:
     _reconstruct = False
@@ -48,8 +49,8 @@ class Resonances:
 
     @ranges.setter
     def ranges(self, ranges):
-        cv.check_type('resonance ranges', ranges, MutableSequence)
-        self._ranges = cv.CheckedList(ResonanceRange, 'resonance ranges',
+        cv.check_type("resonance ranges", ranges, MutableSequence)
+        self._ranges = cv.CheckedList(ResonanceRange, "resonance ranges",
                                       ranges)
 
     @property
@@ -57,19 +58,17 @@ class Resonances:
         resolved_ranges = [r for r in self.ranges
                            if not isinstance(r, Unresolved)]
         if len(resolved_ranges) > 1:
-            raise ValueError('More than one resolved range present')
-        elif len(resolved_ranges) == 0:
+            raise ValueError("More than one resolved range present")
+        if len(resolved_ranges) == 0:
             return None
-        else:
-            return resolved_ranges[0]
+        return resolved_ranges[0]
 
     @property
     def unresolved(self):
         for r in self.ranges:
             if isinstance(r, Unresolved):
                 return r
-        else:
-            return None
+        return None
 
     @classmethod
     def from_endf(cls, ev):
@@ -151,6 +150,7 @@ class ResonanceRange:
         Intrinsic spin, :math:`I`, of the target nuclide
 
     """
+
     def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
         self.target_spin = target_spin
         self.energy_min = energy_min
@@ -204,7 +204,7 @@ class ResonanceRange:
         ap = Polynomial((items[1],))
 
         # Calculate channel radius from ENDF-102 equation D.14
-        a = Polynomial((0.123 * (NEUTRON_MASS*ev.target['mass'])**(1./3.) + 0.08,))
+        a = Polynomial((0.123 * (NEUTRON_MASS*ev.target["mass"])**(1./3.) + 0.08,))
 
         return cls(target_spin, energy_min, energy_max, {0: a}, {0: ap})
 
@@ -328,7 +328,6 @@ class MultiLevelBreitWigner(ResonanceRange):
             Multi-level Breit-Wigner resonance parameters
 
         """
-
         # Read energy-dependent scattering radius if present
         energy_min, energy_max = items[0:2]
         nro, naps = items[4:6]
@@ -384,11 +383,11 @@ class MultiLevelBreitWigner(ResonanceRange):
                 gx = np.zeros_like(gt)
 
             for i, E in enumerate(energy):
-                records.append([energy[i], l_value, spin[i], gt[i], gn[i],
+                records.append([E, l_value, spin[i], gt[i], gn[i],
                                 gg[i], gf[i], gx[i]])
 
-        columns = ['energy', 'L', 'J', 'totalWidth', 'neutronWidth',
-                   'captureWidth', 'fissionWidth', 'competitiveWidth']
+        columns = ["energy", "L", "J", "totalWidth", "neutronWidth",
+                   "captureWidth", "fissionWidth", "competitiveWidth"]
         parameters = pd.DataFrame.from_records(records, columns=columns)
 
         # Create instance of class
@@ -433,15 +432,15 @@ class MultiLevelBreitWigner(ResonanceRange):
             else:
                 px[i] = sx[i] = 0.0
 
-        df['p'] = p
-        df['s'] = s
-        df['px'] = px
-        df['sx'] = sx
+        df["p"] = p
+        df["s"] = s
+        df["px"] = px
+        df["sx"] = sx
 
         self._l_values = np.array(l_values)
         self._competitive = np.array(competitive)
         for l in l_values:
-            self._parameter_matrix[l] = df[df.L == l].values
+            self._parameter_matrix[l] = df[l == df.L].values
 
         self._prepared = True
 
@@ -639,12 +638,12 @@ class ReichMoore(ResonanceRange):
             gfb = values[5::6]
 
             for i, E in enumerate(energy):
-                records.append([energy[i], l_value, spin[i], gn[i], gg[i],
+                records.append([E, l_value, spin[i], gn[i], gg[i],
                                 gfa[i], gfb[i]])
 
         # Create pandas DataFrame with resonance data
-        columns = ['energy', 'L', 'J', 'neutronWidth', 'captureWidth',
-                   'fissionWidthA', 'fissionWidthB']
+        columns = ["energy", "L", "J", "neutronWidth", "captureWidth",
+                   "fissionWidthA", "fissionWidthB"]
         parameters = pd.DataFrame.from_records(records, columns=columns)
 
         # Create instance of ReichMoore
@@ -679,12 +678,12 @@ class ReichMoore(ResonanceRange):
             rho = k*self.channel_radius[l](E)
             p[i], s[i] = penetration_shift(l, rho)
 
-        df['p'] = p
-        df['s'] = s
+        df["p"] = p
+        df["s"] = s
 
         self._l_values = np.array(l_values)
         for (l, J) in lj_values:
-            self._parameter_matrix[l, J] = df[(df.L == l) &
+            self._parameter_matrix[l, J] = df[(l == df.L) &
                                               (abs(df.J) == J)].values
 
         self._prepared = True
@@ -768,14 +767,14 @@ class RMatrixLimited(ResonanceRange):
         items, values = get_list_record(file_obj)
         n_pairs = items[5]//2  # Number of particle pairs (NPP)
         for i in range(n_pairs):
-            first = {'mass': values[12*i],
-                     'z': int(values[12*i + 2]),
-                     'spin': values[12*i + 4],
-                     'parity': values[12*i + 10]}
-            second = {'mass': values[12*i + 1],
-                      'z': int(values[12*i + 3]),
-                      'spin': values[12*i + 5],
-                      'parity': values[12*i + 11]}
+            first = {"mass": values[12*i],
+                     "z": int(values[12*i + 2]),
+                     "spin": values[12*i + 4],
+                     "parity": values[12*i + 10]}
+            second = {"mass": values[12*i + 1],
+                      "z": int(values[12*i + 3]),
+                      "spin": values[12*i + 5],
+                      "parity": values[12*i + 11]}
 
             q_value = values[12*i + 6]
             penetrability = values[12*i + 7]
@@ -790,9 +789,9 @@ class RMatrixLimited(ResonanceRange):
             items, values = get_list_record(file_obj)
             J = items[0]
             if J == 0.0:
-                parity = '+' if items[1] == 1.0 else '-'
+                parity = "+" if items[1] == 1.0 else "-"
             else:
-                parity = '+' if J > 0. else '-'
+                parity = "+" if J > 0. else "-"
                 J = abs(J)
             kbk = items[2]
             kps = items[3]
@@ -800,13 +799,13 @@ class RMatrixLimited(ResonanceRange):
             channels = []
             for j in range(n_channels):
                 channel = {}
-                channel['particle_pair'] = particle_pairs[
+                channel["particle_pair"] = particle_pairs[
                     int(values[6*j]) - 1]
-                channel['l'] = values[6*j + 1]
-                channel['spin'] = values[6*j + 2]
-                channel['boundary'] = values[6*j + 3]
-                channel['effective_radius'] = values[6*j + 4]
-                channel['true_radius'] = values[6*j + 5]
+                channel["l"] = values[6*j + 1]
+                channel["spin"] = values[6*j + 2]
+                channel["boundary"] = values[6*j + 3]
+                channel["effective_radius"] = values[6*j + 4]
+                channel["true_radius"] = values[6*j + 5]
                 channels.append(channel)
 
             # Read resonance energies and widths
@@ -820,17 +819,17 @@ class RMatrixLimited(ResonanceRange):
                                            for k in range(n_channels)])
 
             # Determine column names
-            columns = ['energy']
+            columns = ["energy"]
             for channel in channels:
-                mt = channel['particle_pair'].mt
+                mt = channel["particle_pair"].mt
                 if mt == 2:
-                    columns.append('neutronWidth')
+                    columns.append("neutronWidth")
                 elif mt == 18:
-                    columns.append('fissionWidth')
+                    columns.append("fissionWidth")
                 elif mt == 102:
-                    columns.append('captureWidth')
+                    columns.append("captureWidth")
                 else:
-                    columns.append(f'width (MT={mt})')
+                    columns.append(f"width (MT={mt})")
 
             # Create Pandas dataframe with resonance parameters
             parameters = pd.DataFrame.from_records(records, columns=columns)
@@ -896,7 +895,7 @@ class SpinGroup:
         self.parameters = parameters
 
     def __repr__(self):
-        return f'<SpinGroup: Jpi={self.spin}{self.parity}>'
+        return f"<SpinGroup: Jpi={self.spin}{self.parity}>"
 
 
 class Unresolved(ResonanceRange):
@@ -987,7 +986,7 @@ class Unresolved(ResonanceRange):
             # Case A -- fission widths not given, all parameters are
             # energy-independent
             NLS = items[4]
-            columns = ['L', 'J', 'd', 'amun', 'gn0', 'gg']
+            columns = ["L", "J", "d", "amun", "gn0", "gg"]
             records = []
             for ls in range(NLS):
                 items, values = get_list_record(file_obj)
@@ -1010,7 +1009,7 @@ class Unresolved(ResonanceRange):
             add_to_background = (items[2] == 0)
             NE, NLS = items[4:6]
             records = []
-            columns = ['L', 'J', 'E', 'd', 'amun', 'amuf', 'gn0', 'gg', 'gf']
+            columns = ["L", "J", "E", "d", "amun", "amuf", "gn0", "gg", "gf"]
             for ls in range(NLS):
                 items = get_cont_record(file_obj)
                 awri = items[0]
@@ -1025,15 +1024,15 @@ class Unresolved(ResonanceRange):
                     gn0 = values[3]
                     gg = values[4]
                     gfs = values[6:]
-                    for E, gf in zip(energies, gfs):
+                    for E, gf in zip(energies, gfs, strict=False):
                         records.append([l, j, E, d, amun, muf, gn0, gg, gf])
             parameters = pd.DataFrame.from_records(records, columns=columns)
 
         elif formalism == 2:
             # Case C -- all parameters are energy-dependent
             NLS = items[4]
-            columns = ['L', 'J', 'E', 'd', 'amux', 'amun', 'amuf', 'gx', 'gn0',
-                       'gg', 'gf']
+            columns = ["L", "J", "E", "d", "amux", "amun", "amuf", "gx", "gn0",
+                       "gg", "gf"]
             records = []
             for ls in range(NLS):
                 items = get_cont_record(file_obj)

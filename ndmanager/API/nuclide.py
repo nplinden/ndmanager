@@ -21,6 +21,7 @@ class Nuclide:
             Z (int): Atomic number
             A (int): Mass number
             M (int): Metastable index
+
         """
         self.Z = Z
         self.element = ATOMIC_SYMBOL[Z]
@@ -36,6 +37,7 @@ class Nuclide:
 
         Returns:
             Nuclide: The nuclide object
+
         """
         if name in ATOMIC_SYMBOL:
             Z = ATOMIC_SYMBOL[name]
@@ -61,6 +63,7 @@ class Nuclide:
 
         Returns:
             Nuclide: The nuclide object
+
         """
         M = zam % 10
         A = (zam // 10) % 1000
@@ -78,8 +81,9 @@ class Nuclide:
 
         Returns:
             Nuclide: The nuclide object
+
         """
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, encoding="utf-8") as f:
             f.readline()
             float_za = f.readline()[1:12].replace(" ", "").replace("+", "e+")
             za = float(float_za)
@@ -101,6 +105,7 @@ class Nuclide:
 
         Returns:
             Nuclide: The nuclide object
+
         """
         _, element, AM = name.split("-")
         Z = ATOMIC_SYMBOL[element.capitalize()]
@@ -118,6 +123,7 @@ class Nuclide:
 
         Returns:
             str: The name
+
         """
         if self.A is None and self.M is None:
             return self.element
@@ -131,6 +137,7 @@ class Nuclide:
 
         Returns:
             int: The zam
+
         """
         if self.A is None and self.M is None:
             return 10_000 * self.Z

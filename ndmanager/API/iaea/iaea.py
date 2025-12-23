@@ -3,7 +3,6 @@
 import copy
 import json
 from pathlib import Path
-from typing import List
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,6 +19,7 @@ class IAEA:
 
     Returns:
         IAEA: An IAEA object
+
     """
 
     aliases = {
@@ -50,6 +50,7 @@ class IAEA:
         Args:
             nocache (bool, optional): Force the constructor the ignore the cached
                                       data. Defaults to False.
+
         """
         self.libraries = {}
         if not NDMANAGER_ENDF6.exists():
@@ -69,6 +70,7 @@ class IAEA:
 
         Returns:
             IAEALibrary: A library object
+
         """
         return self.libraries[self.aliases.get(key, key)]
 
@@ -78,6 +80,7 @@ class IAEA:
         Args:
             key (str): Name of the new library
             value (IAEALibrary): The library object
+
         """
         self.libraries[self.aliases.get(key, key.rstrip("/"))] = value
 
@@ -102,6 +105,7 @@ class IAEA:
 
         Args:
             p (str | Path): The path to write the database to
+
         """
         libraries = copy.deepcopy(self.libraries)
         dico = {}
@@ -119,8 +123,9 @@ class IAEA:
 
         Args:
             path (str | Path): The path to the json file
+
         """
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             dictionnary = json.load(f)
             for libname, lib in dictionnary.items():
                 raw_sublibraries = lib.pop("sublibraries")
@@ -139,13 +144,15 @@ class IAEA:
 
         Returns:
             bool: Wether the cache file exists
+
         """
         return (NDMANAGER_ENDF6 / "IAEA_cache.json").exists()
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """The list of available libraries in the database
 
         Returns:
             List[str]: List of libraries
+
         """
         return list(self.libraries.keys())

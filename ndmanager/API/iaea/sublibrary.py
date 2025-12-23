@@ -7,7 +7,7 @@ import zipfile
 from contextlib import chdir
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import requests
 from bs4 import BeautifulSoup
@@ -26,6 +26,7 @@ class IAEASublibrary:
 
     Returns:
         IAEASublibrary: The sublibrary instance
+
     """
 
     kind: str
@@ -35,7 +36,7 @@ class IAEASublibrary:
     library: str
     nsub: int
     sublibrary: str
-    urls: Dict[str, str]
+    urls: dict[str, str]
 
     @classmethod
     def from_website(cls, root: str, node: str, kind: str) -> "IAEASublibrary":
@@ -48,6 +49,7 @@ class IAEASublibrary:
 
         Returns:
             IAEASublibrary: An IAEASublibrary object
+
         """
         kwargs = {}
         kwargs["library_root"] = root
@@ -63,7 +65,7 @@ class IAEASublibrary:
 
         materials = cls.parse_index(index, kwargs)
 
-        for matname, tag in zip(materials, tags):
+        for matname, tag in zip(materials, tags, strict=False):
             if kwargs["nsub"] == 12:
                 # TSL file
                 name = (tag.get("href")).split("/")[-1].rstrip(".zip")
@@ -86,6 +88,7 @@ class IAEASublibrary:
 
         Returns:
             str: URL of the zip file
+
         """
         return self.urls[key]
 
@@ -95,6 +98,7 @@ class IAEASublibrary:
         Args:
             key (str): name of the material
             value (str): URL of the zip file
+
         """
         self.urls[key] = value
 
@@ -103,19 +107,21 @@ class IAEASublibrary:
 
         Returns:
             int: The number of materials in the sublibrary
+
         """
         return len(self.urls)
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """The list of materials in the sublibrary
 
         Returns:
             List[str]: List of materials in the sublibrary
+
         """
         return list(self.urls.keys())
 
     @staticmethod
-    def parse_index(index: List[str], kwargs: Dict[str, Any]) -> List[str]:
+    def parse_index(index: list[str], kwargs: dict[str, Any]) -> list[str]:
         """Parse an sublibrary index from the IAEA website, e.g.
         https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm
 
@@ -125,6 +131,7 @@ class IAEASublibrary:
 
         Returns:
             List[str]: The list of material names
+
         """
         materials = []
         for line in index:
@@ -157,6 +164,7 @@ class IAEASublibrary:
 
         Returns:
             str: A new string with the $ inserted
+
         """
         return string[:pos] + "$" + string[pos:]
 
@@ -168,6 +176,7 @@ class IAEASublibrary:
 
         Returns:
             str: The content of the tape
+
         """
         url = self[material]
 
@@ -180,7 +189,7 @@ class IAEASublibrary:
                 with zipfile.ZipFile(zipname) as zf:
                     zf.extractall()
                 datafile = f"{zipname[:-4]}.dat"
-                with open(datafile, "r", encoding="utf-8", newline="") as f:
+                with open(datafile, encoding="utf-8", newline="") as f:
                     return f.read()
 
     def download_single(self, material: str, targetfile: str | Path) -> None:
@@ -189,6 +198,7 @@ class IAEASublibrary:
         Args:
             material (str): The name of the material
             targetfile (str | Path): The path to write the tape to
+
         """
         content = self.fetch_tape(material)
         target = Path(targetfile)
@@ -197,7 +207,7 @@ class IAEASublibrary:
             print(content, file=f, end="")
 
     def download(
-        self, targetdir: str | Path, style: str = "nuclide", processes: int = 1
+        self, targetdir: str | Path, style: str = "nuclide", processes: int = 1,
     ) -> None:
         """Download the all the tapes in the sublibrary to a directory specified by
         `targetdir`.
@@ -211,6 +221,7 @@ class IAEASublibrary:
         Raises:
             ValueError: If an unknown name style is passed to IAEASublibrary.download
             e: Raise errors raised by parallel download of nuclear data files
+
         """
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
         pbar = tqdm(total=len(self), bar_format=bar_format)
@@ -228,7 +239,7 @@ class IAEASublibrary:
             nuclides.append(nuclide)
 
         if processes == 1:
-            for nuclide, target in zip(nuclides, targets):
+            for nuclide, target in zip(nuclides, targets, strict=False):
                 description = f"{self.lib}/{self.kind}/{name}"
                 pbar.set_description(f"{description:<40}")
                 self.download_single(nuclide, target)
@@ -245,7 +256,7 @@ class IAEASublibrary:
             description = f"{self.lib}/{self.kind}"
             pbar.set_description(f"{description:<25}")
             with mp.get_context("spawn").Pool(processes) as p:
-                for nuclide, target in zip(nuclides, targets):
+                for nuclide, target in zip(nuclides, targets, strict=False):
                     p.apply_async(
                         self.download_single,
                         args=(nuclide, target),

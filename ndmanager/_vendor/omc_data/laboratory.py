@@ -1,12 +1,13 @@
 from collections.abc import Iterable
-from numbers import Real, Integral
+from numbers import Integral, Real
 
 import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
 from ndmanager._vendor.omc_data.univariate import Tabular, Univariate
+
 from .angle_energy import AngleEnergy
-from .endf import get_tab2_record, get_tab1_record
+from .endf import get_tab1_record, get_tab2_record
 
 
 class LaboratoryAngleEnergy(AngleEnergy):
@@ -56,7 +57,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_type('laboratory angle-energy breakpoints', breakpoints,
+        cv.check_type("laboratory angle-energy breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
 
@@ -66,7 +67,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_type('laboratory angle-energy interpolation', interpolation,
+        cv.check_type("laboratory angle-energy interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
 
@@ -76,7 +77,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('laboratory angle-energy incoming energy', energy,
+        cv.check_type("laboratory angle-energy incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
 
@@ -86,7 +87,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     @mu.setter
     def mu(self, mu):
-        cv.check_type('laboratory angle-energy outgoing cosine', mu,
+        cv.check_type("laboratory angle-energy outgoing cosine", mu,
                       Iterable, Univariate)
         self._mu = mu
 
@@ -96,7 +97,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     @energy_out.setter
     def energy_out(self, energy_out):
-        cv.check_iterable_type('laboratory angle-energy outgoing energy',
+        cv.check_iterable_type("laboratory angle-energy outgoing energy",
                                energy_out, Univariate, 2, 2)
         self._energy_out = energy_out
 

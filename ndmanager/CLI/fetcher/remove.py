@@ -19,9 +19,10 @@ class NdfRemoveCommand:
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "remove", help="Remove one or more installed ENDF6 libraries"
+            "remove", help="Remove one or more installed ENDF6 libraries",
         )
         parser.add_argument(
             "library",

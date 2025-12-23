@@ -7,7 +7,6 @@ from ndmanager.CLI.chainer.install import NdcInstallCommand
 from ndmanager.CLI.chainer.listchains import NdcListCommand
 from ndmanager.CLI.chainer.remove import NdcRemoveCommand
 
-
 parser = ap.ArgumentParser(
     prog="ndo",
     description="Manage your OpenMC HDF5 nuclear data libraries",

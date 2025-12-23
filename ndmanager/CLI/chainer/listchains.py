@@ -3,10 +3,10 @@
 import argparse as ap
 import textwrap
 
+from ndmanager.CLI.parser import Command
 from ndmanager.data import OPENMC_CHAINS
 from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.format import get_terminal_size, header
-from ndmanager.CLI.parser import Command
 
 
 class NdcListCommand(Command):
@@ -18,9 +18,10 @@ class NdcListCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "list", help="List libraries compatible with NDManager"
+            "list", help="List libraries compatible with NDManager",
         )
         parser.set_defaults(func=cls)
 
@@ -39,13 +40,13 @@ class NdcListCommand(Command):
             s = f"{chain}"
             s = f"{s:<16} [{check}]: {info}"
             s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=23 * " ", width=col
+                s, initial_indent="", subsequent_indent=23 * " ", width=col,
             )
             lst.append("\n".join(s))
 
         chains = []
         for xmlfile in sorted(
-            NDMANAGER_CHAINS.glob("*.xml"), key=lambda x: str.lower(str(x))
+            NDMANAGER_CHAINS.glob("*.xml"), key=lambda x: str.lower(str(x)),
         ):
             chains.append(xmlfile.stem)
 

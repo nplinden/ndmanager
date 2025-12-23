@@ -1,16 +1,17 @@
 from collections.abc import Iterable
-from numbers import Real, Integral
+from numbers import Integral, Real
 from warnings import warn
 
 import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
 from ndmanager._vendor.omc_data.mixin import EqualityMixin
-from ndmanager._vendor.omc_data.univariate import Tabular, Univariate, Discrete, Mixture
-from .function import Tabulated1D, INTERPOLATION_SCHEME
+from ndmanager._vendor.omc_data.univariate import Discrete, Mixture, Tabular, Univariate
+
 from .angle_energy import AngleEnergy
 from .data import EV_PER_MEV
 from .endf import get_list_record, get_tab2_record
+from .function import INTERPOLATION_SCHEME, Tabulated1D
 
 
 class _AtomicRepresentation(EqualityMixin):
@@ -42,12 +43,13 @@ class _AtomicRepresentation(EqualityMixin):
         number
 
     """
+
     def __init__(self, z, a):
         # Sanity checks on values
-        cv.check_type('z', z, Integral)
-        cv.check_greater_than('z', z, 0, equality=True)
-        cv.check_type('a', a, Integral)
-        cv.check_greater_than('a', a, 0, equality=True)
+        cv.check_type("z", z, Integral)
+        cv.check_greater_than("z", z, 0, equality=True)
+        cv.check_type("a", a, Integral)
+        cv.check_greater_than("a", a, 0, equality=True)
         if z > a:
             raise ValueError(f"Number of protons ({z}) must be less than or "
                              f"equal to number of nucleons ({a}).")
@@ -140,7 +142,7 @@ def _separation_energy(compound, nucleus, particle):
         1002: 2.224566,
         1003: 8.481798,
         2003: 7.718043,
-        2004: 28.29566
+        2004: 28.29566,
     }
     I_a = za_to_breaking_energy[particle.za]
 
@@ -208,7 +210,7 @@ def kalbach_slope(energy_projectile, energy_emitted, za_projectile,
     # TODO: test for other particles than neutron
     if za_projectile != 1:
         raise NotImplementedError(
-            "Developed and tested for neutron projectile only."
+            "Developed and tested for neutron projectile only.",
         )
 
     # Special handling of elemental carbon
@@ -304,7 +306,7 @@ class KalbachMann(AngleEnergy):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_type('Kalbach-Mann breakpoints', breakpoints,
+        cv.check_type("Kalbach-Mann breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
 
@@ -314,7 +316,7 @@ class KalbachMann(AngleEnergy):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_type('Kalbach-Mann interpolation', interpolation,
+        cv.check_type("Kalbach-Mann interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
 
@@ -324,7 +326,7 @@ class KalbachMann(AngleEnergy):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('Kalbach-Mann incoming energy', energy,
+        cv.check_type("Kalbach-Mann incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
 
@@ -334,7 +336,7 @@ class KalbachMann(AngleEnergy):
 
     @energy_out.setter
     def energy_out(self, energy_out):
-        cv.check_type('Kalbach-Mann distributions', energy_out,
+        cv.check_type("Kalbach-Mann distributions", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
 
@@ -344,7 +346,7 @@ class KalbachMann(AngleEnergy):
 
     @precompound.setter
     def precompound(self, precompound):
-        cv.check_type('Kalbach-Mann precompound factor', precompound,
+        cv.check_type("Kalbach-Mann precompound factor", precompound,
                       Iterable, Tabulated1D)
         self._precompound = precompound
 
@@ -354,7 +356,7 @@ class KalbachMann(AngleEnergy):
 
     @slope.setter
     def slope(self, slope):
-        cv.check_type('Kalbach-Mann slope', slope, Iterable, Tabulated1D)
+        cv.check_type("Kalbach-Mann slope", slope, Iterable, Tabulated1D)
         self._slope = slope
 
     def to_hdf5(self, group):
@@ -366,10 +368,10 @@ class KalbachMann(AngleEnergy):
             HDF5 group to write to
 
         """
-        group.attrs['type'] = np.bytes_('kalbach-mann')
+        group.attrs["type"] = np.bytes_("kalbach-mann")
 
-        dset = group.create_dataset('energy', data=self.energy)
-        dset.attrs['interpolation'] = np.vstack((self.breakpoints,
+        dset = group.create_dataset("energy", data=self.energy)
+        dset.attrs["interpolation"] = np.vstack((self.breakpoints,
                                                  self.interpolation))
 
         # Determine total number of (E,p,r,a) tuples and create array
@@ -384,14 +386,14 @@ class KalbachMann(AngleEnergy):
 
         # Populate offsets and distribution array
         for i, (eout, km_r, km_a) in enumerate(zip(
-                self.energy_out, self.precompound, self.slope)):
+                self.energy_out, self.precompound, self.slope, strict=False)):
             n = len(eout)
             offsets[i] = j
 
             if isinstance(eout, Mixture):
                 discrete, continuous = eout.distribution
                 n_discrete_lines[i] = m = len(discrete)
-                interpolation[i] = 1 if continuous.interpolation == 'histogram' else 2
+                interpolation[i] = 1 if continuous.interpolation == "histogram" else 2
                 distribution[0, j:j+m] = discrete.x
                 distribution[1, j:j+m] = discrete.p
                 distribution[2, j:j+m] = discrete.c
@@ -401,7 +403,7 @@ class KalbachMann(AngleEnergy):
             else:
                 if isinstance(eout, Tabular):
                     n_discrete_lines[i] = 0
-                    interpolation[i] = 1 if eout.interpolation == 'histogram' else 2
+                    interpolation[i] = 1 if eout.interpolation == "histogram" else 2
                 elif isinstance(eout, Discrete):
                     n_discrete_lines[i] = n
                     interpolation[i] = 1
@@ -414,12 +416,12 @@ class KalbachMann(AngleEnergy):
             j += n
 
         # Create dataset for distributions
-        dset = group.create_dataset('distribution', data=distribution)
+        dset = group.create_dataset("distribution", data=distribution)
 
         # Write interpolation as attribute
-        dset.attrs['offsets'] = offsets
-        dset.attrs['interpolation'] = interpolation
-        dset.attrs['n_discrete_lines'] = n_discrete_lines
+        dset.attrs["offsets"] = offsets
+        dset.attrs["interpolation"] = interpolation
+        dset.attrs["n_discrete_lines"] = n_discrete_lines
 
     @classmethod
     def from_hdf5(cls, group):
@@ -436,15 +438,15 @@ class KalbachMann(AngleEnergy):
             Kalbach-Mann energy distribution
 
         """
-        interp_data = group['energy'].attrs['interpolation']
+        interp_data = group["energy"].attrs["interpolation"]
         energy_breakpoints = interp_data[0, :]
         energy_interpolation = interp_data[1, :]
-        energy = group['energy'][()]
+        energy = group["energy"][()]
 
-        data = group['distribution']
-        offsets = data.attrs['offsets']
-        interpolation = data.attrs['interpolation']
-        n_discrete_lines = data.attrs['n_discrete_lines']
+        data = group["distribution"]
+        offsets = data.attrs["offsets"]
+        interpolation = data.attrs["interpolation"]
+        n_discrete_lines = data.attrs["n_discrete_lines"]
 
         energy_out = []
         precompound = []
@@ -653,26 +655,25 @@ class KalbachMann(AngleEnergy):
             if n_angle == 2:
                 a_i = values[:, 3]
                 calculated_slope.append(False)
-            else:
-                # Check if the projectile is not a neutron
-                if not np.isclose(projectile_mass, 1.0, atol=1.0e-12, rtol=0.):
-                    warn(
-                        "Kalbach-Mann slope calculation is only available with "
-                        "neutrons as projectile. Slope coefficients are set to 0."
-                    )
-                    a_i = np.zeros_like(r_i)
-                    calculated_slope.append(False)
+            # Check if the projectile is not a neutron
+            elif not np.isclose(projectile_mass, 1.0, atol=1.0e-12, rtol=0.):
+                warn(
+                    "Kalbach-Mann slope calculation is only available with "
+                    "neutrons as projectile. Slope coefficients are set to 0.",
+                )
+                a_i = np.zeros_like(r_i)
+                calculated_slope.append(False)
 
-                else:
-                    # TODO: retrieve ZA of the projectile
-                    za_projectile = 1
-                    a_i = [kalbach_slope(energy_projectile=energy[i],
-                                         energy_emitted=e,
-                                         za_projectile=za_projectile,
-                                         za_emitted=za_emitted,
-                                         za_target=za_target)
-                           for e in eout_i]
-                    calculated_slope.append(True)
+            else:
+                # TODO: retrieve ZA of the projectile
+                za_projectile = 1
+                a_i = [kalbach_slope(energy_projectile=energy[i],
+                                     energy_emitted=e,
+                                     za_projectile=za_projectile,
+                                     za_emitted=za_emitted,
+                                     za_target=za_target)
+                       for e in eout_i]
+                calculated_slope.append(True)
 
             precompound.append(Tabulated1D(eout_i, r_i))
             slope.append(Tabulated1D(eout_i, a_i))

@@ -1,7 +1,6 @@
 """Some utility function to compute ENDF6 tape SHA1"""
 
 import hashlib
-from typing import Dict
 
 from ndmanager.API.endf6 import get_endf6
 from ndmanager.env import NDMANAGER_ENDF6
@@ -12,6 +11,7 @@ def compute_file_sha1(filename: str) -> str:
 
     Args:
         Path to a file.
+
     """
     BUF_SIZE = 65536  # 64 kBi
     sha1 = hashlib.sha1()
@@ -24,7 +24,7 @@ def compute_file_sha1(filename: str) -> str:
     return sha1.hexdigest()
 
 
-def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
+def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> dict[str, str]:
     """Compute the SHA1 hash of a tape stored in the NDManager database
 
     Args:
@@ -43,7 +43,7 @@ def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> Dict[str, str]:
     return {f"{libname}/{sub}/{nuclide}": sha1}
 
 
-def compute_sublib_sha1(libname: str, sub: str) -> Dict[str, str]:
+def compute_sublib_sha1(libname: str, sub: str) -> dict[str, str]:
     """Compute the SHA1 hash of all tapes in a sublibrary in the NDManager database
 
     Args:
@@ -62,7 +62,7 @@ def compute_sublib_sha1(libname: str, sub: str) -> Dict[str, str]:
     return results
 
 
-def compute_lib_sha1(libname: str) -> Dict[str, str]:
+def compute_lib_sha1(libname: str) -> dict[str, str]:
     """Compute the SHA1 hash of all tapes in a library in the NDManager database
 
     Args:
@@ -80,7 +80,7 @@ def compute_lib_sha1(libname: str) -> Dict[str, str]:
     return results
 
 
-def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> Dict[str, str]:
+def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> dict[str, str]:
     """Compute the SHA1 hash of tapes in a library in the NDManager database.
     If a sublibrary is specified, only tapes in that sublibrary will be computed.
     If a nuclide is also specified, only the corresponding tape will be computed.

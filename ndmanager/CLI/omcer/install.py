@@ -10,9 +10,9 @@ from pathlib import Path
 import requests
 from tqdm import tqdm
 
+from ndmanager.CLI.parser import Command
 from ndmanager.data import OPENMC_LIBS
 from ndmanager.env import NDMANAGER_HDF5
-from ndmanager.CLI.parser import Command
 
 
 class NdoInstallCommand(Command):
@@ -24,9 +24,10 @@ class NdoInstallCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "install", help="Install one or more OpenMC libraries"
+            "install", help="Install one or more OpenMC libraries",
         )
         parser.add_argument(
             "library",
@@ -42,6 +43,7 @@ class NdoInstallCommand(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
+
         """
         for libname in args.library:
             with tempfile.TemporaryDirectory() as tmpdir:
@@ -68,6 +70,7 @@ def download(url: str, tarname: str, family: str, lib: str):
         tarname (str): The name of the resulting tar file
         family (str): The name of the library's family
         lib (str): The library name
+
     """
     r = requests.get(url, stream=True, timeout=3600)
 
@@ -96,6 +99,7 @@ def extract(tarname: str, total: int, family: str, lib: str):
         total (int): The uncompressed total size of the library
         family (str): The name of the library's family
         lib (str): The library name
+
     """
     with tarfile.open(tarname) as tar:
         bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"

@@ -7,11 +7,11 @@ import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
 from ndmanager._vendor.omc_data.mixin import EqualityMixin
-from ndmanager._vendor.omc_data.univariate import Univariate, Tabular, Uniform, Legendre
-from .function import INTERPOLATION_SCHEME
+from ndmanager._vendor.omc_data.univariate import Legendre, Tabular, Uniform, Univariate
+
 from .data import EV_PER_MEV
-from .endf import get_head_record, get_cont_record, get_tab1_record, \
-    get_list_record, get_tab2_record
+from .endf import get_cont_record, get_head_record, get_list_record, get_tab1_record, get_tab2_record
+from .function import INTERPOLATION_SCHEME
 
 
 class AngleDistribution(EqualityMixin):
@@ -44,7 +44,7 @@ class AngleDistribution(EqualityMixin):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('angle distribution incoming energy', energy,
+        cv.check_type("angle distribution incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
 
@@ -54,7 +54,7 @@ class AngleDistribution(EqualityMixin):
 
     @mu.setter
     def mu(self, mu):
-        cv.check_type('angle distribution scattering cosines', mu,
+        cv.check_type("angle distribution scattering cosines", mu,
                       Iterable, Univariate)
         self._mu = mu
 
@@ -67,8 +67,7 @@ class AngleDistribution(EqualityMixin):
             HDF5 group to write to
 
         """
-
-        dset = group.create_dataset('energy', data=self.energy)
+        dset = group.create_dataset("energy", data=self.energy)
 
         # Make sure all data is tabular
         mu_tabular = [mu_i if isinstance(mu_i, Tabular) else
@@ -87,18 +86,18 @@ class AngleDistribution(EqualityMixin):
         for i, mu_i in enumerate(mu_tabular):
             n = len(mu_i.x)
             offsets[i] = j
-            interpolation[i] = 1 if mu_i.interpolation == 'histogram' else 2
+            interpolation[i] = 1 if mu_i.interpolation == "histogram" else 2
             pairs[0, j:j+n] = mu_i.x
             pairs[1, j:j+n] = mu_i.p
             pairs[2, j:j+n] = mu_i.c
             j += n
 
         # Create dataset for distributions
-        dset = group.create_dataset('mu', data=pairs)
+        dset = group.create_dataset("mu", data=pairs)
 
         # Write interpolation as attribute
-        dset.attrs['offsets'] = offsets
-        dset.attrs['interpolation'] = interpolation
+        dset.attrs["offsets"] = offsets
+        dset.attrs["interpolation"] = interpolation
 
     @classmethod
     def from_hdf5(cls, group):
@@ -115,10 +114,10 @@ class AngleDistribution(EqualityMixin):
             Angular distribution
 
         """
-        energy = group['energy'][()]
-        data = group['mu']
-        offsets = data.attrs['offsets']
-        interpolation = data.attrs['interpolation']
+        energy = group["energy"][()]
+        data = group["mu"]
+        offsets = data.attrs["offsets"]
+        interpolation = data.attrs["interpolation"]
 
         mu = []
         n_energy = len(energy)
@@ -186,7 +185,7 @@ class AngleDistribution(EqualityMixin):
                 pdf[:n_bins] = 1.0/(n_bins*np.diff(cos))
                 cdf = np.linspace(0.0, 1.0, n_bins + 1)
 
-                mu_i = Tabular(cos, pdf, 'histogram', ignore_negative=True)
+                mu_i = Tabular(cos, pdf, "histogram", ignore_negative=True)
                 mu_i.c = cdf
             elif lc[i] < 0:
                 # Tabular angular distribution
@@ -239,14 +238,14 @@ class AngleDistribution(EqualityMixin):
         # Check for obsolete energy transformation matrix. If present, just skip
         # it and keep reading
         if lvt > 0:
-            warn('Obsolete energy transformation matrix in MF=4 angular '
-                 'distribution.')
+            warn("Obsolete energy transformation matrix in MF=4 angular "
+                 "distribution.")
             for _ in range((nk + 5)//6):
                 file_obj.readline()
 
         if ltt == 0 and li == 1:
             # Purely isotropic
-            energy = np.array([0., ev.info['energy_max']])
+            energy = np.array([0., ev.info["energy_max"]])
             mu = [Uniform(-1., 1.), Uniform(-1., 1.)]
 
         elif ltt == 1 and li == 0:
@@ -273,8 +272,8 @@ class AngleDistribution(EqualityMixin):
                 params, f = get_tab1_record(file_obj)
                 energy[i] = params[1]
                 if f.n_regions > 1:
-                    raise NotImplementedError('Angular distribution with multiple '
-                                              'interpolation regions not supported.')
+                    raise NotImplementedError("Angular distribution with multiple "
+                                              "interpolation regions not supported.")
                 mu.append(Tabular(f.x, f.y, INTERPOLATION_SCHEME[f.interpolation[0]]))
 
         elif ltt == 3 and li == 0:
@@ -298,8 +297,8 @@ class AngleDistribution(EqualityMixin):
                 params, f = get_tab1_record(file_obj)
                 energy_tabulated[i] = params[1]
                 if f.n_regions > 1:
-                    raise NotImplementedError('Angular distribution with multiple '
-                                              'interpolation regions not supported.')
+                    raise NotImplementedError("Angular distribution with multiple "
+                                              "interpolation regions not supported.")
                 mu.append(Tabular(f.x, f.y, INTERPOLATION_SCHEME[f.interpolation[0]]))
 
             energy = np.concatenate((energy_legendre, energy_tabulated))

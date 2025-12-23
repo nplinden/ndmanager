@@ -1,7 +1,6 @@
 """A class for managing photon libraries generation"""
 
 from pathlib import Path
-from typing import Dict
 
 from ndmanager.API.process.base_manager import BaseManager
 from ndmanager.API.process.hdf5_photon import HDF5Photon
@@ -15,7 +14,7 @@ class PhotonManager(InputParser, BaseManager):
     sublibrary = "Photon"
     cross_section_node_type = "photon"
 
-    def __init__(self, photondict: Dict, rootdir: Path) -> None:
+    def __init__(self, photondict: dict, rootdir: Path) -> None:
         InputParser.__init__(self, photondict)
 
         self.sorting_key = lambda x: ATOMIC_SYMBOL[x.target]

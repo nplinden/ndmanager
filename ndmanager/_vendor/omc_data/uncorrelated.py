@@ -1,9 +1,10 @@
 import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
+
+from .angle_distribution import AngleDistribution
 from .angle_energy import AngleEnergy
 from .energy_distribution import EnergyDistribution
-from .angle_distribution import AngleDistribution
 
 
 class UncorrelatedAngleEnergy(AngleEnergy):
@@ -40,7 +41,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     @angle.setter
     def angle(self, angle):
-        cv.check_type('uncorrelated angle distribution', angle,
+        cv.check_type("uncorrelated angle distribution", angle,
                       AngleDistribution)
         self._angle = angle
 
@@ -50,7 +51,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('uncorrelated energy distribution', energy,
+        cv.check_type("uncorrelated energy distribution", energy,
                       EnergyDistribution)
         self._energy = energy
 
@@ -63,13 +64,13 @@ class UncorrelatedAngleEnergy(AngleEnergy):
             HDF5 group to write to
 
         """
-        group.attrs['type'] = np.bytes_('uncorrelated')
+        group.attrs["type"] = np.bytes_("uncorrelated")
         if self.angle is not None:
-            angle_group = group.create_group('angle')
+            angle_group = group.create_group("angle")
             self.angle.to_hdf5(angle_group)
 
         if self.energy is not None:
-            energy_group = group.create_group('energy')
+            energy_group = group.create_group("energy")
             self.energy.to_hdf5(energy_group)
 
     @classmethod
@@ -88,8 +89,8 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
         """
         dist = cls()
-        if 'angle' in group:
-            dist.angle = AngleDistribution.from_hdf5(group['angle'])
-        if 'energy' in group:
-            dist.energy = EnergyDistribution.from_hdf5(group['energy'])
+        if "angle" in group:
+            dist.angle = AngleDistribution.from_hdf5(group["angle"])
+        if "energy" in group:
+            dist.energy = EnergyDistribution.from_hdf5(group["energy"])
         return dist

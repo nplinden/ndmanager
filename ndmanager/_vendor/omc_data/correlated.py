@@ -1,16 +1,16 @@
 from collections.abc import Iterable
-from numbers import Real, Integral
+from numbers import Integral, Real
 from warnings import warn
 
 import numpy as np
 
 import ndmanager._vendor.omc_data.checkvalue as cv
-from ndmanager._vendor.omc_data.univariate import Tabular, Univariate, Discrete, Mixture, \
-    Uniform, Legendre
-from .function import INTERPOLATION_SCHEME
+from ndmanager._vendor.omc_data.univariate import Discrete, Legendre, Mixture, Tabular, Uniform, Univariate
+
 from .angle_energy import AngleEnergy
 from .data import EV_PER_MEV
 from .endf import get_list_record, get_tab2_record
+from .function import INTERPOLATION_SCHEME
 
 
 class CorrelatedAngleEnergy(AngleEnergy):
@@ -44,7 +44,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     """
 
-    _name = 'correlated'
+    _name = "correlated"
 
     def __init__(self, breakpoints, interpolation, energy, energy_out, mu):
         super().__init__()
@@ -60,7 +60,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints):
-        cv.check_type('correlated angle-energy breakpoints', breakpoints,
+        cv.check_type("correlated angle-energy breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
 
@@ -70,7 +70,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @interpolation.setter
     def interpolation(self, interpolation):
-        cv.check_type('correlated angle-energy interpolation', interpolation,
+        cv.check_type("correlated angle-energy interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
 
@@ -80,7 +80,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @energy.setter
     def energy(self, energy):
-        cv.check_type('correlated angle-energy incoming energy', energy,
+        cv.check_type("correlated angle-energy incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
 
@@ -90,7 +90,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @energy_out.setter
     def energy_out(self, energy_out):
-        cv.check_type('correlated angle-energy outgoing energy', energy_out,
+        cv.check_type("correlated angle-energy outgoing energy", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
 
@@ -100,7 +100,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @mu.setter
     def mu(self, mu):
-        cv.check_iterable_type('correlated angle-energy outgoing cosine',
+        cv.check_iterable_type("correlated angle-energy outgoing cosine",
                                mu, Univariate, 2, 2)
         self._mu = mu
 
@@ -113,10 +113,10 @@ class CorrelatedAngleEnergy(AngleEnergy):
             HDF5 group to write to
 
         """
-        group.attrs['type'] = np.bytes_(self._name)
+        group.attrs["type"] = np.bytes_(self._name)
 
-        dset = group.create_dataset('energy', data=self.energy)
-        dset.attrs['interpolation'] = np.vstack((self.breakpoints,
+        dset = group.create_dataset("energy", data=self.energy)
+        dset.attrs["interpolation"] = np.vstack((self.breakpoints,
                                                  self.interpolation))
 
         # Determine total number of (E,p) pairs and create array
@@ -149,7 +149,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
             if isinstance(d, Mixture):
                 discrete, continuous = d.distribution
                 n_discrete_lines[i] = m = len(discrete)
-                interpolation[i] = 1 if continuous.interpolation == 'histogram' else 2
+                interpolation[i] = 1 if continuous.interpolation == "histogram" else 2
                 eout[0, offset_e:offset_e+m] = discrete.x
                 eout[1, offset_e:offset_e+m] = discrete.p
                 eout[2, offset_e:offset_e+m] = discrete.c
@@ -159,14 +159,14 @@ class CorrelatedAngleEnergy(AngleEnergy):
             else:
                 if isinstance(d, Tabular):
                     n_discrete_lines[i] = 0
-                    interpolation[i] = 1 if d.interpolation == 'histogram' else 2
+                    interpolation[i] = 1 if d.interpolation == "histogram" else 2
                 elif isinstance(d, Discrete):
                     n_discrete_lines[i] = n
                     interpolation[i] = 1
                 else:
                     raise ValueError(
-                        'Invalid univariate energy distribution as part of '
-                        'correlated angle-energy: {}'.format(d))
+                        "Invalid univariate energy distribution as part of "
+                        f"correlated angle-energy: {d}")
                 eout[0, offset_e:offset_e+n] = d.x
                 eout[1, offset_e:offset_e+n] = d.p
                 eout[2, offset_e:offset_e+n] = d.c
@@ -175,7 +175,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
                 if isinstance(mu_ij, Discrete):
                     eout[3, offset_e+j] = 0
                 else:
-                    eout[3, offset_e+j] = 1 if mu_ij.interpolation == 'histogram' else 2
+                    eout[3, offset_e+j] = 1 if mu_ij.interpolation == "histogram" else 2
                 eout[4, offset_e+j] = offset_mu
 
                 n_mu = len(mu_ij)
@@ -188,15 +188,15 @@ class CorrelatedAngleEnergy(AngleEnergy):
             offset_e += n
 
         # Create dataset for outgoing energy distributions
-        dset = group.create_dataset('energy_out', data=eout)
+        dset = group.create_dataset("energy_out", data=eout)
 
         # Write interpolation on outgoing energy as attribute
-        dset.attrs['offsets'] = offsets
-        dset.attrs['interpolation'] = interpolation
-        dset.attrs['n_discrete_lines'] = n_discrete_lines
+        dset.attrs["offsets"] = offsets
+        dset.attrs["interpolation"] = interpolation
+        dset.attrs["n_discrete_lines"] = n_discrete_lines
 
         # Create dataset for outgoing angle distributions
-        group.create_dataset('mu', data=mu)
+        group.create_dataset("mu", data=mu)
 
     @classmethod
     def from_hdf5(cls, group):
@@ -213,18 +213,18 @@ class CorrelatedAngleEnergy(AngleEnergy):
             Correlated angle-energy distribution
 
         """
-        interp_data = group['energy'].attrs['interpolation']
+        interp_data = group["energy"].attrs["interpolation"]
         energy_breakpoints = interp_data[0, :]
         energy_interpolation = interp_data[1, :]
-        energy = group['energy'][()]
+        energy = group["energy"][()]
 
-        offsets = group['energy_out'].attrs['offsets']
-        interpolation = group['energy_out'].attrs['interpolation']
-        n_discrete_lines = group['energy_out'].attrs['n_discrete_lines']
-        dset_eout = group['energy_out'][()]
+        offsets = group["energy_out"].attrs["offsets"]
+        interpolation = group["energy_out"].attrs["interpolation"]
+        n_discrete_lines = group["energy_out"].attrs["n_discrete_lines"]
+        dset_eout = group["energy_out"][()]
         energy_out = []
 
-        dset_mu = group['mu'][()]
+        dset_mu = group["mu"][()]
         mu = []
 
         n_energy = len(energy)

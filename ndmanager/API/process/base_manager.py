@@ -12,6 +12,7 @@ def processor(particle: HDF5Sublibrary):
 
     Args:
         particle (HDF5Sublibrary): The sublibrary object
+
     """
     particle.process()
 
@@ -28,6 +29,7 @@ class BaseManager(list):
 
         Raises:
             e: Raised if one or more process fail
+
         """
         if len(self) == 0:
             return

@@ -3,10 +3,8 @@
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
 
 from ndmanager._vendor.omc_data import ThermalScattering
-
 from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 
@@ -16,7 +14,7 @@ class HDF5TSL(HDF5Sublibrary):
 
     tsl: Path
     neutron: Path
-    temperatures: List[int]
+    temperatures: list[int]
 
     def process(self):
         """Process TSL ENDF6 file to HDF5 using OpenMC's API"""
@@ -33,7 +31,7 @@ class HDF5TSL(HDF5Sublibrary):
             data = ThermalScattering.from_njoy(self.neutron, self.tsl)
         else:
             data = ThermalScattering.from_njoy(
-                self.neutron, self.tsl, self.temperatures
+                self.neutron, self.tsl, self.temperatures,
             )
         assert self.path.name == f"{data.name}.h5"
         data.export_to_hdf5(self.path, "w")

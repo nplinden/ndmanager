@@ -3,12 +3,10 @@
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Set
 
 from ndmanager._vendor.omc_data import IncidentNeutron
-
-from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 from ndmanager.API.merge import merge_neutron_file
+from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 
 @dataclass
@@ -16,7 +14,7 @@ class HDF5Neutron(HDF5Sublibrary):
     """A class to process an OpenMC HDF5 neutron data file"""
 
     neutron: Path
-    temperatures: Set[int]
+    temperatures: set[int]
 
     def process(self):
         """Process neutron ENDF6 file to HDF5 using OpenMC's API"""
@@ -47,7 +45,7 @@ class HDF5Neutron(HDF5Sublibrary):
             tmpfile.unlink()
         else:
             data = IncidentNeutron.from_njoy(
-                self.neutron, temperatures=self.temperatures
+                self.neutron, temperatures=self.temperatures,
             )
             data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)

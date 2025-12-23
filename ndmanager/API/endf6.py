@@ -1,7 +1,6 @@
 # pylint: disable=invalid-name
 """A module that defines and ENDF6 class to manipulate ENDF6 tapes"""
 
-from typing import Dict
 from pathlib import Path
 
 from ndmanager.API.nuclide import Nuclide
@@ -17,10 +16,11 @@ class Endf6:
 
         Args:
             filename (str | Path): Path to an ENDF6 tape
+
         """
         self.filename = filename
         self.nuclide = Nuclide.from_file(filename)
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, encoding="utf-8") as f:
             for _ in range(4):
                 line = f.readline()
             NSUB = int(line[46:56])
@@ -42,6 +42,7 @@ def get_endf6(libname: str, sub: str, nuclide: str):
 
     Returns:
         pathlib.Path: The path to the library
+
     """
     p = NDMANAGER_ENDF6 / libname
     if not p.exists():
@@ -50,14 +51,14 @@ def get_endf6(libname: str, sub: str, nuclide: str):
     if not p.exists():
         raise ValueError(f"No {sub} sublibrary available for '{libname}'")
     p = p / f"{nuclide}"
-    if not p.suffix == ".endf6":
+    if p.suffix != ".endf6":
         p = p.parent / (p.name + ".endf6")
     if not p.exists():
         raise ValueError(f"No {nuclide} nuclide available for '{libname}', '{sub}")
     return p
 
 
-def list_endf6(sublibrary: str, params: Dict[str, str]):
+def list_endf6(sublibrary: str, params: dict[str, str]):
     """List the paths to ENDF6 evaluations necessary to build the cross-sections
     and depletion chains.
 
@@ -67,6 +68,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
 
     Returns:
         Dict[str, Path]: A dictionnary that associates nuclide names to ENDF6 paths.
+
     """
     base = params["base"]
     omit = params.get("omit", "").split()
@@ -93,7 +95,7 @@ def list_endf6(sublibrary: str, params: Dict[str, str]):
             p = NDMANAGER_ENDF6 / guestlib / sublibrary / f"{nuclide}.endf6"
             if not p.exists():
                 raise ValueError(
-                    f"Nuclide {nuclide} is not available in the {guestlib} library."
+                    f"Nuclide {nuclide} is not available in the {guestlib} library.",
                 )
             guest_dict[nuclide] = p
         base_dict |= guest_dict

@@ -3,13 +3,12 @@
 import argparse as ap
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Dict, List
 
 import numpy as np
 from h5py import File
 
-from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
+from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoSn301Command(Command):
@@ -21,9 +20,10 @@ class NdoSn301Command(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "sn301", help="Substitute negative MT=301 cross-section in HDF5 library"
+            "sn301", help="Substitute negative MT=301 cross-section in HDF5 library",
         )
         parser.add_argument("--target", "-t", type=str, help="The library to fix")
         parser.add_argument(
@@ -35,7 +35,7 @@ class NdoSn301Command(Command):
             help="List of nuclear data libraries to choose from",
         )
         parser.add_argument(
-            "--dryrun", help="Do not perform the substitution", action="store_true"
+            "--dryrun", help="Do not perform the substitution", action="store_true",
         )
         parser.set_defaults(func=cls)
 
@@ -45,6 +45,7 @@ class NdoSn301Command(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
+
         """
         target = NDMANAGER_HDF5 / args.target / "cross_sections.xml"
         sources = [NDMANAGER_HDF5 / s / "cross_sections.xml" for s in args.sources]
@@ -61,6 +62,7 @@ def overwrite_one_temp(source: File, target: File, nuclide: str, mt: int, t: str
         nuclide (str): The name of the nuclide
         mt (int): The MT number of the reaction
         t (str): The name of the temperature node
+
     """
     target_grid = target[f"{nuclide}/energy/{t:d}K"][...]
     target_attrs = target[f"{nuclide}/reactions/reaction_{mt:03d}/{t}K/xs"].attrs
@@ -88,6 +90,7 @@ def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
     Raises:
         ValueError: If the temperatures available in the source and target file
                     are different
+
     """
     with File(sourcefile, "r") as source, File(targetfile, "r+") as target:
         source_rgroup = source[f"{nuclide}/reactions/reaction_{mt:03d}/"]
@@ -99,14 +102,14 @@ def overwrite(nuclide: str, mt: int, sourcefile: str, targetfile: str):
         for t in target_temperatures:
             if t not in source_temperatures:
                 raise ValueError(
-                    f"Temperature {t} not available for MT={mt} in {sourcefile}"
+                    f"Temperature {t} not available for MT={mt} in {sourcefile}",
                 )
 
         for t in target_temperatures:
             overwrite_one_temp(source, target, nuclide, mt, t)
 
 
-def find_negative(matpath: str, mt: int) -> Dict[str, Dict[str, str | List[str]]]:
+def find_negative(matpath: str, mt: int) -> dict[str, dict[str, str | list[str]]]:
     """Find negative cross sections in a nuclear data library HDF5 file
 
     Args:
@@ -115,6 +118,7 @@ def find_negative(matpath: str, mt: int) -> Dict[str, Dict[str, str | List[str]]
 
     Returns:
         Dict[str, Dict[str, str | List[str]]]: Dictionnary of negative values
+
     """
     result = {}
     with File(matpath, "r") as f:
@@ -136,8 +140,8 @@ def find_negative(matpath: str, mt: int) -> Dict[str, Dict[str, str | List[str]]
 
 
 def find_negative_in_lib(
-    libpath: str, mt: int
-) -> Dict[str, Dict[str, str | List[str]]]:
+    libpath: str, mt: int,
+) -> dict[str, dict[str, str | list[str]]]:
     """Find negative cross sections in a nuclear data library xml file
 
     Args:
@@ -146,6 +150,7 @@ def find_negative_in_lib(
 
     Returns:
         Dict[str, Dict[str, str | List[str]]]: Dictionnary of negative values
+
     """
     plib = Path(libpath)
     root = ET.parse(plib).getroot()
@@ -170,6 +175,7 @@ def set_negative_to_zero(matpath: str, mt: int) -> None:
     Args:
         matpath (str): The path to the file
         mt (int): The MT number of the reaction
+
     """
     with File(matpath, "r+") as f:
         for nuclide in f.keys():
@@ -190,6 +196,7 @@ def set_negative_to_zero_in_lib(libpath: str, mt: int) -> None:
     Args:
         libpath (str): The path to the cross_sections.xml file
         mt (int): The MT number of the reaction
+
     """
     plib = Path(libpath)
     root = ET.parse(plib).getroot()
@@ -215,6 +222,7 @@ def find_nuclide_in_lib(libpath: str, nuclide: str) -> Path:
 
     Returns:
         Path: Path to the material file
+
     """
     plib = Path(libpath)
     root = ET.parse(plib).getroot()
@@ -233,7 +241,7 @@ def find_nuclide_in_lib(libpath: str, nuclide: str) -> Path:
 
 def replace_negatives_in_lib(
     target_path: str,
-    source_paths: List[str],
+    source_paths: list[str],
     mt: int,
     dryrun: bool = False,
     verbose: bool = True,
@@ -247,6 +255,7 @@ def replace_negatives_in_lib(
         mt (int): The MT number of the reaction
         dryrun (bool, optional): Do not perform the substitution. Defaults to False.
         verbose (bool, optional): Additionnal log info. Defaults to True.
+
     """
     negatives = find_negative_in_lib(target_path, mt)
     source_negatives = {
@@ -270,7 +279,7 @@ def replace_negatives_in_lib(
             if verbose:
                 print(
                     f"Replacing\n\tnuclide={nuclide}\n\tmt={mt}"
-                    "\n\ttarget={target}\n\tsource={source}"
+                    "\n\ttarget={target}\n\tsource={source}",
                 )
             if not dryrun:
                 overwrite(nuclide, mt, source, target)
@@ -279,7 +288,7 @@ def replace_negatives_in_lib(
             if verbose:
                 print(
                     f"No replacement found\n\tnuclide={nuclide}\n\tmt={mt}"
-                    "\n\ttarget={target}\n\tsource={source}"
+                    "\n\ttarget={target}\n\tsource={source}",
                 )
             if not dryrun:
                 set_negative_to_zero(target, mt)

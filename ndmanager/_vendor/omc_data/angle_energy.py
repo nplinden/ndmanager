@@ -6,6 +6,7 @@ from ndmanager._vendor.omc_data.mixin import EqualityMixin
 
 class AngleEnergy(EqualityMixin, ABC):
     """Distribution in angle and energy of a secondary particle."""
+
     @abstractmethod
     def to_hdf5(self, group):
         pass
@@ -25,26 +26,26 @@ class AngleEnergy(EqualityMixin, ABC):
             Angle-energy distribution
 
         """
-        dist_type = group.attrs['type'].decode()
-        if dist_type == 'uncorrelated':
+        dist_type = group.attrs["type"].decode()
+        if dist_type == "uncorrelated":
             return ndmanager._vendor.omc_data.UncorrelatedAngleEnergy.from_hdf5(group)
-        elif dist_type == 'correlated':
+        if dist_type == "correlated":
             return ndmanager._vendor.omc_data.CorrelatedAngleEnergy.from_hdf5(group)
-        elif dist_type == 'kalbach-mann':
+        if dist_type == "kalbach-mann":
             return ndmanager._vendor.omc_data.KalbachMann.from_hdf5(group)
-        elif dist_type == 'nbody':
+        if dist_type == "nbody":
             return ndmanager._vendor.omc_data.NBodyPhaseSpace.from_hdf5(group)
-        elif dist_type == 'coherent_elastic':
+        if dist_type == "coherent_elastic":
             return ndmanager._vendor.omc_data.CoherentElasticAE.from_hdf5(group)
-        elif dist_type == 'incoherent_elastic':
+        if dist_type == "incoherent_elastic":
             return ndmanager._vendor.omc_data.IncoherentElasticAE.from_hdf5(group)
-        elif dist_type == 'incoherent_elastic_discrete':
+        if dist_type == "incoherent_elastic_discrete":
             return ndmanager._vendor.omc_data.IncoherentElasticAEDiscrete.from_hdf5(group)
-        elif dist_type == 'incoherent_inelastic_discrete':
+        if dist_type == "incoherent_inelastic_discrete":
             return ndmanager._vendor.omc_data.IncoherentInelasticAEDiscrete.from_hdf5(group)
-        elif dist_type == 'incoherent_inelastic':
+        if dist_type == "incoherent_inelastic":
             return ndmanager._vendor.omc_data.IncoherentInelasticAE.from_hdf5(group)
-        elif dist_type == 'mixed_elastic':
+        if dist_type == "mixed_elastic":
             return ndmanager._vendor.omc_data.MixedElasticAE.from_hdf5(group)
 
     @staticmethod

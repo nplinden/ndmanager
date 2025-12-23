@@ -3,8 +3,8 @@
 import argparse as ap
 import shutil
 
-from ndmanager.env import NDMANAGER_HDF5
 from ndmanager.CLI.parser import Command
+from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoCloneCommand(Command):
@@ -16,9 +16,10 @@ class NdoCloneCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "clone", help="Clone an installed OpenMC library"
+            "clone", help="Clone an installed OpenMC library",
         )
         parser.add_argument(
             "source",
@@ -41,6 +42,7 @@ class NdoCloneCommand(Command):
         Raises:
             ValueError: The source library does not exist
             ValueError: The target library already exists
+
         """
         source = NDMANAGER_HDF5 / args.source
         target = NDMANAGER_HDF5 / args.target

@@ -1,10 +1,11 @@
-import argparse as ap
 import abc
+import argparse as ap
 
 
 class Command:
     """A class that defines how command classes should look like.
-    Command classes should both define a `parser` and `run` method."""
+    Command classes should both define a `parser` and `run` method.
+    """
 
     __metaclass__ = abc.ABCMeta
 
@@ -14,6 +15,7 @@ class Command:
 
         Args:
             args (ap.Namespace): The CLI arguments namespace
+
         """
         self.run(args)
 
@@ -24,8 +26,8 @@ class Command:
 
         Args:
             subparsers (ap._SubParsersAction): A subparser object
+
         """
-        pass
 
     @abc.abstractmethod
     def run(self, args: ap.Namespace) -> None:  # pragma: no cover
@@ -34,5 +36,5 @@ class Command:
 
         Args:
             args (ap.Namespace): The CLI arguments namespace
+
         """
-        pass

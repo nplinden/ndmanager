@@ -2,13 +2,13 @@
 
 import argparse as ap
 
-from ndmanager._vendor.omc_data import Chain
 import yaml
 
+from ndmanager._vendor.omc_data import Chain
 from ndmanager.API.endf6 import list_endf6
 from ndmanager.CLI.chainer.branching_ratios import branching_ratios
-from ndmanager.env import NDMANAGER_CHAINS
 from ndmanager.CLI.parser import Command
+from ndmanager.env import NDMANAGER_CHAINS
 
 REACTIONS = [
     "(n,2nd)",
@@ -107,9 +107,10 @@ class NdcBuildCommand(Command):
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
+
         """
         parser = subparsers.add_parser(
-            "build", help="Build an OpenMC depletion chain from a YAML input file"
+            "build", help="Build an OpenMC depletion chain from a YAML input file",
         )
         parser.add_argument(
             "filename",
@@ -123,8 +124,8 @@ class NdcBuildCommand(Command):
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
-        """
 
+        """
         with open(args.filename, encoding="utf-8") as f:
             inputs = yaml.safe_load(f)
         name = inputs["name"]
@@ -151,7 +152,7 @@ class NdcBuildCommand(Command):
             ratios = branching_ratios[inputs["branching_ratios"]]
             for reaction, br in ratios.items():
                 chain.set_branch_ratios(
-                    branch_ratios=br, reaction=reaction, strict=False
+                    branch_ratios=br, reaction=reaction, strict=False,
                 )
 
         chain.export_to_xml(target)

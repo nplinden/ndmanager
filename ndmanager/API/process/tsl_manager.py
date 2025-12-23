@@ -1,20 +1,19 @@
 """A class for managing TSL libraries generation"""
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 from ndmanager._vendor.omc_data import Evaluation, get_thermal_name
-
+from ndmanager.API.endf6 import get_endf6
 from ndmanager.API.process.base_manager import BaseManager
 from ndmanager.API.process.hdf5_tsl import HDF5TSL
 from ndmanager.API.process.input_parser import InputParser
 from ndmanager.API.process.neutron_manager import NeutronManager
-from ndmanager.API.endf6 import get_endf6
 from ndmanager.data import TSL_NEUTRON
 from ndmanager.env import NDMANAGER_ENDF6
 
 
-def read_temperatures(from_yaml_node: int | str) -> List[int]:
+def read_temperatures(from_yaml_node: int | str) -> list[int]:
     """Read a temperatures node from a yaml file
 
     Args:
@@ -22,6 +21,7 @@ def read_temperatures(from_yaml_node: int | str) -> List[int]:
 
     Returns:
         List[int]: The list of temperatures
+
     """
     if isinstance(from_yaml_node, int):
         return [from_yaml_node]
@@ -35,7 +35,7 @@ class TSLManager(InputParser, BaseManager):
     cross_section_node_type: str = "thermal"
 
     def __init__(
-        self, tsldict: Dict[str, Any], neutron_library: NeutronManager, rootdir: Path
+        self, tsldict: dict[str, Any], neutron_library: NeutronManager, rootdir: Path,
     ) -> None:
         """Create a TSL manager given an input tsl dictionnary, an neutron manager
         and a path to a directory
@@ -44,6 +44,7 @@ class TSLManager(InputParser, BaseManager):
             tsldict (Dict[str, Any]): A TSL input dictionnary
             neutron_library (NeutronManager): A neutron manager
             rootdir (Path): A path to write the HDF5 files in
+
         """
         InputParser.__init__(self, tsldict)
 
@@ -69,6 +70,7 @@ class TSLManager(InputParser, BaseManager):
 
         Args:
             rootdir (Path): A path to write the HDF5 files in
+
         """
         if self.base is not None:
             tsl_to_nuclide = TSL_NEUTRON[self.base]
@@ -105,6 +107,7 @@ class TSLManager(InputParser, BaseManager):
 
         Returns:
             str: The ZSYMAM value
+
         """
         e = Evaluation(tape)
         return get_thermal_name(e.target["zsymam"].strip())

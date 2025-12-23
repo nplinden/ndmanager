@@ -1,11 +1,10 @@
 """A generic class to parse yml inputs of the omcer module"""
 
-from typing import Any, Dict
+from typing import Any
 
 from ndmanager._vendor.omc_data import DataLibrary
-
-from ndmanager.API.nuclide import Nuclide
 from ndmanager.API.endf6 import get_endf6
+from ndmanager.API.nuclide import Nuclide
 from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 
 
@@ -14,11 +13,12 @@ class InputParser:
 
     cross_section_node_type: str = "abstract"
 
-    def __init__(self, sublibdict: Dict[str, Any]) -> None:
+    def __init__(self, sublibdict: dict[str, Any]) -> None:
         """Parse the generic keywords in the input file
 
         Args:
             sublibdict (Dict[Any]): The input dictionnary
+
         """
         if sublibdict is None:
             self.base = None
@@ -26,7 +26,7 @@ class InputParser:
             self.add = {}
             self.reuse = {}
         else:
-            self.base = sublibdict.get("base", None)
+            self.base = sublibdict.get("base")
             self.omit = set(sublibdict.get("omit", "").split())
             self.add = sublibdict.get("add", {})
             if "reuse" in sublibdict:
@@ -49,6 +49,7 @@ class InputParser:
 
         Returns:
             Dict[str, Path]: The dictionnary of tape paths
+
         """
         tapes = {}
         if self.base is not None:

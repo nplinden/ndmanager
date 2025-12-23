@@ -9,7 +9,6 @@ from ndmanager.CLI.omcer.install import NdoInstallCommand
 from ndmanager.CLI.omcer.listlibs import NdoListCommand
 from ndmanager.CLI.omcer.remove import NdoRemoveCommand
 
-
 parser = ap.ArgumentParser(
     prog="ndo",
     description="Manage your OpenMC HDF5 nuclear data libraries",
