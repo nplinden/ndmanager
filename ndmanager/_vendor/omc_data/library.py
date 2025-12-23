@@ -89,8 +89,7 @@ class DataLibrary(list):
                 materials = list(h5file)
         else:
             msg = f"File type {path.name} not supported by {self.__class__.__name__}"
-            raise ValueError(
-                msg)
+            raise ValueError(msg)
 
         library = {"path": str(path), "type": filetype, "materials": materials}
         self.append(library)
@@ -107,8 +106,7 @@ class DataLibrary(list):
         root = ET.Element("cross_sections")
 
         # Determine common directory for library paths
-        common_dir = os.path.dirname(os.path.commonprefix(
-            [lib["path"] for lib in self]))
+        common_dir = os.path.dirname(os.path.commonprefix([lib["path"] for lib in self]))
         if common_dir == "":
             common_dir = "."
 
@@ -131,8 +129,7 @@ class DataLibrary(list):
         # Write XML file
         reorder_attributes(root)  # TODO: Remove when support is Python 3.8+
         tree = ET.ElementTree(root)
-        tree.write(str(path), xml_declaration=True, encoding="utf-8",
-                   method="xml")
+        tree.write(str(path), xml_declaration=True, encoding="utf-8", method="xml")
 
     @classmethod
     def from_xml(cls, path):
@@ -159,16 +156,14 @@ class DataLibrary(list):
             filename = os.path.join(directory, lib_element.attrib["path"])
             filetype = lib_element.attrib["type"]
             materials = lib_element.attrib["materials"].split()
-            library = {"path": filename, "type": filetype,
-                       "materials": materials}
+            library = {"path": filename, "type": filetype, "materials": materials}
             data.libraries.append(library)
 
         # get depletion chain data
         dep_node = root.find("depletion_chain")
         if dep_node is not None:
             filename = os.path.join(directory, dep_node.attrib["path"])
-            library = {"path": filename, "type": "depletion_chain",
-                       "materials": []}
+            library = {"path": filename, "type": "depletion_chain", "materials": []}
             data.libraries.append(library)
 
         return data

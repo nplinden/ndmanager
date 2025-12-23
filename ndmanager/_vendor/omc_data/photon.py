@@ -28,10 +28,48 @@ CM_PER_ANGSTROM = 1.0e-8
 R0 = CM_PER_ANGSTROM * PLANCK_C / (2.0 * pi * FINE_STRUCTURE * MASS_ELECTRON_EV)
 
 # Electron subshell labels
-_SUBSHELLS = (None, "K", "L1", "L2", "L3", "M1", "M2", "M3", "M4", "M5",
-              "N1", "N2", "N3", "N4", "N5", "N6", "N7", "O1", "O2", "O3",
-              "O4", "O5", "O6", "O7", "O8", "O9", "P1", "P2", "P3", "P4",
-              "P5", "P6", "P7", "P8", "P9", "P10", "P11", "Q1", "Q2", "Q3")
+_SUBSHELLS = (
+    None,
+    "K",
+    "L1",
+    "L2",
+    "L3",
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5",
+    "N6",
+    "N7",
+    "O1",
+    "O2",
+    "O3",
+    "O4",
+    "O5",
+    "O6",
+    "O7",
+    "O8",
+    "O9",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "Q1",
+    "Q2",
+    "Q3",
+)
 
 _REACTION_NAME = {
     501: ("Total photon interaction", "total"),
@@ -229,17 +267,17 @@ class AtomicRelaxation(EqualityMixin):
         # Get shell designators
         n = ace.nxs[7]
         idx = ace.jxs[11]
-        shells = [_SUBSHELLS[int(i)] for i in ace.xss[idx : idx+n]]
+        shells = [_SUBSHELLS[int(i)] for i in ace.xss[idx : idx + n]]
 
         # Get number of electrons for each shell
         idx = ace.jxs[12]
-        for shell, num in zip(shells, ace.xss[idx : idx+n], strict=False):
+        for shell, num in zip(shells, ace.xss[idx : idx + n], strict=False):
             num_electrons[shell] = num
 
         # Get binding energy for each shell
         idx = ace.jxs[13]
-        for shell, e in zip(shells, ace.xss[idx : idx+n], strict=False):
-            binding_energy[shell] = e*EV_PER_MEV
+        for shell, e in zip(shells, ace.xss[idx : idx + n], strict=False):
+            binding_energy[shell] = e * EV_PER_MEV
 
         # Get transition table
         columns = ["secondary", "tertiary", "energy (eV)", "probability"]
@@ -251,14 +289,13 @@ class AtomicRelaxation(EqualityMixin):
                 for j in range(n_transitions):
                     subj = _SUBSHELLS[int(ace.xss[idx])]
                     subk = _SUBSHELLS[int(ace.xss[idx + 1])]
-                    etr = ace.xss[idx + 2]*EV_PER_MEV
+                    etr = ace.xss[idx + 2] * EV_PER_MEV
                     ftr = ace.xss[idx + 3] if j == 0 else ace.xss[idx + 3] - ace.xss[idx - 1]
                     records.append((subj, subk, etr, ftr))
                     idx += 4
 
                 # Create dataframe for transitions
-                transitions[subi] = pd.DataFrame.from_records(
-                    records, columns=columns)
+                transitions[subi] = pd.DataFrame.from_records(records, columns=columns)
 
         return cls(binding_energy, num_electrons, transitions)
 
@@ -282,10 +319,7 @@ class AtomicRelaxation(EqualityMixin):
 
         # Atomic relaxation data is always MF=28, MT=533
         if (28, 533) not in ev.section:
-            msg = (
-                f"{ev} does not appear to be an atomic relaxation "
-                          "sublibrary."
-            )
+            msg = f"{ev} does not appear to be an atomic relaxation " "sublibrary."
             raise OSError(msg)
 
         # Determine number of subshells
@@ -311,15 +345,14 @@ class AtomicRelaxation(EqualityMixin):
                 # Read transition data
                 records = []
                 for j in range(n_transitions):
-                    subj = _SUBSHELLS[int(list_items[6*(j+1)])]
-                    subk = _SUBSHELLS[int(list_items[6*(j+1) + 1])]
-                    etr = list_items[6*(j+1) + 2]
-                    ftr = list_items[6*(j+1) + 3]
+                    subj = _SUBSHELLS[int(list_items[6 * (j + 1)])]
+                    subk = _SUBSHELLS[int(list_items[6 * (j + 1) + 1])]
+                    etr = list_items[6 * (j + 1) + 2]
+                    ftr = list_items[6 * (j + 1) + 3]
                     records.append((subj, subk, etr, ftr))
 
                 # Create dataframe for transitions
-                transitions[subi] = pd.DataFrame.from_records(
-                    records, columns=columns)
+                transitions[subi] = pd.DataFrame.from_records(records, columns=columns)
 
         # Return instance of class
         return cls(binding_energy, num_electrons, transitions)
@@ -358,12 +391,10 @@ class AtomicRelaxation(EqualityMixin):
 
             # Read transition data
             if "transitions" in sub_group:
-                df = pd.DataFrame(sub_group["transitions"][()],
-                                  columns=columns)
+                df = pd.DataFrame(sub_group["transitions"][()], columns=columns)
                 # Replace float indexes back to subshell strings
                 with pd.option_context("future.no_silent_downcasting", True):
-                    df[columns[:2]] = df[columns[:2]].replace(
-                                np.arange(float(len(_SUBSHELLS))), _SUBSHELLS)
+                    df[columns[:2]] = df[columns[:2]].replace(np.arange(float(len(_SUBSHELLS))), _SUBSHELLS)
                 transitions[shell] = df
 
         return cls(binding_energy, num_electrons, transitions)
@@ -386,8 +417,7 @@ class AtomicRelaxation(EqualityMixin):
         # Write transition data with replacements
         if shell in self.transitions:
             with pd.option_context("future.no_silent_downcasting", True):
-                df = self.transitions[shell].replace(
-                    _SUBSHELLS, range(len(_SUBSHELLS)))
+                df = self.transitions[shell].replace(_SUBSHELLS, range(len(_SUBSHELLS)))
             group.create_dataset("transitions", data=df.values.astype(float))
 
 
@@ -474,8 +504,7 @@ class IncidentPhoton(EqualityMixin):
 
     @atomic_relaxation.setter
     def atomic_relaxation(self, atomic_relaxation) -> None:
-        cv.check_type("atomic relaxation data", atomic_relaxation,
-                      AtomicRelaxation)
+        cv.check_type("atomic relaxation data", atomic_relaxation, AtomicRelaxation)
         self._atomic_relaxation = atomic_relaxation
 
     @property
@@ -515,19 +544,18 @@ class IncidentPhoton(EqualityMixin):
 
         # Get heating cross sections [eV-barn] from factors [eV per collision]
         # by multiplying with total xs
-        data.reactions[525].xs.y *= sum([data.reactions[mt].xs.y for mt in
-                                         (502, 504, 517, 522)])
+        data.reactions[525].xs.y *= sum([data.reactions[mt].xs.y for mt in (502, 504, 517, 522)])
 
         # Compton profiles
         n_shell = ace.nxs[5]
         if n_shell != 0:
             # Get number of electrons in each shell
             idx = ace.jxs[6]
-            data.compton_profiles["num_electrons"] = ace.xss[idx : idx+n_shell]
+            data.compton_profiles["num_electrons"] = ace.xss[idx : idx + n_shell]
 
             # Get binding energy for each shell
             idx = ace.jxs[7]
-            e = ace.xss[idx : idx+n_shell]*EV_PER_MEV
+            e = ace.xss[idx : idx + n_shell] * EV_PER_MEV
             data.compton_profiles["binding_energy"] = e
 
             # Create Compton profile for each electron shell
@@ -540,8 +568,8 @@ class IncidentPhoton(EqualityMixin):
 
                 # Read momentum and PDF
                 idx = ace.jxs[10] + loca + 1
-                pz = ace.xss[idx : idx+m]
-                pdf = ace.xss[idx+m : idx+2*m]
+                pz = ace.xss[idx : idx + m]
+                pdf = ace.xss[idx + m : idx + 2 * m]
 
                 # Create proflie function
                 J_k = Tabulated1D(pz, pdf, [m], [jj])
@@ -555,12 +583,12 @@ class IncidentPhoton(EqualityMixin):
             # Get subshell designators
             n_subshells = ace.nxs[7]
             idx = ace.jxs[11]
-            designators = [int(i) for i in ace.xss[idx : idx+n_subshells]]
+            designators = [int(i) for i in ace.xss[idx : idx + n_subshells]]
 
             # Get energy grid for subshell photoionization
             n_energy = ace.nxs[3]
             idx = ace.jxs[1]
-            energy = np.exp(ace.xss[idx : idx+n_energy])*EV_PER_MEV
+            energy = np.exp(ace.xss[idx : idx + n_energy]) * EV_PER_MEV
 
             # Get cross section for each subshell
             idx = ace.jxs[16]
@@ -571,12 +599,11 @@ class IncidentPhoton(EqualityMixin):
                 data.reactions[mt] = rx
 
                 # Store cross section, determining threshold
-                xs = ace.xss[idx : idx+n_energy].copy()
-                nonzero = (xs != 0.0)
+                xs = ace.xss[idx : idx + n_energy].copy()
+                nonzero = xs != 0.0
                 xs[nonzero] = np.exp(xs[nonzero])
                 threshold = np.where(xs > 0.0)[0][0]
-                rx.xs = Tabulated1D(energy[threshold:], xs[threshold:],
-                                    [n_energy - threshold], [5])
+                rx.xs = Tabulated1D(energy[threshold:], xs[threshold:], [n_energy - threshold], [5])
                 idx += n_energy
 
                 # Copy binding energy
@@ -586,8 +613,8 @@ class IncidentPhoton(EqualityMixin):
         else:
             msg = (
                 f"ACE table {ace.name} does not have subshell data. Only "
-                             "newer ACE photoatomic libraries are supported "
-                             "(e.g., eprdata14)."
+                "newer ACE photoatomic libraries are supported "
+                "(e.g., eprdata14)."
             )
             raise ValueError(msg)
 
@@ -637,11 +664,9 @@ class IncidentPhoton(EqualityMixin):
                 for i in range(1, 101):
                     group = f[f"{i:03}"]
                     num_electrons = group["num_electrons"][()]
-                    binding_energy = group["binding_energy"][()]*EV_PER_MEV
+                    binding_energy = group["binding_energy"][()] * EV_PER_MEV
                     J = group["J"][()]
-                    _COMPTON_PROFILES[i] = {"num_electrons": num_electrons,
-                                            "binding_energy": binding_energy,
-                                            "J": J}
+                    _COMPTON_PROFILES[i] = {"num_electrons": num_electrons, "binding_energy": binding_energy, "J": J}
 
         # Add Compton profile data
         pz = _COMPTON_PROFILES["pz"]
@@ -690,7 +715,7 @@ class IncidentPhoton(EqualityMixin):
                 )
                 raise OSError(
                     msg,
-                    )
+                )
 
             group = next(iter(h5file.values()))
 
@@ -729,10 +754,7 @@ class IncidentPhoton(EqualityMixin):
             pz = rgroup["pz"][()]
             J = rgroup["J"][()]
             if pz.size != J.shape[1]:
-                msg = (
-                    "'J' array shape is not consistent with the "
-                                 "'pz' array shape"
-                )
+                msg = "'J' array shape is not consistent with the " "'pz' array shape"
                 raise ValueError(msg)
             profile["J"] = [Tabulated1D(pz, Jk) for Jk in J]
 
@@ -740,8 +762,7 @@ class IncidentPhoton(EqualityMixin):
         if "bremsstrahlung" in group:
             rgroup = group["bremsstrahlung"]
             data.bremsstrahlung["I"] = rgroup.attrs["I"]
-            for key in ("dcs", "electron_energy", "ionization_energy",
-                        "num_electrons", "photon_energy"):
+            for key in ("dcs", "electron_energy", "ionization_energy", "num_electrons", "photon_energy"):
                 data.bremsstrahlung[key] = rgroup[key][()]
 
         # If HDF5 file was opened here, make sure it gets closed
@@ -808,10 +829,8 @@ class IncidentPhoton(EqualityMixin):
                 compton_group = group.create_group("compton_profiles")
 
                 profile = self.compton_profiles
-                compton_group.create_dataset("num_electrons",
-                                            data=profile["num_electrons"])
-                compton_group.create_dataset("binding_energy",
-                                            data=profile["binding_energy"])
+                compton_group.create_dataset("num_electrons", data=profile["num_electrons"])
+                compton_group.create_dataset("binding_energy", data=profile["binding_energy"])
 
                 # Get electron momentum values
                 compton_group.create_dataset("pz", data=profile["J"][0].x)
@@ -862,11 +881,11 @@ class IncidentPhoton(EqualityMixin):
             # Get log of incident electron kinetic energy values, used for
             # cubic spline interpolation in log energy. Units are in MeV, so
             # convert to eV.
-            logx = np.log(np.fromiter(brem[p:p+n], float, n)*EV_PER_MEV)
+            logx = np.log(np.fromiter(brem[p : p + n], float, n) * EV_PER_MEV)
             p += n
 
             # Get reduced photon energy values
-            _BREMSSTRAHLUNG["photon_energy"] = np.fromiter(brem[p:p+k], float, k)
+            _BREMSSTRAHLUNG["photon_energy"] = np.fromiter(brem[p : p + k], float, k)
             p += k
 
             for i in range(1, 101):
@@ -875,8 +894,8 @@ class IncidentPhoton(EqualityMixin):
                 # Get the scaled cross section values for each electron energy
                 # and reduced photon energy for this Z. Units are in mb, so
                 # convert to b.
-                y = np.reshape(np.fromiter(brem[p:p+n*k], float, n*k), (n, k))*1.0e-3
-                p += k*n
+                y = np.reshape(np.fromiter(brem[p : p + n * k], float, n * k), (n, k)) * 1.0e-3
+                p += k * n
 
                 for j in range(k):
                     # Cubic spline interpolation in log energy and linear DCS
@@ -934,8 +953,7 @@ class PhotonReaction(EqualityMixin):
 
     @anomalous_real.setter
     def anomalous_real(self, anomalous_real) -> None:
-        cv.check_type("real part of anomalous scattering factor",
-                      anomalous_real, Callable)
+        cv.check_type("real part of anomalous scattering factor", anomalous_real, Callable)
         self._anomalous_real = anomalous_real
 
     @property
@@ -944,8 +962,7 @@ class PhotonReaction(EqualityMixin):
 
     @anomalous_imag.setter
     def anomalous_imag(self, anomalous_imag) -> None:
-        cv.check_type("imaginary part of anomalous scattering factor",
-                      anomalous_imag, Callable)
+        cv.check_type("imaginary part of anomalous scattering factor", anomalous_imag, Callable)
         self._anomalous_imag = anomalous_imag
 
     @property
@@ -989,38 +1006,35 @@ class PhotonReaction(EqualityMixin):
         # Get energy grid (stored as logarithms)
         n = ace.nxs[3]
         idx = ace.jxs[1]
-        energy = np.exp(ace.xss[idx : idx+n])*EV_PER_MEV
+        energy = np.exp(ace.xss[idx : idx + n]) * EV_PER_MEV
 
         # Get index for appropriate reaction
         if mt == 502:
             # Coherent scattering
-            idx = ace.jxs[1] + 2*n
+            idx = ace.jxs[1] + 2 * n
         elif mt == 504:
             # Incoherent scattering
             idx = ace.jxs[1] + n
         elif mt == 517:
             # Pair production
-            idx = ace.jxs[1] + 4*n
+            idx = ace.jxs[1] + 4 * n
         elif mt == 522:
             # Photoelectric
-            idx = ace.jxs[1] + 3*n
+            idx = ace.jxs[1] + 3 * n
         elif mt == 525:
             # Heating
             idx = ace.jxs[5]
         else:
-            msg = (
-                "ACE photoatomic cross sections do not have "
-                             f"data for MT={mt}."
-            )
+            msg = "ACE photoatomic cross sections do not have " f"data for MT={mt}."
             raise ValueError(msg)
 
         # Store cross section
-        xs = ace.xss[idx : idx+n].copy()
+        xs = ace.xss[idx : idx + n].copy()
         if mt == 525:
             # Get heating factors in [eV per collision]
             xs *= EV_PER_MEV
         else:
-            nonzero = (xs != 0.0)
+            nonzero = xs != 0.0
             xs[nonzero] = np.exp(xs[nonzero])
 
             # Replace zero elements to small non-zero to enable log-log
@@ -1028,38 +1042,111 @@ class PhotonReaction(EqualityMixin):
         rx.xs = Tabulated1D(energy, xs, [n], [5])
 
         # Get form factors for incoherent/coherent scattering
-        new_format = (ace.nxs[6] > 0)
+        new_format = ace.nxs[6] > 0
         if mt == 502:
             idx = ace.jxs[3]
             if new_format:
                 n = (ace.jxs[4] - ace.jxs[3]) // 3
-                x = ace.xss[idx : idx+n]
+                x = ace.xss[idx : idx + n]
                 idx += n
             else:
-                x = np.array([
-                    0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.08, 0.1, 0.12,
-                    0.15, 0.18, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55,
-                    0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6,
-                    1.7, 1.8, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4,
-                    3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0, 5.2, 5.4, 5.6,
-                    5.8, 6.0])
+                x = np.array(
+                    [
+                        0.0,
+                        0.01,
+                        0.02,
+                        0.03,
+                        0.04,
+                        0.05,
+                        0.06,
+                        0.08,
+                        0.1,
+                        0.12,
+                        0.15,
+                        0.18,
+                        0.2,
+                        0.25,
+                        0.3,
+                        0.35,
+                        0.4,
+                        0.45,
+                        0.5,
+                        0.55,
+                        0.6,
+                        0.7,
+                        0.8,
+                        0.9,
+                        1.0,
+                        1.1,
+                        1.2,
+                        1.3,
+                        1.4,
+                        1.5,
+                        1.6,
+                        1.7,
+                        1.8,
+                        1.9,
+                        2.0,
+                        2.2,
+                        2.4,
+                        2.6,
+                        2.8,
+                        3.0,
+                        3.2,
+                        3.4,
+                        3.6,
+                        3.8,
+                        4.0,
+                        4.2,
+                        4.4,
+                        4.6,
+                        4.8,
+                        5.0,
+                        5.2,
+                        5.4,
+                        5.6,
+                        5.8,
+                        6.0,
+                    ]
+                )
                 n = x.size
-            ff = ace.xss[idx+n : idx+2*n]
+            ff = ace.xss[idx + n : idx + 2 * n]
             rx.scattering_factor = Tabulated1D(x, ff)
 
         elif mt == 504:
             idx = ace.jxs[2]
             if new_format:
                 n = (ace.jxs[3] - ace.jxs[2]) // 2
-                x = ace.xss[idx : idx+n]
+                x = ace.xss[idx : idx + n]
                 idx += n
             else:
-                x = np.array([
-                    0.0, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6,
-                    0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 8.0,
-                ])
+                x = np.array(
+                    [
+                        0.0,
+                        0.005,
+                        0.01,
+                        0.05,
+                        0.1,
+                        0.15,
+                        0.2,
+                        0.3,
+                        0.4,
+                        0.5,
+                        0.6,
+                        0.7,
+                        0.8,
+                        0.9,
+                        1.0,
+                        1.5,
+                        2.0,
+                        3.0,
+                        4.0,
+                        5.0,
+                        8.0,
+                    ]
+                )
                 n = x.size
-            ff = ace.xss[idx : idx+n]
+            ff = ace.xss[idx : idx + n]
             rx.scattering_factor = Tabulated1D(x, ff)
 
         return rx
@@ -1195,7 +1282,7 @@ class PhotonReaction(EqualityMixin):
                 # Create integrated form factor
                 ff = deepcopy(self.scattering_factor)
                 ff.x *= ff.x
-                ff.y *= ff.y/Z**2
+                ff.y *= ff.y / Z**2
                 int_ff = Tabulated1D(ff.x, ff.integral())
                 int_ff.to_hdf5(group, "integrated_scattering_factor")
             self.scattering_factor.to_hdf5(group, "scattering_factor")

@@ -36,7 +36,7 @@ def _load_dose_icrp(data_source: str, particle: str) -> None:
     """
     path = Path(__file__).parent / _FILES[data_source, particle]
     data = np.loadtxt(path, skiprows=3, encoding="utf-8")
-    data[:, 0] *= 1e6   # Change energies to eV
+    data[:, 0] *= 1e6  # Change energies to eV
     _DOSE_TABLES[data_source, particle] = data
 
 

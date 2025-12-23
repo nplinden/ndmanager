@@ -68,8 +68,9 @@ class ProbabilityTables(EqualityMixin):
 
     """
 
-    def __init__(self, energy, table, interpolation, inelastic_flag=-1,
-                 absorption_flag=-1, multiply_smooth=False) -> None:
+    def __init__(
+        self, energy, table, interpolation, inelastic_flag=-1, absorption_flag=-1, multiply_smooth=False
+    ) -> None:
         self.energy = energy
         self.table = table
         self.interpolation = interpolation
@@ -171,8 +172,7 @@ class ProbabilityTables(EqualityMixin):
         energy = group["energy"][()]
         table = group["table"][()]
 
-        return cls(energy, table, interpolation, inelastic_flag,
-                   absorption_flag, multiply_smooth)
+        return cls(energy, table, interpolation, inelastic_flag, absorption_flag, multiply_smooth)
 
     @classmethod
     def from_ace(cls, ace):
@@ -194,24 +194,23 @@ class ProbabilityTables(EqualityMixin):
         if idx == 0:
             return None
 
-        N = int(ace.xss[idx])      # Number of incident energies
-        M = int(ace.xss[idx+1])    # Length of probability table
-        interpolation = int(ace.xss[idx+2])
-        inelastic_flag = int(ace.xss[idx+3])
-        absorption_flag = int(ace.xss[idx+4])
-        multiply_smooth = (int(ace.xss[idx+5]) == 1)
+        N = int(ace.xss[idx])  # Number of incident energies
+        M = int(ace.xss[idx + 1])  # Length of probability table
+        interpolation = int(ace.xss[idx + 2])
+        inelastic_flag = int(ace.xss[idx + 3])
+        absorption_flag = int(ace.xss[idx + 4])
+        multiply_smooth = int(ace.xss[idx + 5]) == 1
         idx += 6
 
         # Get energies at which tables exist
-        energy = ace.xss[idx : idx+N]*EV_PER_MEV
+        energy = ace.xss[idx : idx + N] * EV_PER_MEV
         idx += N
 
         # Get probability tables
-        table = ace.xss[idx : idx+N*6*M].copy()
+        table = ace.xss[idx : idx + N * 6 * M].copy()
         table.shape = (N, 6, M)
 
         # Convert units on heating numbers
-        table[:,5,:] *= EV_PER_MEV
+        table[:, 5, :] *= EV_PER_MEV
 
-        return cls(energy, table, interpolation, inelastic_flag,
-                   absorption_flag, multiply_smooth)
+        return cls(energy, table, interpolation, inelastic_flag, absorption_flag, multiply_smooth)

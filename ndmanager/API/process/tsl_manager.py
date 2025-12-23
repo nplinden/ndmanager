@@ -35,7 +35,10 @@ class TSLManager(InputParser, BaseManager):
     cross_section_node_type: str = "thermal"
 
     def __init__(
-        self, tsldict: dict[str, Any], neutron_library: NeutronManager, rootdir: Path,
+        self,
+        tsldict: dict[str, Any],
+        neutron_library: NeutronManager,
+        rootdir: Path,
     ) -> None:
         """Create a TSL manager given an input tsl dictionnary, an neutron manager
         and a path to a directory.

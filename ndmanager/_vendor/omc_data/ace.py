@@ -115,10 +115,7 @@ def ascii_to_binary(ascii_file, binary_file) -> None:
                 if lines[idx + 1].split()[3] == "3":
                     idx = idx + 3
                 else:
-                    msg = (
-                        "Only backwards compatible ACE"
-                                              "headers currently supported"
-                    )
+                    msg = "Only backwards compatible ACE" "headers currently supported"
                     raise NotImplementedError(msg)
             # Read/write header block
             hz = lines[idx][:10].encode()
@@ -127,29 +124,27 @@ def ascii_to_binary(ascii_file, binary_file) -> None:
             hd = lines[idx][35:45].encode()
             hk = lines[idx + 1][:70].encode()
             hm = lines[idx + 1][70:80].encode()
-            binary_file.write(struct.pack("=10sdd10s70s10s",
-                              hz, aw0, tz, hd, hk, hm))
+            binary_file.write(struct.pack("=10sdd10s70s10s", hz, aw0, tz, hd, hk, hm))
 
             # Read/write IZ/AW pairs
-            data = " ".join(lines[idx + 2:idx + 6]).split()
+            data = " ".join(lines[idx + 2 : idx + 6]).split()
             iz = np.array(data[::2], dtype=int)
             aw = np.array(data[1::2], dtype=float)
             izaw = [item for sublist in zip(iz, aw, strict=False) for item in sublist]
-            binary_file.write(struct.pack(str("=" + 16*"id"), *izaw))
+            binary_file.write(struct.pack(str("=" + 16 * "id"), *izaw))
 
             # Read/write NXS and JXS arrays. Null bytes are added at the end so
             # that XSS will start at the second record
-            nxs = [int(x) for x in " ".join(lines[idx + 6:idx + 8]).split()]
-            jxs = [int(x) for x in " ".join(lines[idx + 8:idx + 12]).split()]
-            binary_file.write(struct.pack(str(f"=16i32i{record_length - 500}x"),
-                                          *(nxs + jxs)))
+            nxs = [int(x) for x in " ".join(lines[idx + 6 : idx + 8]).split()]
+            jxs = [int(x) for x in " ".join(lines[idx + 8 : idx + 12]).split()]
+            binary_file.write(struct.pack(str(f"=16i32i{record_length - 500}x"), *(nxs + jxs)))
 
             # Read/write XSS array. Null bytes are added to form a complete record
             # at the end of the file
-            n_lines = (nxs[0] + 3)//4
+            n_lines = (nxs[0] + 3) // 4
             start = idx + _ACE_HEADER_SIZE
-            xss = np.fromstring(" ".join(lines[start:start + n_lines]), sep=" ")
-            extra_bytes = record_length - ((len(xss)*8 - 1) % record_length + 1)
+            xss = np.fromstring(" ".join(lines[start : start + n_lines]), sep=" ")
+            extra_bytes = record_length - ((len(xss) * 8 - 1) % record_length + 1)
             binary_file.write(struct.pack(str(f"={nxs[0]}d{extra_bytes}x"), *xss))
 
             # Advance to next table in file
@@ -236,8 +231,7 @@ class Library(EqualityMixin):
             with open(filename, "rb") as fh:
                 self._read_binary(fh, table_names, verbose)
 
-    def _read_binary(self, ace_file, table_names, verbose=False,
-                     recl_length=4096, entries=512) -> None:
+    def _read_binary(self, ace_file, table_names, verbose=False, recl_length=4096, entries=512) -> None:
         """Read a binary (Type 2) ACE table.
 
         Parameters
@@ -266,12 +260,13 @@ class Library(EqualityMixin):
 
             # Read name, atomic mass ratio, temperature, date, comment, and
             # material
-            name, atomic_weight_ratio, temperature, date, comment, mat = \
-                struct.unpack("=10sdd10s70s10s", ace_file.read(116))
+            name, atomic_weight_ratio, temperature, date, comment, mat = struct.unpack(
+                "=10sdd10s70s10s", ace_file.read(116)
+            )
             name = name.decode().strip()
 
             # Read ZAID/awr combinations
-            data = struct.unpack(str("=" + 16*"id"), ace_file.read(192))
+            data = struct.unpack(str("=" + 16 * "id"), ace_file.read(192))
             pairs = list(zip(data[::2], data[1::2], strict=False))
 
             # Read NXS
@@ -279,11 +274,11 @@ class Library(EqualityMixin):
 
             # Determine length of XSS and number of records
             length = nxs[0]
-            n_records = (length + entries - 1)//entries
+            n_records = (length + entries - 1) // entries
 
             # verify that we are supposed to read this table in
             if (table_names is not None) and (name not in table_names):
-                ace_file.seek(start_position + recl_length*(n_records + 1))
+                ace_file.seek(start_position + recl_length * (n_records + 1))
                 continue
 
             if verbose:
@@ -294,8 +289,7 @@ class Library(EqualityMixin):
 
             # Read XSS
             ace_file.seek(start_position + recl_length)
-            xss = list(struct.unpack(str(f"={length}d"),
-                                     ace_file.read(length*8)))
+            xss = list(struct.unpack(str(f"={length}d"), ace_file.read(length * 8)))
 
             # Insert zeros at beginning of NXS, JXS, and XSS arrays so that the
             # indexing will be the same as Fortran. This makes it easier to
@@ -310,12 +304,11 @@ class Library(EqualityMixin):
             xss = np.array(xss)
 
             # Create ACE table with data read in
-            table = Table(name, atomic_weight_ratio, temperature, pairs,
-                          nxs, jxs, xss)
+            table = Table(name, atomic_weight_ratio, temperature, pairs, nxs, jxs, xss)
             self.tables.append(table)
 
             # Advance to next record
-            ace_file.seek(start_position + recl_length*(n_records + 1))
+            ace_file.seek(start_position + recl_length * (n_records + 1))
 
     def _read_ascii(self, ace_file, table_names, verbose=False) -> None:
         """Read an ASCII (Type 1) ACE table.
@@ -357,15 +350,14 @@ class Library(EqualityMixin):
                 temperature = float(words[2])
 
             datastr = " ".join(lines[2:6]).split()
-            pairs = list(zip(map(int, datastr[::2]),
-                             map(float, datastr[1::2]), strict=False))
+            pairs = list(zip(map(int, datastr[::2]), map(float, datastr[1::2]), strict=False))
 
             datastr = "0 " + " ".join(lines[6:8])
             nxs = np.fromstring(datastr, sep=" ", dtype=int)
 
             # Detemrine number of lines in the XSS array; each line consists of
             # four values
-            n_lines = (nxs[1] + 3)//4
+            n_lines = (nxs[1] + 3) // 4
 
             # Ensure that we have more tables to read in
             if (table_names is not None) and (table_names <= tables_seen):
@@ -391,7 +383,7 @@ class Library(EqualityMixin):
             datastr = "0 " + " ".join(lines[8:_ACE_HEADER_SIZE])
             jxs = np.fromstring(datastr, dtype=int, sep=" ")
 
-            datastr = "0.0 " + "".join(lines[_ACE_HEADER_SIZE:_ACE_HEADER_SIZE + n_lines])
+            datastr = "0.0 " + "".join(lines[_ACE_HEADER_SIZE : _ACE_HEADER_SIZE + n_lines])
             xss = np.fromstring(datastr, sep=" ")
 
             # When NJOY writes an ACE file, any values less than 1e-100 actually
@@ -405,8 +397,7 @@ class Library(EqualityMixin):
                 xss = np.fromstring(datastr, sep=" ")
                 assert xss.size == nxs[1] + 1
 
-            table = Table(name, atomic_weight_ratio, temperature, pairs,
-                          nxs, jxs, xss)
+            table = Table(name, atomic_weight_ratio, temperature, pairs, nxs, jxs, xss)
             self.tables.append(table)
 
             # Read all data blocks
@@ -479,8 +470,7 @@ class Table(EqualityMixin):
 
     """
 
-    def __init__(self, name, atomic_weight_ratio, temperature, pairs,
-                 nxs, jxs, xss) -> None:
+    def __init__(self, name, atomic_weight_ratio, temperature, pairs, nxs, jxs, xss) -> None:
         self.name = name
         self.atomic_weight_ratio = atomic_weight_ratio
         self.temperature = temperature
@@ -529,9 +519,8 @@ def get_libraries_from_xsdir(path):
         raise RuntimeError(msg)
 
     # Handle continuation lines indicated by '+' at end of line
-    lines = lines[index + 1:]
-    continue_lines = [i for i, line in enumerate(lines)
-                      if line.strip().endswith("+")]
+    lines = lines[index + 1 :]
+    continue_lines = [i for i, line in enumerate(lines) if line.strip().endswith("+")]
     for i in reversed(continue_lines):
         lines[i] = lines[i].strip()[:-1] + lines.pop(i + 1)
 

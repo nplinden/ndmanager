@@ -222,8 +222,7 @@ acer / %%%%%%%%%%%%%%%%%%%%%%%% Write out in ACE format %%%%%%%%%%%%%%%%%%%%%%%%
 """
 
 
-def run(commands, tapein, tapeout, input_filename=None, stdout=False,
-        njoy_exec="njoy") -> None:
+def run(commands, tapein, tapeout, input_filename=None, stdout=False, njoy_exec="njoy") -> None:
     """Run NJOY with given commands.
 
     Parameters
@@ -258,8 +257,7 @@ def run(commands, tapein, tapeout, input_filename=None, stdout=False,
             shutil.copy(str(filename), tmpfilename)
 
         # Start up NJOY process
-        njoy = Popen([njoy_exec], cwd=tmpdir, stdin=PIPE, stdout=PIPE,
-                     stderr=STDOUT, universal_newlines=True)
+        njoy = Popen([njoy_exec], cwd=tmpdir, stdin=PIPE, stdout=PIPE, stderr=STDOUT, universal_newlines=True)
 
         njoy.stdin.write(commands)
         njoy.stdin.flush()
@@ -277,8 +275,7 @@ def run(commands, tapein, tapeout, input_filename=None, stdout=False,
 
         # Check for error
         if njoy.returncode != 0:
-            raise CalledProcessError(njoy.returncode, njoy_exec,
-                                     "".join(lines))
+            raise CalledProcessError(njoy.returncode, njoy_exec, "".join(lines))
 
         # Copy output files back to original directory
         for tape_num, filename in tapeout.items():
@@ -311,10 +308,22 @@ def make_pendf(filename, pendf="pendf", **kwargs) -> None:
     make_ace(filename, pendf=pendf, **kwargs)
 
 
-def make_ace(filename, temperatures=None, acer=True, xsdir=None,
-             output_dir=None, pendf=False, error=0.001, broadr=True,
-             heatr=True, gaspr=True, purr=True, evaluation=None,
-             smoothing=True, **kwargs) -> None:
+def make_ace(
+    filename,
+    temperatures=None,
+    acer=True,
+    xsdir=None,
+    output_dir=None,
+    pendf=False,
+    error=0.001,
+    broadr=True,
+    heatr=True,
+    gaspr=True,
+    purr=True,
+    evaluation=None,
+    smoothing=True,
+    **kwargs,
+) -> None:
     """Generate incident neutron ACE file from an ENDF file.
 
     File names can be passed to
@@ -421,8 +430,7 @@ def make_ace(filename, temperatures=None, acer=True, xsdir=None,
     if heatr:
         nheatr_in = nlast
         nheatr_local = nheatr_in + 1
-        tapeout[nheatr_local] = (output_dir / "heatr_local") if heatr is True \
-            else heatr + "_local"
+        tapeout[nheatr_local] = (output_dir / "heatr_local") if heatr is True else heatr + "_local"
         commands += _TEMPLATE_HEATR_LOCAL
         nheatr = nheatr_local + 1
         tapeout[nheatr] = (output_dir / "heatr") if heatr is True else heatr
@@ -453,7 +461,7 @@ def make_ace(filename, temperatures=None, acer=True, xsdir=None,
         nacer_in = nlast
         for i, temperature in enumerate(temperatures):
             # Extend input with an ACER run for each temperature
-            nace = nacer_in + 1 + 2*i
+            nace = nacer_in + 1 + 2 * i
             ndir = nace + 1
             ext = f"{i + 1:02}"
             commands += _TEMPLATE_ACER.format(**locals())
@@ -492,10 +500,23 @@ def make_ace(filename, temperatures=None, acer=True, xsdir=None,
             (output_dir / f"xsdir_{temperature:.1f}").unlink()
 
 
-def make_ace_thermal(filename, filename_thermal, temperatures=None,
-                     ace=None, xsdir=None, output_dir=None, error=0.001,
-                     iwt=2, evaluation=None, evaluation_thermal=None,
-                     table_name=None, zaids=None, nmix=None, nbin=16, **kwargs) -> None:
+def make_ace_thermal(
+    filename,
+    filename_thermal,
+    temperatures=None,
+    ace=None,
+    xsdir=None,
+    output_dir=None,
+    error=0.001,
+    iwt=2,
+    evaluation=None,
+    evaluation_thermal=None,
+    table_name=None,
+    zaids=None,
+    nmix=None,
+    nbin=16,
+    **kwargs,
+) -> None:
     """Generate thermal scattering ACE file from ENDF files.
 
     Parameters
@@ -555,8 +576,7 @@ def make_ace_thermal(filename, filename_thermal, temperatures=None,
     mat = ev.material
     zsymam = ev.target["zsymam"]
 
-    ev_thermal = (evaluation_thermal if evaluation_thermal is not None
-                  else endf.Evaluation(filename_thermal))
+    ev_thermal = evaluation_thermal if evaluation_thermal is not None else endf.Evaluation(filename_thermal)
     mat_thermal = ev_thermal.material
     zsymam_thermal = ev_thermal.target["zsymam"].strip()
 
@@ -572,8 +592,7 @@ def make_ace_thermal(filename, filename_thermal, temperatures=None,
                     "recognized. Please contact OpenMC developers at "
                     "https://openmc.discourse.group."
                 )
-                raise RuntimeError(
-                    msg)
+                raise RuntimeError(msg)
         data = _THERMAL_DATA[proper_name]
 
     zaids = " ".join(str(zaid) for zaid in data.zaids)
@@ -651,7 +670,7 @@ def make_ace_thermal(filename, filename_thermal, temperatures=None,
     nthermal_acer_in = nlast
     for i, temperature in enumerate(temperatures):
         # Extend input with an ACER run for each temperature
-        nace = nthermal_acer_in + 1 + 2*i
+        nace = nthermal_acer_in + 1 + 2 * i
         ndir = nace + 1
         ext = f"{i + 1:02}"
         commands += _THERMAL_TEMPLATE_ACER.format(**locals())

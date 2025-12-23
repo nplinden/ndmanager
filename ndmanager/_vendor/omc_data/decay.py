@@ -65,8 +65,7 @@ def get_decay_modes(value):
         # The logic below would treat 10.0 as [1, 0] rather than [10] as it
         # should, so we handle this case separately
         return ["unknown"]
-    return [_DECAY_MODES[int(x)][0] for x in
-            str(value).strip("0").replace(".", "")]
+    return [_DECAY_MODES[int(x)][0] for x in str(value).strip("0").replace(".", "")]
 
 
 class FissionProductYields(EqualityMixin):
@@ -123,12 +122,12 @@ class FissionProductYields(EqualityMixin):
                 # Get yields for i-th energy
                 yields = {}
                 for j in range(n_products):
-                    Z, A = divmod(int(values[4*j]), 1000)
-                    isomeric_state = int(values[4*j + 1])
+                    Z, A = divmod(int(values[4 * j]), 1000)
+                    isomeric_state = int(values[4 * j + 1])
                     name = ATOMIC_SYMBOL[Z] + str(A)
                     if isomeric_state > 0:
                         name += f"_m{isomeric_state}"
-                    yield_j = ufloat(values[4*j + 2], values[4*j + 3])
+                    yield_j = ufloat(values[4 * j + 2], values[4 * j + 3])
                     yields[name] = yield_j
 
                 data.append(yields)
@@ -207,8 +206,7 @@ class DecayMode(EqualityMixin):
 
     """
 
-    def __init__(self, parent, modes, daughter_state, energy,
-                 branching_ratio) -> None:
+    def __init__(self, parent, modes, daughter_state, energy, branching_ratio) -> None:
         self._daughter_state = daughter_state
         self.parent = parent
         self.modes = modes
@@ -216,9 +214,9 @@ class DecayMode(EqualityMixin):
         self.branching_ratio = branching_ratio
 
     def __repr__(self) -> str:
-        return ("<DecayMode: ({}), {} -> {}, {}>".format(
-            ",".join(self.modes), self.parent, self.daughter,
-            self.branching_ratio))
+        return "<DecayMode: ({}), {} -> {}, {}>".format(
+            ",".join(self.modes), self.parent, self.daughter, self.branching_ratio
+        )
 
     @property
     def branching_ratio(self):
@@ -227,13 +225,12 @@ class DecayMode(EqualityMixin):
     @branching_ratio.setter
     def branching_ratio(self, branching_ratio) -> None:
         cv.check_type("branching ratio", branching_ratio, UFloat)
-        cv.check_greater_than("branching ratio",
-                              branching_ratio.nominal_value, 0.0, True)
+        cv.check_greater_than("branching ratio", branching_ratio.nominal_value, 0.0, True)
         if branching_ratio.nominal_value == 0.0:
-            warn(f"Decay mode {self.modes} of parent {self.parent} has a zero branching ratio.",
-                 )
-        cv.check_greater_than("branching ratio uncertainty",
-                              branching_ratio.std_dev, 0.0, True)
+            warn(
+                f"Decay mode {self.modes} of parent {self.parent} has a zero branching ratio.",
+            )
+        cv.check_greater_than("branching ratio uncertainty", branching_ratio.std_dev, 0.0, True)
         self._branching_ratio = branching_ratio
 
     @property
@@ -272,8 +269,7 @@ class DecayMode(EqualityMixin):
     def energy(self, energy) -> None:
         cv.check_type("decay energy", energy, UFloat)
         cv.check_greater_than("decay energy", energy.nominal_value, 0.0, True)
-        cv.check_greater_than("decay energy uncertainty",
-                              energy.std_dev, 0.0, True)
+        cv.check_greater_than("decay energy uncertainty", energy.std_dev, 0.0, True)
         self._energy = energy
 
     @property
@@ -347,7 +343,7 @@ class Decay(EqualityMixin):
             self.nuclide["name"] = f"{ATOMIC_SYMBOL[Z]}{A}"
         self.nuclide["mass"] = items[1]  # AWR
         self.nuclide["excited_state"] = items[2]  # State of the original nuclide
-        self.nuclide["stable"] = (items[4] == 1)  # Nucleus stability flag
+        self.nuclide["stable"] = items[4] == 1  # Nucleus stability flag
 
         # Determine if radioactive/stable
         if not self.nuclide["stable"]:
@@ -356,7 +352,7 @@ class Decay(EqualityMixin):
             # Half-life and decay energies
             items, values = get_list_record(file_obj)
             self.half_life = ufloat(items[0], items[1])
-            NC = items[4]//2
+            NC = items[4] // 2
             pairs = list(zip(values[::2], values[1::2], strict=False))
             ex = self.average_energies
             ex["light"] = ufloat(*pairs[0])
@@ -390,18 +386,23 @@ class Decay(EqualityMixin):
             # Decay mode information
             n_modes = items[5]  # Number of decay modes
             for i in range(n_modes):
-                decay_type = get_decay_modes(values[6*i])
-                isomeric_state = int(values[6*i + 1])
-                energy = ufloat(*values[6*i + 2:6*i + 4])
-                branching_ratio = ufloat(*values[6*i + 4:6*(i + 1)])
+                decay_type = get_decay_modes(values[6 * i])
+                isomeric_state = int(values[6 * i + 1])
+                energy = ufloat(*values[6 * i + 2 : 6 * i + 4])
+                branching_ratio = ufloat(*values[6 * i + 4 : 6 * (i + 1)])
 
-                mode = DecayMode(self.nuclide["name"], decay_type, isomeric_state,
-                                 energy, branching_ratio)
+                mode = DecayMode(self.nuclide["name"], decay_type, isomeric_state, energy, branching_ratio)
                 self.modes.append(mode)
 
-            discrete_type = {0.0: None, 1.0: "allowed", 2.0: "first-forbidden",
-                             3.0: "second-forbidden", 4.0: "third-forbidden",
-                             5.0: "fourth-forbidden", 6.0: "fifth-forbidden"}
+            discrete_type = {
+                0.0: None,
+                1.0: "allowed",
+                2.0: "first-forbidden",
+                3.0: "second-forbidden",
+                4.0: "third-forbidden",
+                5.0: "fourth-forbidden",
+                6.0: "fifth-forbidden",
+            }
 
             # Read spectra
             for i in range(NSP):
@@ -411,8 +412,7 @@ class Decay(EqualityMixin):
                 # Decay radiation type
                 spectrum["type"] = _RADIATION_TYPES[items[1]]
                 # Continuous spectrum flag
-                spectrum["continuous_flag"] = {0: "discrete", 1: "continuous",
-                                               2: "both"}[items[2]]
+                spectrum["continuous_flag"] = {0: "discrete", 1: "continuous", 2: "both"}[items[2]]
                 spectrum["discrete_normalization"] = ufloat(*values[0:2])
                 spectrum["energy_average"] = ufloat(*values[2:4])
                 spectrum["continuous_normalization"] = ufloat(*values[4:6])
@@ -472,7 +472,7 @@ class Decay(EqualityMixin):
             name = self.nuclide["name"]
             msg = f"{name} is listed as unstable but has a zero half-life."
             raise ValueError(msg)
-        return log(2.)/self.half_life
+        return log(2.0) / self.half_life
 
     @property
     def decay_energy(self):
@@ -550,9 +550,7 @@ class Decay(EqualityMixin):
                     raise NotImplementedError(msg)
                 interpolation = INTERPOLATION_SCHEME[f.interpolation[0]]
                 if interpolation not in ("histogram", "linear-linear"):
-                    warn(
-                        f"Continuous spectra with {interpolation} interpolation "
-                        f"({name}, {particle}) encountered.")
+                    warn(f"Continuous spectra with {interpolation} interpolation " f"({name}, {particle}) encountered.")
 
                 intensity = spectra["continuous_normalization"].n
                 rates = decay_constant * intensity * f.y
@@ -562,8 +560,7 @@ class Decay(EqualityMixin):
         # Combine discrete distributions
         merged_sources = {}
         for particle_type, dist_list in sources.items():
-            merged_sources[particle_type] = combine_distributions(
-                dist_list, [1.0]*len(dist_list))
+            merged_sources[particle_type] = combine_distributions(dist_list, [1.0] * len(dist_list))
 
         self._sources = merged_sources
         return self._sources
@@ -599,8 +596,7 @@ def decay_photon_energy(nuclide: str, chain_file: cv.PathLike = None) -> Univari
     if not _DECAY_PHOTON_ENERGY:
         if chain_file is None:
             msg = (
-                "A depletion chain file must be specified with "
-                "the chain_file argument in order to load decay data."
+                "A depletion chain file must be specified with " "the chain_file argument in order to load decay data."
             )
             raise DataError(
                 msg,
@@ -613,8 +609,7 @@ def decay_photon_energy(nuclide: str, chain_file: cv.PathLike = None) -> Univari
 
         # If the chain file contained no sources at all, warn the user
         if not _DECAY_PHOTON_ENERGY:
-            warn(f"Chain file '{chain_file}' does not have any decay photon "
-                 "sources listed.")
+            warn(f"Chain file '{chain_file}' does not have any decay photon " "sources listed.")
 
     return _DECAY_PHOTON_ENERGY.get(nuclide)
 
@@ -648,8 +643,7 @@ def decay_energy(nuclide: str, chain_file: cv.PathLike = None) -> float:
     if not _DECAY_ENERGY:
         if chain_file is None:
             msg = (
-                "A depletion chain file must be specified with "
-                "the chain_file argument in order to load decay data."
+                "A depletion chain file must be specified with " "the chain_file argument in order to load decay data."
             )
             raise DataError(
                 msg,
@@ -665,5 +659,3 @@ def decay_energy(nuclide: str, chain_file: cv.PathLike = None) -> float:
             warn(f"Chain file '{chain_file}' does not have any decay energy.")
 
     return _DECAY_ENERGY.get(nuclide, 0.0)
-
-

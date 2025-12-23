@@ -49,7 +49,7 @@ class NBodyPhaseSpace(AngleEnergy):
     def total_mass(self, total_mass) -> None:
         name = "N-body phase space total mass"
         cv.check_type(name, total_mass, Real)
-        cv.check_greater_than(name, total_mass, 0.)
+        cv.check_greater_than(name, total_mass, 0.0)
         self._total_mass = total_mass
 
     @property

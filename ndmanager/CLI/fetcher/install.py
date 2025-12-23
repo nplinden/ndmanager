@@ -75,7 +75,9 @@ class NdfInstallCommand:
                     sublibdata.download(targetdir, style="atom", processes=self.args.j)
                 else:
                     sublibdata.download(
-                        targetdir, style="nuclide", processes=self.args.j,
+                        targetdir,
+                        style="nuclide",
+                        processes=self.args.j,
                     )
 
     def download_foo(self) -> None:
@@ -112,7 +114,8 @@ class NdfInstallCommand:
 
         tsl = self.iaea["jendl5"]["tsl"]
         tsl.download_single(
-            "tsl_ortho-H_0003", target / "tsl" / "tsl_ortho-H_0003.endf6",
+            "tsl_ortho-H_0003",
+            target / "tsl" / "tsl_ortho-H_0003.endf6",
         )
         tsl.download_single("tsl_para-H_0002", target / "tsl" / "tsl_para-H_0002.endf6")
 
@@ -200,10 +203,16 @@ class NdfInstallCommand:
             help="List of sublibraries libraries to download",
         )
         group.add_argument(
-            "--all", "-a", action="store_true", help="Download all sublibraries",
+            "--all",
+            "-a",
+            action="store_true",
+            help="Download all sublibraries",
         )
         parser.add_argument(
-            "-j", type=int, default=1, help="Number of concurent processes",
+            "-j",
+            type=int,
+            default=1,
+            help="Number of concurent processes",
         )
         parser.add_argument(
             "--name",

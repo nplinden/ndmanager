@@ -325,8 +325,8 @@ class MaxwellEnergy(EnergyDistribution):
 
         # Restriction energy
         nr = int(ace.xss[idx])
-        ne = int(ace.xss[idx + 1 + 2*nr])
-        u = ace.xss[idx + 2 + 2*nr + 2*ne]*EV_PER_MEV
+        ne = int(ace.xss[idx + 1 + 2 * nr])
+        u = ace.xss[idx + 2 + 2 * nr + 2 * ne] * EV_PER_MEV
 
         return cls(theta, u)
 
@@ -457,8 +457,8 @@ class Evaporation(EnergyDistribution):
 
         # Restriction energy
         nr = int(ace.xss[idx])
-        ne = int(ace.xss[idx + 1 + 2*nr])
-        u = ace.xss[idx + 2 + 2*nr + 2*ne]*EV_PER_MEV
+        ne = int(ace.xss[idx + 1 + 2 * nr])
+        u = ace.xss[idx + 2 + 2 * nr + 2 * ne] * EV_PER_MEV
 
         return cls(theta, u)
 
@@ -604,8 +604,8 @@ class WattEnergy(EnergyDistribution):
 
         # Advance index
         nr = int(ace.xss[idx])
-        ne = int(ace.xss[idx + 1 + 2*nr])
-        idx += 2 + 2*nr + 2*ne
+        ne = int(ace.xss[idx + 1 + 2 * nr])
+        idx += 2 + 2 * nr + 2 * ne
 
         # Energy-dependent b parameter -- units are MeV^-1
         b = Tabulated1D.from_ace(ace, idx)
@@ -613,11 +613,11 @@ class WattEnergy(EnergyDistribution):
 
         # Advance index
         nr = int(ace.xss[idx])
-        ne = int(ace.xss[idx + 1 + 2*nr])
-        idx += 2 + 2*nr + 2*ne
+        ne = int(ace.xss[idx + 1 + 2 * nr])
+        idx += 2 + 2 * nr + 2 * ne
 
         # Restriction energy
-        u = ace.xss[idx]*EV_PER_MEV
+        u = ace.xss[idx] * EV_PER_MEV
 
         return cls(a, b, u)
 
@@ -695,7 +695,7 @@ class MadlandNix(EnergyDistribution):
     def efl(self, efl) -> None:
         name = "Madland-Nix light fragment energy"
         cv.check_type(name, efl, Real)
-        cv.check_greater_than(name, efl, 0.)
+        cv.check_greater_than(name, efl, 0.0)
         self._efl = efl
 
     @property
@@ -706,7 +706,7 @@ class MadlandNix(EnergyDistribution):
     def efh(self, efh) -> None:
         name = "Madland-Nix heavy fragment energy"
         cv.check_type(name, efh, Real)
-        cv.check_greater_than(name, efh, 0.)
+        cv.check_greater_than(name, efh, 0.0)
         self._efh = efh
 
     @property
@@ -887,7 +887,7 @@ class DiscretePhoton(EnergyDistribution):
 
         """
         primary_flag = int(ace.xss[idx])
-        energy = ace.xss[idx + 1]*EV_PER_MEV
+        energy = ace.xss[idx + 1] * EV_PER_MEV
         return cls(primary_flag, energy, ace.atomic_weight_ratio)
 
 
@@ -982,7 +982,7 @@ class LevelInelastic(EnergyDistribution):
             Level inelastic scattering distribution
 
         """
-        threshold = ace.xss[idx]*EV_PER_MEV
+        threshold = ace.xss[idx] * EV_PER_MEV
         mass_ratio = ace.xss[idx + 1]
         return cls(threshold, mass_ratio)
 
@@ -1027,8 +1027,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @breakpoints.setter
     def breakpoints(self, breakpoints) -> None:
-        cv.check_type("continuous tabular breakpoints", breakpoints,
-                      Iterable, Integral)
+        cv.check_type("continuous tabular breakpoints", breakpoints, Iterable, Integral)
         self._breakpoints = breakpoints
 
     @property
@@ -1037,8 +1036,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @interpolation.setter
     def interpolation(self, interpolation) -> None:
-        cv.check_type("continuous tabular interpolation", interpolation,
-                      Iterable, Integral)
+        cv.check_type("continuous tabular interpolation", interpolation, Iterable, Integral)
         self._interpolation = interpolation
 
     @property
@@ -1047,8 +1045,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @energy.setter
     def energy(self, energy) -> None:
-        cv.check_type("continuous tabular incoming energy", energy,
-                      Iterable, Real)
+        cv.check_type("continuous tabular incoming energy", energy, Iterable, Real)
         self._energy = energy
 
     @property
@@ -1057,8 +1054,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @energy_out.setter
     def energy_out(self, energy_out) -> None:
-        cv.check_type("continuous tabular outgoing energy", energy_out,
-                      Iterable, Univariate)
+        cv.check_type("continuous tabular outgoing energy", energy_out, Iterable, Univariate)
         self._energy_out = energy_out
 
     def to_hdf5(self, group) -> None:
@@ -1073,8 +1069,7 @@ class ContinuousTabular(EnergyDistribution):
         group.attrs["type"] = np.bytes_("continuous")
 
         dset = group.create_dataset("energy", data=self.energy)
-        dset.attrs["interpolation"] = np.vstack((self.breakpoints,
-                                                 self.interpolation))
+        dset.attrs["interpolation"] = np.vstack((self.breakpoints, self.interpolation))
 
         # Determine total number of (E,p) pairs and create array
         n_pairs = sum(len(d) for d in self.energy_out)
@@ -1095,12 +1090,12 @@ class ContinuousTabular(EnergyDistribution):
                 discrete, continuous = eout.distribution
                 n_discrete_lines[i] = m = len(discrete)
                 interpolation[i] = 1 if continuous.interpolation == "histogram" else 2
-                pairs[0, j:j+m] = discrete.x
-                pairs[1, j:j+m] = discrete.p
-                pairs[2, j:j+m] = discrete.c
-                pairs[0, j+m:j+n] = continuous.x
-                pairs[1, j+m:j+n] = continuous.p
-                pairs[2, j+m:j+n] = continuous.c
+                pairs[0, j : j + m] = discrete.x
+                pairs[1, j : j + m] = discrete.p
+                pairs[2, j : j + m] = discrete.c
+                pairs[0, j + m : j + n] = continuous.x
+                pairs[1, j + m : j + n] = continuous.p
+                pairs[2, j + m : j + n] = continuous.c
             else:
                 if isinstance(eout, Tabular):
                     n_discrete_lines[i] = 0
@@ -1108,9 +1103,9 @@ class ContinuousTabular(EnergyDistribution):
                 elif isinstance(eout, Discrete):
                     n_discrete_lines[i] = n
                     interpolation[i] = 1
-                pairs[0, j:j+n] = eout.x
-                pairs[1, j:j+n] = eout.p
-                pairs[2, j:j+n] = eout.c
+                pairs[0, j : j + n] = eout.x
+                pairs[1, j : j + n] = eout.p
+                pairs[2, j : j + n] = eout.c
             j += n
 
         # Create dataset for distributions
@@ -1157,15 +1152,15 @@ class ContinuousTabular(EnergyDistribution):
 
             # Create discrete distribution if lines are present
             if m > 0:
-                eout_discrete = Discrete(data[0, j:j+m], data[1, j:j+m])
-                eout_discrete.c = data[2, j:j+m]
+                eout_discrete = Discrete(data[0, j : j + m], data[1, j : j + m])
+                eout_discrete.c = data[2, j : j + m]
                 p_discrete = eout_discrete.c[-1]
 
             # Create continuous distribution
             if m < n:
                 interp = INTERPOLATION_SCHEME[interpolation[i]]
-                eout_continuous = Tabular(data[0, j+m:j+n], data[1, j+m:j+n], interp)
-                eout_continuous.c = data[2, j+m:j+n]
+                eout_continuous = Tabular(data[0, j + m : j + n], data[1, j + m : j + n], interp)
+                eout_continuous.c = data[2, j + m : j + n]
 
             # If both continuous and discrete are present, create a mixture
             # distribution
@@ -1174,12 +1169,10 @@ class ContinuousTabular(EnergyDistribution):
             elif m == n:
                 eout_i = eout_discrete
             else:
-                eout_i = Mixture([p_discrete, 1. - p_discrete],
-                                 [eout_discrete, eout_continuous])
+                eout_i = Mixture([p_discrete, 1.0 - p_discrete], [eout_discrete, eout_continuous])
             energy_out.append(eout_i)
 
-        return cls(energy_breakpoints, energy_interpolation,
-                   energy, energy_out)
+        return cls(energy_breakpoints, energy_interpolation, energy, energy_out)
 
     @classmethod
     def from_ace(cls, ace, idx, ldis):
@@ -1204,24 +1197,24 @@ class ContinuousTabular(EnergyDistribution):
         """
         # Read number of interpolation regions and incoming energies
         n_regions = int(ace.xss[idx])
-        n_energy_in = int(ace.xss[idx + 1 + 2*n_regions])
+        n_energy_in = int(ace.xss[idx + 1 + 2 * n_regions])
 
         # Get interpolation information
         idx += 1
         if n_regions > 0:
-            breakpoints = ace.xss[idx:idx + n_regions].astype(int)
-            interpolation = ace.xss[idx + n_regions:idx + 2*n_regions].astype(int)
+            breakpoints = ace.xss[idx : idx + n_regions].astype(int)
+            interpolation = ace.xss[idx + n_regions : idx + 2 * n_regions].astype(int)
         else:
             breakpoints = np.array([n_energy_in])
             interpolation = np.array([2])
 
         # Incoming energies at which distributions exist
-        idx += 2*n_regions + 1
-        energy = ace.xss[idx:idx + n_energy_in]*EV_PER_MEV
+        idx += 2 * n_regions + 1
+        energy = ace.xss[idx : idx + n_energy_in] * EV_PER_MEV
 
         # Location of distributions
         idx += n_energy_in
-        loc_dist = ace.xss[idx:idx + n_energy_in].astype(int)
+        loc_dist = ace.xss[idx : idx + n_energy_in].astype(int)
 
         # Initialize variables
         energy_out = []
@@ -1233,34 +1226,31 @@ class ContinuousTabular(EnergyDistribution):
             # intt = interpolation scheme (1=hist, 2=lin-lin)
             INTTp = int(ace.xss[idx])
             intt = INTTp % 10
-            n_discrete_lines = (INTTp - intt)//10
+            n_discrete_lines = (INTTp - intt) // 10
             if intt not in (1, 2):
-                warn("Interpolation scheme for continuous tabular distribution "
-                     "is not histogram or linear-linear.")
+                warn("Interpolation scheme for continuous tabular distribution " "is not histogram or linear-linear.")
                 intt = 2
 
             n_energy_out = int(ace.xss[idx + 1])
-            data = ace.xss[idx + 2:idx + 2 + 3*n_energy_out].copy()
+            data = ace.xss[idx + 2 : idx + 2 + 3 * n_energy_out].copy()
             data.shape = (3, n_energy_out)
-            data[0,:] *= EV_PER_MEV
+            data[0, :] *= EV_PER_MEV
 
             # Create continuous distribution
-            eout_continuous = Tabular(data[0][n_discrete_lines:],
-                                      data[1][n_discrete_lines:]/EV_PER_MEV,
-                                      INTERPOLATION_SCHEME[intt])
+            eout_continuous = Tabular(
+                data[0][n_discrete_lines:], data[1][n_discrete_lines:] / EV_PER_MEV, INTERPOLATION_SCHEME[intt]
+            )
             eout_continuous.c = data[2][n_discrete_lines:]
 
             # If discrete lines are present, create a mixture distribution
             if n_discrete_lines > 0:
-                eout_discrete = Discrete(data[0][:n_discrete_lines],
-                                         data[1][:n_discrete_lines])
+                eout_discrete = Discrete(data[0][:n_discrete_lines], data[1][:n_discrete_lines])
                 eout_discrete.c = data[2][:n_discrete_lines]
                 if n_discrete_lines == n_energy_out:
                     eout_i = eout_discrete
                 else:
                     p_discrete = min(sum(eout_discrete.p), 1.0)
-                    eout_i = Mixture([p_discrete, 1. - p_discrete],
-                                     [eout_discrete, eout_continuous])
+                    eout_i = Mixture([p_discrete, 1.0 - p_discrete], [eout_discrete, eout_continuous])
             else:
                 eout_i = eout_continuous
 

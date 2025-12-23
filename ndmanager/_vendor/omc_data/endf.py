@@ -6,6 +6,7 @@ The version from September 2023 can be found at
 https://www.nndc.bnl.gov/endfdocs/ENDF-102-2023.pdf
 
 """
+
 import io
 import re
 from pathlib import PurePath
@@ -16,11 +17,26 @@ from endf.records import float_endf
 from .data import gnds_name
 from .function import Tabulated1D
 
-_LIBRARY = {0: "ENDF/B", 1: "ENDF/A", 2: "JEFF", 3: "EFF",
-            4: "ENDF/B High Energy", 5: "CENDL", 6: "JENDL",
-            17: "TENDL", 18: "ROSFOND", 21: "SG-21", 31: "INDL/V",
-            32: "INDL/A", 33: "FENDL", 34: "IRDF", 35: "BROND",
-            36: "INGDB-90", 37: "FENDL/A", 41: "BROND"}
+_LIBRARY = {
+    0: "ENDF/B",
+    1: "ENDF/A",
+    2: "JEFF",
+    3: "EFF",
+    4: "ENDF/B High Energy",
+    5: "CENDL",
+    6: "JENDL",
+    17: "TENDL",
+    18: "ROSFOND",
+    21: "SG-21",
+    31: "INDL/V",
+    32: "INDL/A",
+    33: "FENDL",
+    34: "IRDF",
+    35: "BROND",
+    36: "INGDB-90",
+    37: "FENDL/A",
+    41: "BROND",
+}
 
 _SUBLIBRARY = {
     0: "Photo-nuclear data",
@@ -42,23 +58,87 @@ _SUBLIBRARY = {
     20040: "Incident-alpha data",
 }
 
-SUM_RULES = {1: [2, 3],
-             3: [4, 5, 11, 16, 17, 22, 23, 24, 25, 27, 28, 29, 30, 32, 33, 34, 35,
-                 36, 37, 41, 42, 44, 45, 152, 153, 154, 156, 157, 158, 159, 160,
-                 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172,
-                 173, 174, 175, 176, 177, 178, 179, 180, 181, 183, 184, 185,
-                 186, 187, 188, 189, 190, 194, 195, 196, 198, 199, 200],
-             4: list(range(50, 92)),
-             16: list(range(875, 892)),
-             18: [19, 20, 21, 38],
-             27: [18, 101],
-             101: [102, 103, 104, 105, 106, 107, 108, 109, 111, 112, 113, 114,
-                   115, 116, 117, 155, 182, 191, 192, 193, 197],
-             103: list(range(600, 650)),
-             104: list(range(650, 700)),
-             105: list(range(700, 750)),
-             106: list(range(750, 800)),
-             107: list(range(800, 850))}
+SUM_RULES = {
+    1: [2, 3],
+    3: [
+        4,
+        5,
+        11,
+        16,
+        17,
+        22,
+        23,
+        24,
+        25,
+        27,
+        28,
+        29,
+        30,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        41,
+        42,
+        44,
+        45,
+        152,
+        153,
+        154,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        194,
+        195,
+        196,
+        198,
+        199,
+        200,
+    ],
+    4: list(range(50, 92)),
+    16: list(range(875, 892)),
+    18: [19, 20, 21, 38],
+    27: [18, 101],
+    101: [102, 103, 104, 105, 106, 107, 108, 109, 111, 112, 113, 114, 115, 116, 117, 155, 182, 191, 192, 193, 197],
+    103: list(range(600, 650)),
+    104: list(range(650, 700)),
+    105: list(range(700, 750)),
+    106: list(range(750, 800)),
+    107: list(range(800, 850)),
+}
 
 ENDF_FLOAT_RE = re.compile(r"([\s\-\+]?\d*\.\d+)([\+\-]) ?(\d+)")
 
@@ -201,11 +281,11 @@ def get_list_record(file_obj):
 
     # read items
     b = []
-    for i in range((NPL - 1)//6 + 1):
+    for i in range((NPL - 1) // 6 + 1):
         line = file_obj.readline()
-        n = min(6, NPL - 6*i)
+        n = min(6, NPL - 6 * i)
         for j in range(n):
-            b.append(float_endf(line[11*j:11*(j + 1)]))
+            b.append(float_endf(line[11 * j : 11 * (j + 1)]))
 
     return (items, b)
 
@@ -240,7 +320,7 @@ def get_tab1_record(file_obj):
     breakpoints = np.zeros(n_regions, dtype=int)
     interpolation = np.zeros(n_regions, dtype=int)
     m = 0
-    for _i in range((n_regions - 1)//3 + 1):
+    for _i in range((n_regions - 1) // 3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_regions - m)
         for _j in range(to_read):
@@ -253,7 +333,7 @@ def get_tab1_record(file_obj):
     x = np.zeros(n_pairs)
     y = np.zeros(n_pairs)
     m = 0
-    for _i in range((n_pairs - 1)//3 + 1):
+    for _i in range((n_pairs - 1) // 3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_pairs - m)
         for _j in range(to_read):
@@ -274,7 +354,7 @@ def get_tab2_record(file_obj):
     breakpoints = np.zeros(n_regions, dtype=int)
     interpolation = np.zeros(n_regions, dtype=int)
     m = 0
-    for _i in range((n_regions - 1)//3 + 1):
+    for _i in range((n_regions - 1) // 3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_regions - m)
         for _j in range(to_read):
@@ -304,7 +384,7 @@ def get_intg_record(file_obj):
     # determine how many items are in list and NDIGIT
     items = get_cont_record(file_obj)
     ndigit = items[2]
-    npar = items[3]    # Number of parameters
+    npar = items[3]  # Number of parameters
     nlines = items[4]  # Lines to read
     NROW_RULES = {2: 18, 3: 12, 4: 11, 5: 9, 6: 8}
     nrow = NROW_RULES[ndigit]
@@ -317,13 +397,13 @@ def get_intg_record(file_obj):
         jj = int_endf(line[5:10]) - 1
         factor = 10**ndigit
         for j in range(nrow):
-            if jj+j >= ii:
+            if jj + j >= ii:
                 break
-            element = int_endf(line[11+(ndigit+1)*j:11+(ndigit+1)*(j+1)])
+            element = int_endf(line[11 + (ndigit + 1) * j : 11 + (ndigit + 1) * (j + 1)])
             if element > 0:
-                corr[ii, jj] = (element+0.5)/factor
+                corr[ii, jj] = (element + 0.5) / factor
             elif element < 0:
-                corr[ii, jj] = (element-0.5)/factor
+                corr[ii, jj] = (element - 0.5) / factor
 
     # Symmetrize the correlation matrix
     return corr + corr.T - np.diag(corr.diagonal())
@@ -452,7 +532,7 @@ class Evaluation:
         self.target["mass_number"] = A
         self.target["mass"] = items[1]
         self._LRP = items[2]
-        self.target["fissionable"] = (items[3] == 1)
+        self.target["fissionable"] = items[3] == 1
         try:
             library = _LIBRARY[items[4]]
         except KeyError:
@@ -462,7 +542,7 @@ class Evaluation:
         # Control record 1
         items = get_cont_record(file_obj)
         self.target["excitation_energy"] = items[0]
-        self.target["stable"] = (int(items[1]) == 0)
+        self.target["stable"] = int(items[1]) == 0
         self.target["state"] = items[2]
         self.target["isomeric_state"] = m = items[3]
         self.info["format"] = items[5]
@@ -484,7 +564,7 @@ class Evaluation:
         # Control record 3
         items = get_cont_record(file_obj)
         self.target["temperature"] = items[0]
-        self.info["derived"] = (items[2] > 0)
+        self.info["derived"] = items[2] > 0
         NWD = items[4]
         NXC = items[5]
 
@@ -511,9 +591,7 @@ class Evaluation:
 
     @property
     def gnds_name(self):
-        return gnds_name(self.target["atomic_number"],
-                         self.target["mass_number"],
-                         self.target["isomeric_state"])
+        return gnds_name(self.target["atomic_number"], self.target["mass_number"], self.target["isomeric_state"])
 
 
 class Tabulated2D:

@@ -48,7 +48,6 @@ class NdfListCommand:
         s = textwrap.wrap(s, width=col)
         self.lines.append("\n".join(s))
 
-
     def list_libraries(self):
         """Get the full names of the libraries to list,
         taking aliases into account.

@@ -93,8 +93,7 @@ class IncidentNeutron(EqualityMixin):
 
     """
 
-    def __init__(self, name, atomic_number, mass_number, metastable,
-                 atomic_weight_ratio, kTs) -> None:
+    def __init__(self, name, atomic_number, mass_number, metastable, atomic_weight_ratio, kTs) -> None:
         self.name = name
         self.atomic_number = atomic_number
         self.mass_number = mass_number
@@ -181,8 +180,7 @@ class IncidentNeutron(EqualityMixin):
 
     @fission_energy.setter
     def fission_energy(self, fission_energy) -> None:
-        cv.check_type("fission energy release", fission_energy,
-                      FissionEnergyRelease)
+        cv.check_type("fission energy release", fission_energy, FissionEnergyRelease)
         self._fission_energy = fission_energy
 
     @property
@@ -209,8 +207,7 @@ class IncidentNeutron(EqualityMixin):
 
     @resonance_covariance.setter
     def resonance_covariance(self, resonance_covariance) -> None:
-        cv.check_type("resonance covariance", resonance_covariance,
-                      res_cov.ResonanceCovariances)
+        cv.check_type("resonance covariance", resonance_covariance, res_cov.ResonanceCovariances)
         self._resonance_covariance = resonance_covariance
 
     @property
@@ -275,8 +272,7 @@ class IncidentNeutron(EqualityMixin):
             if mt in self:
                 self[mt].xs[strT] = data[mt].xs[strT]
             else:
-                warn(f"Tried to add cross sections for MT={mt} at T={strT} but this "
-                     "reaction doesn't exist.")
+                warn(f"Tried to add cross sections for MT={mt} at T={strT} but this " "reaction doesn't exist.")
 
         # Add probability tables
         if strT in data.urr:
@@ -365,10 +361,7 @@ class IncidentNeutron(EqualityMixin):
         """
         # If data come from ENDF, don't allow exporting to HDF5
         if hasattr(self, "_evaluation"):
-            msg = (
-                "Cannot export incident neutron data that "
-                                      "originated from an ENDF file."
-            )
+            msg = "Cannot export incident neutron data that " "originated from an ENDF file."
             raise NotImplementedError(msg)
 
         # Open file and write version
@@ -404,8 +397,7 @@ class IncidentNeutron(EqualityMixin):
                 # production, heating, and damage energy production.
                 if rx.redundant:
                     photon_rx = any(p.particle == "photon" for p in rx.products)
-                    keep_mts = (4, 16, 103, 104, 105, 106, 107,
-                                203, 204, 205, 206, 207, 301, 444, 901)
+                    keep_mts = (4, 16, 103, 104, 105, 106, 107, 203, 204, 205, 206, 207, 301, 444, 901)
                     if not (photon_rx or rx.mt in keep_mts):
                         continue
 
@@ -462,7 +454,7 @@ class IncidentNeutron(EqualityMixin):
                 )
                 raise OSError(
                     msg,
-                    )
+                )
 
             group = next(iter(h5file.values()))
 
@@ -476,8 +468,7 @@ class IncidentNeutron(EqualityMixin):
         for temp in kTg:
             kTs.append(kTg[temp][()])
 
-        data = cls(name, atomic_number, mass_number, metastable,
-                   atomic_weight_ratio, kTs)
+        data = cls(name, atomic_number, mass_number, metastable, atomic_weight_ratio, kTs)
 
         # Read energy grid
         e_group = group["energy"]
@@ -540,16 +531,13 @@ class IncidentNeutron(EqualityMixin):
         zaid, xs = ace.name.split(".")
         if not xs.endswith("c"):
             msg = f"{ace} is not a continuous-energy neutron ACE table."
-            raise TypeError(
-                msg)
-        name, element, Z, mass_number, metastable = \
-            get_metadata(int(zaid), metastable_scheme)
+            raise TypeError(msg)
+        name, element, Z, mass_number, metastable = get_metadata(int(zaid), metastable_scheme)
 
         # Assign temperature to the running list
-        kTs = [ace.temperature*EV_PER_MEV]
+        kTs = [ace.temperature * EV_PER_MEV]
 
-        data = cls(name, Z, mass_number, metastable,
-                   ace.atomic_weight_ratio, kTs)
+        data = cls(name, Z, mass_number, metastable, ace.atomic_weight_ratio, kTs)
 
         # Get string of temperature to use as a dictionary key
         strT = data.temperatures[0]
@@ -557,11 +545,11 @@ class IncidentNeutron(EqualityMixin):
         # Read energy grid
         n_energy = ace.nxs[3]
         i = ace.jxs[1]
-        energy = ace.xss[i : i + n_energy]*EV_PER_MEV
+        energy = ace.xss[i : i + n_energy] * EV_PER_MEV
         data.energy[strT] = energy
-        total_xs = ace.xss[i + n_energy : i + 2*n_energy]
-        absorption_xs = ace.xss[i + 2*n_energy : i + 3*n_energy]
-        heating_number = ace.xss[i + 4*n_energy : i + 5*n_energy]*EV_PER_MEV
+        total_xs = ace.xss[i + n_energy : i + 2 * n_energy]
+        absorption_xs = ace.xss[i + 2 * n_energy : i + 3 * n_energy]
+        heating_number = ace.xss[i + 4 * n_energy : i + 5 * n_energy] * EV_PER_MEV
 
         # Create redundant reaction for total (MT=1)
         total = Reaction(1)
@@ -578,7 +566,7 @@ class IncidentNeutron(EqualityMixin):
 
         # Create redundant reaction for heating (MT=301)
         heating = Reaction(301)
-        heating.xs[strT] = Tabulated1D(energy, heating_number*total_xs)
+        heating.xs[strT] = Tabulated1D(energy, heating_number * total_xs)
         heating.redundant = True
         data.reactions[301] = heating
 
@@ -592,21 +580,18 @@ class IncidentNeutron(EqualityMixin):
         # exist, usually MT=4. In this case, we create a new reaction and add
         # them
         n_photon_reactions = ace.nxs[6]
-        photon_mts = ace.xss[ace.jxs[13]:ace.jxs[13] +
-                             n_photon_reactions].astype(int)
+        photon_mts = ace.xss[ace.jxs[13] : ace.jxs[13] + n_photon_reactions].astype(int)
 
         for mt in np.unique(photon_mts // 1000):
             if mt not in data:
                 if mt not in SUM_RULES:
-                    warn(f"Photon production is present for MT={mt} but no "
-                         "cross section is given.")
+                    warn(f"Photon production is present for MT={mt} but no " "cross section is given.")
                     continue
 
                 # Create redundant reaction with appropriate cross section
                 mts = data.get_reaction_components(mt)
                 if len(mts) == 0:
-                    warn(f"Photon production is present for MT={mt} but no "
-                         "reaction components exist.")
+                    warn(f"Photon production is present for MT={mt} but no " "reaction components exist.")
                     continue
 
                 # Determine redundant cross section
@@ -679,16 +664,13 @@ class IncidentNeutron(EqualityMixin):
         name = f"{element}{mass_number}_m{metastable}" if metastable > 0 else f"{element}{mass_number}"
 
         # Instantiate incident neutron data
-        data = cls(name, atomic_number, mass_number, metastable,
-                   atomic_weight_ratio, [temperature])
+        data = cls(name, atomic_number, mass_number, metastable, atomic_weight_ratio, [temperature])
 
         if (2, 151) in ev.section:
             data.resonances = res.Resonances.from_endf(ev)
 
         if (32, 151) in ev.section and covariance:
-            data.resonance_covariance = (
-                res_cov.ResonanceCovariances.from_endf(ev, data.resonances)
-            )
+            data.resonance_covariance = res_cov.ResonanceCovariances.from_endf(ev, data.resonances)
 
         # Read each reaction
         for mf, mt, _nc, _mod in ev.reaction_list:
@@ -701,8 +683,7 @@ class IncidentNeutron(EqualityMixin):
                 for mt in (2, 102, 18):
                     if mt in data.reactions:
                         rx = data.reactions[mt]
-                        rx.xs["0K"] = ResonancesWithBackground(
-                            data.resonances, rx.xs["0K"], mt)
+                        rx.xs["0K"] = ResonancesWithBackground(data.resonances, rx.xs["0K"], mt)
         except ValueError:
             # Thrown if multiple resolved ranges (e.g. Pu239 in ENDF/B-VII.1)
             pass
@@ -817,8 +798,7 @@ class IncidentNeutron(EqualityMixin):
                     # Replace fission KERMA with (EFR + EB)*sigma_f
                     fission = data[18].xs[temp]
                     kerma_fission = get_file3_xs(ev, 318, E)
-                    kerma.y = kerma.y - kerma_fission + (
-                        f.fragments(E) + f.betas(E)) * fission(E)
+                    kerma.y = kerma.y - kerma_fission + (f.fragments(E) + f.betas(E)) * fission(E)
 
                 # For local KERMA, we first need to get the values from the
                 # HEATR run with photon energy deposited locally and put
@@ -829,9 +809,11 @@ class IncidentNeutron(EqualityMixin):
                     # When photons deposit their energy locally, we replace the
                     # fission KERMA with (EFR + EGP + EGD + EB)*sigma_f
                     kerma_fission_local = get_file3_xs(ev_local, 318, E)
-                    kerma_local = kerma_local - kerma_fission_local + (
-                        f.fragments(E) + f.prompt_photons(E)
-                        + f.delayed_photons(E) + f.betas(E))*fission(E)
+                    kerma_local = (
+                        kerma_local
+                        - kerma_fission_local
+                        + (f.fragments(E) + f.prompt_photons(E) + f.delayed_photons(E) + f.betas(E)) * fission(E)
+                    )
 
                 heating_local.xs[temp] = Tabulated1D(E, kerma_local)
 
@@ -860,8 +842,7 @@ class IncidentNeutron(EqualityMixin):
         for strT in self.temperatures:
             energy = self.energy[strT]
             xss = [self.reactions[mt_i].xs[strT] for mt_i in mts]
-            idx = min([xs._threshold_idx if hasattr(xs, "_threshold_idx")
-                       else 0 for xs in xss])
+            idx = min([xs._threshold_idx if hasattr(xs, "_threshold_idx") else 0 for xs in xss])
             rx.xs[strT] = Tabulated1D(energy[idx:], Sum(xss)(energy[idx:]))
             rx.xs[strT]._threshold_idx = idx
 

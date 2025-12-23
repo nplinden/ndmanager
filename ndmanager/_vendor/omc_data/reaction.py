@@ -23,37 +23,119 @@ from .nbody import NBodyPhaseSpace
 from .product import Product
 from .uncorrelated import UncorrelatedAngleEnergy
 
-REACTION_NAME = {1: "(n,total)", 2: "(n,elastic)", 3: "(n,nonelastic)",
-                 4: "(n,level)", 5: "(n,misc)", 11: "(n,2nd)", 16: "(n,2n)",
-                 17: "(n,3n)", 18: "(n,fission)", 19: "(n,f)", 20: "(n,nf)",
-                 21: "(n,2nf)", 22: "(n,na)", 23: "(n,n3a)", 24: "(n,2na)",
-                 25: "(n,3na)", 27: "(n,absorption)", 28: "(n,np)", 29: "(n,n2a)",
-                 30: "(n,2n2a)", 32: "(n,nd)", 33: "(n,nt)", 34: "(n,n3He)",
-                 35: "(n,nd2a)", 36: "(n,nt2a)", 37: "(n,4n)", 38: "(n,3nf)",
-                 41: "(n,2np)", 42: "(n,3np)", 44: "(n,n2p)", 45: "(n,npa)",
-                 91: "(n,nc)", 101: "(n,disappear)", 102: "(n,gamma)",
-                 103: "(n,p)", 104: "(n,d)", 105: "(n,t)", 106: "(n,3He)",
-                 107: "(n,a)", 108: "(n,2a)", 109: "(n,3a)", 111: "(n,2p)",
-                 112: "(n,pa)", 113: "(n,t2a)", 114: "(n,d2a)", 115: "(n,pd)",
-                 116: "(n,pt)", 117: "(n,da)", 152: "(n,5n)", 153: "(n,6n)",
-                 154: "(n,2nt)", 155: "(n,ta)", 156: "(n,4np)", 157: "(n,3nd)",
-                 158: "(n,nda)", 159: "(n,2npa)", 160: "(n,7n)", 161: "(n,8n)",
-                 162: "(n,5np)", 163: "(n,6np)", 164: "(n,7np)", 165: "(n,4na)",
-                 166: "(n,5na)", 167: "(n,6na)", 168: "(n,7na)", 169: "(n,4nd)",
-                 170: "(n,5nd)", 171: "(n,6nd)", 172: "(n,3nt)", 173: "(n,4nt)",
-                 174: "(n,5nt)", 175: "(n,6nt)", 176: "(n,2n3He)",
-                 177: "(n,3n3He)", 178: "(n,4n3He)", 179: "(n,3n2p)",
-                 180: "(n,3n2a)", 181: "(n,3npa)", 182: "(n,dt)",
-                 183: "(n,npd)", 184: "(n,npt)", 185: "(n,ndt)",
-                 186: "(n,np3He)", 187: "(n,nd3He)", 188: "(n,nt3He)",
-                 189: "(n,nta)", 190: "(n,2n2p)", 191: "(n,p3He)",
-                 192: "(n,d3He)", 193: "(n,3Hea)", 194: "(n,4n2p)",
-                 195: "(n,4n2a)", 196: "(n,4npa)", 197: "(n,3p)",
-                 198: "(n,n3p)", 199: "(n,3n2pa)", 200: "(n,5n2p)", 203: "(n,Xp)",
-                 204: "(n,Xd)", 205: "(n,Xt)", 206: "(n,X3He)", 207: "(n,Xa)",
-                 301: "heating", 444: "damage-energy",
-                 649: "(n,pc)", 699: "(n,dc)", 749: "(n,tc)", 799: "(n,3Hec)",
-                 849: "(n,ac)", 891: "(n,2nc)", 901: "heating-local"}
+REACTION_NAME = {
+    1: "(n,total)",
+    2: "(n,elastic)",
+    3: "(n,nonelastic)",
+    4: "(n,level)",
+    5: "(n,misc)",
+    11: "(n,2nd)",
+    16: "(n,2n)",
+    17: "(n,3n)",
+    18: "(n,fission)",
+    19: "(n,f)",
+    20: "(n,nf)",
+    21: "(n,2nf)",
+    22: "(n,na)",
+    23: "(n,n3a)",
+    24: "(n,2na)",
+    25: "(n,3na)",
+    27: "(n,absorption)",
+    28: "(n,np)",
+    29: "(n,n2a)",
+    30: "(n,2n2a)",
+    32: "(n,nd)",
+    33: "(n,nt)",
+    34: "(n,n3He)",
+    35: "(n,nd2a)",
+    36: "(n,nt2a)",
+    37: "(n,4n)",
+    38: "(n,3nf)",
+    41: "(n,2np)",
+    42: "(n,3np)",
+    44: "(n,n2p)",
+    45: "(n,npa)",
+    91: "(n,nc)",
+    101: "(n,disappear)",
+    102: "(n,gamma)",
+    103: "(n,p)",
+    104: "(n,d)",
+    105: "(n,t)",
+    106: "(n,3He)",
+    107: "(n,a)",
+    108: "(n,2a)",
+    109: "(n,3a)",
+    111: "(n,2p)",
+    112: "(n,pa)",
+    113: "(n,t2a)",
+    114: "(n,d2a)",
+    115: "(n,pd)",
+    116: "(n,pt)",
+    117: "(n,da)",
+    152: "(n,5n)",
+    153: "(n,6n)",
+    154: "(n,2nt)",
+    155: "(n,ta)",
+    156: "(n,4np)",
+    157: "(n,3nd)",
+    158: "(n,nda)",
+    159: "(n,2npa)",
+    160: "(n,7n)",
+    161: "(n,8n)",
+    162: "(n,5np)",
+    163: "(n,6np)",
+    164: "(n,7np)",
+    165: "(n,4na)",
+    166: "(n,5na)",
+    167: "(n,6na)",
+    168: "(n,7na)",
+    169: "(n,4nd)",
+    170: "(n,5nd)",
+    171: "(n,6nd)",
+    172: "(n,3nt)",
+    173: "(n,4nt)",
+    174: "(n,5nt)",
+    175: "(n,6nt)",
+    176: "(n,2n3He)",
+    177: "(n,3n3He)",
+    178: "(n,4n3He)",
+    179: "(n,3n2p)",
+    180: "(n,3n2a)",
+    181: "(n,3npa)",
+    182: "(n,dt)",
+    183: "(n,npd)",
+    184: "(n,npt)",
+    185: "(n,ndt)",
+    186: "(n,np3He)",
+    187: "(n,nd3He)",
+    188: "(n,nt3He)",
+    189: "(n,nta)",
+    190: "(n,2n2p)",
+    191: "(n,p3He)",
+    192: "(n,d3He)",
+    193: "(n,3Hea)",
+    194: "(n,4n2p)",
+    195: "(n,4n2a)",
+    196: "(n,4npa)",
+    197: "(n,3p)",
+    198: "(n,n3p)",
+    199: "(n,3n2pa)",
+    200: "(n,5n2p)",
+    203: "(n,Xp)",
+    204: "(n,Xd)",
+    205: "(n,Xt)",
+    206: "(n,X3He)",
+    207: "(n,Xa)",
+    301: "heating",
+    444: "damage-energy",
+    649: "(n,pc)",
+    699: "(n,dc)",
+    749: "(n,tc)",
+    799: "(n,3Hec)",
+    849: "(n,ac)",
+    891: "(n,2nc)",
+    901: "heating-local",
+}
 REACTION_NAME.update({i: f"(n,n{i - 50})" for i in range(51, 91)})
 REACTION_NAME.update({i: f"(n,p{i - 600})" for i in range(600, 649)})
 REACTION_NAME.update({i: f"(n,d{i - 650})" for i in range(650, 699)})
@@ -96,8 +178,7 @@ def _get_products(ev, mt):
 
     # Read HEAD record
     items = get_head_record(file_obj)
-    reference_frame = {1: "laboratory", 2: "center-of-mass",
-                       3: "light-heavy", 4: "breakup"}[items[3]]
+    reference_frame = {1: "laboratory", 2: "center-of-mass", 3: "light-heavy", 4: "breakup"}[items[3]]
     n_products = items[4]
 
     products = []
@@ -151,24 +232,18 @@ def _get_products(ev, mt):
                 if reference_frame == "center-of-mass":
                     product_center_of_mass = True
                 elif reference_frame == "light-heavy":
-                    product_center_of_mass = (awr <= 4.0)
+                    product_center_of_mass = awr <= 4.0
                 # TODO: 'breakup' logic not implemented
 
                 if product_center_of_mass is False:
-                    msg = (
-                        "Kalbach-Mann representation must be defined in the "
-                        "'center-of-mass' system"
-                    )
+                    msg = "Kalbach-Mann representation must be defined in the " "'center-of-mass' system"
                     raise OSError(
                         msg,
                     )
 
                 zat = ev.target["atomic_number"] * 1000 + ev.target["mass_number"]
                 projectile_mass = ev.projectile["mass"]
-                p.distribution = [KalbachMann.from_endf(file_obj,
-                                                        za,
-                                                        zat,
-                                                        projectile_mass)]
+                p.distribution = [KalbachMann.from_endf(file_obj, za, zat, projectile_mass)]
 
         elif law == 2:
             # Discrete two-body scattering
@@ -185,8 +260,7 @@ def _get_products(ev, mt):
                 elif lang == 12:
                     mu.append(Tabular(values[::2], values[1::2]))
                 elif lang == 14:
-                    mu.append(Tabular(values[::2], values[1::2],
-                                      "log-linear"))
+                    mu.append(Tabular(values[::2], values[1::2], "log-linear"))
 
             angle_dist = AngleDistribution(energy, mu)
             dist = UncorrelatedAngleEnergy(angle_dist)
@@ -253,10 +327,10 @@ def _get_fission_products_ace(ace):
         LNU = int(ace.xss[idx])
         if LNU == 1:
             # Polynomial function form of nu
-            NC = int(ace.xss[idx+1])
-            coefficients = ace.xss[idx+2 : idx+2+NC].copy()
+            NC = int(ace.xss[idx + 1])
+            coefficients = ace.xss[idx + 2 : idx + 2 + NC].copy()
             for i in range(coefficients.size):
-                coefficients[i] *= EV_PER_MEV**(-i)
+                coefficients[i] *= EV_PER_MEV ** (-i)
             neutron.yield_ = Polynomial(coefficients)
         elif LNU == 2:
             # Tabular data form of nu
@@ -274,10 +348,10 @@ def _get_fission_products_ace(ace):
         LNU = int(ace.xss[idx])
         if LNU == 1:
             # Polynomial function form of nu
-            NC = int(ace.xss[idx+1])
-            coefficients = ace.xss[idx+2 : idx+2+NC].copy()
+            NC = int(ace.xss[idx + 1])
+            coefficients = ace.xss[idx + 2 : idx + 2 + NC].copy()
             for i in range(coefficients.size):
-                coefficients[i] *= EV_PER_MEV**(-i)
+                coefficients[i] *= EV_PER_MEV ** (-i)
             prompt_neutron.yield_ = Polynomial(coefficients)
         elif LNU == 2:
             # Tabular data form of nu
@@ -292,10 +366,10 @@ def _get_fission_products_ace(ace):
 
         if LNU == 1:
             # Polynomial function form of nu
-            NC = int(ace.xss[idx+1])
-            coefficients = ace.xss[idx+2 : idx+2+NC].copy()
+            NC = int(ace.xss[idx + 1])
+            coefficients = ace.xss[idx + 2 : idx + 2 + NC].copy()
             for i in range(coefficients.size):
-                coefficients[i] *= EV_PER_MEV**(-i)
+                coefficients[i] *= EV_PER_MEV ** (-i)
             total_neutron.yield_ = Polynomial(coefficients)
         elif LNU == 2:
             # Tabular data form of nu
@@ -311,13 +385,13 @@ def _get_fission_products_ace(ace):
         # Delayed neutron precursor distribution
         idx = ace.jxs[25]
         n_group = ace.nxs[8]
-        total_group_probability = 0.
+        total_group_probability = 0.0
         for group in range(n_group):
             delayed_neutron = Product("neutron")
             delayed_neutron.emission_mode = "delayed"
 
             # Convert units of inverse shakes to inverse seconds
-            delayed_neutron.decay_rate = ace.xss[idx] * 1.e8
+            delayed_neutron.decay_rate = ace.xss[idx] * 1.0e8
 
             group_probability = Tabulated1D.from_ace(ace, idx + 1)
             if np.all(group_probability.y == group_probability.y[0]):
@@ -337,20 +411,19 @@ def _get_fission_products_ace(ace):
 
             # Advance position
             nr = int(ace.xss[idx + 1])
-            ne = int(ace.xss[idx + 2 + 2*nr])
-            idx += 3 + 2*nr + 2*ne
+            ne = int(ace.xss[idx + 2 + 2 * nr])
+            idx += 3 + 2 * nr + 2 * ne
 
             # Energy distribution for delayed fission neutrons
             location_start = int(ace.xss[ace.jxs[26] + group])
-            delayed_neutron.distribution.append(
-                AngleEnergy.from_ace(ace, ace.jxs[27], location_start))
+            delayed_neutron.distribution.append(AngleEnergy.from_ace(ace, ace.jxs[27], location_start))
 
             products.append(delayed_neutron)
 
         # Renormalize delayed neutron yields to reflect fact that in ACE
         # file, the sum of the group probabilities is not exactly one
         for product in products[1:]:
-            if total_group_probability > 0.:
+            if total_group_probability > 0.0:
                 product.yield_.y /= total_group_probability
 
     return products, derived_products
@@ -429,10 +502,7 @@ def _get_fission_products_endf(ev):
                 products.append(delayed_neutron)
         elif ldg == 1:
             # Delayed-group constants energy dependent
-            msg = (
-                "Delayed neutron with energy-dependent "
-                                      "group constants."
-            )
+            msg = "Delayed neutron with energy-dependent " "group constants."
             raise NotImplementedError(msg)
 
         # In MF=1, MT=455, the delayed-group abundances are actually not
@@ -465,8 +535,7 @@ def _get_fission_products_endf(ev):
                     f"Number of delayed neutron fission spectra ({nk}) does not "
                     f"match number of delayed neutron precursors ({len(decay_constants)})."
                 )
-                raise ValueError(
-                    msg)
+                raise ValueError(msg)
             for i in range(nk):
                 params, applicability = get_tab1_record(file_obj)
                 dist = UncorrelatedAngleEnergy()
@@ -498,12 +567,8 @@ def _get_fission_products_endf(ev):
                     elif np.all(applicability.y == applicability.y[0]):
                         yield_.coef[0] *= applicability.y[0]
                     else:
-                        msg = (
-                            "Total delayed neutron yield and delayed group "
-                            "probability are both energy-dependent."
-                        )
-                        raise NotImplementedError(
-                            msg)
+                        msg = "Total delayed neutron yield and delayed group " "probability are both energy-dependent."
+                        raise NotImplementedError(msg)
 
                 delayed_neutron.distribution.append(dist)
 
@@ -532,7 +597,7 @@ def _get_activation_products(ev, rx):
     # decay sublibrary
     items = get_head_record(file_obj)
     n_states = items[4]
-    decay_sublib = (items[5] == 1)
+    decay_sublib = items[5] == 1
 
     # Determine if file 9/10 are present
     present = {9: False, 10: False}
@@ -611,8 +676,7 @@ def _get_photon_products_ace(ace, rx):
 
     """
     n_photon_reactions = ace.nxs[6]
-    photon_mts = ace.xss[ace.jxs[13]:ace.jxs[13] +
-                         n_photon_reactions].astype(int)
+    photon_mts = ace.xss[ace.jxs[13] : ace.jxs[13] + n_photon_reactions].astype(int)
 
     photons = []
     for i in range(n_photon_reactions):
@@ -647,13 +711,12 @@ def _get_photon_products_ace(ace, rx):
             # Energy grid index at which data starts
             threshold_idx = int(ace.xss[idx]) - 1
             n_energy = int(ace.xss[idx + 1])
-            energy = ace.xss[ace.jxs[1] + threshold_idx:
-                             ace.jxs[1] + threshold_idx + n_energy]*EV_PER_MEV
+            energy = ace.xss[ace.jxs[1] + threshold_idx : ace.jxs[1] + threshold_idx + n_energy] * EV_PER_MEV
 
             # Get photon production cross section
-            photon_prod_xs = ace.xss[idx + 2:idx + 2 + n_energy]
+            photon_prod_xs = ace.xss[idx + 2 : idx + 2 + n_energy]
             neutron_xs = next(iter(rx.xs.values()))(energy)
-            idx = np.where(neutron_xs > 0.)
+            idx = np.where(neutron_xs > 0.0)
 
             # Calculate photon yield
             yield_ = np.zeros_like(photon_prod_xs)
@@ -679,9 +742,8 @@ def _get_photon_products_ace(ace, rx):
             # No angular distribution data are given for this reaction,
             # isotropic scattering is asssumed in LAB
             energy = np.array([photon.yield_.x[0], photon.yield_.x[-1]])
-            mu_isotropic = Uniform(-1., 1.)
-            distribution.angle = AngleDistribution(
-                energy, [mu_isotropic, mu_isotropic])
+            mu_isotropic = Uniform(-1.0, 1.0)
+            distribution.angle = AngleDistribution(energy, [mu_isotropic, mu_isotropic])
         else:
             distribution.angle = AngleDistribution.from_ace(ace, ace.jxs[17], loc)
 
@@ -736,8 +798,7 @@ def _get_photon_products_endf(ev, rx):
                 elif law == 2:
                     energy = items[0]
                     primary_flag = items[2]
-                    dist.energy = DiscretePhoton(primary_flag, energy,
-                                                 ev.target["mass"])
+                    dist.energy = DiscretePhoton(primary_flag, energy, ev.target["mass"])
 
                 photon.distribution.append(dist)
                 products.append(photon)
@@ -754,12 +815,11 @@ def _get_photon_products_endf(ev, rx):
             # Get transition data
             items, values = get_list_record(file_obj)
             transition["energy_start"] = items[0]
-            transition["energies"] = np.array(values[::lg + 1])
-            transition["direct_probability"] = np.array(values[1::lg + 1])
+            transition["energies"] = np.array(values[:: lg + 1])
+            transition["direct_probability"] = np.array(values[1 :: lg + 1])
             if lg == 2:
                 # Complex case
-                transition["conditional_probability"] = np.array(
-                    values[2::lg + 1])
+                transition["conditional_probability"] = np.array(values[2 :: lg + 1])
 
     elif (13, rx.mt) in ev.section:
         file_obj = StringIO(ev.section[13, rx.mt])
@@ -794,8 +854,7 @@ def _get_photon_products_endf(ev, rx):
             elif law == 2:
                 energy = items[1]
                 primary_flag = items[2]
-                dist.energy = DiscretePhoton(primary_flag, energy,
-                                             ev.target["mass"])
+                dist.energy = DiscretePhoton(primary_flag, energy, ev.target["mass"])
 
             photon.distribution.append(dist)
             products.append(photon)
@@ -842,7 +901,7 @@ class Reaction(EqualityMixin):
     def __init__(self, mt) -> None:
         self._center_of_mass = True
         self._redundant = False
-        self._q_value = 0.
+        self._q_value = 0.0
         self._xs = {}
         self._products = []
         self._derived_products = []
@@ -896,8 +955,7 @@ class Reaction(EqualityMixin):
 
     @derived_products.setter
     def derived_products(self, derived_products) -> None:
-        cv.check_type("reaction derived products", derived_products,
-                      Iterable, Product)
+        cv.check_type("reaction derived products", derived_products, Iterable, Product)
         self._derived_products = derived_products
 
     @property
@@ -973,8 +1031,7 @@ class Reaction(EqualityMixin):
                         f"at T={T} because no corresponding energy grid "
                         "exists."
                     )
-                    raise ValueError(
-                        msg)
+                    raise ValueError(msg)
                 xs = Tgroup["xs"][()]
                 threshold_idx = Tgroup["xs"].attrs["threshold_idx"]
                 tabulated_xs = Tabulated1D(energy[T][threshold_idx:], xs)
@@ -998,18 +1055,18 @@ class Reaction(EqualityMixin):
     def from_ace(cls, ace, i_reaction):
         # Get nuclide energy grid
         n_grid = ace.nxs[3]
-        grid = ace.xss[ace.jxs[1]:ace.jxs[1] + n_grid]*EV_PER_MEV
+        grid = ace.xss[ace.jxs[1] : ace.jxs[1] + n_grid] * EV_PER_MEV
 
         # Convert data temperature to a "300.0K" number for indexing
         # temperature data
-        strT = str(int(round(ace.temperature*EV_PER_MEV / K_BOLTZMANN))) + "K"
+        strT = str(int(round(ace.temperature * EV_PER_MEV / K_BOLTZMANN))) + "K"
 
         if i_reaction > 0:
             mt = int(ace.xss[ace.jxs[3] + i_reaction - 1])
             rx = cls(mt)
 
             # Get Q-value of reaction
-            rx.q_value = ace.xss[ace.jxs[4] + i_reaction - 1]*EV_PER_MEV
+            rx.q_value = ace.xss[ace.jxs[4] + i_reaction - 1] * EV_PER_MEV
 
             # ==================================================================
             # CROSS SECTION
@@ -1022,10 +1079,10 @@ class Reaction(EqualityMixin):
 
             # Determine number of energies in reaction
             n_energy = int(ace.xss[ace.jxs[7] + loc])
-            energy = grid[threshold_idx:threshold_idx + n_energy]
+            energy = grid[threshold_idx : threshold_idx + n_energy]
 
             # Read reaction cross section
-            xs = ace.xss[ace.jxs[7] + loc + 1:ace.jxs[7] + loc + 1 + n_energy]
+            xs = ace.xss[ace.jxs[7] + loc + 1 : ace.jxs[7] + loc + 1 + n_energy]
 
             # For damage energy production, convert to eV
             if mt == 444:
@@ -1033,8 +1090,7 @@ class Reaction(EqualityMixin):
 
             # Fix negatives -- known issue for Y89 in JEFF 3.2
             if np.any(xs < 0.0):
-                warn(f"Negative cross sections found for MT={rx.mt} in {ace.name}. Setting "
-                     "to zero.")
+                warn(f"Negative cross sections found for MT={rx.mt} in {ace.name}. Setting " "to zero.")
                 xs[xs < 0.0] = 0.0
 
             tabulated_xs = Tabulated1D(energy, xs)
@@ -1046,7 +1102,7 @@ class Reaction(EqualityMixin):
 
             # Determine multiplicity
             ty = int(ace.xss[ace.jxs[5] + i_reaction - 1])
-            rx.center_of_mass = (ty < 0)
+            rx.center_of_mass = ty < 0
             if i_reaction < ace.nxs[5] + 1:
                 if ty != 19:
                     if abs(ty) > 100:
@@ -1076,12 +1132,10 @@ class Reaction(EqualityMixin):
                 lnw = int(ace.xss[ace.jxs[10] + i_reaction - 1])
                 while lnw > 0:
                     # Applicability of this distribution
-                    neutron.applicability.append(Tabulated1D.from_ace(
-                        ace, ace.jxs[11] + lnw + 2))
+                    neutron.applicability.append(Tabulated1D.from_ace(ace, ace.jxs[11] + lnw + 2))
 
                     # Read energy distribution data
-                    neutron.distribution.append(AngleEnergy.from_ace(
-                        ace, ace.jxs[11], lnw, rx))
+                    neutron.distribution.append(AngleEnergy.from_ace(ace, ace.jxs[11], lnw, rx))
 
                     lnw = int(ace.xss[ace.jxs[11] + lnw - 1])
 
@@ -1091,12 +1145,11 @@ class Reaction(EqualityMixin):
             rx = cls(mt)
 
             # Get elastic cross section values
-            elastic_xs = ace.xss[ace.jxs[1] + 3*n_grid:ace.jxs[1] + 4*n_grid]
+            elastic_xs = ace.xss[ace.jxs[1] + 3 * n_grid : ace.jxs[1] + 4 * n_grid]
 
             # Fix negatives -- known issue for Ti46,49,50 in JEFF 3.2
             if np.any(elastic_xs < 0.0):
-                warn(f"Negative elastic scattering cross section found for {ace.name}. "
-                     "Setting to zero.")
+                warn(f"Negative elastic scattering cross section found for {ace.name}. " "Setting to zero.")
                 elastic_xs[elastic_xs < 0.0] = 0.0
 
             tabulated_xs = Tabulated1D(grid, elastic_xs)
@@ -1121,7 +1174,7 @@ class Reaction(EqualityMixin):
             elif loc == 0:
                 # Angular distribution is isotropic
                 energy = [0.0, grid[-1]]
-                mu = Uniform(-1., 1.)
+                mu = Uniform(-1.0, 1.0)
                 angle_dist = AngleDistribution(energy, [mu, mu])
             else:
                 angle_dist = AngleDistribution.from_ace(ace, ace.jxs[9], loc)
@@ -1208,8 +1261,8 @@ class Reaction(EqualityMixin):
                 dist = UncorrelatedAngleEnergy()
 
                 A = ev.target["mass"]
-                threshold = (A + 1.)/A*abs(rx.q_value)
-                mass_ratio = (A/(A + 1.))**2
+                threshold = (A + 1.0) / A * abs(rx.q_value)
+                mass_ratio = (A / (A + 1.0)) ** 2
                 dist.energy = LevelInelastic(threshold, mass_ratio)
 
                 neutron.distribution.append(dist)

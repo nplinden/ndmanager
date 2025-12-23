@@ -10,9 +10,15 @@ from .endf import Evaluation, get_cont_record, get_list_record, get_tab1_record
 from .function import Function1D, Polynomial, Tabulated1D, sum_functions
 
 _NAMES = (
-    "fragments", "prompt_neutrons", "delayed_neutrons",
-    "prompt_photons", "delayed_photons", "betas",
-    "neutrinos", "recoverable", "total",
+    "fragments",
+    "prompt_neutrons",
+    "delayed_neutrons",
+    "prompt_photons",
+    "delayed_photons",
+    "betas",
+    "neutrinos",
+    "recoverable",
+    "total",
 )
 
 
@@ -87,8 +93,9 @@ class FissionEnergyRelease(EqualityMixin):
 
     """
 
-    def __init__(self, fragments, prompt_neutrons, delayed_neutrons,
-                 prompt_photons, delayed_photons, betas, neutrinos) -> None:
+    def __init__(
+        self, fragments, prompt_neutrons, delayed_neutrons, prompt_photons, delayed_photons, betas, neutrinos
+    ) -> None:
         self.fragments = fragments
         self.prompt_neutrons = prompt_neutrons
         self.delayed_neutrons = delayed_neutrons
@@ -162,22 +169,26 @@ class FissionEnergyRelease(EqualityMixin):
 
     @property
     def recoverable(self):
-        components = ["fragments", "prompt_neutrons", "delayed_neutrons",
-                      "prompt_photons", "delayed_photons", "betas"]
+        components = ["fragments", "prompt_neutrons", "delayed_neutrons", "prompt_photons", "delayed_photons", "betas"]
         return sum_functions(getattr(self, c) for c in components)
 
     @property
     def total(self):
-        components = ["fragments", "prompt_neutrons", "delayed_neutrons",
-                      "prompt_photons", "delayed_photons", "betas",
-                      "neutrinos"]
+        components = [
+            "fragments",
+            "prompt_neutrons",
+            "delayed_neutrons",
+            "prompt_photons",
+            "delayed_photons",
+            "betas",
+            "neutrinos",
+        ]
         return sum_functions(getattr(self, c) for c in components)
 
     @property
     def q_prompt(self):
         # Use a polynomial to subtract incident energy.
-        funcs = [self.fragments, self.prompt_neutrons, self.prompt_photons,
-                 Polynomial((0.0, -1.0))]
+        funcs = [self.fragments, self.prompt_neutrons, self.prompt_photons, Polynomial((0.0, -1.0))]
         return sum_functions(funcs)
 
     @property
@@ -211,22 +222,13 @@ class FissionEnergyRelease(EqualityMixin):
 
         # Check to make sure this ENDF file matches the expected isomer.
         if ev.target["atomic_number"] != incident_neutron.atomic_number:
-            msg = (
-                "The atomic number of the ENDF evaluation does "
-                             "not match the given IncidentNeutron."
-            )
+            msg = "The atomic number of the ENDF evaluation does " "not match the given IncidentNeutron."
             raise ValueError(msg)
         if ev.target["mass_number"] != incident_neutron.mass_number:
-            msg = (
-                "The atomic mass of the ENDF evaluation does "
-                             "not match the given IncidentNeutron."
-            )
+            msg = "The atomic mass of the ENDF evaluation does " "not match the given IncidentNeutron."
             raise ValueError(msg)
         if ev.target["isomeric_state"] != incident_neutron.metastable:
-            msg = (
-                "The metastable state of the ENDF evaluation "
-                             "does not match the given IncidentNeutron."
-            )
+            msg = "The metastable state of the ENDF evaluation " "does not match the given IncidentNeutron."
             raise ValueError(msg)
         if not ev.target["fissionable"]:
             msg = "The ENDF evaluation is not fissionable."
@@ -251,7 +253,7 @@ class FissionEnergyRelease(EqualityMixin):
         # Associate each set of values and uncertainties with its label.
         functions = {}
         for i, name in enumerate(_NAMES):
-            coeffs = data[2*i::18]
+            coeffs = data[2 * i :: 18]
 
             # Ignore recoverable and total since we recalculate those directly
             if name in ("recoverable", "total"):
@@ -264,7 +266,7 @@ class FissionEnergyRelease(EqualityMixin):
                 # If a 5 MeV neutron causes a change of more than 100 MeV, we
                 # know something is wrong.
                 second_order = coeffs[2]
-                if abs(second_order) * (5e6)**2 > 1e8:
+                if abs(second_order) * (5e6) ** 2 > 1e8:
                     # If we found the error, reduce 2nd-order coeff by 10**6.
                     coeffs[2] /= EV_PER_MEV
 
@@ -288,24 +290,22 @@ class FissionEnergyRelease(EqualityMixin):
                 # is negligible. MT=18 (n, fission) might not be available so
                 # try MT=19 (n, f) as well.
                 if 18 in incident_neutron and not incident_neutron[18].redundant:
-                    nu = [p.yield_ for p in incident_neutron[18].products
-                          if p.particle == "neutron"
-                          and p.emission_mode in ("prompt", "total")]
+                    nu = [
+                        p.yield_
+                        for p in incident_neutron[18].products
+                        if p.particle == "neutron" and p.emission_mode in ("prompt", "total")
+                    ]
                 elif 19 in incident_neutron:
-                    nu = [p.yield_ for p in incident_neutron[19].products
-                          if p.particle == "neutron"
-                          and p.emission_mode in ("prompt", "total")]
+                    nu = [
+                        p.yield_
+                        for p in incident_neutron[19].products
+                        if p.particle == "neutron" and p.emission_mode in ("prompt", "total")
+                    ]
                 else:
-                    msg = (
-                        "IncidentNeutron data has no fission "
-                                     "reaction."
-                    )
+                    msg = "IncidentNeutron data has no fission " "reaction."
                     raise ValueError(msg)
                 if len(nu) == 0:
-                    msg = (
-                        "Nu data is needed to compute fission energy "
-                        "release with the Sher-Beck format."
-                    )
+                    msg = "Nu data is needed to compute fission energy " "release with the Sher-Beck format."
                     raise ValueError(
                         msg,
                     )
@@ -317,15 +317,15 @@ class FissionEnergyRelease(EqualityMixin):
                 if isinstance(nu, Tabulated1D):
                     # Evaluate Sher-Beck polynomial form at each tabulated value
                     func = deepcopy(nu)
-                    func.y = (zeroth_order + 1.307*nu.x - 8.07e6*(nu.y - nu.y[0]))
+                    func.y = zeroth_order + 1.307 * nu.x - 8.07e6 * (nu.y - nu.y[0])
                 elif isinstance(nu, Polynomial):
                     # Combine polynomials
                     if len(nu) == 1:
                         func = Polynomial([zeroth_order, 1.307])
                     else:
                         func = Polynomial(
-                            [zeroth_order, 1.307 - 8.07e6*nu.coef[1]]
-                            + [-8.07e6*c for c in nu.coef[2:]])
+                            [zeroth_order, 1.307 - 8.07e6 * nu.coef[1]] + [-8.07e6 * c for c in nu.coef[2:]]
+                        )
             else:
                 func = Polynomial(coeffs)
 
@@ -370,8 +370,7 @@ class FissionEnergyRelease(EqualityMixin):
         betas = Function1D.from_hdf5(group["betas"])
         neutrinos = Function1D.from_hdf5(group["neutrinos"])
 
-        return cls(fragments, prompt_neutrons, delayed_neutrons, prompt_photons,
-                   delayed_photons, betas, neutrinos)
+        return cls(fragments, prompt_neutrons, delayed_neutrons, prompt_photons, delayed_photons, betas, neutrinos)
 
     def to_hdf5(self, group) -> None:
         """Write energy release data to an HDF5 group.

@@ -59,8 +59,7 @@ class Product(EqualityMixin):
 
     @applicability.setter
     def applicability(self, applicability) -> None:
-        cv.check_type("product distribution applicability", applicability,
-                      Iterable, Tabulated1D)
+        cv.check_type("product distribution applicability", applicability, Iterable, Tabulated1D)
         self._applicability = applicability
 
     @property
@@ -79,8 +78,7 @@ class Product(EqualityMixin):
 
     @distribution.setter
     def distribution(self, distribution) -> None:
-        cv.check_type("product angle-energy distribution", distribution,
-                      Iterable, AngleEnergy)
+        cv.check_type("product angle-energy distribution", distribution, Iterable, AngleEnergy)
         self._distribution = distribution
 
     @property
@@ -89,8 +87,7 @@ class Product(EqualityMixin):
 
     @emission_mode.setter
     def emission_mode(self, emission_mode) -> None:
-        cv.check_value("product emission mode", emission_mode,
-                       ("prompt", "delayed", "total"))
+        cv.check_value("product emission mode", emission_mode, ("prompt", "delayed", "total"))
         self._emission_mode = emission_mode
 
     @property
@@ -168,8 +165,7 @@ class Product(EqualityMixin):
         for i in range(n_distribution):
             dgroup = group[f"distribution_{i}"]
             if "applicability" in dgroup:
-                applicability.append(Tabulated1D.from_hdf5(
-                    dgroup["applicability"]))
+                applicability.append(Tabulated1D.from_hdf5(dgroup["applicability"]))
             distribution.append(AngleEnergy.from_hdf5(dgroup))
 
         p.distribution = distribution

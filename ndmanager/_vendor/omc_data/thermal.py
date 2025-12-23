@@ -189,8 +189,7 @@ def get_thermal_name(name):
 
     # First, construct a list of all the values/keys in the names
     # dictionary
-    all_names = itertools.chain(_THERMAL_NAMES.keys(),
-                                *_THERMAL_NAMES.values())
+    all_names = itertools.chain(_THERMAL_NAMES.keys(), *_THERMAL_NAMES.values())
 
     matches = get_close_matches(name, all_names, cutoff=0.5)
     if matches:
@@ -202,12 +201,10 @@ def get_thermal_name(name):
                     match = key
                     break
 
-        warn(f'Thermal scattering material "{name}" is not recognized. '
-             f'Assigning a name of {match}.')
+        warn(f'Thermal scattering material "{name}" is not recognized. ' f"Assigning a name of {match}.")
         return match
     # OK, we give up. Just use the ACE name.
-    warn(f'Thermal scattering material "{name}" is not recognized. '
-         f'Assigning a name of c_{name}.')
+    warn(f'Thermal scattering material "{name}" is not recognized. ' f"Assigning a name of c_{name}.")
     return "c_" + name
 
 
@@ -271,8 +268,7 @@ class CoherentElastic(Function1D):
 
     @factors.setter
     def factors(self, factors) -> None:
-        cv.check_type("structure factor cumulative sums", factors,
-                      Iterable, Real)
+        cv.check_type("structure factor cumulative sums", factors, Iterable, Real)
         self._factors = np.asarray(factors)
 
     def to_hdf5(self, group, name) -> None:
@@ -286,8 +282,7 @@ class CoherentElastic(Function1D):
             Name of the dataset to create
 
         """
-        dataset = group.create_dataset(name, data=np.vstack(
-            [self.bragg_edges, self.factors]))
+        dataset = group.create_dataset(name, data=np.vstack([self.bragg_edges, self.factors]))
         dataset.attrs["type"] = np.bytes_(type(self).__name__)
 
     @classmethod
@@ -347,7 +342,7 @@ class IncoherentElastic(Function1D):
 
     def __call__(self, E):
         W = self.debye_waller
-        return self.bound_xs / 2.0 * (1 - np.exp(-4*E*W)) / (2*E*W)
+        return self.bound_xs / 2.0 * (1 - np.exp(-4 * E * W)) / (2 * E * W)
 
     def to_hdf5(self, group, name) -> None:
         """Write incoherent elastic scattering to an HDF5 group.
@@ -626,8 +621,7 @@ class ThermalScattering(EqualityMixin):
                         "installation of the OpenMC Python API expects version "
                         f"{HDF5_VERSION_MAJOR}.x."
                     )
-                    raise OSError(
-                        msg)
+                    raise OSError(msg)
             else:
                 msg = (
                     "HDF5 data does not indicate a version. Your installation of "
@@ -635,7 +629,7 @@ class ThermalScattering(EqualityMixin):
                 )
                 raise OSError(
                     msg,
-                    )
+                )
 
             group = next(iter(h5file.values()))
 
@@ -651,12 +645,16 @@ class ThermalScattering(EqualityMixin):
         # Read thermal elastic scattering
         if "elastic" in group[table.temperatures[0]]:
             table.elastic = ThermalScatteringReaction.from_hdf5(
-                group, "elastic", table.temperatures,
+                group,
+                "elastic",
+                table.temperatures,
             )
 
         # Read thermal inelastic scattering
         table.inelastic = ThermalScatteringReaction.from_hdf5(
-            group, "inelastic", table.temperatures,
+            group,
+            "inelastic",
+            table.temperatures,
         )
 
         return table
@@ -692,49 +690,44 @@ class ThermalScattering(EqualityMixin):
             name = get_thermal_name(ace_name)
 
         # Assign temperature to the running list
-        kTs = [ace.temperature*EV_PER_MEV]
+        kTs = [ace.temperature * EV_PER_MEV]
 
         # Incoherent inelastic scattering cross section
         idx = ace.jxs[1]
         n_energy = int(ace.xss[idx])
-        energy = ace.xss[idx+1 : idx+1+n_energy]*EV_PER_MEV
-        xs = ace.xss[idx+1+n_energy : idx+1+2*n_energy]
+        energy = ace.xss[idx + 1 : idx + 1 + n_energy] * EV_PER_MEV
+        xs = ace.xss[idx + 1 + n_energy : idx + 1 + 2 * n_energy]
         inelastic_xs = Tabulated1D(energy, xs)
         energy_max = energy[-1]
 
         # Incoherent inelastic angle-energy distribution
-        continuous = (ace.nxs[7] == 2)
+        continuous = ace.nxs[7] == 2
         n_energy_out = ace.nxs[4]
         if not continuous:
             n_mu = ace.nxs[3]
             idx = ace.jxs[3]
-            energy_out = ace.xss[idx:idx + n_energy * n_energy_out *
-                (n_mu + 2): n_mu + 2]*EV_PER_MEV
+            energy_out = ace.xss[idx : idx + n_energy * n_energy_out * (n_mu + 2) : n_mu + 2] * EV_PER_MEV
             energy_out.shape = (n_energy, n_energy_out)
 
-            mu_out = ace.xss[idx:idx + n_energy * n_energy_out * (n_mu + 2)]
-            mu_out.shape = (n_energy, n_energy_out, n_mu+2)
+            mu_out = ace.xss[idx : idx + n_energy * n_energy_out * (n_mu + 2)]
+            mu_out.shape = (n_energy, n_energy_out, n_mu + 2)
             mu_out = mu_out[:, :, 1:]
-            skewed = (ace.nxs[7] == 1)
+            skewed = ace.nxs[7] == 1
             distribution = IncoherentInelasticAEDiscrete(energy_out, mu_out, skewed)
         else:
             n_mu = ace.nxs[3] - 1
             idx = ace.jxs[3]
-            locc = ace.xss[idx:idx + n_energy].astype(int)
-            n_energy_out = \
-                ace.xss[idx + n_energy:idx + 2 * n_energy].astype(int)
+            locc = ace.xss[idx : idx + n_energy].astype(int)
+            n_energy_out = ace.xss[idx + n_energy : idx + 2 * n_energy].astype(int)
             energy_out = []
             mu_out = []
             for i in range(n_energy):
                 idx = locc[i]
 
                 # Outgoing energy distribution for incoming energy i
-                e = ace.xss[idx + 1:idx + 1 + n_energy_out[i]*(n_mu + 3):
-                            n_mu + 3]*EV_PER_MEV
-                p = ace.xss[idx + 2:idx + 2 + n_energy_out[i]*(n_mu + 3):
-                            n_mu + 3]/EV_PER_MEV
-                c = ace.xss[idx + 3:idx + 3 + n_energy_out[i]*(n_mu + 3):
-                            n_mu + 3]
+                e = ace.xss[idx + 1 : idx + 1 + n_energy_out[i] * (n_mu + 3) : n_mu + 3] * EV_PER_MEV
+                p = ace.xss[idx + 2 : idx + 2 + n_energy_out[i] * (n_mu + 3) : n_mu + 3] / EV_PER_MEV
+                c = ace.xss[idx + 3 : idx + 3 + n_energy_out[i] * (n_mu + 3) : n_mu + 3]
                 eout_i = Tabular(e, p, "linear-linear", ignore_negative=True)
                 eout_i.c = c
 
@@ -742,7 +735,7 @@ class ThermalScattering(EqualityMixin):
                 # (incoming, outgoing) energy pair
                 mu_i = []
                 for j in range(n_energy_out[i]):
-                    mu = ace.xss[idx + 4:idx + 4 + n_mu]
+                    mu = ace.xss[idx + 4 : idx + 4 + n_mu]
                     # The equiprobable angles produced by NJOY are not always
                     # sorted. This is problematic when the smearing algorithm
                     # is applied when sampling the angles. We sort the angles
@@ -753,12 +746,14 @@ class ThermalScattering(EqualityMixin):
                     # Older versions of NJOY had a bug, and the discrete
                     # scattering angles could sometimes be less than -1 or
                     # greater than 1. We check for this here, and warn users.
-                    if mu[0] < -1. or mu[-1] > 1.:
-                        warn("S(a,b) scattering angle for incident energy index "
-                             f"{i} and exit energy index {j} outside of the "
-                             "interval [-1, 1].")
+                    if mu[0] < -1.0 or mu[-1] > 1.0:
+                        warn(
+                            "S(a,b) scattering angle for incident energy index "
+                            f"{i} and exit energy index {j} outside of the "
+                            "interval [-1, 1]."
+                        )
 
-                    p_mu = 1. / n_mu * np.ones(n_mu)
+                    p_mu = 1.0 / n_mu * np.ones(n_mu)
                     mu_ij = Discrete(mu, p_mu)
                     mu_ij.c = np.cumsum(p_mu)
                     mu_i.append(mu_ij)
@@ -770,16 +765,16 @@ class ThermalScattering(EqualityMixin):
                 # the outgoing energy. From Eq. 7.6 of the ENDF manual, we can
                 # add an outgoing energy 0 eV that has a PDF of 0 (and of
                 # course, a CDF of 0 as well).
-                if eout_i.c[0] > 0.:
-                    eout_i._x = np.insert(eout_i.x, 0, 0.)
-                    eout_i._p = np.insert(eout_i.p, 0, 0.)
-                    eout_i.c = np.insert(eout_i.c, 0, 0.)
+                if eout_i.c[0] > 0.0:
+                    eout_i._x = np.insert(eout_i.x, 0, 0.0)
+                    eout_i._p = np.insert(eout_i.p, 0, 0.0)
+                    eout_i.c = np.insert(eout_i.c, 0, 0.0)
 
                     # For this added outgoing energy (of 0 eV) we add a set of
                     # isotropic discrete angles.
-                    dmu = 2. / n_mu
-                    mu = np.linspace(-1. + 0.5*dmu, 1. - 0.5*dmu, n_mu)
-                    p_mu = 1. / n_mu * np.ones(n_mu)
+                    dmu = 2.0 / n_mu
+                    mu = np.linspace(-1.0 + 0.5 * dmu, 1.0 - 0.5 * dmu, n_mu)
+                    p_mu = 1.0 / n_mu * np.ones(n_mu)
                     mu_0 = Discrete(mu, p_mu)
                     mu_0.c = np.cumsum(p_mu)
                     mu_i.insert(0, mu_0)
@@ -794,13 +789,13 @@ class ThermalScattering(EqualityMixin):
             breakpoints = [n_energy]
             interpolation = [2]
             energy = inelastic_xs.x
-            distribution = IncoherentInelasticAE(
-                breakpoints, interpolation, energy, energy_out, mu_out)
+            distribution = IncoherentInelasticAE(breakpoints, interpolation, energy, energy_out, mu_out)
 
         table = cls(name, ace.atomic_weight_ratio, energy_max, kTs)
         T = table.temperatures[0]
         table.inelastic = ThermalScatteringReaction(
-            {T: inelastic_xs}, {T: distribution},
+            {T: inelastic_xs},
+            {T: distribution},
         )
 
         # Incoherent/coherent elastic scattering cross section
@@ -809,9 +804,9 @@ class ThermalScattering(EqualityMixin):
             if ace.nxs[5] in (4, 5):
                 # Coherent elastic
                 n_energy = int(ace.xss[idx])
-                energy = ace.xss[idx + 1: idx + 1 + n_energy]*EV_PER_MEV
-                P = ace.xss[idx + 1 + n_energy: idx + 1 + 2 * n_energy]
-                coherent_xs = CoherentElastic(energy, P*EV_PER_MEV)
+                energy = ace.xss[idx + 1 : idx + 1 + n_energy] * EV_PER_MEV
+                P = ace.xss[idx + 1 + n_energy : idx + 1 + 2 * n_energy]
+                coherent_xs = CoherentElastic(energy, P * EV_PER_MEV)
                 coherent_dist = CoherentElasticAE(coherent_xs)
 
                 # Coherent elastic shouldn't have angular distributions listed
@@ -821,13 +816,13 @@ class ThermalScattering(EqualityMixin):
             if ace.nxs[5] in (3, 5):
                 # Incoherent elastic scattering -- first determine if both
                 # incoherent and coherent are present (mixed)
-                mixed = (ace.nxs[5] == 5)
+                mixed = ace.nxs[5] == 5
 
                 # Get cross section values
                 idx = ace.jxs[7] if mixed else ace.jxs[4]
                 n_energy = int(ace.xss[idx])
-                energy = ace.xss[idx + 1: idx + 1 + n_energy]*EV_PER_MEV
-                values = ace.xss[idx + 1 + n_energy: idx + 1 + 2 * n_energy]
+                energy = ace.xss[idx + 1 : idx + 1 + n_energy] * EV_PER_MEV
+                values = ace.xss[idx + 1 + n_energy : idx + 1 + 2 * n_energy]
 
                 incoherent_xs = Tabulated1D(energy, values)
 
@@ -835,7 +830,7 @@ class ThermalScattering(EqualityMixin):
                 n_mu = (ace.nxs[8] if mixed else ace.nxs[6]) + 1
                 assert n_mu > 0
                 idx = ace.jxs[9] if mixed else ace.jxs[6]
-                mu_out = ace.xss[idx:idx + n_energy * n_mu]
+                mu_out = ace.xss[idx : idx + n_energy * n_mu]
                 mu_out.shape = (n_energy, n_mu)
                 incoherent_dist = IncoherentElasticAEDiscrete(mu_out)
 
@@ -875,9 +870,17 @@ class ThermalScattering(EqualityMixin):
         return table
 
     @classmethod
-    def from_njoy(cls, filename, filename_thermal, temperatures=None,
-                  evaluation=None, evaluation_thermal=None,
-                  use_endf_data=True, divide_incoherent_elastic=False, **kwargs):
+    def from_njoy(
+        cls,
+        filename,
+        filename_thermal,
+        temperatures=None,
+        evaluation=None,
+        evaluation_thermal=None,
+        use_endf_data=True,
+        divide_incoherent_elastic=False,
+        **kwargs,
+    ):
         """Generate thermal scattering data by running NJOY.
 
         Parameters
@@ -991,10 +994,10 @@ class ThermalScattering(EqualityMixin):
         data["non_principal"] = []
         NonPrincipal = namedtuple("NonPrincipal", ["func", "xs", "A", "M"])
         for i in range(1, n_non_principal + 1):
-            func = {0.0: "SCT", 1.0: "free gas", 2.0: "diffusive"}[B[6*i]]
-            xs = B[6*i + 1]
-            A = B[6*i + 2]
-            M = B[6*i + 5]
+            func = {0.0: "SCT", 1.0: "free gas", 2.0: "diffusive"}[B[6 * i]]
+            xs = B[6 * i + 1]
+            A = B[6 * i + 2]
+            M = B[6 * i + 5]
             data["non_principal"].append(NonPrincipal(func, xs, A, M))
 
         # Get S(alpha,beta,T)
@@ -1052,10 +1055,10 @@ class ThermalScattering(EqualityMixin):
 
             def get_incoherent_elastic(file_obj, natom):
                 params, W = endf.get_tab1_record(file_obj)
-                bound_xs = params[0]/natom
+                bound_xs = params[0] / natom
 
                 # Check whether divide_incoherent_elastic was applied correctly
-                if abs(free_xs - bound_xs/(1 + 1/data["A0"])**2) > 0.5:
+                if abs(free_xs - bound_xs / (1 + 1 / data["A0"]) ** 2) > 0.5:
                     if divide_incoherent_elastic:
                         msg = (
                             "Thermal scattering evaluation follows ENDF-6 "

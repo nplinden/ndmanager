@@ -19,7 +19,8 @@ class NdoCloneCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "clone", help="Clone an installed OpenMC library",
+            "clone",
+            help="Clone an installed OpenMC library",
         )
         parser.add_argument(
             "source",

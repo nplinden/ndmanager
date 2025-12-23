@@ -19,7 +19,8 @@ class NdoRemoveCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "remove", help="Remove one or more OpenMC libraries",
+            "remove",
+            help="Remove one or more OpenMC libraries",
         )
         parser.add_argument(
             "library",

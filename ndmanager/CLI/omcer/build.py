@@ -21,7 +21,8 @@ class NdoBuildCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "build", help="Build an OpenMC library from a YAML input file",
+            "build",
+            help="Build an OpenMC library from a YAML input file",
         )
         parser.add_argument(
             "filename",
@@ -29,10 +30,14 @@ class NdoBuildCommand(Command):
             help="The name of the YAML file describing the target library",
         )
         parser.add_argument(
-            "--dryrun", help="Do not perform NJOY runs", action="store_true",
+            "--dryrun",
+            help="Do not perform NJOY runs",
+            action="store_true",
         )
         parser.add_argument(
-            "--clean", help="Remove the library before building", action="store_true",
+            "--clean",
+            help="Remove the library before building",
+            action="store_true",
         )
         parser.add_argument(
             "--temperatures",
@@ -43,7 +48,10 @@ class NdoBuildCommand(Command):
             default=None,
         )
         parser.add_argument(
-            "-j", type=int, default=1, help="Number of concurent processes",
+            "-j",
+            type=int,
+            default=1,
+            help="Number of concurent processes",
         )
         parser.set_defaults(func=cls)
 

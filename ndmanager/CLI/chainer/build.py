@@ -110,7 +110,8 @@ class NdcBuildCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "build", help="Build an OpenMC depletion chain from a YAML input file",
+            "build",
+            help="Build an OpenMC depletion chain from a YAML input file",
         )
         parser.add_argument(
             "filename",
@@ -142,18 +143,16 @@ class NdcBuildCommand(Command):
 
         chain = Chain.from_endf(decay, nfpy, n, REACTIONS)
         if hl > 0.0:
-            tokeep = [
-                nuc.name
-                for nuc in chain.nuclides
-                if nuc.half_life is None or nuc.half_life > hl
-            ]
+            tokeep = [nuc.name for nuc in chain.nuclides if nuc.half_life is None or nuc.half_life > hl]
             chain = chain.reduce(tokeep)
 
         if "branching_ratios" in inputs:
             ratios = branching_ratios[inputs["branching_ratios"]]
             for reaction, br in ratios.items():
                 chain.set_branch_ratios(
-                    branch_ratios=br, reaction=reaction, strict=False,
+                    branch_ratios=br,
+                    reaction=reaction,
+                    strict=False,
                 )
 
         chain.export_to_xml(target)

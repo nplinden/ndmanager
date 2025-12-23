@@ -41,8 +41,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     @angle.setter
     def angle(self, angle) -> None:
-        cv.check_type("uncorrelated angle distribution", angle,
-                      AngleDistribution)
+        cv.check_type("uncorrelated angle distribution", angle, AngleDistribution)
         self._angle = angle
 
     @property
@@ -51,8 +50,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     @energy.setter
     def energy(self, energy) -> None:
-        cv.check_type("uncorrelated energy distribution", energy,
-                      EnergyDistribution)
+        cv.check_type("uncorrelated energy distribution", energy, EnergyDistribution)
         self._energy = energy
 
     def to_hdf5(self, group) -> None:

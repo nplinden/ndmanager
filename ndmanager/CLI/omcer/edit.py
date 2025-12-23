@@ -23,7 +23,8 @@ class NdoSn301Command(Command):
 
         """
         parser = subparsers.add_parser(
-            "sn301", help="Substitute negative MT=301 cross-section in HDF5 library",
+            "sn301",
+            help="Substitute negative MT=301 cross-section in HDF5 library",
         )
         parser.add_argument("--target", "-t", type=str, help="The library to fix")
         parser.add_argument(
@@ -35,7 +36,9 @@ class NdoSn301Command(Command):
             help="List of nuclear data libraries to choose from",
         )
         parser.add_argument(
-            "--dryrun", help="Do not perform the substitution", action="store_true",
+            "--dryrun",
+            help="Do not perform the substitution",
+            action="store_true",
         )
         parser.set_defaults(func=cls)
 
@@ -141,7 +144,8 @@ def find_negative(matpath: str, mt: int) -> dict[str, dict[str, str | list[str]]
 
 
 def find_negative_in_lib(
-    libpath: str, mt: int,
+    libpath: str,
+    mt: int,
 ) -> dict[str, dict[str, str | list[str]]]:
     """Find negative cross sections in a nuclear data library xml file.
 
@@ -250,9 +254,7 @@ def replace_negatives_in_lib(
 
     """
     negatives = find_negative_in_lib(target_path, mt)
-    source_negatives = {
-        source: find_negative_in_lib(source, mt) for source in source_paths
-    }
+    source_negatives = {source: find_negative_in_lib(source, mt) for source in source_paths}
 
     for nuclide in negatives:
         found = False

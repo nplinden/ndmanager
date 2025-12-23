@@ -45,7 +45,8 @@ class HDF5Neutron(HDF5Sublibrary):
             tmpfile.unlink()
         else:
             data = IncidentNeutron.from_njoy(
-                self.neutron, temperatures=self.temperatures,
+                self.neutron,
+                temperatures=self.temperatures,
             )
             data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)

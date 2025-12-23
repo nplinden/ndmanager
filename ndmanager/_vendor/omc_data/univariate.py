@@ -134,7 +134,7 @@ def _intensity_clip(intensity: Sequence[float], tolerance: float = 1e-6) -> np.n
     index_cutoff = np.searchsorted(cumsum, 1.0 - tolerance)
 
     # Now get indices up to cutoff
-    new_indices = index_sort[:index_cutoff + 1]
+    new_indices = index_sort[: index_cutoff + 1]
 
     # Put back in the order of the original array and return
     new_indices.sort()
@@ -246,8 +246,8 @@ class Discrete(Univariate):
 
         """
         params = [float(x) for x in get_text(elem, "parameters").split()]
-        x = params[:len(params)//2]
-        p = params[len(params)//2:]
+        x = params[: len(params) // 2]
+        p = params[len(params) // 2 :]
         return cls(x, p)
 
     @classmethod
@@ -283,7 +283,7 @@ class Discrete(Univariate):
         for dist, p_dist in zip(dists, probs, strict=False):
             for x, p in zip(dist.x, dist.p, strict=False):
                 x_merged.add(x)
-                p_merged[x] += p*p_dist
+                p_merged[x] += p * p_dist
 
         # Create values and probabilities as arrays
         x_arr = np.array(sorted(x_merged))
@@ -411,9 +411,9 @@ class Uniform(Univariate):
         self._b = b
 
     def to_tabular(self):
-        prob = 1./(self.b - self.a)
+        prob = 1.0 / (self.b - self.a)
         t = Tabular([self.a, self.b], [prob, prob], "histogram")
-        t.c = [0., 1.]
+        t.c = [0.0, 1.0]
         return t
 
     def sample(self, n_samples=1, seed=None):
@@ -486,7 +486,7 @@ class PowerLaw(Univariate):
 
     """
 
-    def __init__(self, a: float = 0.0, b: float = 1.0, n: float = 0.) -> None:
+    def __init__(self, a: float = 0.0, b: float = 1.0, n: float = 0.0) -> None:
         self.a = a
         self.b = b
         self.n = n
@@ -527,7 +527,7 @@ class PowerLaw(Univariate):
         pwr = self.n + 1
         offset = self.a**pwr
         span = self.b**pwr - offset
-        return np.power(offset + xi * span, 1/pwr)
+        return np.power(offset + xi * span, 1 / pwr)
 
     def to_xml_element(self, element_name: str):
         """Return XML representation of the power law distribution.
@@ -705,9 +705,9 @@ class Watt(Univariate):
     def sample(self, n_samples=1, seed=None):
         rng = np.random.RandomState(seed)
         w = Maxwell.sample_maxwell(self.a, n_samples, rng=rng)
-        u = rng.uniform(-1., 1., n_samples)
+        u = rng.uniform(-1.0, 1.0, n_samples)
         aab = self.a * self.a * self.b
-        return w + 0.25*aab + u*np.sqrt(aab*w)
+        return w + 0.25 * aab + u * np.sqrt(aab * w)
 
     def to_xml_element(self, element_name: str):
         """Return XML representation of the Watt distribution.
@@ -922,12 +922,12 @@ class Tabular(Univariate):
     """
 
     def __init__(
-            self,
-            x: Sequence[float],
-            p: Sequence[float],
-            interpolation: str = "linear-linear",
-            ignore_negative: bool = False,
-        ) -> None:
+        self,
+        x: Sequence[float],
+        p: Sequence[float],
+        interpolation: str = "linear-linear",
+        ignore_negative: bool = False,
+    ) -> None:
         self.interpolation = interpolation
 
         cv.check_type("tabulated values", x, Iterable, Real)
@@ -940,10 +940,7 @@ class Tabular(Univariate):
             msg = "Number of probabilities exceeds number of table values."
             raise ValueError(msg)
         if self.interpolation != "histogram" and x.size != p.size:
-            msg = (
-                f"Tabulated values ({x.size}) and probabilities "
-                             f"({p.size}) should have the same length"
-            )
+            msg = f"Tabulated values ({x.size}) and probabilities " f"({p.size}) should have the same length"
             raise ValueError(msg)
 
         if not ignore_negative:
@@ -979,17 +976,14 @@ class Tabular(Univariate):
         p = self.p
 
         if self.interpolation == "histogram":
-            c[1:] = p[:x.size-1] * np.diff(x)
+            c[1:] = p[: x.size - 1] * np.diff(x)
         elif self.interpolation == "linear-linear":
             c[1:] = 0.5 * (p[:-1] + p[1:]) * np.diff(x)
         else:
             msg = (
-                "Can only generate CDFs for tabular "
-                                      "distributions using histogram or "
-                                      "linear-linear interpolation"
+                "Can only generate CDFs for tabular " "distributions using histogram or " "linear-linear interpolation"
             )
             raise NotImplementedError(msg)
-
 
         return np.cumsum(c)
 
@@ -998,14 +992,14 @@ class Tabular(Univariate):
         if self.interpolation == "linear-linear":
             mean = 0.0
             for i in range(1, len(self.x)):
-                y_min = self.p[i-1]
+                y_min = self.p[i - 1]
                 y_max = self.p[i]
-                x_min = self.x[i-1]
+                x_min = self.x[i - 1]
                 x_max = self.x[i]
 
                 m = (y_max - y_min) / (x_max - x_min)
 
-                exp_val = (1./3.) * m * (x_max**3 - x_min**3)
+                exp_val = (1.0 / 3.0) * m * (x_max**3 - x_min**3)
                 exp_val += 0.5 * m * x_min * (x_min**2 - x_max**2)
                 exp_val += 0.5 * y_min * (x_max**2 - x_min**2)
                 mean += exp_val
@@ -1013,13 +1007,11 @@ class Tabular(Univariate):
         elif self.interpolation == "histogram":
             x_l = self.x[:-1]
             x_r = self.x[1:]
-            p_l = self.p[:self.x.size-1]
+            p_l = self.p[: self.x.size - 1]
             mean = (0.5 * (x_l + x_r) * (x_r - x_l) * p_l).sum()
         else:
             msg = (
-                "Can only compute mean for tabular "
-                                      "distributions using histogram "
-                                      "or linear-linear interpolation."
+                "Can only compute mean for tabular " "distributions using histogram " "or linear-linear interpolation."
             )
             raise NotImplementedError(msg)
 
@@ -1061,8 +1053,7 @@ class Tabular(Univariate):
             pos_mask = p_i > 0.0
             # probabilities greater than zero are set proportional to the
             # position of the random numebers in relation to the cdf value
-            p_i[pos_mask] = x_i[pos_mask] + (xi[pos_mask] - c_i[pos_mask]) \
-                           / p_i[pos_mask]
+            p_i[pos_mask] = x_i[pos_mask] + (xi[pos_mask] - c_i[pos_mask]) / p_i[pos_mask]
             # probabilities smaller than zero are set to the random number value
             p_i[~pos_mask] = x_i[~pos_mask]
 
@@ -1086,11 +1077,7 @@ class Tabular(Univariate):
             samples_out = m
 
         else:
-            msg = (
-                "Can only sample tabular distributions "
-                                      "using histogram or "
-                                      "linear-linear interpolation"
-            )
+            msg = "Can only sample tabular distributions " "using histogram or " "linear-linear interpolation"
             raise NotImplementedError(msg)
 
         assert all(samples_out < self.x[-1])
@@ -1136,7 +1123,7 @@ class Tabular(Univariate):
         """
         interpolation = get_text(elem, "interpolation")
         params = [float(x) for x in get_text(elem, "parameters").split()]
-        m = (len(params) + 1)//2  # +1 for when len(params) is odd
+        m = (len(params) + 1) // 2  # +1 for when len(params) is odd
         x = params[:m]
         p = params[m:]
         return cls(x, p, interpolation)
@@ -1153,12 +1140,11 @@ class Tabular(Univariate):
 
         """
         if self.interpolation == "histogram":
-            return np.sum(np.diff(self.x) * self.p[:self.x.size-1])
+            return np.sum(np.diff(self.x) * self.p[: self.x.size - 1])
         if self.interpolation == "linear-linear":
             return trapezoid(self.p, self.x)
         msg = f"integral() not supported for {self.inteprolation} interpolation"
-        raise NotImplementedError(
-            msg)
+        raise NotImplementedError(msg)
 
 
 class Legendre(Univariate):
@@ -1187,7 +1173,7 @@ class Legendre(Univariate):
         # Create Legendre polynomial if we haven't yet
         if self._legendre_poly is None:
             l = np.arange(len(self._coefficients))
-            coeffs = (2.*l + 1.)/2. * self._coefficients
+            coeffs = (2.0 * l + 1.0) / 2.0 * self._coefficients
             self._legendre_poly = np.polynomial.Legendre(coeffs)
 
         return self._legendre_poly(x)
@@ -1250,11 +1236,9 @@ class Mixture(Univariate):
 
     @probability.setter
     def probability(self, probability) -> None:
-        cv.check_type("mixture distribution probabilities", probability,
-                      Iterable, Real)
+        cv.check_type("mixture distribution probabilities", probability, Iterable, Real)
         for p in probability:
-            cv.check_greater_than("mixture distribution probabilities",
-                                  p, 0.0, True)
+            cv.check_greater_than("mixture distribution probabilities", p, 0.0, True)
         self._probability = np.array(probability, dtype=float)
 
     @property
@@ -1263,8 +1247,7 @@ class Mixture(Univariate):
 
     @distribution.setter
     def distribution(self, distribution) -> None:
-        cv.check_type("mixture distribution components", distribution,
-                      Iterable, Univariate)
+        cv.check_type("mixture distribution components", distribution, Iterable, Univariate)
         self._distribution = distribution
 
     def cdf(self):
@@ -1274,8 +1257,7 @@ class Mixture(Univariate):
         rng = np.random.RandomState(seed)
 
         # Get probability of each distribution accounting for its intensity
-        p = np.array([prob*dist.integral() for prob, dist in
-                      zip(self.probability, self.distribution, strict=False)])
+        p = np.array([prob * dist.integral() for prob, dist in zip(self.probability, self.distribution, strict=False)])
         p /= p.sum()
 
         # Sample from the distributions
@@ -1314,9 +1296,9 @@ class Mixture(Univariate):
         element.set("type", "mixture")
 
         for p, d in zip(self.probability, self.distribution, strict=False):
-          data = ET.SubElement(element, "pair")
-          data.set("probability", str(p))
-          data.append(d.to_xml_element("dist"))
+            data = ET.SubElement(element, "pair")
+            data.set("probability", str(p))
+            data.append(d.to_xml_element("dist"))
 
         return element
 
@@ -1356,10 +1338,7 @@ class Mixture(Univariate):
             Integral of the distribution
 
         """
-        return sum([
-            p*dist.integral()
-            for p, dist in zip(self.probability, self.distribution, strict=False)
-        ])
+        return sum([p * dist.integral() for p, dist in zip(self.probability, self.distribution, strict=False)])
 
     def clip(self, tolerance: float = 1e-6, inplace: bool = False) -> Mixture:
         r"""Remove low-importance points / distributions.
@@ -1388,8 +1367,7 @@ class Mixture(Univariate):
 
         # Determine indices for any distributions that contribute non-negligibly
         # to overall intensity
-        intensities = [prob*dist.integral() for prob, dist in
-                       zip(self.probability, self.distribution, strict=False)]
+        intensities = [prob * dist.integral() for prob, dist in zip(self.probability, self.distribution, strict=False)]
         indices = _intensity_clip(intensities, tolerance=tolerance)
 
         # Clip mixture of distributions
@@ -1397,10 +1375,7 @@ class Mixture(Univariate):
         distribution = [self.distribution[i] for i in indices]
 
         # Clip points from Discrete distributions
-        distribution = [
-            dist.clip(tolerance, inplace) if isinstance(dist, Discrete) else dist
-            for dist in distribution
-        ]
+        distribution = [dist.clip(tolerance, inplace) if isinstance(dist, Discrete) else dist for dist in distribution]
 
         if inplace:
             # Set attributes of current object and return
@@ -1413,10 +1388,12 @@ class Mixture(Univariate):
 
         # Show warning if integral of new distribution is not within
         # tolerance of original
-        diff = (original_integral - new_dist.integral())/original_integral
+        diff = (original_integral - new_dist.integral()) / original_integral
         if diff > tolerance:
-            warn("Clipping mixture distribution resulted in an integral that is "
-                    f"lower by a fraction of {diff} when tolerance={tolerance}.")
+            warn(
+                "Clipping mixture distribution resulted in an integral that is "
+                f"lower by a fraction of {diff} when tolerance={tolerance}."
+            )
 
         return new_dist
 
@@ -1468,7 +1445,7 @@ def combine_distributions(
 
     # Combine discrete and continuous if present
     if len(dist_list) > 1:
-        probs = [1.0]*len(dist_list)
+        probs = [1.0] * len(dist_list)
         dist_list[:] = [Mixture(probs, dist_list.copy())]
 
     return dist_list[0]

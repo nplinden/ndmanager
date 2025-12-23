@@ -24,7 +24,8 @@ class NdcInstallCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "install", help="Install one or more OpenMC Chain",
+            "install",
+            help="Install one or more OpenMC Chain",
         )
         parser.add_argument(
             "chain",

@@ -27,7 +27,8 @@ class NdoInstallCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "install", help="Install one or more OpenMC libraries",
+            "install",
+            help="Install one or more OpenMC libraries",
         )
         parser.add_argument(
             "library",

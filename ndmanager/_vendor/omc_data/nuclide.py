@@ -15,9 +15,7 @@ import numpy as np
 from ndmanager._vendor.omc_data.checkvalue import check_type
 from ndmanager._vendor.omc_data.univariate import Univariate
 
-__all__ = [
-    "DecayTuple", "ReactionTuple", "Nuclide", "FissionYield",
-    "FissionYieldDistribution"]
+__all__ = ["DecayTuple", "ReactionTuple", "Nuclide", "FissionYield", "FissionYieldDistribution"]
 
 
 DecayTuple = namedtuple("DecayTuple", "type target branching_ratio")
@@ -266,8 +264,7 @@ class Nuclide:
                     Q = fission_q
 
             # Append reaction
-            nuc.reactions.append(ReactionTuple(
-                r_type, target, Q, branching_ratio))
+            nuc.reactions.append(ReactionTuple(r_type, target, Q, branching_ratio))
 
         fpy_elem = element.find("neutron_fission_yields")
         if fpy_elem is not None:
@@ -283,8 +280,7 @@ class Nuclide:
                         f"Fission product yields for {nuc.name} borrow from {parent}, but {parent} is"
                         " not present in the chain file or has no yields."
                     )
-                    raise ValueError(
-                        msg)
+                    raise ValueError(msg)
                 nuc._fpy = parent
 
             nuc.yield_data = FissionYieldDistribution.from_xml_element(fpy_elem)
@@ -385,8 +381,7 @@ class Nuclide:
         openmc.deplete.Chain.validate
 
         """
-        msg_func = ("Nuclide {name} has {prop} that sum to {actual} "
-                    "instead of {expected} +/- {tol:7.4e}").format
+        msg_func = ("Nuclide {name} has {prop} that sum to {actual} " "instead of {expected} +/- {tol:7.4e}").format
         valid = True
 
         # check decay modes
@@ -395,8 +390,8 @@ class Nuclide:
             stat = 1.0 - tolerance <= sum_br <= 1.0 + tolerance
             if not stat:
                 msg = msg_func(
-                    name=self.name, actual=sum_br, expected=1.0, tol=tolerance,
-                    prop="decay mode branch ratios")
+                    name=self.name, actual=sum_br, expected=1.0, tol=tolerance, prop="decay mode branch ratios"
+                )
                 if strict:
                     raise ValueError(msg)
                 if quiet:
@@ -414,8 +409,12 @@ class Nuclide:
                 if stat:
                     continue
                 msg = msg_func(
-                    name=self.name, actual=sum_br, expected=1.0, tol=tolerance,
-                    prop=f"{rxn_type} reaction branch ratios")
+                    name=self.name,
+                    actual=sum_br,
+                    expected=1.0,
+                    tol=tolerance,
+                    prop=f"{rxn_type} reaction branch ratios",
+                )
                 if strict:
                     raise ValueError(msg)
                 if quiet:
@@ -430,9 +429,12 @@ class Nuclide:
                 if stat:
                     continue
                 msg = msg_func(
-                    name=self.name, actual=sum_yield,
-                    expected=2.0, tol=tolerance,
-                    prop=f"fission yields (E = {energy:7.4e} eV)")
+                    name=self.name,
+                    actual=sum_yield,
+                    expected=2.0,
+                    tol=tolerance,
+                    prop=f"fission yields (E = {energy:7.4e} eV)",
+                )
                 if strict:
                     raise ValueError(msg)
                 if quiet:
@@ -506,14 +508,15 @@ class FissionYieldDistribution(Mapping):
     def __getitem__(self, energy):
         if energy not in self.energies:
             raise KeyError(energy)
-        return FissionYield(
-            self.products, self.yield_matrix[self.energies.index(energy)])
+        return FissionYield(self.products, self.yield_matrix[self.energies.index(energy)])
 
     def __iter__(self):
         return iter(self.energies)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} with {self.yield_matrix.shape[1]} products at {len(self.energies)} energies>"
+        return (
+            f"<{self.__class__.__name__} with {self.yield_matrix.shape[1]} products at {len(self.energies)} energies>"
+        )
 
     @classmethod
     def from_xml_element(cls, element):

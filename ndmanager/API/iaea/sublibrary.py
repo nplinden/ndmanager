@@ -206,7 +206,10 @@ class IAEASublibrary:
             print(content, file=f, end="")
 
     def download(
-        self, targetdir: str | Path, style: str = "nuclide", processes: int = 1,
+        self,
+        targetdir: str | Path,
+        style: str = "nuclide",
+        processes: int = 1,
     ) -> None:
         """Download the all the tapes in the sublibrary to a directory specified by
         `targetdir`.

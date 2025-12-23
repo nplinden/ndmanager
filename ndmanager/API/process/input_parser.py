@@ -32,11 +32,7 @@ class InputParser:
             if "reuse" in sublibdict:
                 guestpath = NDMANAGER_HDF5 / sublibdict["reuse"] / "cross_sections.xml"
                 guestlib = DataLibrary.from_xml(guestpath)
-                guestlib = [
-                    node
-                    for node in guestlib
-                    if node["type"] == self.cross_section_node_type
-                ]
+                guestlib = [node for node in guestlib if node["type"] == self.cross_section_node_type]
                 self.reuse = {g["materials"][0]: g["path"] for g in guestlib}
             else:
                 self.reuse = {}

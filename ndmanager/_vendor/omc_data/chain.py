@@ -160,7 +160,7 @@ def replace_missing(product, decay_data):
 
     # If mass number of longest-lived isotope is less than that of missing
     # product, assume it undergoes beta-. Otherwise assume beta+.
-    beta_minus = (mass_longest_lived < A)
+    beta_minus = mass_longest_lived < A
 
     # Iterate until we find an existing nuclide
     while product not in decay_data:
@@ -306,7 +306,11 @@ class Chain:
                 self.reactions.append(rx.type)
 
     @classmethod
-    def from_endf(cls, decay_files, fpy_files, neutron_files,
+    def from_endf(
+        cls,
+        decay_files,
+        fpy_files,
+        neutron_files,
         reactions=("(n,2n)", "(n,3n)", "(n,4n)", "(n,gamma)", "(n,p)", "(n,a)"),
         progress=True,
     ):
@@ -740,11 +744,9 @@ class Chain:
                 if not components:
                     break
                 if elm in components:
-                    matrix[i, i] = sum(
-                        tr_rates.get_external_rate(mat, elm, current_timestep))
+                    matrix[i, i] = sum(tr_rates.get_external_rate(mat, elm, current_timestep))
                 elif nuc.name in components:
-                    matrix[i, i] = sum(
-                        tr_rates.get_external_rate(mat, nuc.name, current_timestep))
+                    matrix[i, i] = sum(tr_rates.get_external_rate(mat, nuc.name, current_timestep))
                 else:
                     matrix[i, i] = 0.0
 
@@ -753,11 +755,9 @@ class Chain:
                 dest_mat, mat = mats
                 components = tr_rates.get_components(mat, current_timestep, dest_mat)
                 if elm in components:
-                    matrix[i, i] = tr_rates.get_external_rate(
-                        mat, elm, current_timestep, dest_mat)[0]
+                    matrix[i, i] = tr_rates.get_external_rate(mat, elm, current_timestep, dest_mat)[0]
                 elif nuc.name in components:
-                    matrix[i, i] = tr_rates.get_external_rate(
-                        mat, nuc.name, current_timestep, dest_mat)[0]
+                    matrix[i, i] = tr_rates.get_external_rate(mat, nuc.name, current_timestep, dest_mat)[0]
                 else:
                     matrix[i, i] = 0.0
 
@@ -793,8 +793,7 @@ class Chain:
         for i, nuc in enumerate(self.nuclides):
             # Build source term vector
             if nuc.name in ext_source_rates.get_components(mat, current_timestep):
-                vector[i] = sum(ext_source_rates.get_external_rate(
-                    mat, nuc.name, current_timestep))
+                vector[i] = sum(ext_source_rates.get_external_rate(mat, nuc.name, current_timestep))
             else:
                 vector[i] = 0.0
 
@@ -834,8 +833,7 @@ class Chain:
                 capt[nuclide.name] = nuc_capt
         return capt
 
-    def set_branch_ratios(self, branch_ratios, reaction="(n,gamma)",
-                          strict=True, tolerance=1e-5) -> None:
+    def set_branch_ratios(self, branch_ratios, reaction="(n,gamma)", strict=True, tolerance=1e-5) -> None:
         """Set the branching ratios for a given reactions.
 
         Parameters
@@ -932,20 +930,20 @@ class Chain:
             if len(indexes) == 0:
                 if strict:
                     msg = f"Nuclide {parent} does not have {reaction} reactions"
-                    raise AttributeError(
-                        msg)
+                    raise AttributeError(msg)
                 missing_reaction.add(parent)
                 continue
 
             this_sum = sum(sub.values())
             # sum of branching ratios can be lower than 1 if no ground
             # target is given, but never greater
-            if (this_sum >= 1 + tolerance or (grounds[parent] in sub
-                                              and this_sum <= 1 - tolerance)):
+            if this_sum >= 1 + tolerance or (grounds[parent] in sub and this_sum <= 1 - tolerance):
                 if strict:
-                    msg = (f"Sum of {reaction} branching ratios for {parent} "
-                           f"({this_sum:7.3f}) outside tolerance of 1 +/- "
-                           f"{tolerance:5.3e}")
+                    msg = (
+                        f"Sum of {reaction} branching ratios for {parent} "
+                        f"({this_sum:7.3f}) outside tolerance of 1 +/- "
+                        f"{tolerance:5.3e}"
+                    )
                     raise ValueError(msg)
                 bad_sums[parent] = this_sum
             else:
@@ -954,35 +952,40 @@ class Chain:
 
         if len(rxn_ix_map) == 0:
             msg = f"No {reaction} reactions found in this {self.__class__.__name__}"
-            raise IndexError(
-                msg)
+            raise IndexError(msg)
 
         if len(missing_parents) > 0:
-            warn("The following nuclides were not found in {}: {}".format(
-                 self.__class__.__name__, ", ".join(sorted(missing_parents))))
+            warn(
+                "The following nuclides were not found in {}: {}".format(
+                    self.__class__.__name__, ", ".join(sorted(missing_parents))
+                )
+            )
 
         if len(missing_reaction) > 0:
-            warn("The following nuclides did not have {} reactions: "
-                 "{}".format(reaction, ", ".join(sorted(missing_reaction))))
+            warn(
+                "The following nuclides did not have {} reactions: " "{}".format(
+                    reaction, ", ".join(sorted(missing_reaction))
+                )
+            )
 
         if len(missing_products) > 0:
-            tail = (f"{k} -> {v}"
-                    for k, v in sorted(missing_products.items()))
-            warn("The following products were not found in the {} and "
-                 "parents were unmodified: \n{}".format(
-                     self.__class__.__name__, ", ".join(tail)))
+            tail = (f"{k} -> {v}" for k, v in sorted(missing_products.items()))
+            warn(
+                "The following products were not found in the {} and " "parents were unmodified: \n{}".format(
+                    self.__class__.__name__, ", ".join(tail)
+                )
+            )
 
         if len(bad_sums) > 0:
-            tail = (f"{k}: {s:5.3f}"
-                    for k, s in sorted(bad_sums.items()))
-            warn("The following parent nuclides were given {} branch ratios "
-                 "with a sum outside tolerance of 1 +/- {:5.3e}:\n{}".format(
-                     reaction, tolerance, "\n".join(tail)))
+            tail = (f"{k}: {s:5.3f}" for k, s in sorted(bad_sums.items()))
+            warn(
+                "The following parent nuclides were given {} branch ratios "
+                "with a sum outside tolerance of 1 +/- {:5.3e}:\n{}".format(reaction, tolerance, "\n".join(tail))
+            )
 
         # Insert new ReactionTuples with updated branch ratios
 
         for parent_name, rxn_index in rxn_ix_map.items():
-
             parent = self[parent_name]
             new_ratios = branch_ratios[parent_name]
             rxn_index = rxn_ix_map[parent_name]
@@ -1156,8 +1159,7 @@ class Chain:
                 if rx.target in all_isotopes:
                     new_nuclide.add_reaction(*rx)
                 elif rx.type == "fission":
-                    new_yields = new_nuclide.yield_data = (
-                        previous.yield_data.restrict_products(name_sort))
+                    new_yields = new_nuclide.yield_data = previous.yield_data.restrict_products(name_sort)
                     if new_yields is not None:
                         new_nuclide.add_reaction(*rx)
                 # Maintain total destruction rates but set no target
@@ -1177,12 +1179,8 @@ class Chain:
         found = isotopes.copy()
         remaining = set(self.nuclide_dict)
         if not found.issubset(remaining):
-            msg = (
-                "The following isotopes were not found in the chain: "
-                "{}".format(", ".join(found - remaining))
-            )
-            raise IndexError(
-                msg)
+            msg = "The following isotopes were not found in the chain: " "{}".format(", ".join(found - remaining))
+            raise IndexError(msg)
 
         if level == 0:
             return found
@@ -1211,15 +1209,13 @@ class Chain:
                     secondaries = [x for x in secondaries if x in self]
 
                     for product in chain([rxn.target], secondaries):
-                        if product is None or (product in next_iso or product in found
-                              or product in isotopes):
+                        if product is None or (product in next_iso or product in found or product in isotopes):
                             continue
                         next_iso.add(product)
 
                 if nuclide.yield_data is not None:
                     for product in nuclide.yield_data.products:
-                        if (product in next_iso
-                                or product in found or product in isotopes):
+                        if product in next_iso or product in found or product in isotopes:
                             continue
                         next_iso.add(product)
 
@@ -1273,10 +1269,7 @@ def _get_chain(
     if chain_file is None:
         chain_file = openmc.config.get("chain_file")
         if "chain_file" not in openmc.config:
-            msg = (
-                "No depletion chain specified and could not find depletion "
-                "chain in openmc.config['chain_file']"
-            )
+            msg = "No depletion chain specified and could not find depletion " "chain in openmc.config['chain_file']"
             raise DataError(
                 msg,
             )

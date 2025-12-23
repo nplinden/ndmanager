@@ -90,8 +90,7 @@ class AngleEnergy(EqualityMixin, ABC):
             distribution.energy = ndmanager._vendor.omc_data.LevelInelastic.from_ace(ace, idx)
         elif law == 4:
             distribution = ndmanager._vendor.omc_data.UncorrelatedAngleEnergy()
-            distribution.energy = ndmanager._vendor.omc_data.ContinuousTabular.from_ace(
-                ace, idx, location_dist)
+            distribution.energy = ndmanager._vendor.omc_data.ContinuousTabular.from_ace(ace, idx, location_dist)
         elif law == 5:
             distribution = ndmanager._vendor.omc_data.UncorrelatedAngleEnergy()
             distribution.energy = ndmanager._vendor.omc_data.GeneralEvaporation.from_ace(ace, idx)
@@ -105,14 +104,11 @@ class AngleEnergy(EqualityMixin, ABC):
             distribution = ndmanager._vendor.omc_data.UncorrelatedAngleEnergy()
             distribution.energy = ndmanager._vendor.omc_data.WattEnergy.from_ace(ace, idx)
         elif law == 44:
-            distribution = ndmanager._vendor.omc_data.KalbachMann.from_ace(
-                ace, idx, location_dist)
+            distribution = ndmanager._vendor.omc_data.KalbachMann.from_ace(ace, idx, location_dist)
         elif law == 61:
-            distribution = ndmanager._vendor.omc_data.CorrelatedAngleEnergy.from_ace(
-                ace, idx, location_dist)
+            distribution = ndmanager._vendor.omc_data.CorrelatedAngleEnergy.from_ace(ace, idx, location_dist)
         elif law == 66:
-            distribution = ndmanager._vendor.omc_data.NBodyPhaseSpace.from_ace(
-                ace, idx, rx.q_value)
+            distribution = ndmanager._vendor.omc_data.NBodyPhaseSpace.from_ace(ace, idx, rx.q_value)
         else:
             msg = f"Unsupported ACE secondary energy distribution law {law}"
             raise ValueError(msg)

@@ -23,7 +23,8 @@ class NdoListCommand(Command):
 
         """
         parser = subparsers.add_parser(
-            "list", help="List libraries compatible with NDManager",
+            "list",
+            help="List libraries compatible with NDManager",
         )
         parser.set_defaults(func=cls)
 
@@ -50,7 +51,10 @@ class NdoListCommand(Command):
                 s = f"{name}"
                 s = f"{s:<16} {fancyname:<15} [{check}]: {libdict['info']}"
                 s = textwrap.wrap(
-                    s, initial_indent="", subsequent_indent=38 * " ", width=col,
+                    s,
+                    initial_indent="",
+                    subsequent_indent=38 * " ",
+                    width=col,
                 )
                 lst.append("\n".join(s))
         lst.append(header("Custom Libraries"))
@@ -63,6 +67,9 @@ class NdoListCommand(Command):
                 desc = ""
             s = f"{name:<16} {desc}"
             s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=21 * " ", width=col,
+                s,
+                initial_indent="",
+                subsequent_indent=21 * " ",
+                width=col,
             )
             lst.append("\n".join(s))

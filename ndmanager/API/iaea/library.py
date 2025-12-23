@@ -123,7 +123,9 @@ class IAEALibrary:
         for tag in tags:
             kind = nsub_tags[tag.text]
             kwargs["sublibraries"][kind] = IAEASublibrary.from_website(
-                kwargs["url"], tag.get("href"), kind,
+                kwargs["url"],
+                tag.get("href"),
+                kind,
             )
         index = html.find_all("pre")[0].text.split("\n")
         for line in index:
