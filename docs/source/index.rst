@@ -47,12 +47,6 @@ A tool to manage your nuclear data libraries.
 
             Install and build depletion chain files for OpenMC
 
-        .. grid-item-card:: \ :octicon:`squirrel;2em` NDSampler
-            :text-align: center
-            :link: ndsampler/index
-            :link-type: doc
-
-            Leverage Sandy to sample nuclear data files
 
 .. toctree::
    :maxdepth: 2
@@ -64,6 +58,5 @@ A tool to manage your nuclear data libraries.
    ndfetcher/index
    ndomcer/index
    ndchainer/index
-   ndsampler/index
    API/iaea
 

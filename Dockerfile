@@ -56,6 +56,4 @@ RUN git clone https://github.com/nplinden/ndmanager.git \
 ENV NDMANAGER_ENDF6="/ndmanager/endf6"
 ENV NDMANAGER_HDF5="/ndmanager/hdf5"
 ENV NDMANAGER_CHAINS="/ndmanager/chains"
-ENV NDMANAGER_SAMPLES="/ndmanager/samples"
-ENV NDMANAGER_COV="/ndmanager/cov"
 ENV PATH=/ve/bin:$PATH

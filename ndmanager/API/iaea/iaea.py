@@ -12,7 +12,7 @@ from tqdm import tqdm
 from ndmanager.API.iaea.library import FORBIDDEN_NODES, IAEALibrary
 from ndmanager.API.iaea.sublibrary import IAEASublibrary
 from ndmanager.data import IAEA_ROOT
-from ndmanager.env import NDMANAGER_CONFIG
+from ndmanager.env import NDMANAGER_ENDF6
 
 
 class IAEA:
@@ -52,9 +52,9 @@ class IAEA:
                                       data. Defaults to False.
         """
         self.libraries = {}
-        if not NDMANAGER_CONFIG.exists():
-            NDMANAGER_CONFIG.mkdir(parents=True)
-        p = NDMANAGER_CONFIG / "IAEA_cache.json"
+        if not NDMANAGER_ENDF6.exists():
+            NDMANAGER_ENDF6.mkdir(parents=True)
+        p = NDMANAGER_ENDF6 / "IAEA_cache.json"
         if not p.exists() or nocache:
             self.from_website()
             self.to_json(p)
@@ -140,7 +140,7 @@ class IAEA:
         Returns:
             bool: Wether the cache file exists
         """
-        return (NDMANAGER_CONFIG / "IAEA_cache.json").exists()
+        return (NDMANAGER_ENDF6 / "IAEA_cache.json").exists()
 
     def keys(self) -> List[str]:
         """The list of available libraries in the database

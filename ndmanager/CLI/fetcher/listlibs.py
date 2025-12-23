@@ -36,9 +36,7 @@ class NdfListCommand:
             else:
                 check = " "
             s = f"{libname:<20} {fancyname:<20} [{check}]: {libdata.library}"
-            s = textwrap.wrap(
-                s, initial_indent="", subsequent_indent=47 * " ", width=col
-            )
+            s = textwrap.wrap(s, initial_indent="", subsequent_indent=47 * " ", width=col)
             self.lines.append("\n".join(s))
 
         self.lines.append(header("Custom Libraries"))
@@ -46,6 +44,8 @@ class NdfListCommand:
             [lib.name for lib in NDMANAGER_ENDF6.glob("*") if lib.name not in libnames],
             key=str.lower,
         )
+        if "IAEA_cache.json" in installed:
+            installed.remove("IAEA_cache.json")
         s = " ".join([f"{i:<15}" for i in sorted(installed)])
         s = textwrap.wrap(s, width=col)
         self.lines.append("\n".join(s))
@@ -76,10 +76,6 @@ class NdfListCommand:
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
         """
-        parser = subparsers.add_parser(
-            "list", help="List libraries compatible with NDManager"
-        )
-        parser.add_argument(
-            "--all", "-a", action="store_true", help="List all available libraries"
-        )
+        parser = subparsers.add_parser("list", help="List libraries compatible with NDManager")
+        parser.add_argument("--all", "-a", action="store_true", help="List all available libraries")
         parser.set_defaults(func=cls)

@@ -35,7 +35,6 @@ Homepage = "https://github.com/nplinden/ndmanager"
 ndf = "ndmanager.CLI.fetcher.main:main"
 ndo = "ndmanager.CLI.omcer.main:main"
 ndc = "ndmanager.CLI.chainer.main:main"
-nds = "ndmanager.CLI.sampler.main:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -44,8 +43,6 @@ env = [
     "NDMANAGER_ENDF6=pytest-artifacts/endf6",
     "NDMANAGER_HDF5=pytest-artifacts/hdf5",
     "NDMANAGER_CHAINS=pytest-artifacts/chains",
-    "NDMANAGER_SAMPLES=pytest-artifacts/samples",
-    "NDMANAGER_CONFIG=pytest-artifacts",
 ]
 
 [dependency-groups]

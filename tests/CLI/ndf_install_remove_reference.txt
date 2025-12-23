@@ -1,4 +1,3 @@
-Initializing IAEA database...
 ---------------------------------------------------------------  Available libraries  ----------------------------------------------------------------
 ADS-2.0              ADS-2.0              [ ]: ADS-2.0 Accelerator driven systems nuclear data library, IAEA, 2008
 ADS-HE               ADS-HE               [ ]: ADS-HE High energy library for accelerator driven systems, IAEA, 2013
@@ -75,4 +74,4 @@ tendl2021            TENDL-2021           [ ]: TENDL-2021 TALYS-based Evaluated 
 tendl2023            TENDL-2023           [ ]: TENDL-2023 TALYS-based Evaluated Nuclear Data Library, 2023
 UKDD-12              UKDD-12              [ ]: UKDD-12 Decay Library, UK, 2012
 -----------------------------------------------------------------  Custom Libraries  -----------------------------------------------------------------
-bar             foo
+IAEA_cache.json bar             foo

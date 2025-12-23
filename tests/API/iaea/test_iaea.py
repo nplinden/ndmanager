@@ -1,6 +1,6 @@
 from ndmanager.API.iaea import IAEA, IAEALibrary
 from ndmanager.API.sha1 import compute_file_sha1
-from ndmanager.env import NDMANAGER_CONFIG
+from ndmanager.env import NDMANAGER_ENDF6
 
 CACHE_SHA1 = "a7d5e5fef57358c602b3159303e7f8f06d99e50d"
 
@@ -9,7 +9,7 @@ def test_iaea():
     # Build without cache, tests from_website
     assert not IAEA.is_cached()
     iaea = IAEA(nocache=True)
-    sha1 = compute_file_sha1(NDMANAGER_CONFIG / "IAEA_cache.json")
+    sha1 = compute_file_sha1(NDMANAGER_ENDF6 / "IAEA_cache.json")
     assert sha1 == CACHE_SHA1
     assert IAEA.is_cached()
 
