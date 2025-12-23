@@ -23,7 +23,7 @@ _FILES = {
 _DOSE_TABLES = {}
 
 
-def _load_dose_icrp(data_source: str, particle: str):
+def _load_dose_icrp(data_source: str, particle: str) -> None:
     """Load effective dose tables from text files.
 
     Parameters
@@ -81,7 +81,8 @@ def dose_coefficients(particle, geometry="AP", data_source="icrp116"):
     cv.check_value("data_source", data_source, {"icrp74", "icrp116"})
 
     if (data_source, particle) not in _FILES:
-        raise ValueError(f"{particle} has no dose data in data source {data_source}.")
+        msg = f"{particle} has no dose data in data source {data_source}."
+        raise ValueError(msg)
     if (data_source, particle) not in _DOSE_TABLES:
         _load_dose_icrp(data_source, particle)
 

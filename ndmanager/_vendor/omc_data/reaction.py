@@ -69,7 +69,7 @@ FISSION_MTS = (18, 19, 20, 21, 38)
 
 
 def _get_products(ev, mt):
-    """Generate products from MF=6 in an ENDF evaluation
+    """Generate products from MF=6 in an ENDF evaluation.
 
     Parameters
     ----------
@@ -155,9 +155,12 @@ def _get_products(ev, mt):
                 # TODO: 'breakup' logic not implemented
 
                 if product_center_of_mass is False:
-                    raise OSError(
+                    msg = (
                         "Kalbach-Mann representation must be defined in the "
-                        "'center-of-mass' system",
+                        "'center-of-mass' system"
+                    )
+                    raise OSError(
+                        msg,
                     )
 
                 zat = ev.target["atomic_number"] * 1000 + ev.target["mass_number"]
@@ -217,7 +220,7 @@ def _get_products(ev, mt):
 
 
 def _get_fission_products_ace(ace):
-    """Generate fission products from an ACE table
+    """Generate fission products from an ACE table.
 
     Parameters
     ----------
@@ -354,7 +357,7 @@ def _get_fission_products_ace(ace):
 
 
 def _get_fission_products_endf(ev):
-    """Generate fission products from an ENDF evaluation
+    """Generate fission products from an ENDF evaluation.
 
     Parameters
     ----------
@@ -426,8 +429,11 @@ def _get_fission_products_endf(ev):
                 products.append(delayed_neutron)
         elif ldg == 1:
             # Delayed-group constants energy dependent
-            raise NotImplementedError("Delayed neutron with energy-dependent "
-                                      "group constants.")
+            msg = (
+                "Delayed neutron with energy-dependent "
+                                      "group constants."
+            )
+            raise NotImplementedError(msg)
 
         # In MF=1, MT=455, the delayed-group abundances are actually not
         # specified if the group constants are energy-independent. In this case,
@@ -455,9 +461,12 @@ def _get_fission_products_endf(ev):
                 for _ in range(nk - 1):
                     products.append(deepcopy(products[1]))
             elif nk != len(decay_constants):
-                raise ValueError(
+                msg = (
                     f"Number of delayed neutron fission spectra ({nk}) does not "
-                    f"match number of delayed neutron precursors ({len(decay_constants)}).")
+                    f"match number of delayed neutron precursors ({len(decay_constants)})."
+                )
+                raise ValueError(
+                    msg)
             for i in range(nk):
                 params, applicability = get_tab1_record(file_obj)
                 dist = UncorrelatedAngleEnergy()
@@ -489,9 +498,12 @@ def _get_fission_products_endf(ev):
                     elif np.all(applicability.y == applicability.y[0]):
                         yield_.coef[0] *= applicability.y[0]
                     else:
-                        raise NotImplementedError(
+                        msg = (
                             "Total delayed neutron yield and delayed group "
-                            "probability are both energy-dependent.")
+                            "probability are both energy-dependent."
+                        )
+                        raise NotImplementedError(
+                            msg)
 
                 delayed_neutron.distribution.append(dist)
 
@@ -499,7 +511,7 @@ def _get_fission_products_endf(ev):
 
 
 def _get_activation_products(ev, rx):
-    """Generate activation products from an ENDF evaluation
+    """Generate activation products from an ENDF evaluation.
 
     Parameters
     ----------
@@ -544,7 +556,7 @@ def _get_activation_products(ev, rx):
         file_obj = StringIO(ev.section[mf, rx.mt])
         items = get_head_record(file_obj)
         n_states = items[4]
-        for i in range(n_states):
+        for _i in range(n_states):
             # Determine what the product is
             items, xs = get_tab1_record(file_obj)
             Z, A = divmod(items[2], 1000)
@@ -552,10 +564,7 @@ def _get_activation_products(ev, rx):
 
             # Get GNDS name for product
             symbol = ATOMIC_SYMBOL[Z]
-            if excited_state > 0:
-                name = f"{symbol}{A}_e{excited_state}"
-            else:
-                name = f"{symbol}{A}"
+            name = f"{symbol}{A}_e{excited_state}" if excited_state > 0 else f"{symbol}{A}"
 
             p = Product(name)
             if mf == 9:
@@ -586,7 +595,7 @@ def _get_activation_products(ev, rx):
 
 
 def _get_photon_products_ace(ace, rx):
-    """Generate photon products from an ACE table
+    """Generate photon products from an ACE table.
 
     Parameters
     ----------
@@ -643,7 +652,7 @@ def _get_photon_products_ace(ace, rx):
 
             # Get photon production cross section
             photon_prod_xs = ace.xss[idx + 2:idx + 2 + n_energy]
-            neutron_xs = list(rx.xs.values())[0](energy)
+            neutron_xs = next(iter(rx.xs.values()))(energy)
             idx = np.where(neutron_xs > 0.)
 
             # Calculate photon yield
@@ -652,7 +661,8 @@ def _get_photon_products_ace(ace, rx):
             photon.yield_ = Tabulated1D(energy, yield_)
 
         else:
-            raise ValueError(f"MFTYPE must be 12, 13, 16. Got {mftype}")
+            msg = f"MFTYPE must be 12, 13, 16. Got {mftype}"
+            raise ValueError(msg)
 
         # ==================================================================
         # Photon energy distribution
@@ -683,7 +693,7 @@ def _get_photon_products_ace(ace, rx):
 
 
 def _get_photon_products_endf(ev, rx):
-    """Generate photon products from an ENDF evaluation
+    """Generate photon products from an ENDF evaluation.
 
     Parameters
     ----------
@@ -711,7 +721,7 @@ def _get_photon_products_endf(ev, rx):
             n_discrete_photon = items[4]
             if n_discrete_photon > 1:
                 items, total_yield = get_tab1_record(file_obj)
-            for k in range(n_discrete_photon):
+            for _k in range(n_discrete_photon):
                 photon = Product("photon")
 
                 # Get photon yield
@@ -759,7 +769,7 @@ def _get_photon_products_endf(ev, rx):
         n_discrete_photon = items[4]
         if n_discrete_photon > 1:
             items, total_xs = get_tab1_record(file_obj)
-        for k in range(n_discrete_photon):
+        for _k in range(n_discrete_photon):
             photon = Product("photon")
             items, xs = get_tab1_record(file_obj)
 
@@ -794,7 +804,7 @@ def _get_photon_products_endf(ev, rx):
 
 
 class Reaction(EqualityMixin):
-    """A nuclear reaction
+    """A nuclear reaction.
 
     A Reaction object represents a single reaction channel for a nuclide with
     an associated cross section and, if present, a secondary angle and energy
@@ -829,7 +839,7 @@ class Reaction(EqualityMixin):
 
     """
 
-    def __init__(self, mt):
+    def __init__(self, mt) -> None:
         self._center_of_mass = True
         self._redundant = False
         self._q_value = 0.
@@ -839,7 +849,7 @@ class Reaction(EqualityMixin):
 
         self.mt = mt
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.mt in REACTION_NAME:
             return f"<Reaction: MT={self.mt} {REACTION_NAME[self.mt]}>"
         return f"<Reaction: MT={self.mt}>"
@@ -849,7 +859,7 @@ class Reaction(EqualityMixin):
         return self._center_of_mass
 
     @center_of_mass.setter
-    def center_of_mass(self, center_of_mass):
+    def center_of_mass(self, center_of_mass) -> None:
         cv.check_type("center of mass", center_of_mass, (bool, np.bool_))
         self._center_of_mass = center_of_mass
 
@@ -858,7 +868,7 @@ class Reaction(EqualityMixin):
         return self._redundant
 
     @redundant.setter
-    def redundant(self, redundant):
+    def redundant(self, redundant) -> None:
         cv.check_type("redundant", redundant, (bool, np.bool_))
         self._redundant = redundant
 
@@ -867,7 +877,7 @@ class Reaction(EqualityMixin):
         return self._q_value
 
     @q_value.setter
-    def q_value(self, q_value):
+    def q_value(self, q_value) -> None:
         cv.check_type("Q value", q_value, Real)
         self._q_value = q_value
 
@@ -876,7 +886,7 @@ class Reaction(EqualityMixin):
         return self._products
 
     @products.setter
-    def products(self, products):
+    def products(self, products) -> None:
         cv.check_type("reaction products", products, Iterable, Product)
         self._products = products
 
@@ -885,7 +895,7 @@ class Reaction(EqualityMixin):
         return self._derived_products
 
     @derived_products.setter
-    def derived_products(self, derived_products):
+    def derived_products(self, derived_products) -> None:
         cv.check_type("reaction derived products", derived_products,
                       Iterable, Product)
         self._derived_products = derived_products
@@ -895,15 +905,15 @@ class Reaction(EqualityMixin):
         return self._xs
 
     @xs.setter
-    def xs(self, xs):
+    def xs(self, xs) -> None:
         cv.check_type("reaction cross section dictionary", xs, MutableMapping)
         for key, value in xs.items():
             cv.check_type("reaction cross section temperature", key, str)
             cv.check_type("reaction cross section", value, Callable)
         self._xs = xs
 
-    def to_hdf5(self, group):
-        """Write reaction to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write reaction to an HDF5 group.
 
         Parameters
         ----------
@@ -931,7 +941,7 @@ class Reaction(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group, energy):
-        """Generate reaction from an HDF5 group
+        """Generate reaction from an HDF5 group.
 
         Parameters
         ----------
@@ -955,19 +965,21 @@ class Reaction(EqualityMixin):
 
         # Read cross section at each temperature
         for T, Tgroup in group.items():
-            if T.endswith("K"):
-                if "xs" in Tgroup:
-                    # Make sure temperature has associated energy grid
-                    if T not in energy:
-                        raise ValueError(
-                            f"Could not create reaction cross section for MT={mt} "
-                            f"at T={T} because no corresponding energy grid "
-                            "exists.")
-                    xs = Tgroup["xs"][()]
-                    threshold_idx = Tgroup["xs"].attrs["threshold_idx"]
-                    tabulated_xs = Tabulated1D(energy[T][threshold_idx:], xs)
-                    tabulated_xs._threshold_idx = threshold_idx
-                    rx.xs[T] = tabulated_xs
+            if T.endswith("K") and "xs" in Tgroup:
+                # Make sure temperature has associated energy grid
+                if T not in energy:
+                    msg = (
+                        f"Could not create reaction cross section for MT={mt} "
+                        f"at T={T} because no corresponding energy grid "
+                        "exists."
+                    )
+                    raise ValueError(
+                        msg)
+                xs = Tgroup["xs"][()]
+                threshold_idx = Tgroup["xs"].attrs["threshold_idx"]
+                tabulated_xs = Tabulated1D(energy[T][threshold_idx:], xs)
+                tabulated_xs._threshold_idx = threshold_idx
+                rx.xs[T] = tabulated_xs
 
         # Determine number of products
         n_product = 0
@@ -1057,7 +1069,8 @@ class Reaction(EqualityMixin):
                             neutron = p
                             break
                     else:
-                        raise Exception("Couldn't find prompt/total fission neutron")
+                        msg = "Couldn't find prompt/total fission neutron"
+                        raise Exception(msg)
 
                 # Determine locator for ith energy distribution
                 lnw = int(ace.xss[ace.jxs[10] + i_reaction - 1])
@@ -1128,7 +1141,7 @@ class Reaction(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev, mt):
-        """Generate a reaction from an ENDF evaluation
+        """Generate a reaction from an ENDF evaluation.
 
         Parameters
         ----------
@@ -1176,7 +1189,7 @@ class Reaction(EqualityMixin):
                 file_obj = StringIO(ev.section[5, mt])
                 items = get_head_record(file_obj)
                 nk = items[4]
-                for i in range(nk):
+                for _i in range(nk):
                     params, applicability = get_tab1_record(file_obj)
                     dist = UncorrelatedAngleEnergy()
                     dist.energy = EnergyDistribution.from_endf(file_obj, params)

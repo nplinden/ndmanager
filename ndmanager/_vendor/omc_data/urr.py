@@ -69,7 +69,7 @@ class ProbabilityTables(EqualityMixin):
     """
 
     def __init__(self, energy, table, interpolation, inelastic_flag=-1,
-                 absorption_flag=-1, multiply_smooth=False):
+                 absorption_flag=-1, multiply_smooth=False) -> None:
         self.energy = energy
         self.table = table
         self.interpolation = interpolation
@@ -82,7 +82,7 @@ class ProbabilityTables(EqualityMixin):
         return self._absorption_flag
 
     @absorption_flag.setter
-    def absorption_flag(self, absorption_flag):
+    def absorption_flag(self, absorption_flag) -> None:
         cv.check_type("absorption flag", absorption_flag, Integral)
         self._absorption_flag = absorption_flag
 
@@ -91,7 +91,7 @@ class ProbabilityTables(EqualityMixin):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("probability table energies", energy, Iterable, Real)
         self._energy = energy
 
@@ -100,7 +100,7 @@ class ProbabilityTables(EqualityMixin):
         return self._inelastic_flag
 
     @inelastic_flag.setter
-    def inelastic_flag(self, inelastic_flag):
+    def inelastic_flag(self, inelastic_flag) -> None:
         cv.check_type("inelastic flag", inelastic_flag, Integral)
         self._inelastic_flag = inelastic_flag
 
@@ -109,7 +109,7 @@ class ProbabilityTables(EqualityMixin):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_value("interpolation", interpolation, [2, 5])
         self._interpolation = interpolation
 
@@ -118,7 +118,7 @@ class ProbabilityTables(EqualityMixin):
         return self._multiply_smooth
 
     @multiply_smooth.setter
-    def multiply_smooth(self, multiply_smooth):
+    def multiply_smooth(self, multiply_smooth) -> None:
         cv.check_type("multiply by smooth", multiply_smooth, bool)
         self._multiply_smooth = multiply_smooth
 
@@ -127,12 +127,12 @@ class ProbabilityTables(EqualityMixin):
         return self._table
 
     @table.setter
-    def table(self, table):
+    def table(self, table) -> None:
         cv.check_type("probability tables", table, np.ndarray)
         self._table = table
 
-    def to_hdf5(self, group):
-        """Write probability tables to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write probability tables to an HDF5 group.
 
         Parameters
         ----------
@@ -150,7 +150,7 @@ class ProbabilityTables(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate probability tables from HDF5 data
+        """Generate probability tables from HDF5 data.
 
         Parameters
         ----------
@@ -176,7 +176,7 @@ class ProbabilityTables(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace):
-        """Generate probability tables from an ACE table
+        """Generate probability tables from an ACE table.
 
         Parameters
         ----------

@@ -15,7 +15,7 @@ from .function import INTERPOLATION_SCHEME
 
 
 class AngleDistribution(EqualityMixin):
-    """Angle distribution as a function of incoming energy
+    """Angle distribution as a function of incoming energy.
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ class AngleDistribution(EqualityMixin):
 
     """
 
-    def __init__(self, energy, mu):
+    def __init__(self, energy, mu) -> None:
         super().__init__()
         self.energy = energy
         self.mu = mu
@@ -43,7 +43,7 @@ class AngleDistribution(EqualityMixin):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("angle distribution incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
@@ -53,13 +53,13 @@ class AngleDistribution(EqualityMixin):
         return self._mu
 
     @mu.setter
-    def mu(self, mu):
+    def mu(self, mu) -> None:
         cv.check_type("angle distribution scattering cosines", mu,
                       Iterable, Univariate)
         self._mu = mu
 
-    def to_hdf5(self, group):
-        """Write angle distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write angle distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -101,7 +101,7 @@ class AngleDistribution(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate angular distribution from HDF5 data
+        """Generate angular distribution from HDF5 data.
 
         Parameters
         ----------
@@ -125,10 +125,7 @@ class AngleDistribution(EqualityMixin):
             # Determine length of outgoing energy distribution and number of
             # discrete lines
             j = offsets[i]
-            if i < n_energy - 1:
-                n = offsets[i+1] - j
-            else:
-                n = data.shape[1] - j
+            n = offsets[i + 1] - j if i < n_energy - 1 else data.shape[1] - j
 
             interp = INTERPOLATION_SCHEME[interpolation[i]]
             mu_i = Tabular(data[0, j:j+n], data[1, j:j+n], interp)
@@ -140,7 +137,7 @@ class AngleDistribution(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace, location_dist, location_start):
-        """Generate an angular distribution from ACE data
+        """Generate an angular distribution from ACE data.
 
         Parameters
         ----------
@@ -208,7 +205,7 @@ class AngleDistribution(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev, mt):
-        """Generate an angular distribution from an ENDF evaluation
+        """Generate an angular distribution from an ENDF evaluation.
 
         Parameters
         ----------
@@ -258,7 +255,7 @@ class AngleDistribution(EqualityMixin):
             for i in range(n_energy):
                 items, al = get_list_record(file_obj)
                 energy[i] = items[1]
-                coefficients = np.asarray([1.0] + al)
+                coefficients = np.asarray([1.0, *al])
                 mu.append(Legendre(coefficients))
 
         elif ltt == 2 and li == 0:
@@ -272,8 +269,11 @@ class AngleDistribution(EqualityMixin):
                 params, f = get_tab1_record(file_obj)
                 energy[i] = params[1]
                 if f.n_regions > 1:
-                    raise NotImplementedError("Angular distribution with multiple "
-                                              "interpolation regions not supported.")
+                    msg = (
+                        "Angular distribution with multiple "
+                                              "interpolation regions not supported."
+                    )
+                    raise NotImplementedError(msg)
                 mu.append(Tabular(f.x, f.y, INTERPOLATION_SCHEME[f.interpolation[0]]))
 
         elif ltt == 3 and li == 0:
@@ -286,7 +286,7 @@ class AngleDistribution(EqualityMixin):
             for i in range(n_energy_legendre):
                 items, al = get_list_record(file_obj)
                 energy_legendre[i] = items[1]
-                coefficients = np.asarray([1.0] + al)
+                coefficients = np.asarray([1.0, *al])
                 mu.append(Legendre(coefficients))
 
             params, tab2 = get_tab2_record(file_obj)
@@ -297,8 +297,11 @@ class AngleDistribution(EqualityMixin):
                 params, f = get_tab1_record(file_obj)
                 energy_tabulated[i] = params[1]
                 if f.n_regions > 1:
-                    raise NotImplementedError("Angular distribution with multiple "
-                                              "interpolation regions not supported.")
+                    msg = (
+                        "Angular distribution with multiple "
+                                              "interpolation regions not supported."
+                    )
+                    raise NotImplementedError(msg)
                 mu.append(Tabular(f.x, f.y, INTERPOLATION_SCHEME[f.interpolation[0]]))
 
             energy = np.concatenate((energy_legendre, energy_tabulated))

@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndo install` command"""
+"""Definition and parser for the `ndo install` command."""
 
 import argparse as ap
 import shutil
@@ -16,11 +16,11 @@ from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoInstallCommand(Command):
-    """Define the `ndo install` command"""
+    """Define the `ndo install` command."""
 
     @classmethod
-    def parser(cls, subparsers: ap._SubParsersAction):
-        """Add the parser for the 'ndo build' command to a subparser object
+    def parser(cls, subparsers: ap._SubParsersAction) -> None:
+        """Add the parser for the 'ndo build' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -38,32 +38,31 @@ class NdoInstallCommand(Command):
         )
         parser.set_defaults(func=cls)
 
-    def run(self, args: ap.Namespace):
-        """Download and install a OpenMC nuclear data library from the official website
+    def run(self, args: ap.Namespace) -> None:
+        """Download and install a OpenMC nuclear data library from the official website.
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
 
         """
         for libname in args.library:
-            with tempfile.TemporaryDirectory() as tmpdir:
-                with chdir(tmpdir):
-                    family, lib = libname.split("/")
-                    dico = OPENMC_LIBS[family][lib]
+            with tempfile.TemporaryDirectory() as tmpdir, chdir(tmpdir):
+                family, lib = libname.split("/")
+                dico = OPENMC_LIBS[family][lib]
 
-                    download(dico["source"], dico["tarname"], family, lib)
-                    extract(dico["tarname"], dico["size"], family, lib)
+                download(dico["source"], dico["tarname"], family, lib)
+                extract(dico["tarname"], dico["size"], family, lib)
 
-                    # sp.run(["tar", "xf", dico["tarname"]], check=True)
-                    source = Path(dico["extractedname"])
-                    target = NDMANAGER_HDF5 / family / lib
-                    target.parent.mkdir(exist_ok=True, parents=True)
-                    shutil.rmtree(target, ignore_errors=True)
-                    shutil.move(source, target)
+                # sp.run(["tar", "xf", dico["tarname"]], check=True)
+                source = Path(dico["extractedname"])
+                target = NDMANAGER_HDF5 / family / lib
+                target.parent.mkdir(exist_ok=True, parents=True)
+                shutil.rmtree(target, ignore_errors=True)
+                shutil.move(source, target)
 
 
-def download(url: str, tarname: str, family: str, lib: str):
-    """Download an HDF5 OpenMC library from the official OpenMC website
+def download(url: str, tarname: str, family: str, lib: str) -> None:
+    """Download an HDF5 OpenMC library from the official OpenMC website.
 
     Args:
         url (str): The URL of the library
@@ -91,8 +90,8 @@ def download(url: str, tarname: str, family: str, lib: str):
     pbar.close()
 
 
-def extract(tarname: str, total: int, family: str, lib: str):
-    """Extract a tar file containing an OpenMC HDF5 library
+def extract(tarname: str, total: int, family: str, lib: str) -> None:
+    """Extract a tar file containing an OpenMC HDF5 library.
 
     Args:
         tarname (str): The name of the tar file

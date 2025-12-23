@@ -1,4 +1,4 @@
-"""Definition and parser for the 'ndf install' command"""
+"""Definition and parser for the 'ndf install' command."""
 
 import argparse as ap
 import shutil
@@ -14,10 +14,10 @@ from ndmanager.env import NDMANAGER_ENDF6
 
 
 class NdfInstallCommand:
-    """Define the `ndf install` command"""
+    """Define the `ndf install` command."""
 
     def __init__(self, args: ap.Namespace) -> None:
-        """Execute the `nds install` command given an argparse namespace
+        """Execute the `nds install` command given an argparse namespace.
 
         Args:
             args (ap.Namespace): An argparse namespace containing the `nds install`
@@ -33,7 +33,7 @@ class NdfInstallCommand:
                 return
 
         if not IAEA.is_cached():
-            print("Initializing IAEA database...")
+            pass
         self.iaea = IAEA()
 
         if "foo" in self.libraries:
@@ -48,7 +48,7 @@ class NdfInstallCommand:
         self.download_errata()
 
     def get_sublibrary_list(self) -> list[str]:
-        """Get the list of sublibraries to download
+        """Get the list of sublibraries to download.
 
         Returns:
             List[str]: The list of sublibraries
@@ -61,8 +61,8 @@ class NdfInstallCommand:
             return list(reduce(lambda x, y: x | y, sublibraries))
         return SUBLIBRARIES_SHORTLIST
 
-    def download(self):
-        """Download all the ENDF6 nuclear data file requested"""
+    def download(self) -> None:
+        """Download all the ENDF6 nuclear data file requested."""
         for library in self.libraries:
             libdata = self.iaea[library]
             for sublibrary in self.sublibraries:
@@ -78,8 +78,8 @@ class NdfInstallCommand:
                         targetdir, style="nuclide", processes=self.args.j,
                     )
 
-    def download_foo(self):
-        """Download a minimal library for testing purposes"""
+    def download_foo(self) -> None:
+        """Download a minimal library for testing purposes."""
         target = NDMANAGER_ENDF6 / "foo"
 
         neutron = self.iaea["endfb8"]["n"]
@@ -101,8 +101,8 @@ class NdfInstallCommand:
         photo.download_single("H0", target / "ard" / "H.endf6")
         photo.download_single("Pu0", target / "ard" / "Pu.endf6")
 
-    def download_bar(self):
-        """Download a minimal library for testing purposes"""
+    def download_bar(self) -> None:
+        """Download a minimal library for testing purposes."""
         target = NDMANAGER_ENDF6 / "bar"
 
         neutron = self.iaea["jendl5"]["n"]
@@ -124,8 +124,8 @@ class NdfInstallCommand:
         ard.download_single("C0", target / "ard" / "C.endf6")
         ard.download_single("H0", target / "ard" / "H.endf6")
 
-    def download_errata(self):
-        """Manualy define some errata ENDF6 files to download"""
+    def download_errata(self) -> None:
+        """Manualy define some errata ENDF6 files to download."""
         if "endfb8" in self.libraries and "n" in self.sublibraries:
             url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
             tape = requests.get(url, timeout=600).text
@@ -134,7 +134,7 @@ class NdfInstallCommand:
                 f.write(tape)
 
     def install_directory(self, libpath: str, libname: str) -> None:
-        """Automatically
+        """Automatically.
 
         Args:
             libpath (str): The path to the directory where the ENDF6 tape are located
@@ -144,10 +144,10 @@ class NdfInstallCommand:
             FileExistsError: If the library name is already taken
 
         """
-        print(f"Installing the {libname} library...")
         p = NDMANAGER_ENDF6 / libname
         if p.exists():
-            raise FileExistsError(f"Library {libname} already exists")
+            msg = f"Library {libname} already exists"
+            raise FileExistsError(msg)
         p.mkdir(parents=True)
 
         candidates = Path(libpath).rglob("*")
@@ -169,11 +169,10 @@ class NdfInstallCommand:
 
             ntapes += 1
             shutil.copy(candidate, p / name)
-        print(f"Installed {ntapes} tapes at {p}")
 
     @classmethod
-    def parser(cls, subparsers):
-        """Add the parser for the 'ndf install' command to a subparser object
+    def parser(cls, subparsers) -> None:
+        """Add the parser for the 'ndf install' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object

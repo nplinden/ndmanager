@@ -11,7 +11,7 @@ from .function import Function1D, Polynomial, Tabulated1D
 
 
 class Product(EqualityMixin):
-    """Secondary particle emitted in a nuclear reaction
+    """Secondary particle emitted in a nuclear reaction.
 
     Parameters
     ----------
@@ -38,7 +38,7 @@ class Product(EqualityMixin):
 
     """
 
-    def __init__(self, particle="neutron"):
+    def __init__(self, particle="neutron") -> None:
         self.applicability = []
         self.decay_rate = 0.0
         self.distribution = []
@@ -46,7 +46,7 @@ class Product(EqualityMixin):
         self.particle = particle
         self.yield_ = Polynomial((1,))  # 0-order polynomial, i.e., a constant
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if isinstance(self.yield_, Tabulated1D):
             if np.all(self.yield_.y == self.yield_.y[0]):
                 return f"<Product: {self.particle}, emission={self.emission_mode}, yield={self.yield_.y[0]}>"
@@ -58,7 +58,7 @@ class Product(EqualityMixin):
         return self._applicability
 
     @applicability.setter
-    def applicability(self, applicability):
+    def applicability(self, applicability) -> None:
         cv.check_type("product distribution applicability", applicability,
                       Iterable, Tabulated1D)
         self._applicability = applicability
@@ -68,7 +68,7 @@ class Product(EqualityMixin):
         return self._decay_rate
 
     @decay_rate.setter
-    def decay_rate(self, decay_rate):
+    def decay_rate(self, decay_rate) -> None:
         cv.check_type("product decay rate", decay_rate, Real)
         cv.check_greater_than("product decay rate", decay_rate, 0.0, True)
         self._decay_rate = decay_rate
@@ -78,7 +78,7 @@ class Product(EqualityMixin):
         return self._distribution
 
     @distribution.setter
-    def distribution(self, distribution):
+    def distribution(self, distribution) -> None:
         cv.check_type("product angle-energy distribution", distribution,
                       Iterable, AngleEnergy)
         self._distribution = distribution
@@ -88,7 +88,7 @@ class Product(EqualityMixin):
         return self._emission_mode
 
     @emission_mode.setter
-    def emission_mode(self, emission_mode):
+    def emission_mode(self, emission_mode) -> None:
         cv.check_value("product emission mode", emission_mode,
                        ("prompt", "delayed", "total"))
         self._emission_mode = emission_mode
@@ -98,7 +98,7 @@ class Product(EqualityMixin):
         return self._particle
 
     @particle.setter
-    def particle(self, particle):
+    def particle(self, particle) -> None:
         cv.check_type("product particle type", particle, str)
         self._particle = particle
 
@@ -107,12 +107,12 @@ class Product(EqualityMixin):
         return self._yield
 
     @yield_.setter
-    def yield_(self, yield_):
+    def yield_(self, yield_) -> None:
         cv.check_type("product yield", yield_, Function1D)
         self._yield = yield_
 
-    def to_hdf5(self, group):
-        """Write product to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write product to an HDF5 group.
 
         Parameters
         ----------
@@ -138,7 +138,7 @@ class Product(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate reaction product from HDF5 data
+        """Generate reaction product from HDF5 data.
 
         Parameters
         ----------

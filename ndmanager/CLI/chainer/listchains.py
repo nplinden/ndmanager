@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndc list` command"""
+"""Definition and parser for the `ndc list` command."""
 
 import argparse as ap
 import textwrap
@@ -10,11 +10,11 @@ from ndmanager.format import get_terminal_size, header
 
 
 class NdcListCommand(Command):
-    """Define the `ndc list` command"""
+    """Define the `ndc list` command."""
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction) -> None:
-        """Add the parser for the 'ndc list' command to a subparser object
+        """Add the parser for the 'ndc list' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -26,15 +26,12 @@ class NdcListCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """List the available chains"""
+        """List the available chains."""
         col, _ = get_terminal_size()
 
         lst = [header("Installable Chains")]
         for chain, dico in OPENMC_CHAINS.items():
-            if (NDMANAGER_CHAINS / f"official/{chain}.xml").exists():
-                check = "✓"
-            else:
-                check = " "
+            check = "✓" if (NDMANAGER_CHAINS / f"official/{chain}.xml").exists() else " "
             info = dico["info"]
 
             s = f"{chain}"
@@ -54,4 +51,3 @@ class NdcListCommand(Command):
         s = " ".join([f"{i:<15}" for i in sorted(chains)])
         s = textwrap.wrap(s, width=col)
         lst.append("\n".join(s))
-        print("\n".join(lst))

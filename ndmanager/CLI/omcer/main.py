@@ -1,4 +1,4 @@
-"""Entry point for the `ndo` command"""
+"""Entry point for the `ndo` command."""
 
 import argparse as ap
 
@@ -23,8 +23,8 @@ NdoBuildCommand.parser(subparsers)
 NdoSn301Command.parser(subparsers)
 
 
-def main():
-    """Entry point for the ndo command"""
+def main() -> None:
+    """Entry point for the ndo command."""
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)

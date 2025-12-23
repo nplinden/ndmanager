@@ -1,7 +1,7 @@
 import h5py
 
 
-def merge_neutron_file(sourcepath, targetpath):
+def merge_neutron_file(sourcepath, targetpath) -> None:
     """Merge two nuclear data file containing data for the same nuclide at
     different temperatures.
 
@@ -15,8 +15,8 @@ def merge_neutron_file(sourcepath, targetpath):
 
     assert len(source.keys()) == 1
     assert len(target.keys()) == 1
-    nuclide = list(source.keys())[0]
-    assert list(source.keys())[0] == nuclide
+    nuclide = next(iter(source.keys()))
+    assert next(iter(source.keys())) == nuclide
 
     s_temperatures = source[f"{nuclide}/energy"].keys()
     s_temperatures = {int(t[:-1]) for t in s_temperatures}

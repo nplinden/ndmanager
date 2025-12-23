@@ -48,15 +48,12 @@ class Nuclide:
             Z = ATOMIC_SYMBOL[element]
             A = int(A)
 
-            if not m:
-                M = 0
-            else:
-                M = int(m.removeprefix("m"))
+            M = 0 if not m else int(m.removeprefix("m"))
         return cls(Z, A, M)
 
     @classmethod
     def from_zam(cls, zam: int) -> "Nuclide":
-        """Instanciate a nuclide using its zam number
+        """Instanciate a nuclide using its zam number.
 
         Args:
             zam (int): The zam number
@@ -74,7 +71,7 @@ class Nuclide:
     def from_file(cls, filename: str | Path) -> "Nuclide":
         """Instanciate a nuclide using a path to an ENDF6 file, for files
         containing multiple MAT numbers, only the first nuclide will be
-        returned
+        returned.
 
         Args:
             filename (str): Path to an ENDF6 file
@@ -98,7 +95,7 @@ class Nuclide:
     @classmethod
     def from_iaea_name(cls, name: str) -> "Nuclide":
         """Instanciate a nuclide using its name if the format used by the IAEA's website.
-        e.g. 048-Cd-115M
+        e.g. 048-Cd-115M.
 
         Args:
             name (str): The name in the IAEA format
@@ -119,7 +116,7 @@ class Nuclide:
 
     @property
     def name(self) -> str:
-        """Returns the name of the nuclide in the GNDS format
+        """Returns the name of the nuclide in the GNDS format.
 
         Returns:
             str: The name
@@ -133,7 +130,7 @@ class Nuclide:
 
     @property
     def zam(self) -> int:
-        """Returns the zam of the nuclide
+        """Returns the zam of the nuclide.
 
         Returns:
             int: The zam

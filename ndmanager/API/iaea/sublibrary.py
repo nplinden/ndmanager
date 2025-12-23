@@ -1,4 +1,4 @@
-"""A class to manage a nuclear data sublibrary originating from the IAEA website"""
+"""A class to manage a nuclear data sublibrary originating from the IAEA website."""
 
 import multiprocessing as mp
 import re
@@ -7,7 +7,7 @@ import zipfile
 from contextlib import chdir
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Never
 
 import requests
 from bs4 import BeautifulSoup
@@ -81,7 +81,7 @@ class IAEASublibrary:
         return cls(**kwargs)
 
     def __getitem__(self, key: str) -> str:
-        """Define the [] get operator
+        """Define the [] get operator.
 
         Args:
             key (str): Name of the desired material
@@ -93,7 +93,7 @@ class IAEASublibrary:
         return self.urls[key]
 
     def __setitem__(self, key: str, value: str) -> None:
-        """Define the [] set operator
+        """Define the [] set operator.
 
         Args:
             key (str): name of the material
@@ -103,7 +103,7 @@ class IAEASublibrary:
         self.urls[key] = value
 
     def __len__(self) -> int:
-        """The number of materials in the sublibrary
+        """The number of materials in the sublibrary.
 
         Returns:
             int: The number of materials in the sublibrary
@@ -112,7 +112,7 @@ class IAEASublibrary:
         return len(self.urls)
 
     def keys(self) -> list[str]:
-        """The list of materials in the sublibrary
+        """The list of materials in the sublibrary.
 
         Returns:
             List[str]: List of materials in the sublibrary
@@ -123,7 +123,7 @@ class IAEASublibrary:
     @staticmethod
     def parse_index(index: list[str], kwargs: dict[str, Any]) -> list[str]:
         """Parse an sublibrary index from the IAEA website, e.g.
-        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm
+        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm.
 
         Args:
             index (List[str]): The index file lines
@@ -169,7 +169,7 @@ class IAEASublibrary:
         return string[:pos] + "$" + string[pos:]
 
     def fetch_tape(self, material: str) -> str:
-        """Fetch the content of an ENDF6 tape for the desired material
+        """Fetch the content of an ENDF6 tape for the desired material.
 
         Args:
             material (str): The name of the material
@@ -180,20 +180,19 @@ class IAEASublibrary:
         """
         url = self[material]
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            with chdir(tmpdir):
-                content = requests.get(url, timeout=600).content
-                zipname = url.split("/")[-1]
-                with open(zipname, "wb") as f:
-                    f.write(content)
-                with zipfile.ZipFile(zipname) as zf:
-                    zf.extractall()
-                datafile = f"{zipname[:-4]}.dat"
-                with open(datafile, encoding="utf-8", newline="") as f:
-                    return f.read()
+        with tempfile.TemporaryDirectory() as tmpdir, chdir(tmpdir):
+            content = requests.get(url, timeout=600).content
+            zipname = url.split("/")[-1]
+            with open(zipname, "wb") as f:
+                f.write(content)
+            with zipfile.ZipFile(zipname) as zf:
+                zf.extractall()
+            datafile = f"{zipname[:-4]}.dat"
+            with open(datafile, encoding="utf-8", newline="") as f:
+                return f.read()
 
     def download_single(self, material: str, targetfile: str | Path) -> None:
-        """Download an ENDF6 tape for the desired material
+        """Download an ENDF6 tape for the desired material.
 
         Args:
             material (str): The name of the material
@@ -234,7 +233,8 @@ class IAEASublibrary:
             elif style == "atom":
                 name = Nuclide.from_name(nuclide).element
             else:
-                raise ValueError("Unknown name style")
+                msg = "Unknown name style"
+                raise ValueError(msg)
             targets.append(Path(targetdir) / f"{name}.endf6")
             nuclides.append(nuclide)
 
@@ -247,10 +247,10 @@ class IAEASublibrary:
             pbar.close()
         else:
 
-            def error_callback(e):
+            def error_callback(e) -> Never:
                 raise e
 
-            def update_pbar(_):
+            def update_pbar(_) -> None:
                 pbar.update()
 
             description = f"{self.lib}/{self.kind}"

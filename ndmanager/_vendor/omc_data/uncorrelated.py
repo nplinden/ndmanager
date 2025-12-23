@@ -8,7 +8,7 @@ from .energy_distribution import EnergyDistribution
 
 
 class UncorrelatedAngleEnergy(AngleEnergy):
-    """Uncorrelated angle-energy distribution
+    """Uncorrelated angle-energy distribution.
 
     Parameters
     ----------
@@ -26,7 +26,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     """
 
-    def __init__(self, angle=None, energy=None):
+    def __init__(self, angle=None, energy=None) -> None:
         self._angle = None
         self._energy = None
 
@@ -40,7 +40,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
         return self._angle
 
     @angle.setter
-    def angle(self, angle):
+    def angle(self, angle) -> None:
         cv.check_type("uncorrelated angle distribution", angle,
                       AngleDistribution)
         self._angle = angle
@@ -50,13 +50,13 @@ class UncorrelatedAngleEnergy(AngleEnergy):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("uncorrelated energy distribution", energy,
                       EnergyDistribution)
         self._energy = energy
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -75,7 +75,7 @@ class UncorrelatedAngleEnergy(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate uncorrelated angle-energy distribution from HDF5 data
+        """Generate uncorrelated angle-energy distribution from HDF5 data.
 
         Parameters
         ----------

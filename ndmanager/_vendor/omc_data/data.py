@@ -359,11 +359,12 @@ def atomic_weight(element):
         weight += atomic_mass(nuclide) * abundance
     if weight > 0.:
         return weight
-    raise ValueError(f"No naturally-occurring isotopes for element '{element}'.")
+    msg = f"No naturally-occurring isotopes for element '{element}'."
+    raise ValueError(msg)
 
 
 def half_life(isotope):
-    """Return half-life of isotope in seconds or None if isotope is stable
+    """Return half-life of isotope in seconds or None if isotope is stable.
 
     Half-life values are from the `ENDF/B-VIII.0 decay sublibrary
     <https://www.nndc.bnl.gov/endf-b8.0/download.html>`_.
@@ -391,7 +392,7 @@ def half_life(isotope):
 
 
 def decay_constant(isotope):
-    """Return decay constant of isotope in [s^-1]
+    """Return decay constant of isotope in [s^-1].
 
     Decay constants are based on half-life values from the
     :func:`~ndmanager._vendor.omc_data.half_life` function. When the isotope is stable, a decay
@@ -450,13 +451,15 @@ def water_density(temperature, pressure=0.1013):
     if pressure > 100.0:
         warn("Results are not valid for pressures above 100 MPa.")
     elif pressure < 0.0:
-        raise ValueError("Pressure must be positive.")
+        msg = "Pressure must be positive."
+        raise ValueError(msg)
     if temperature < 273:
         warn("Results are not valid for temperatures below 273.15 K.")
     elif temperature > 623.15:
         warn("Results are not valid for temperatures above 623.15 K.")
     elif temperature <= 0.0:
-        raise ValueError("Temperature must be positive.")
+        msg = "Temperature must be positive."
+        raise ValueError(msg)
 
     # IAPWS region 4 parameters
     n4 = [0.11670521452767e4, -0.72421316703206e6, -0.17073846940092e2,
@@ -521,8 +524,8 @@ def water_density(temperature, pressure=0.1013):
     return coeff / pi / gamma1_pi
 
 
-def gnds_name(Z, A, m=0):
-    """Return nuclide name using GNDS convention
+def gnds_name(Z, A, m=0) -> str:
+    """Return nuclide name using GNDS convention.
 
     .. versionchanged:: 0.14.0
         Function name changed from ``gnd_name`` to ``gnds_name``
@@ -552,13 +555,14 @@ def _get_element_symbol(element: str) -> str:
     if len(element) > 2:
         symbol = ELEMENT_SYMBOL.get(element.lower())
         if symbol is None:
-            raise ValueError(f'Element name "{element}" not recognized')
+            msg = f'Element name "{element}" not recognized'
+            raise ValueError(msg)
         return symbol
     return element
 
 
 def isotopes(element: str) -> list[tuple[str, float]]:
-    """Return naturally occurring isotopes and their abundances
+    """Return naturally occurring isotopes and their abundances.
 
     .. versionadded:: 0.12.1
 
@@ -590,7 +594,7 @@ def isotopes(element: str) -> list[tuple[str, float]]:
 
 
 def zam(name):
-    """Return tuple of (atomic number, mass number, metastable state)
+    """Return tuple of (atomic number, mass number, metastable state).
 
     Parameters
     ----------
@@ -606,11 +610,15 @@ def zam(name):
     try:
         symbol, A, state = _GNDS_NAME_RE.fullmatch(name).groups()
     except AttributeError:
-        raise ValueError(f"'{name}' does not appear to be a nuclide name in "
-                         "GNDS format")
+        msg = (
+            f"'{name}' does not appear to be a nuclide name in "
+                         "GNDS format"
+        )
+        raise ValueError(msg)
 
     if symbol not in ATOMIC_NUMBER:
-        raise ValueError(f"'{symbol}' is not a recognized element symbol")
+        msg = f"'{symbol}' is not a recognized element symbol"
+        raise ValueError(msg)
 
     metastable = int(state[2:]) if state else 0
     return (ATOMIC_NUMBER[symbol], int(A), metastable)

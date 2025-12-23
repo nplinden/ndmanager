@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 from numbers import Integral, Real
+from typing import Never
 
 import numpy as np
 
@@ -11,7 +12,7 @@ from .endf import get_tab1_record, get_tab2_record
 
 
 class LaboratoryAngleEnergy(AngleEnergy):
-    """Laboratory angle-energy distribution
+    """Laboratory angle-energy distribution.
 
     Parameters
     ----------
@@ -43,7 +44,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
     """
 
-    def __init__(self, breakpoints, interpolation, energy, mu, energy_out):
+    def __init__(self, breakpoints, interpolation, energy, mu, energy_out) -> None:
         super().__init__()
         self.breakpoints = breakpoints
         self.interpolation = interpolation
@@ -56,7 +57,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_type("laboratory angle-energy breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
@@ -66,7 +67,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_type("laboratory angle-energy interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
@@ -76,7 +77,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("laboratory angle-energy incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
@@ -86,7 +87,7 @@ class LaboratoryAngleEnergy(AngleEnergy):
         return self._mu
 
     @mu.setter
-    def mu(self, mu):
+    def mu(self, mu) -> None:
         cv.check_type("laboratory angle-energy outgoing cosine", mu,
                       Iterable, Univariate)
         self._mu = mu
@@ -96,14 +97,14 @@ class LaboratoryAngleEnergy(AngleEnergy):
         return self._energy_out
 
     @energy_out.setter
-    def energy_out(self, energy_out):
+    def energy_out(self, energy_out) -> None:
         cv.check_iterable_type("laboratory angle-energy outgoing energy",
                                energy_out, Univariate, 2, 2)
         self._energy_out = energy_out
 
     @classmethod
     def from_endf(cls, file_obj):
-        """Generate laboratory angle-energy distribution from an ENDF evaluation
+        """Generate laboratory angle-energy distribution from an ENDF evaluation.
 
         Parameters
         ----------
@@ -139,5 +140,5 @@ class LaboratoryAngleEnergy(AngleEnergy):
 
         return cls(tab2.breakpoints, tab2.interpolation, energy, mu, energy_out)
 
-    def to_hdf5(self, group):
+    def to_hdf5(self, group) -> Never:
         raise NotImplementedError

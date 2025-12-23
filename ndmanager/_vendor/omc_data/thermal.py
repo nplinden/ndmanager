@@ -157,14 +157,14 @@ _THERMAL_NAMES = {
 }
 
 
-def _temperature_str(T):
+def _temperature_str(T) -> str:
     # round() normally returns an int when called with a single argument, but
     # numpy floats overload rounding to return another float
     return f"{int(round(T))}K"
 
 
 def get_thermal_name(name):
-    """Get proper S(a,b) table name, e.g. 'HH2O' -> 'c_H_in_H2O'
+    """Get proper S(a,b) table name, e.g. 'HH2O' -> 'c_H_in_H2O'.
 
     Parameters
     ----------
@@ -212,7 +212,7 @@ def get_thermal_name(name):
 
 
 class CoherentElastic(Function1D):
-    r"""Coherent elastic scattering data from a crystalline material
+    r"""Coherent elastic scattering data from a crystalline material.
 
     The integrated cross section for coherent elastic scattering from a
     powdered crystalline material may be represented as:
@@ -239,7 +239,7 @@ class CoherentElastic(Function1D):
 
     """
 
-    def __init__(self, bragg_edges, factors):
+    def __init__(self, bragg_edges, factors) -> None:
         self.bragg_edges = bragg_edges
         self.factors = factors
 
@@ -253,7 +253,7 @@ class CoherentElastic(Function1D):
             return xs
         return self.factors[idx] / E if idx >= 0 else 0.0
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.bragg_edges)
 
     @property
@@ -261,7 +261,7 @@ class CoherentElastic(Function1D):
         return self._bragg_edges
 
     @bragg_edges.setter
-    def bragg_edges(self, bragg_edges):
+    def bragg_edges(self, bragg_edges) -> None:
         cv.check_type("Bragg edges", bragg_edges, Iterable, Real)
         self._bragg_edges = np.asarray(bragg_edges)
 
@@ -270,13 +270,13 @@ class CoherentElastic(Function1D):
         return self._factors
 
     @factors.setter
-    def factors(self, factors):
+    def factors(self, factors) -> None:
         cv.check_type("structure factor cumulative sums", factors,
                       Iterable, Real)
         self._factors = np.asarray(factors)
 
-    def to_hdf5(self, group, name):
-        """Write coherent elastic scattering to an HDF5 group
+    def to_hdf5(self, group, name) -> None:
+        """Write coherent elastic scattering to an HDF5 group.
 
         Parameters
         ----------
@@ -292,7 +292,7 @@ class CoherentElastic(Function1D):
 
     @classmethod
     def from_hdf5(cls, dataset):
-        """Read coherent elastic scattering from an HDF5 dataset
+        """Read coherent elastic scattering from an HDF5 dataset.
 
         Parameters
         ----------
@@ -311,7 +311,7 @@ class CoherentElastic(Function1D):
 
 
 class IncoherentElastic(Function1D):
-    r"""Incoherent elastic scattering cross section
+    r"""Incoherent elastic scattering cross section.
 
     Elastic scattering can be treated in the incoherent approximation for
     partially ordered systems such as ZrHx and polyethylene. The integrated
@@ -341,7 +341,7 @@ class IncoherentElastic(Function1D):
 
     """
 
-    def __init__(self, bound_xs, debye_waller):
+    def __init__(self, bound_xs, debye_waller) -> None:
         self.bound_xs = bound_xs
         self.debye_waller = debye_waller
 
@@ -349,8 +349,8 @@ class IncoherentElastic(Function1D):
         W = self.debye_waller
         return self.bound_xs / 2.0 * (1 - np.exp(-4*E*W)) / (2*E*W)
 
-    def to_hdf5(self, group, name):
-        """Write incoherent elastic scattering to an HDF5 group
+    def to_hdf5(self, group, name) -> None:
+        """Write incoherent elastic scattering to an HDF5 group.
 
         Parameters
         ----------
@@ -366,7 +366,7 @@ class IncoherentElastic(Function1D):
 
     @classmethod
     def from_hdf5(cls, dataset):
-        """Read incoherent elastic scattering from an HDF5 dataset
+        """Read incoherent elastic scattering from an HDF5 dataset.
 
         Parameters
         ----------
@@ -384,7 +384,7 @@ class IncoherentElastic(Function1D):
 
 
 class ThermalScatteringReaction(EqualityMixin):
-    r"""Thermal scattering reaction
+    r"""Thermal scattering reaction.
 
     This class is used to hold the integral and differential cross sections
     for either elastic or inelastic thermal scattering.
@@ -405,12 +405,12 @@ class ThermalScatteringReaction(EqualityMixin):
 
     """
 
-    def __init__(self, xs, distribution):
+    def __init__(self, xs, distribution) -> None:
         self.xs = xs
         self.distribution = distribution
 
-    def to_hdf5(self, group, name):
-        """Write thermal scattering reaction to HDF5
+    def to_hdf5(self, group, name) -> None:
+        """Write thermal scattering reaction to HDF5.
 
         Parameters
         ----------
@@ -429,7 +429,7 @@ class ThermalScatteringReaction(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group, name, temperatures):
-        """Generate thermal scattering reaction data from HDF5
+        """Generate thermal scattering reaction data from HDF5.
 
         Parameters
         ----------
@@ -497,7 +497,7 @@ class ThermalScattering(EqualityMixin):
 
     """
 
-    def __init__(self, name, atomic_weight_ratio, energy_max, kTs):
+    def __init__(self, name, atomic_weight_ratio, energy_max, kTs) -> None:
         self.name = name
         self.atomic_weight_ratio = atomic_weight_ratio
         self.energy_max = energy_max
@@ -506,7 +506,7 @@ class ThermalScattering(EqualityMixin):
         self.inelastic = None
         self.nuclides = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if hasattr(self, "name"):
             return f"<Thermal Scattering Data: {self.name}>"
         return "<Thermal Scattering Data>"
@@ -515,7 +515,7 @@ class ThermalScattering(EqualityMixin):
     def temperatures(self):
         return [_temperature_str(kT / K_BOLTZMANN) for kT in self.kTs]
 
-    def export_to_hdf5(self, path, mode="a", libver="earliest"):
+    def export_to_hdf5(self, path, mode="a", libver="earliest") -> None:
         """Export table to an HDF5 file.
 
         Parameters
@@ -549,7 +549,7 @@ class ThermalScattering(EqualityMixin):
                 self.elastic.to_hdf5(g, "elastic")
             self.inelastic.to_hdf5(g, "inelastic")
 
-    def add_temperature_from_ace(self, ace_or_filename, name=None):
+    def add_temperature_from_ace(self, ace_or_filename, name=None) -> None:
         """Add data to the ThermalScattering object from an ACE file at a
         different temperature.
 
@@ -579,7 +579,8 @@ class ThermalScattering(EqualityMixin):
 
         # Check that name matches
         if data.name != self.name:
-            raise ValueError("Data provided for an incorrect material.")
+            msg = "Data provided for an incorrect material."
+            raise ValueError(msg)
 
         # Add temperature
         self.kTs += data.kTs
@@ -596,7 +597,7 @@ class ThermalScattering(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group_or_filename):
-        """Generate thermal scattering data from HDF5 group
+        """Generate thermal scattering data from HDF5 group.
 
         Parameters
         ----------
@@ -620,17 +621,23 @@ class ThermalScattering(EqualityMixin):
             if "version" in h5file.attrs:
                 major, minor = h5file.attrs["version"]
                 if major != HDF5_VERSION_MAJOR:
-                    raise OSError(
+                    msg = (
                         f"HDF5 data format uses version {major}.{minor} whereas your "
                         "installation of the OpenMC Python API expects version "
-                        f"{HDF5_VERSION_MAJOR}.x.")
+                        f"{HDF5_VERSION_MAJOR}.x."
+                    )
+                    raise OSError(
+                        msg)
             else:
-                raise OSError(
+                msg = (
                     "HDF5 data does not indicate a version. Your installation of "
-                    f"the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data.",
+                    f"the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data."
+                )
+                raise OSError(
+                    msg,
                     )
 
-            group = list(h5file.values())[0]
+            group = next(iter(h5file.values()))
 
         name = group.name[1:]
         atomic_weight_ratio = group.attrs["atomic_weight_ratio"]
@@ -656,7 +663,7 @@ class ThermalScattering(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace_or_filename, name=None):
-        """Generate thermal scattering data from an ACE table
+        """Generate thermal scattering data from an ACE table.
 
         Parameters
         ----------
@@ -674,15 +681,13 @@ class ThermalScattering(EqualityMixin):
             Thermal scattering data
 
         """
-        if isinstance(ace_or_filename, Table):
-            ace = ace_or_filename
-        else:
-            ace = get_table(ace_or_filename)
+        ace = ace_or_filename if isinstance(ace_or_filename, Table) else get_table(ace_or_filename)
 
         # Get new name that is GND-consistent
         ace_name, xs = ace.name.split(".")
         if not xs.endswith("t"):
-            raise TypeError(f"{ace} is not a thermal scattering ACE table.")
+            msg = f"{ace} is not a thermal scattering ACE table."
+            raise TypeError(msg)
         if name is None:
             name = get_thermal_name(ace_name)
 
@@ -854,7 +859,7 @@ class ThermalScattering(EqualityMixin):
         # nuclides that the S(a,b) table applies to. Thus, for all elements
         # other than H and Fe, we automatically add all the naturally-occurring
         # isotopes.
-        for zaid, awr in ace.pairs:
+        for zaid, _awr in ace.pairs:
             if zaid > 0:
                 Z, A = divmod(zaid, 1000)
                 element = ATOMIC_SYMBOL[Z]
@@ -937,7 +942,7 @@ class ThermalScattering(EqualityMixin):
                     # Replace ACE data with ENDF data
                     rx, rx_endf = data.elastic, data_endf.elastic
                     for t in temperatures:
-                        if isinstance(rx_endf.xs[t], (IncoherentElastic, Sum)):
+                        if isinstance(rx_endf.xs[t], IncoherentElastic | Sum):
                             rx.xs[t] = rx_endf.xs[t]
                             rx.distribution[t] = rx_endf.distribution[t]
 
@@ -945,7 +950,7 @@ class ThermalScattering(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev_or_filename, divide_incoherent_elastic=False):
-        """Generate thermal scattering data from an ENDF file
+        """Generate thermal scattering data from an ENDF file.
 
         Parameters
         ----------
@@ -963,10 +968,7 @@ class ThermalScattering(EqualityMixin):
             Thermal scattering data
 
         """
-        if isinstance(ev_or_filename, endf.Evaluation):
-            ev = ev_or_filename
-        else:
-            ev = endf.Evaluation(ev_or_filename)
+        ev = ev_or_filename if isinstance(ev_or_filename, endf.Evaluation) else endf.Evaluation(ev_or_filename)
 
         # Read incoherent inelastic data
         assert (7, 4) in ev.section, "No MF=7, MT=4 found in thermal scattering"

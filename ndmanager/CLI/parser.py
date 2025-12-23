@@ -11,7 +11,7 @@ class Command:
 
     def __init__(self, args: ap.Namespace) -> None:
         """When the class is called, simply run the
-        `run` command
+        `run` command.
 
         Args:
             args (ap.Namespace): The CLI arguments namespace
@@ -21,8 +21,8 @@ class Command:
 
     @classmethod
     @abc.abstractmethod
-    def parser(self, subparsers: ap._SubParsersAction):  # pragma: no cover
-        """This should define a parser to add to the subparser list
+    def parser(cls, subparsers: ap._SubParsersAction):  # pragma: no cover
+        """This should define a parser to add to the subparser list.
 
         Args:
             subparsers (ap._SubParsersAction): A subparser object
@@ -32,7 +32,7 @@ class Command:
     @abc.abstractmethod
     def run(self, args: ap.Namespace) -> None:  # pragma: no cover
         """This should define what the command does based on the passed
-        CLI arguments
+        CLI arguments.
 
         Args:
             args (ap.Namespace): The CLI arguments namespace

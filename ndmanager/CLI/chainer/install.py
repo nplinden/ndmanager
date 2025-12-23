@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndc install` command"""
+"""Definition and parser for the `ndc install` command."""
 
 import argparse as ap
 import tempfile
@@ -13,11 +13,11 @@ from ndmanager.env import NDMANAGER_CHAINS
 
 
 class NdcInstallCommand(Command):
-    """Define the `ndc install` command"""
+    """Define the `ndc install` command."""
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction) -> None:
-        """Add the parser for the 'ndc build' command to a subparser object
+        """Add the parser for the 'ndc build' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -36,7 +36,7 @@ class NdcInstallCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """Download and install a OpenMC chain file from the official website
+        """Download and install a OpenMC chain file from the official website.
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
@@ -47,27 +47,27 @@ class NdcInstallCommand(Command):
         """
         for chain in args.chain:
             if chain not in OPENMC_CHAINS:
-                raise KeyError(f"{chain} chain is not available for installation")
+                msg = f"{chain} chain is not available for installation"
+                raise KeyError(msg)
         for chain in args.chain:
-            with tempfile.TemporaryDirectory() as tmpdir:
-                with chdir(tmpdir):
-                    url = OPENMC_CHAINS[chain]["url"]
-                    total = int(OPENMC_CHAINS[chain]["size"])
-                    r = requests.get(url, timeout=3600, stream=True)
+            with tempfile.TemporaryDirectory() as tmpdir, chdir(tmpdir):
+                url = OPENMC_CHAINS[chain]["url"]
+                total = int(OPENMC_CHAINS[chain]["size"])
+                r = requests.get(url, timeout=3600, stream=True)
 
-                    bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-                    pbar = tqdm(
-                        desc=f"Downloading {chain:<15}",
-                        total=total,
-                        unit="iB",
-                        unit_scale=True,
-                        unit_divisor=1024,
-                        bar_format=bar_format,
-                    )
-                    p = NDMANAGER_CHAINS / "official" / f"{chain}.xml"
-                    p.parent.mkdir(exist_ok=True, parents=True)
-                    with open(p, "wb") as f:
-                        for data in r.iter_content(chunk_size=1024):
-                            size = f.write(data)
-                            pbar.update(size)
-                    pbar.close()
+                bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
+                pbar = tqdm(
+                    desc=f"Downloading {chain:<15}",
+                    total=total,
+                    unit="iB",
+                    unit_scale=True,
+                    unit_divisor=1024,
+                    bar_format=bar_format,
+                )
+                p = NDMANAGER_CHAINS / "official" / f"{chain}.xml"
+                p.parent.mkdir(exist_ok=True, parents=True)
+                with open(p, "wb") as f:
+                    for data in r.iter_content(chunk_size=1024):
+                        size = f.write(data)
+                        pbar.update(size)
+                pbar.close()

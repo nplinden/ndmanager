@@ -1,4 +1,4 @@
-"""A generic class to parse yml inputs of the omcer module"""
+"""A generic class to parse yml inputs of the omcer module."""
 
 from typing import Any
 
@@ -9,12 +9,12 @@ from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 
 
 class InputParser:
-    """A generic class to parse yml inputs of the omcer module"""
+    """A generic class to parse yml inputs of the omcer module."""
 
     cross_section_node_type: str = "abstract"
 
     def __init__(self, sublibdict: dict[str, Any]) -> None:
-        """Parse the generic keywords in the input file
+        """Parse the generic keywords in the input file.
 
         Args:
             sublibdict (Dict[Any]): The input dictionnary
@@ -42,7 +42,7 @@ class InputParser:
                 self.reuse = {}
 
     def list_endf6(self, sublibrary: str):
-        """List the ENDF6 tapes asked by the input file
+        """List the ENDF6 tapes asked by the input file.
 
         Args:
             sublibrary (str): The type of sublibrary

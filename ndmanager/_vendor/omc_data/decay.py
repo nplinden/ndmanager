@@ -105,7 +105,7 @@ class FissionProductYields(EqualityMixin):
 
     """
 
-    def __init__(self, ev_or_filename):
+    def __init__(self, ev_or_filename) -> None:
         # Define function that can be used to read both independent and
         # cumulative yields
         def get_yields(file_obj):
@@ -136,10 +136,7 @@ class FissionProductYields(EqualityMixin):
             return energies, data
 
         # Get evaluation if str is passed
-        if isinstance(ev_or_filename, Evaluation):
-            ev = ev_or_filename
-        else:
-            ev = Evaluation(ev_or_filename)
+        ev = ev_or_filename if isinstance(ev_or_filename, Evaluation) else Evaluation(ev_or_filename)
 
         # Assign basic nuclide properties
         self.nuclide = {
@@ -162,7 +159,7 @@ class FissionProductYields(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev_or_filename):
-        """Generate fission product yield data from an ENDF evaluation
+        """Generate fission product yield data from an ENDF evaluation.
 
         Parameters
         ----------
@@ -211,14 +208,14 @@ class DecayMode(EqualityMixin):
     """
 
     def __init__(self, parent, modes, daughter_state, energy,
-                 branching_ratio):
+                 branching_ratio) -> None:
         self._daughter_state = daughter_state
         self.parent = parent
         self.modes = modes
         self.energy = energy
         self.branching_ratio = branching_ratio
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ("<DecayMode: ({}), {} -> {}, {}>".format(
             ",".join(self.modes), self.parent, self.daughter,
             self.branching_ratio))
@@ -228,7 +225,7 @@ class DecayMode(EqualityMixin):
         return self._branching_ratio
 
     @branching_ratio.setter
-    def branching_ratio(self, branching_ratio):
+    def branching_ratio(self, branching_ratio) -> None:
         cv.check_type("branching ratio", branching_ratio, UFloat)
         cv.check_greater_than("branching ratio",
                               branching_ratio.nominal_value, 0.0, True)
@@ -240,7 +237,7 @@ class DecayMode(EqualityMixin):
         self._branching_ratio = branching_ratio
 
     @property
-    def daughter(self):
+    def daughter(self) -> str:
         # Determine atomic number and mass number of parent
         symbol, A = re.match(r"([A-Zn][a-z]*)(\d+)", self.parent).groups()
         A = int(A)
@@ -249,11 +246,10 @@ class DecayMode(EqualityMixin):
         # Process changes
         for mode in self.modes:
             for name, changes in _DECAY_MODES.values():
-                if name == mode:
-                    if changes is not None:
-                        delta_A, delta_Z = changes
-                        A += delta_A
-                        Z += delta_Z
+                if name == mode and changes is not None:
+                    delta_A, delta_Z = changes
+                    A += delta_A
+                    Z += delta_Z
 
         if self._daughter_state > 0:
             return f"{ATOMIC_SYMBOL[Z]}{A}_m{self._daughter_state}"
@@ -264,7 +260,7 @@ class DecayMode(EqualityMixin):
         return self._parent
 
     @parent.setter
-    def parent(self, parent):
+    def parent(self, parent) -> None:
         cv.check_type("parent nuclide", parent, str)
         self._parent = parent
 
@@ -273,7 +269,7 @@ class DecayMode(EqualityMixin):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("decay energy", energy, UFloat)
         cv.check_greater_than("decay energy", energy.nominal_value, 0.0, True)
         cv.check_greater_than("decay energy uncertainty",
@@ -285,7 +281,7 @@ class DecayMode(EqualityMixin):
         return self._modes
 
     @modes.setter
-    def modes(self, modes):
+    def modes(self, modes) -> None:
         cv.check_type("decay modes", modes, Iterable, str)
         self._modes = modes
 
@@ -326,12 +322,9 @@ class Decay(EqualityMixin):
 
     """
 
-    def __init__(self, ev_or_filename):
+    def __init__(self, ev_or_filename) -> None:
         # Get evaluation if str is passed
-        if isinstance(ev_or_filename, Evaluation):
-            ev = ev_or_filename
-        else:
-            ev = Evaluation(ev_or_filename)
+        ev = ev_or_filename if isinstance(ev_or_filename, Evaluation) else Evaluation(ev_or_filename)
 
         file_obj = StringIO(ev.section[8, 457])
 
@@ -429,7 +422,7 @@ class Decay(EqualityMixin):
                 if spectrum["continuous_flag"] != "continuous":
                     # Information about discrete spectrum
                     spectrum["discrete"] = []
-                    for j in range(NER):
+                    for _j in range(NER):
                         items, values = get_list_record(file_obj)
                         di = {}
                         di["energy"] = ufloat(*items[0:2])
@@ -477,7 +470,8 @@ class Decay(EqualityMixin):
     def decay_constant(self):
         if self.half_life.n == 0.0:
             name = self.nuclide["name"]
-            raise ValueError(f"{name} is listed as unstable but has a zero half-life.")
+            msg = f"{name} is listed as unstable but has a zero half-life."
+            raise ValueError(msg)
         return log(2.)/self.half_life
 
     @property
@@ -489,7 +483,7 @@ class Decay(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev_or_filename):
-        """Generate radioactive decay data from an ENDF evaluation
+        """Generate radioactive decay data from an ENDF evaluation.
 
         Parameters
         ----------
@@ -507,7 +501,7 @@ class Decay(EqualityMixin):
 
     @property
     def sources(self):
-        """Radioactive decay source distributions"""
+        """Radioactive decay source distributions."""
         # If property has been computed already, return it
         # TODO: Replace with functools.cached_property when support is Python 3.9+
         if self._sources is not None:
@@ -552,7 +546,8 @@ class Decay(EqualityMixin):
             if spectra["continuous_flag"] in ("continuous", "both"):
                 f = spectra["continuous"]["probability"]
                 if len(f.interpolation) > 1:
-                    raise NotImplementedError("Multiple interpolation regions: {name}, {particle}")
+                    msg = "Multiple interpolation regions: {name}, {particle}"
+                    raise NotImplementedError(msg)
                 interpolation = INTERPOLATION_SCHEME[f.interpolation[0]]
                 if interpolation not in ("histogram", "linear-linear"):
                     warn(
@@ -578,10 +573,10 @@ _DECAY_PHOTON_ENERGY = {}
 
 
 def decay_photon_energy(nuclide: str, chain_file: cv.PathLike = None) -> Univariate | None:
-    """Get photon energy distribution resulting from the decay of a nuclide
+    """Get photon energy distribution resulting from the decay of a nuclide.
 
-    This function relies on data stored in a depletion chain. When calling 
-    this function for the first time, the chain_file argument must be 
+    This function relies on data stored in a depletion chain. When calling
+    this function for the first time, the chain_file argument must be
     specified, or the function will raise a DataError.
 
     .. versionadded:: 0.13.2
@@ -603,9 +598,12 @@ def decay_photon_energy(nuclide: str, chain_file: cv.PathLike = None) -> Univari
     """
     if not _DECAY_PHOTON_ENERGY:
         if chain_file is None:
-            raise DataError(
+            msg = (
                 "A depletion chain file must be specified with "
-                "the chain_file argument in order to load decay data.",
+                "the chain_file argument in order to load decay data."
+            )
+            raise DataError(
+                msg,
             )
 
         chain = Chain.from_xml(chain_file)
@@ -625,7 +623,7 @@ _DECAY_ENERGY = {}
 
 
 def decay_energy(nuclide: str, chain_file: cv.PathLike = None) -> float:
-    """Get decay energy value resulting from the decay of a nuclide
+    """Get decay energy value resulting from the decay of a nuclide.
 
     This function relies on data stored in a depletion chain. When calling
     this function for the first time, the chain_file argument must be
@@ -649,9 +647,12 @@ def decay_energy(nuclide: str, chain_file: cv.PathLike = None) -> float:
     """
     if not _DECAY_ENERGY:
         if chain_file is None:
-            raise DataError(
+            msg = (
                 "A depletion chain file must be specified with "
-                "the chain_file argument in order to load decay data.",
+                "the chain_file argument in order to load decay data."
+            )
+            raise DataError(
+                msg,
             )
 
         chain = Chain.from_xml(chain_file)

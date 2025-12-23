@@ -1,4 +1,4 @@
-"""A class for managing photon libraries generation"""
+"""A class for managing photon libraries generation."""
 
 from pathlib import Path
 
@@ -9,7 +9,7 @@ from ndmanager.data import ATOMIC_SYMBOL
 
 
 class PhotonManager(InputParser, BaseManager):
-    """A class for managing photon libraries generation"""
+    """A class for managing photon libraries generation."""
 
     sublibrary = "Photon"
     cross_section_node_type = "photon"

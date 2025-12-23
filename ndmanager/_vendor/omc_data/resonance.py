@@ -18,7 +18,7 @@ except ImportError:
 
 
 class Resonances:
-    """Resolved and unresolved resonance data
+    """Resolved and unresolved resonance data.
 
     Parameters
     ----------
@@ -36,19 +36,18 @@ class Resonances:
 
     """
 
-    def __init__(self, ranges):
+    def __init__(self, ranges) -> None:
         self.ranges = ranges
 
     def __iter__(self):
-        for r in self.ranges:
-            yield r
+        yield from self.ranges
 
     @property
     def ranges(self):
         return self._ranges
 
     @ranges.setter
-    def ranges(self, ranges):
+    def ranges(self, ranges) -> None:
         cv.check_type("resonance ranges", ranges, MutableSequence)
         self._ranges = cv.CheckedList(ResonanceRange, "resonance ranges",
                                       ranges)
@@ -58,7 +57,8 @@ class Resonances:
         resolved_ranges = [r for r in self.ranges
                            if not isinstance(r, Unresolved)]
         if len(resolved_ranges) > 1:
-            raise ValueError("More than one resolved range present")
+            msg = "More than one resolved range present"
+            raise ValueError(msg)
         if len(resolved_ranges) == 0:
             return None
         return resolved_ranges[0]
@@ -97,7 +97,7 @@ class Resonances:
             fission_widths = (items[3] == 1)  # fission widths are given?
             n_ranges = items[4]  # number of resonance energy ranges
 
-            for j in range(n_ranges):
+            for _j in range(n_ranges):
                 items = get_cont_record(file_obj)
                 resonance_flag = items[2]  # flag for resolved (1)/unresolved (2)
                 formalism = items[3]  # resonance formalism
@@ -117,7 +117,7 @@ class Resonances:
 
 
 class ResonanceRange:
-    """Resolved resonance range
+    """Resolved resonance range.
 
     Parameters
     ----------
@@ -151,7 +151,7 @@ class ResonanceRange:
 
     """
 
-    def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
+    def __init__(self, target_spin, energy_min, energy_max, channel, scattering) -> None:
         self.target_spin = target_spin
         self.energy_min = energy_min
         self.energy_max = energy_max
@@ -224,7 +224,8 @@ class ResonanceRange:
 
         """
         if not _reconstruct:
-            raise RuntimeError("Resonance reconstruction not available.")
+            msg = "Resonance reconstruction not available."
+            raise RuntimeError(msg)
 
         # Pre-calculate penetrations and shifts for resonances
         if not self._prepared:
@@ -294,7 +295,7 @@ class MultiLevelBreitWigner(ResonanceRange):
 
     """
 
-    def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
+    def __init__(self, target_spin, energy_min, energy_max, channel, scattering) -> None:
         super().__init__(target_spin, energy_min, energy_max, channel,
                          scattering)
         self.parameters = None
@@ -345,7 +346,7 @@ class MultiLevelBreitWigner(ResonanceRange):
         scattering_radius = {}
         q_value = {}
         records = []
-        for l in range(NLS):
+        for _l in range(NLS):
             items, values = get_list_record(file_obj)
             l_value = items[2]
             awri = items[0]
@@ -377,10 +378,7 @@ class MultiLevelBreitWigner(ResonanceRange):
             gn = np.asarray(values[3::6])
             gg = np.asarray(values[4::6])
             gf = np.asarray(values[5::6])
-            if competitive > 0:
-                gx = gt - (gn + gg + gf)
-            else:
-                gx = np.zeros_like(gt)
+            gx = gt - (gn + gg + gf) if competitive > 0 else np.zeros_like(gt)
 
             for i, E in enumerate(energy):
                 records.append([E, l_value, spin[i], gt[i], gn[i],
@@ -399,7 +397,7 @@ class MultiLevelBreitWigner(ResonanceRange):
 
         return mlbw
 
-    def _prepare_resonances(self):
+    def _prepare_resonances(self) -> None:
         df = self.parameters.copy()
 
         # Penetration and shift factors
@@ -414,7 +412,7 @@ class MultiLevelBreitWigner(ResonanceRange):
         competitive = []
 
         A = self.atomic_weight_ratio
-        for i, E, l, J, gt, gn, gg, gf, gx in df.itertuples():
+        for i, E, l, _J, _gt, _gn, _gg, _gf, gx in df.itertuples():
             if l not in l_values:
                 l_values.append(l)
                 competitive.append(gx > 0)
@@ -493,7 +491,7 @@ class SingleLevelBreitWigner(MultiLevelBreitWigner):
 
     """
 
-    def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
+    def __init__(self, target_spin, energy_min, energy_max, channel, scattering) -> None:
         super().__init__(target_spin, energy_min, energy_max, channel,
                          scattering)
 
@@ -552,7 +550,7 @@ class ReichMoore(ResonanceRange):
 
     """
 
-    def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
+    def __init__(self, target_spin, energy_min, energy_max, channel, scattering) -> None:
         super().__init__(target_spin, energy_min, energy_max, channel,
                          scattering)
         self.parameters = None
@@ -656,7 +654,7 @@ class ReichMoore(ResonanceRange):
 
         return rm
 
-    def _prepare_resonances(self):
+    def _prepare_resonances(self) -> None:
         df = self.parameters.copy()
 
         # Penetration and shift factors
@@ -667,7 +665,7 @@ class ReichMoore(ResonanceRange):
         lj_values = []
 
         A = self.atomic_weight_ratio
-        for i, E, l, J, gn, gg, gfa, gfb in df.itertuples():
+        for i, E, l, J, _gn, _gg, _gfa, _gfb in df.itertuples():
             if l not in l_values:
                 l_values.append(l)
             if (l, abs(J)) not in lj_values:
@@ -726,7 +724,7 @@ class RMatrixLimited(ResonanceRange):
 
     """
 
-    def __init__(self, energy_min, energy_max, particle_pairs, spin_groups):
+    def __init__(self, energy_min, energy_max, particle_pairs, spin_groups) -> None:
         super().__init__(0.0, energy_min, energy_max, None, None)
         self.reduced_width = False
         self.formalism = 3
@@ -863,7 +861,7 @@ class RMatrixLimited(ResonanceRange):
 
 class ParticlePair:
     def __init__(self, first, second, q_value, penetrability,
-                 shift, mt):
+                 shift, mt) -> None:
         self.first = first
         self.second = second
         self.q_value = q_value
@@ -873,7 +871,7 @@ class ParticlePair:
 
 
 class SpinGroup:
-    """Resonance spin group
+    """Resonance spin group.
 
     Attributes
     ----------
@@ -888,13 +886,13 @@ class SpinGroup:
 
     """
 
-    def __init__(self, spin, parity, channels, parameters):
+    def __init__(self, spin, parity, channels, parameters) -> None:
         self.spin = spin
         self.parity = parity
         self.channels = channels
         self.parameters = parameters
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<SpinGroup: Jpi={self.spin}{self.parity}>"
 
 
@@ -938,7 +936,7 @@ class Unresolved(ResonanceRange):
 
     """
 
-    def __init__(self, target_spin, energy_min, energy_max, channel, scattering):
+    def __init__(self, target_spin, energy_min, energy_max, channel, scattering) -> None:
         super().__init__(target_spin, energy_min, energy_max, channel,
                          scattering)
         self.energies = None
@@ -988,7 +986,7 @@ class Unresolved(ResonanceRange):
             NLS = items[4]
             columns = ["L", "J", "d", "amun", "gn0", "gg"]
             records = []
-            for ls in range(NLS):
+            for _ls in range(NLS):
                 items, values = get_list_record(file_obj)
                 awri = items[0]
                 l = items[2]
@@ -1010,7 +1008,7 @@ class Unresolved(ResonanceRange):
             NE, NLS = items[4:6]
             records = []
             columns = ["L", "J", "E", "d", "amun", "amuf", "gn0", "gg", "gf"]
-            for ls in range(NLS):
+            for _ls in range(NLS):
                 items = get_cont_record(file_obj)
                 awri = items[0]
                 l = items[2]
@@ -1034,7 +1032,7 @@ class Unresolved(ResonanceRange):
             columns = ["L", "J", "E", "d", "amux", "amun", "amuf", "gx", "gn0",
                        "gg", "gf"]
             records = []
-            for ls in range(NLS):
+            for _ls in range(NLS):
                 items = get_cont_record(file_obj)
                 awri = items[0]
                 l = items[2]

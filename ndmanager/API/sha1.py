@@ -1,4 +1,4 @@
-"""Some utility function to compute ENDF6 tape SHA1"""
+"""Some utility function to compute ENDF6 tape SHA1."""
 
 import hashlib
 
@@ -25,7 +25,7 @@ def compute_file_sha1(filename: str) -> str:
 
 
 def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> dict[str, str]:
-    """Compute the SHA1 hash of a tape stored in the NDManager database
+    """Compute the SHA1 hash of a tape stored in the NDManager database.
 
     Args:
         libname (str): The name of the desired evaluation
@@ -44,7 +44,7 @@ def compute_tape_sha1(libname: str, sub: str, nuclide: str) -> dict[str, str]:
 
 
 def compute_sublib_sha1(libname: str, sub: str) -> dict[str, str]:
-    """Compute the SHA1 hash of all tapes in a sublibrary in the NDManager database
+    """Compute the SHA1 hash of all tapes in a sublibrary in the NDManager database.
 
     Args:
         libname (str): The name of the desired evaluation
@@ -63,7 +63,7 @@ def compute_sublib_sha1(libname: str, sub: str) -> dict[str, str]:
 
 
 def compute_lib_sha1(libname: str) -> dict[str, str]:
-    """Compute the SHA1 hash of all tapes in a library in the NDManager database
+    """Compute the SHA1 hash of all tapes in a library in the NDManager database.
 
     Args:
         libname (str): The name of the desired evaluation
@@ -80,7 +80,7 @@ def compute_lib_sha1(libname: str) -> dict[str, str]:
     return results
 
 
-def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> dict[str, str]:
+def compute_sha1(libname: str, sub: str | None = None, nuclide: str | None = None) -> dict[str, str]:
     """Compute the SHA1 hash of tapes in a library in the NDManager database.
     If a sublibrary is specified, only tapes in that sublibrary will be computed.
     If a nuclide is also specified, only the corresponding tape will be computed.
@@ -96,7 +96,8 @@ def compute_sha1(libname: str, sub: str = None, nuclide: str = None) -> dict[str
 
     """
     if sub is None and nuclide is not None:
-        raise ValueError("You can't specify a nuclide without a sublibrary")
+        msg = "You can't specify a nuclide without a sublibrary"
+        raise ValueError(msg)
     if nuclide is None:
         if sub is None:
             return compute_lib_sha1(libname)

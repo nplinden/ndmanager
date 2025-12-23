@@ -13,7 +13,7 @@ class AngleEnergy(EqualityMixin, ABC):
 
     @staticmethod
     def from_hdf5(group):
-        """Generate angle-energy distribution from HDF5 data
+        """Generate angle-energy distribution from HDF5 data.
 
         Parameters
         ----------
@@ -47,10 +47,11 @@ class AngleEnergy(EqualityMixin, ABC):
             return ndmanager._vendor.omc_data.IncoherentInelasticAE.from_hdf5(group)
         if dist_type == "mixed_elastic":
             return ndmanager._vendor.omc_data.MixedElasticAE.from_hdf5(group)
+        return None
 
     @staticmethod
     def from_ace(ace, location_dist, location_start, rx=None):
-        """Generate an angle-energy distribution from ACE data
+        """Generate an angle-energy distribution from ACE data.
 
         Parameters
         ----------
@@ -113,6 +114,7 @@ class AngleEnergy(EqualityMixin, ABC):
             distribution = ndmanager._vendor.omc_data.NBodyPhaseSpace.from_ace(
                 ace, idx, rx.q_value)
         else:
-            raise ValueError(f"Unsupported ACE secondary energy distribution law {law}")
+            msg = f"Unsupported ACE secondary energy distribution law {law}"
+            raise ValueError(msg)
 
         return distribution

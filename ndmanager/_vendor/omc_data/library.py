@@ -20,7 +20,7 @@ class DataLibrary(list):
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     @property
@@ -52,8 +52,8 @@ class DataLibrary(list):
                 return library
         return None
 
-    def remove_by_material(self, name: str, data_type="neutron"):
-        """Remove the library dictionary containing a specific material
+    def remove_by_material(self, name: str, data_type="neutron") -> None:
+        """Remove the library dictionary containing a specific material.
 
         Parameters
         ----------
@@ -67,7 +67,7 @@ class DataLibrary(list):
         if library is not None:
             self.remove(library)
 
-    def register_file(self, filename):
+    def register_file(self, filename) -> None:
         """Register a file with the data library.
 
         Parameters
@@ -78,10 +78,7 @@ class DataLibrary(list):
             materials.
 
         """
-        if not isinstance(filename, pathlib.Path):
-            path = pathlib.Path(filename)
-        else:
-            path = filename
+        path = pathlib.Path(filename) if not isinstance(filename, pathlib.Path) else filename
 
         if path.suffix == ".xml":
             filetype = "depletion_chain"
@@ -91,13 +88,14 @@ class DataLibrary(list):
                 filetype = h5file.attrs["filetype"].decode()[5:]
                 materials = list(h5file)
         else:
+            msg = f"File type {path.name} not supported by {self.__class__.__name__}"
             raise ValueError(
-                f"File type {path.name} not supported by {self.__class__.__name__}")
+                msg)
 
         library = {"path": str(path), "type": filetype, "materials": materials}
         self.append(library)
 
-    def export_to_xml(self, path="cross_sections.xml"):
+    def export_to_xml(self, path="cross_sections.xml") -> None:
         """Export cross section data library to an XML file.
 
         Parameters
@@ -155,10 +153,7 @@ class DataLibrary(list):
 
         tree = ET.parse(path)
         root = tree.getroot()
-        if root.find("directory") is not None:
-            directory = root.find("directory").text
-        else:
-            directory = os.path.dirname(path)
+        directory = root.find("directory").text if root.find("directory") is not None else os.path.dirname(path)
 
         for lib_element in root.findall("library"):
             filename = os.path.join(directory, lib_element.attrib["path"])

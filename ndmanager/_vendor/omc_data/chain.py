@@ -179,7 +179,7 @@ def replace_missing(product, decay_data):
 
 
 def replace_missing_fpy(actinide, fpy_data, decay_data):
-    """Replace missing fission product yields
+    """Replace missing fission product yields.
 
     Parameters
     ----------
@@ -260,35 +260,35 @@ class Chain:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.nuclides: list[Nuclide] = []
         self.reactions = []
         self.nuclide_dict = {}
         self._fission_yields = None
 
-    def __contains__(self, nuclide):
+    def __contains__(self, nuclide) -> bool:
         return nuclide in self.nuclide_dict
 
     def __getitem__(self, name):
         """Get a Nuclide by name."""
         return self.nuclides[self.nuclide_dict[name]]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Number of nuclides in chain."""
         return len(self.nuclides)
 
     @property
     def stable_nuclides(self) -> list[Nuclide]:
-        """List of stable nuclides available in the chain"""
+        """List of stable nuclides available in the chain."""
         return [nuc for nuc in self.nuclides if nuc.half_life is None]
 
     @property
     def unstable_nuclides(self) -> list[Nuclide]:
-        """List of unstable nuclides available in the chain"""
+        """List of unstable nuclides available in the chain."""
         return [nuc for nuc in self.nuclides if nuc.half_life is not None]
 
-    def add_nuclide(self, nuclide: Nuclide):
-        """Add a nuclide to the depletion chain
+    def add_nuclide(self, nuclide: Nuclide) -> None:
+        """Add a nuclide to the depletion chain.
 
         Parameters
         ----------
@@ -355,13 +355,13 @@ class Chain:
 
         # Create dictionary mapping target to filename
         if progress:
-            print("Processing neutron sub-library files...")
+            pass
         reactions = {}
         for f in neutron_files:
             evaluation = ndmanager._vendor.omc_data.endf.Evaluation(f)
             name = evaluation.gnds_name
             reactions[name] = {}
-            for mf, mt, nc, mod in evaluation.reaction_list:
+            for mf, mt, _nc, _mod in evaluation.reaction_list:
                 if mf == 3:
                     file_obj = StringIO(evaluation.section[3, mt])
                     ndmanager._vendor.omc_data.endf.get_head_record(file_obj)
@@ -370,7 +370,7 @@ class Chain:
 
         # Determine what decay and FPY nuclides are available
         if progress:
-            print("Processing decay sub-library files...")
+            pass
         decay_data = {}
         for f in decay_files:
             data = ndmanager._vendor.omc_data.Decay(f)
@@ -380,21 +380,21 @@ class Chain:
             decay_data[data.nuclide["name"]] = data
 
         if progress:
-            print("Processing fission product yield sub-library files...")
+            pass
         fpy_data = {}
         for f in fpy_files:
             data = ndmanager._vendor.omc_data.FissionProductYields(f)
             fpy_data[data.nuclide["name"]] = data
 
         if progress:
-            print("Creating depletion_chain...")
+            pass
         missing_daughter = []
         missing_rx_product = []
         missing_fpy = []
         missing_fp = []
 
         chain = cls()
-        for idx, parent in enumerate(sorted(decay_data, key=ndmanager._vendor.omc_data.zam)):
+        for _idx, parent in enumerate(sorted(decay_data, key=ndmanager._vendor.omc_data.zam)):
             data = decay_data[parent]
 
             nuclide = Nuclide(parent)
@@ -409,7 +409,6 @@ class Chain:
                     if mode.daughter in decay_data:
                         target = mode.daughter
                     else:
-                        print(f"missing {parent} {type_} {mode.daughter}")
                         target = replace_missing(mode.daughter, decay_data)
                     br = mode.branching_ratio.nominal_value
                     branch_ratios.append(br)
@@ -465,10 +464,7 @@ class Chain:
                 if parent in fpy_data:
                     fpy = fpy_data[parent]
 
-                    if fpy.energies is not None:
-                        yield_energies = fpy.energies
-                    else:
-                        yield_energies = [0.0]
+                    yield_energies = fpy.energies if fpy.energies is not None else [0.0]
 
                     yield_data = {}
                     for E, yield_table in zip(yield_energies, fpy.independent, strict=False):
@@ -502,27 +498,20 @@ class Chain:
 
         # Display warnings
         if missing_daughter:
-            print("The following decay modes have daughters with no decay data:")
             for mode in missing_daughter:
-                print(f"  {mode}")
-            print()
+                pass
 
         if missing_rx_product:
-            print("The following reaction products have no decay data:")
-            for vals in missing_rx_product:
-                print("{} {} -> {}".format(*vals))
-            print()
+            for _vals in missing_rx_product:
+                pass
 
         if missing_fpy:
-            print("The following fissionable nuclides have no fission product yields:")
-            for parent, replacement in missing_fpy:
-                print(f"  {parent}, replaced with {replacement}")
-            print()
+            for parent, _replacement in missing_fpy:
+                pass
 
         if missing_fp:
-            print("The following nuclides have fission products with no decay data:")
-            for vals in missing_fp:
-                print("  {}, E={} eV (total yield={})".format(*vals))
+            for _vals in missing_fp:
+                pass
 
         return chain
 
@@ -549,7 +538,7 @@ class Chain:
         # Load XML tree
         root = ET.parse(str(filename))
 
-        for i, nuclide_elem in enumerate(root.findall("nuclide")):
+        for _i, nuclide_elem in enumerate(root.findall("nuclide")):
             this_q = fission_q.get(nuclide_elem.get("name"))
 
             nuc = Nuclide.from_xml(nuclide_elem, root, this_q)
@@ -560,7 +549,7 @@ class Chain:
 
         return chain
 
-    def export_to_xml(self, filename):
+    def export_to_xml(self, filename) -> None:
         """Writes a depletion chain XML file.
 
         Parameters
@@ -577,7 +566,7 @@ class Chain:
         tree.write(str(filename), encoding="utf-8", pretty_print=True)
 
     def get_default_fission_yields(self):
-        """Return fission yields at lowest incident neutron energy
+        """Return fission yields at lowest incident neutron energy.
 
         Used as the default set of fission yields for :meth:`form_matrix`
         if ``fission_yields`` are not provided
@@ -813,7 +802,7 @@ class Chain:
         return vector.tocsc()
 
     def get_branch_ratios(self, reaction="(n,gamma)"):
-        """Return a dictionary with reaction branching ratios
+        """Return a dictionary with reaction branching ratios.
 
         Parameters
         ----------
@@ -846,8 +835,8 @@ class Chain:
         return capt
 
     def set_branch_ratios(self, branch_ratios, reaction="(n,gamma)",
-                          strict=True, tolerance=1e-5):
-        """Set the branching ratios for a given reactions
+                          strict=True, tolerance=1e-5) -> None:
+        """Set the branching ratios for a given reactions.
 
         Parameters
         ----------
@@ -942,8 +931,9 @@ class Chain:
 
             if len(indexes) == 0:
                 if strict:
+                    msg = f"Nuclide {parent} does not have {reaction} reactions"
                     raise AttributeError(
-                        f"Nuclide {parent} does not have {reaction} reactions")
+                        msg)
                 missing_reaction.add(parent)
                 continue
 
@@ -963,8 +953,9 @@ class Chain:
                 sums[parent] = this_sum
 
         if len(rxn_ix_map) == 0:
+            msg = f"No {reaction} reactions found in this {self.__class__.__name__}"
             raise IndexError(
-                f"No {reaction} reactions found in this {self.__class__.__name__}")
+                msg)
 
         if len(missing_parents) > 0:
             warn("The following nuclides were not found in {}: {}".format(
@@ -1027,7 +1018,7 @@ class Chain:
         return self._fission_yields
 
     @fission_yields.setter
-    def fission_yields(self, yields):
+    def fission_yields(self, yields) -> None:
         _invalidate_chain_cache(self)
         if yields is not None:
             if isinstance(yields, Mapping):
@@ -1036,7 +1027,7 @@ class Chain:
         self._fission_yields = yields
 
     def validate(self, strict=True, quiet=False, tolerance=1e-4):
-        """Search for possible inconsistencies
+        """Search for possible inconsistencies.
 
         The following checks are performed for all nuclides present:
 
@@ -1088,7 +1079,7 @@ class Chain:
         return valid
 
     def reduce(self, initial_isotopes, level=None):
-        """Reduce the size of the chain by following transmutation paths
+        """Reduce the size of the chain by following transmutation paths.
 
         As an example, consider a simple chain with the following
         isotopes and transmutation paths::
@@ -1146,7 +1137,7 @@ class Chain:
 
         new_chain = type(self)()
 
-        for idx, iso in enumerate(sorted(all_isotopes, key=ndmanager._vendor.omc_data.zam)):
+        for _idx, iso in enumerate(sorted(all_isotopes, key=ndmanager._vendor.omc_data.zam)):
             previous = self[iso]
             new_nuclide = Nuclide(previous.name)
             new_nuclide.half_life = previous.half_life
@@ -1182,13 +1173,16 @@ class Chain:
         return new_chain
 
     def _follow(self, isotopes, level):
-        """Return all isotopes present up to depth level"""
+        """Return all isotopes present up to depth level."""
         found = isotopes.copy()
         remaining = set(self.nuclide_dict)
         if not found.issubset(remaining):
-            raise IndexError(
+            msg = (
                 "The following isotopes were not found in the chain: "
-                "{}".format(", ".join(found - remaining)))
+                "{}".format(", ".join(found - remaining))
+            )
+            raise IndexError(
+                msg)
 
         if level == 0:
             return found
@@ -1211,10 +1205,7 @@ class Chain:
                         continue
 
                     # Figure out if this reaction produces light nuclides
-                    if rxn.type in REACTIONS:
-                        secondaries = REACTIONS[rxn.type].secondaries
-                    else:
-                        secondaries = []
+                    secondaries = REACTIONS[rxn.type].secondaries if rxn.type in REACTIONS else []
 
                     # Only include secondaries if they are present in original chain
                     secondaries = [x for x in secondaries if x in self]
@@ -1282,12 +1273,16 @@ def _get_chain(
     if chain_file is None:
         chain_file = openmc.config.get("chain_file")
         if "chain_file" not in openmc.config:
-            raise DataError(
+            msg = (
                 "No depletion chain specified and could not find depletion "
-                "chain in openmc.config['chain_file']",
+                "chain in openmc.config['chain_file']"
+            )
+            raise DataError(
+                msg,
             )
     elif not isinstance(chain_file, PathLike):
-        raise TypeError("chain_file must be path-like, a Chain, or None")
+        msg = "chain_file must be path-like, a Chain, or None"
+        raise TypeError(msg)
 
     # Determine the key for the cache, which consists of the absolute path, the
     # file modification time, the file size, and the fission Q values.
@@ -1303,7 +1298,7 @@ def _get_chain(
     return _CHAIN_CACHE[key]
 
 
-def _invalidate_chain_cache(chain):
+def _invalidate_chain_cache(chain) -> None:
     """Invalidate the cache for a specific Chain (when it is modifed)."""
     if hasattr(chain, "_xml_path"):
         # Remove all entries with the same path as self._xml_path

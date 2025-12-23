@@ -68,10 +68,7 @@ def get_metadata(zaid, metastable_scheme="nndc"):
         if zaid > 1000000:
             # New SZA format
             Z = Z % 1000
-            if zaid == 1095242:
-                metastable = 0
-            else:
-                metastable = zaid // 1000000
+            metastable = 0 if zaid == 1095242 else zaid // 1000000
         elif zaid == 95242:
             metastable = 1
         elif zaid == 95642:
@@ -91,7 +88,7 @@ def get_metadata(zaid, metastable_scheme="nndc"):
     return (name, element, Z, mass_number, metastable)
 
 
-def ascii_to_binary(ascii_file, binary_file):
+def ascii_to_binary(ascii_file, binary_file) -> None:
     """Convert an ACE file in ASCII format (type 1) to binary format (type 2).
 
     Parameters
@@ -118,8 +115,11 @@ def ascii_to_binary(ascii_file, binary_file):
                 if lines[idx + 1].split()[3] == "3":
                     idx = idx + 3
                 else:
-                    raise NotImplementedError("Only backwards compatible ACE"
-                                              "headers currently supported")
+                    msg = (
+                        "Only backwards compatible ACE"
+                                              "headers currently supported"
+                    )
+                    raise NotImplementedError(msg)
             # Read/write header block
             hz = lines[idx][:10].encode()
             aw0 = float(lines[idx][10:22])
@@ -157,7 +157,7 @@ def ascii_to_binary(ascii_file, binary_file):
 
 
 def get_table(filename, name=None):
-    """Read a single table from an ACE file
+    """Read a single table from an ACE file.
 
     Parameters
     ----------
@@ -178,7 +178,8 @@ def get_table(filename, name=None):
     lib = Library(filename, name)
     if lib.tables:
         return lib.tables[0]
-    raise ValueError(f"Could not find ACE table with name: {name}")
+    msg = f"Could not find ACE table with name: {name}"
+    raise ValueError(msg)
 
 
 # The beginning of an ASCII ACE file consists of 12 lines that include the name,
@@ -208,7 +209,7 @@ class Library(EqualityMixin):
 
     """
 
-    def __init__(self, filename, table_names=None, verbose=False):
+    def __init__(self, filename, table_names=None, verbose=False) -> None:
         if isinstance(table_names, str):
             table_names = [table_names]
         if table_names is not None:
@@ -236,7 +237,7 @@ class Library(EqualityMixin):
                 self._read_binary(fh, table_names, verbose)
 
     def _read_binary(self, ace_file, table_names, verbose=False,
-                     recl_length=4096, entries=512):
+                     recl_length=4096, entries=512) -> None:
         """Read a binary (Type 2) ACE table.
 
         Parameters
@@ -286,8 +287,7 @@ class Library(EqualityMixin):
                 continue
 
             if verbose:
-                kelvin = round(temperature * EV_PER_MEV / K_BOLTZMANN)
-                print(f"Loading nuclide {name} at {kelvin} K")
+                round(temperature * EV_PER_MEV / K_BOLTZMANN)
 
             # Read JXS
             jxs = list(struct.unpack("=32i", ace_file.read(128)))
@@ -317,7 +317,7 @@ class Library(EqualityMixin):
             # Advance to next record
             ace_file.seek(start_position + recl_length*(n_records + 1))
 
-    def _read_ascii(self, ace_file, table_names, verbose=False):
+    def _read_ascii(self, ace_file, table_names, verbose=False) -> None:
         """Read an ASCII (Type 1) ACE table.
 
         Parameters
@@ -383,8 +383,7 @@ class Library(EqualityMixin):
             lines += [ace_file.readline() for i in range(n_lines - 1)]
 
             if verbose:
-                kelvin = round(temperature * EV_PER_MEV / K_BOLTZMANN)
-                print(f"Loading nuclide {name} at {kelvin} K")
+                round(temperature * EV_PER_MEV / K_BOLTZMANN)
 
             # Insert zeros at beginning of NXS, JXS, and XSS arrays so that the
             # indexing will be the same as Fortran. This makes it easier to
@@ -447,11 +446,12 @@ class TableType(enum.Enum):
         for member in cls:
             if suffix.endswith(member.value):
                 return member
-        raise ValueError(f"Suffix '{suffix}' has no corresponding ACE table type.")
+        msg = f"Suffix '{suffix}' has no corresponding ACE table type."
+        raise ValueError(msg)
 
 
 class Table(EqualityMixin):
-    """ACE cross section table
+    """ACE cross section table.
 
     Parameters
     ----------
@@ -480,7 +480,7 @@ class Table(EqualityMixin):
     """
 
     def __init__(self, name, atomic_weight_ratio, temperature, pairs,
-                 nxs, jxs, xss):
+                 nxs, jxs, xss) -> None:
         self.name = name
         self.atomic_weight_ratio = atomic_weight_ratio
         self.temperature = temperature
@@ -498,7 +498,7 @@ class Table(EqualityMixin):
         xs = self.name.split(".")[1]
         return TableType.from_suffix(xs[-1])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<ACE Table: {self.name}>"
 
 
@@ -525,7 +525,8 @@ def get_libraries_from_xsdir(path):
         if line.strip().lower() == "directory":
             break
     else:
-        raise RuntimeError("Could not find 'directory' section in MCNP xsdir file")
+        msg = "Could not find 'directory' section in MCNP xsdir file"
+        raise RuntimeError(msg)
 
     # Handle continuation lines indicated by '+' at end of line
     lines = lines[index + 1:]

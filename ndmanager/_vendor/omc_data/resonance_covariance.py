@@ -32,20 +32,19 @@ def _add_file2_contributions(file32params, file2params):
     # Use l-values and competitiveWidth from File 2 data
     # Re-sort File 2 by energy to match File 32
     file2params = file2params.sort_values(by=["energy"])
-    file2params.reset_index(drop=True, inplace=True)
+    file2params = file2params.reset_index(drop=True)
     # Sort File 32 parameters by energy as well (maintaining index)
-    file32params.sort_values(by=["energy"], inplace=True)
+    file32params = file32params.sort_values(by=["energy"])
     # Add in values (.values converts to array first to ignore index)
     file32params["L"] = file2params["L"].values
     if "competitiveWidth" in file2params.columns:
         file32params["competitiveWidth"] = file2params["competitiveWidth"].values
     # Resort to File 32 order (by L then by E) for use with covariance
-    file32params.sort_index(inplace=True)
-    return file32params
+    return file32params.sort_index()
 
 
 class ResonanceCovariances(Resonances):
-    """Resolved resonance covariance data
+    """Resolved resonance covariance data.
 
     Parameters
     ----------
@@ -64,7 +63,7 @@ class ResonanceCovariances(Resonances):
         return self._ranges
 
     @ranges.setter
-    def ranges(self, ranges):
+    def ranges(self, ranges) -> None:
         cv.check_type("resonance ranges", ranges, MutableSequence)
         self._ranges = cv.CheckedList(ResonanceCovarianceRange,
                                       "resonance range", ranges)
@@ -158,7 +157,7 @@ class ResonanceCovarianceRange:
 
     """
 
-    def __init__(self, energy_min, energy_max):
+    def __init__(self, energy_min, energy_max) -> None:
         self.energy_min = energy_min
         self.energy_max = energy_max
 
@@ -243,7 +242,7 @@ class ResonanceCovarianceRange:
 
         # Handling MLBW/SLBW sampling
         rng = np.random.default_rng()
-        if formalism == "mlbw" or formalism == "slbw":
+        if formalism in ("mlbw", "slbw"):
             params = ["energy", "neutronWidth", "captureWidth", "fissionWidth",
                       "competitiveWidth"]
             param_list = params[:mpar]
@@ -338,7 +337,7 @@ class MultiLevelBreitWignerCovariance(ResonanceCovarianceRange):
     """
 
     def __init__(self, energy_min, energy_max, parameters, covariance, mpar,
-                 lcomp, file2res):
+                 lcomp, file2res) -> None:
         super().__init__(energy_min, energy_max)
         self.parameters = parameters
         self.covariance = covariance
@@ -486,9 +485,8 @@ class MultiLevelBreitWignerCovariance(ResonanceCovarianceRange):
         parameters = _add_file2_contributions(parameters,
                                               resonance.parameters)
         # Create instance of class
-        mlbw = cls(energy_min, energy_max, parameters, cov, mpar, lcomp,
+        return cls(energy_min, energy_max, parameters, cov, mpar, lcomp,
                    resonance)
-        return mlbw
 
 
 class SingleLevelBreitWignerCovariance(MultiLevelBreitWignerCovariance):
@@ -525,7 +523,7 @@ class SingleLevelBreitWignerCovariance(MultiLevelBreitWignerCovariance):
     """
 
     def __init__(self, energy_min, energy_max, parameters, covariance, mpar,
-                 lcomp, file2res):
+                 lcomp, file2res) -> None:
         super().__init__(energy_min, energy_max, parameters, covariance, mpar,
                          lcomp, file2res)
         self.formalism = "slbw"
@@ -566,7 +564,7 @@ class ReichMooreCovariance(ResonanceCovarianceRange):
     """
 
     def __init__(self, energy_min, energy_max, parameters, covariance, mpar,
-                 lcomp, file2res):
+                 lcomp, file2res) -> None:
         super().__init__(energy_min, energy_max)
         self.parameters = parameters
         self.covariance = covariance
@@ -684,9 +682,8 @@ class ReichMooreCovariance(ResonanceCovarianceRange):
         parameters = _add_file2_contributions(parameters,
                                               resonance.parameters)
         # Create instance of ReichMooreCovariance
-        rmc = cls(energy_min, energy_max, parameters, cov, mpar, lcomp,
+        return cls(energy_min, energy_max, parameters, cov, mpar, lcomp,
                   resonance)
-        return rmc
 
 
 _FORMALISMS = {

@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndc build` command"""
+"""Definition and parser for the `ndc build` command."""
 
 import argparse as ap
 
@@ -99,11 +99,11 @@ REACTIONS = [
 
 
 class NdcBuildCommand(Command):
-    """Define the `ndc build` command"""
+    """Define the `ndc build` command."""
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction) -> None:
-        """Add the parser for the 'ndc build' command to a subparser object
+        """Add the parser for the 'ndc build' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -120,7 +120,7 @@ class NdcBuildCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """Build an OpenMC depletion chain from a YAML descriptive file
+        """Build an OpenMC depletion chain from a YAML descriptive file.
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
@@ -133,7 +133,8 @@ class NdcBuildCommand(Command):
 
         target = NDMANAGER_CHAINS / f"{name}.xml"
         if target.exists():
-            raise FileExistsError("A chain with that name already exists")
+            msg = "A chain with that name already exists"
+            raise FileExistsError(msg)
 
         decay = list(list_endf6("decay", inputs["decay"]).values())
         n = list(list_endf6("n", inputs["n"]).values())

@@ -1,4 +1,4 @@
-"""A class to process an OpenMC HDF5 neutron data file"""
+"""A class to process an OpenMC HDF5 neutron data file."""
 
 import time
 from dataclasses import dataclass
@@ -11,13 +11,13 @@ from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 @dataclass
 class HDF5Neutron(HDF5Sublibrary):
-    """A class to process an OpenMC HDF5 neutron data file"""
+    """A class to process an OpenMC HDF5 neutron data file."""
 
     neutron: Path
     temperatures: set[int]
 
-    def process(self):
-        """Process neutron ENDF6 file to HDF5 using OpenMC's API"""
+    def process(self) -> None:
+        """Process neutron ENDF6 file to HDF5 using OpenMC's API."""
         logger = self.get_logger()
         logger.info("PROCESS NEUTRON DATA")
         logger.info("Nuclide: %s", self.target)

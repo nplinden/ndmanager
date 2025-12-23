@@ -1,29 +1,31 @@
-"""A generic class to manage libraries of OpenMC HDF5 data files"""
+"""A generic class to manage libraries of OpenMC HDF5 data files."""
 
 import abc
 import logging
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Never
 
 
 @dataclass
 class HDF5Sublibrary:
-    """A generic class to manage libraries of OpenMC HDF5 data files"""
+    """A generic class to manage libraries of OpenMC HDF5 data files."""
 
     target: str
     path: Path
     logpath: Path
 
     @abc.abstractmethod
-    def process(self):
-        """An HDF5Sublibrary should define a process method"""
+    def process(self) -> Never:
+        """An HDF5Sublibrary should define a process method."""
+        msg = "Can't use the process method directly on a HDF5Sublibrary object"
         raise NotImplementedError(
-            "Can't use the process method directly on a HDF5Sublibrary object",
+            msg,
         )
 
     def get_logger(self):
-        """Create a new logger and return it
+        """Create a new logger and return it.
 
         Returns:
             logging.Logger: The logger object
@@ -37,7 +39,7 @@ class HDF5Sublibrary:
         logger.addHandler(handler)
         logger.setLevel("INFO")
 
-        def showwarning(message, *args, **kwargs):
+        def showwarning(message, *args, **kwargs) -> None:
             logger.warning(message)
 
         warnings.showwarning = showwarning

@@ -223,8 +223,8 @@ acer / %%%%%%%%%%%%%%%%%%%%%%%% Write out in ACE format %%%%%%%%%%%%%%%%%%%%%%%%
 
 
 def run(commands, tapein, tapeout, input_filename=None, stdout=False,
-        njoy_exec="njoy"):
-    """Run NJOY with given commands
+        njoy_exec="njoy") -> None:
+    """Run NJOY with given commands.
 
     Parameters
     ----------
@@ -273,7 +273,7 @@ def run(commands, tapein, tapeout, input_filename=None, stdout=False,
             lines.append(line)
             if stdout:
                 # If user requested output, print to screen
-                print(line, end="")
+                pass
 
         # Check for error
         if njoy.returncode != 0:
@@ -287,8 +287,8 @@ def run(commands, tapein, tapeout, input_filename=None, stdout=False,
                 shutil.move(tmpfilename, str(filename))
 
 
-def make_pendf(filename, pendf="pendf", **kwargs):
-    """Generate pointwise ENDF file from an ENDF file
+def make_pendf(filename, pendf="pendf", **kwargs) -> None:
+    """Generate pointwise ENDF file from an ENDF file.
 
     Parameters
     ----------
@@ -314,8 +314,8 @@ def make_pendf(filename, pendf="pendf", **kwargs):
 def make_ace(filename, temperatures=None, acer=True, xsdir=None,
              output_dir=None, pendf=False, error=0.001, broadr=True,
              heatr=True, gaspr=True, purr=True, evaluation=None,
-             smoothing=True, **kwargs):
-    """Generate incident neutron ACE file from an ENDF file
+             smoothing=True, **kwargs) -> None:
+    """Generate incident neutron ACE file from an ENDF file.
 
     File names can be passed to
     ``[acer, xsdir, pendf, broadr, heatr, gaspr, purr]``
@@ -382,7 +382,8 @@ def make_ace(filename, temperatures=None, acer=True, xsdir=None,
     else:
         output_dir = Path(output_dir)
         if not output_dir.is_dir():
-            raise OSError(f"{output_dir} is not a directory")
+            msg = f"{output_dir} is not a directory"
+            raise OSError(msg)
 
     ev = evaluation if evaluation is not None else endf.Evaluation(filename)
     mat = ev.material
@@ -494,8 +495,8 @@ def make_ace(filename, temperatures=None, acer=True, xsdir=None,
 def make_ace_thermal(filename, filename_thermal, temperatures=None,
                      ace=None, xsdir=None, output_dir=None, error=0.001,
                      iwt=2, evaluation=None, evaluation_thermal=None,
-                     table_name=None, zaids=None, nmix=None, nbin=16, **kwargs):
-    """Generate thermal scattering ACE file from ENDF files
+                     table_name=None, zaids=None, nmix=None, nbin=16, **kwargs) -> None:
+    """Generate thermal scattering ACE file from ENDF files.
 
     Parameters
     ----------
@@ -547,7 +548,8 @@ def make_ace_thermal(filename, filename_thermal, temperatures=None,
     else:
         output_dir = Path(output_dir)
         if not output_dir.is_dir():
-            raise OSError(f"{output_dir} is not a directory")
+            msg = f"{output_dir} is not a directory"
+            raise OSError(msg)
 
     ev = evaluation if evaluation is not None else endf.Evaluation(filename)
     mat = ev.material
@@ -565,10 +567,13 @@ def make_ace_thermal(filename, filename_thermal, temperatures=None,
         with warnings.catch_warnings(record=True) as w:
             proper_name = ndmanager._vendor.omc_data.get_thermal_name(zsymam_thermal)
             if w:
-                raise RuntimeError(
+                msg = (
                     f"Thermal scattering material {zsymam_thermal} not "
                     "recognized. Please contact OpenMC developers at "
-                    "https://openmc.discourse.group.")
+                    "https://openmc.discourse.group."
+                )
+                raise RuntimeError(
+                    msg)
         data = _THERMAL_DATA[proper_name]
 
     zaids = " ".join(str(zaid) for zaid in data.zaids)

@@ -240,10 +240,10 @@ def get_tab1_record(file_obj):
     breakpoints = np.zeros(n_regions, dtype=int)
     interpolation = np.zeros(n_regions, dtype=int)
     m = 0
-    for i in range((n_regions - 1)//3 + 1):
+    for _i in range((n_regions - 1)//3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_regions - m)
-        for j in range(to_read):
+        for _j in range(to_read):
             breakpoints[m] = int_endf(line[0:11])
             interpolation[m] = int_endf(line[11:22])
             line = line[22:]
@@ -253,10 +253,10 @@ def get_tab1_record(file_obj):
     x = np.zeros(n_pairs)
     y = np.zeros(n_pairs)
     m = 0
-    for i in range((n_pairs - 1)//3 + 1):
+    for _i in range((n_pairs - 1)//3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_pairs - m)
-        for j in range(to_read):
+        for _j in range(to_read):
             x[m] = float_endf(line[:11])
             y[m] = float_endf(line[11:22])
             line = line[22:]
@@ -274,10 +274,10 @@ def get_tab2_record(file_obj):
     breakpoints = np.zeros(n_regions, dtype=int)
     interpolation = np.zeros(n_regions, dtype=int)
     m = 0
-    for i in range((n_regions - 1)//3 + 1):
+    for _i in range((n_regions - 1)//3 + 1):
         line = file_obj.readline()
         to_read = min(3, n_regions - m)
-        for j in range(to_read):
+        for _j in range(to_read):
             breakpoints[m] = int(line[0:11])
             interpolation[m] = int(line[11:22])
             line = line[22:]
@@ -311,7 +311,7 @@ def get_intg_record(file_obj):
 
     # read lines and build correlation matrix
     corr = np.identity(npar)
-    for i in range(nlines):
+    for _i in range(nlines):
         line = file_obj.readline()
         ii = int_endf(line[:5]) - 1  # -1 to account for 0 indexing
         jj = int_endf(line[5:10]) - 1
@@ -326,8 +326,7 @@ def get_intg_record(file_obj):
                 corr[ii, jj] = (element-0.5)/factor
 
     # Symmetrize the correlation matrix
-    corr = corr + corr.T - np.diag(corr.diagonal())
-    return corr
+    return corr + corr.T - np.diag(corr.diagonal())
 
 
 def get_evaluations(filename):
@@ -357,7 +356,7 @@ def get_evaluations(filename):
 
 
 class Evaluation:
-    """ENDF material evaluation with multiple files/sections
+    """ENDF material evaluation with multiple files/sections.
 
     Parameters
     ----------
@@ -381,8 +380,8 @@ class Evaluation:
 
     """
 
-    def __init__(self, filename_or_obj):
-        if isinstance(filename_or_obj, (str, PurePath)):
+    def __init__(self, filename_or_obj) -> None:
+        if isinstance(filename_or_obj, str | PurePath):
             fh = open(str(filename_or_obj))
             need_to_close = True
         else:
@@ -439,11 +438,11 @@ class Evaluation:
 
         self._read_header()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         name = self.target["zsymam"].replace(" ", "")
         return f"<{self.info['sublibrary']} for {name} {self.info['library']}>"
 
-    def _read_header(self):
+    def _read_header(self) -> None:
         file_obj = io.StringIO(self.section[1, 451])
 
         # Information about target/projectile
@@ -506,7 +505,7 @@ class Evaluation:
             self.target["zsymam"] = "Unknown"
 
         # File numbers, reaction designations, and number of records
-        for i in range(NXC):
+        for _i in range(NXC):
             _, _, mf, mt, nc, mod = get_cont_record(file_obj, skip_c=True)
             self.reaction_list.append((mf, mt, nc, mod))
 
@@ -535,6 +534,6 @@ class Tabulated2D:
 
     """
 
-    def __init__(self, breakpoints, interpolation):
+    def __init__(self, breakpoints, interpolation) -> None:
         self.breakpoints = breakpoints
         self.interpolation = interpolation

@@ -1,4 +1,4 @@
-"""A class for managing neutron libraries generation"""
+"""A class for managing neutron libraries generation."""
 
 from pathlib import Path
 from typing import Any
@@ -10,14 +10,14 @@ from ndmanager.API.process.input_parser import InputParser
 
 
 class NeutronManager(InputParser, BaseManager):
-    """A class for managing neutron libraries generation"""
+    """A class for managing neutron libraries generation."""
 
     sublibrary: str = "Neutron"
     cross_section_node_type: str = "neutron"
 
     def __init__(self, neutrondict: dict[str, Any], rootdir: Path) -> None:
         """Create a neutron manager given an input neutron dictionnary
-        and a path to a directory
+        and a path to a directory.
 
         Args:
             neutrondict (Dict[str, Any]): A neutron input dictionnary
@@ -46,7 +46,7 @@ class NeutronManager(InputParser, BaseManager):
                 )
 
     def update_temperatures(self, temperatures: set[int]) -> None:
-        """Set new temperatures
+        """Set new temperatures.
 
         Args:
             temperatures (Set[int]): A set of temperatures

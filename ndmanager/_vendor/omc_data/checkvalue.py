@@ -8,7 +8,7 @@ import numpy as np
 PathLike = str | os.PathLike
 
 
-def check_type(name, value, expected_type, expected_iter_type=None, *, none_ok=False):
+def check_type(name, value, expected_type, expected_iter_type=None, *, none_ok=False) -> None:
     """Ensure that an object is of an expected type. Optionally, if the object is
     iterable, check that each element is of a particular type.
 
@@ -61,7 +61,7 @@ def check_type(name, value, expected_type, expected_iter_type=None, *, none_ok=F
                 raise TypeError(msg)
 
 
-def check_iterable_type(name, value, expected_type, min_depth=1, max_depth=1):
+def check_iterable_type(name, value, expected_type, min_depth=1, max_depth=1) -> None:
     """Ensure that an object is an iterable containing an expected type.
 
     Parameters
@@ -137,7 +137,7 @@ def check_iterable_type(name, value, expected_type, min_depth=1, max_depth=1):
             raise TypeError(msg)
 
 
-def check_length(name, value, length_min, length_max=None):
+def check_length(name, value, length_min, length_max=None) -> None:
     """Ensure that a sized object has length within a given range.
 
     Parameters
@@ -168,7 +168,7 @@ def check_length(name, value, length_min, length_max=None):
         raise ValueError(msg)
 
 
-def check_increasing(name: str, value, equality: bool = False):
+def check_increasing(name: str, value, equality: bool = False) -> None:
     """Ensure that a list's elements are strictly or loosely increasing.
 
     Parameters
@@ -183,15 +183,20 @@ def check_increasing(name: str, value, equality: bool = False):
     """
     if equality:
         if not np.all(np.diff(value) >= 0.0):
-            raise ValueError(f'Unable to set "{name}" to "{value}" since its '
-                             'elements must be increasing.')
-    elif not equality:
-        if not np.all(np.diff(value) > 0.0):
-            raise ValueError(f'Unable to set "{name}" to "{value}" since its '
-                             'elements must be strictly increasing.')
+            msg = (
+                f'Unable to set "{name}" to "{value}" since its '
+                             'elements must be increasing.'
+            )
+            raise ValueError(msg)
+    elif not equality and not np.all(np.diff(value) > 0.0):
+        msg = (
+            f'Unable to set "{name}" to "{value}" since its '
+                         'elements must be strictly increasing.'
+        )
+        raise ValueError(msg)
 
 
-def check_value(name, value, accepted_values):
+def check_value(name, value, accepted_values) -> None:
     """Ensure that an object's value is contained in a set of acceptable values.
 
     Parameters
@@ -210,7 +215,7 @@ def check_value(name, value, accepted_values):
         raise ValueError(msg)
 
 
-def check_less_than(name, value, maximum, equality=False):
+def check_less_than(name, value, maximum, equality=False) -> None:
     """Ensure that an object's value is less than a given value.
 
     Parameters
@@ -236,7 +241,7 @@ def check_less_than(name, value, maximum, equality=False):
         raise ValueError(msg)
 
 
-def check_greater_than(name, value, minimum, equality=False):
+def check_greater_than(name, value, minimum, equality=False) -> None:
     """Ensure that an object's value is greater than a given value.
 
     Parameters
@@ -262,7 +267,7 @@ def check_greater_than(name, value, minimum, equality=False):
         raise ValueError(msg)
 
 
-def check_filetype_version(obj, expected_type, expected_version):
+def check_filetype_version(obj, expected_type, expected_version) -> None:
     """Check filetype and version of an HDF5 file.
 
     Parameters
@@ -281,23 +286,30 @@ def check_filetype_version(obj, expected_type, expected_version):
 
         # Check filetype
         if this_filetype != expected_type:
-            raise OSError(f"{obj.filename} is not a {expected_type} file.")
+            msg = f"{obj.filename} is not a {expected_type} file."
+            raise OSError(msg)
 
         # Check version
         if this_version[0] != expected_version:
-            raise OSError("{} file has a version of {} which is not "
+            msg = (
+                "{} file has a version of {} which is not "
                           "consistent with the version expected by OpenMC, {}"
                           .format(this_filetype,
                                   ".".join(str(v) for v in this_version),
-                                  expected_version))
+                                  expected_version)
+            )
+            raise OSError(msg)
     except AttributeError:
-        raise OSError(f"Could not read {obj.filename} file. This most likely "
+        msg = (
+            f"Could not read {obj.filename} file. This most likely "
                       "means the file was produced by a different version of "
-                      "OpenMC than the one you are using.")
+                      "OpenMC than the one you are using."
+        )
+        raise OSError(msg)
 
 
 class CheckedList(list):
-    """A list for which each element is type-checked as it's added
+    """A list for which each element is type-checked as it's added.
 
     Parameters
     ----------
@@ -310,7 +322,7 @@ class CheckedList(list):
 
     """
 
-    def __init__(self, expected_type, name, items=None):
+    def __init__(self, expected_type, name, items=None) -> None:
         super().__init__()
         self.expected_type = expected_type
         self.name = name
@@ -333,8 +345,8 @@ class CheckedList(list):
             self.append(item)
         return self
 
-    def append(self, item):
-        """Append item to list
+    def append(self, item) -> None:
+        """Append item to list.
 
         Parameters
         ----------
@@ -345,8 +357,8 @@ class CheckedList(list):
         check_type(self.name, item, self.expected_type)
         super().append(item)
 
-    def insert(self, index, item):
-        """Insert item before index
+    def insert(self, index, item) -> None:
+        """Insert item before index.
 
         Parameters
         ----------

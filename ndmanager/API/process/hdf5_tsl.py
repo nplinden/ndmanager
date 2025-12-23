@@ -1,4 +1,4 @@
-"""A class to process an OpenMC HDF5 TSL data file"""
+"""A class to process an OpenMC HDF5 TSL data file."""
 
 import time
 from dataclasses import dataclass
@@ -10,14 +10,14 @@ from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 @dataclass
 class HDF5TSL(HDF5Sublibrary):
-    """A class to process an OpenMC HDF5 TSL data file"""
+    """A class to process an OpenMC HDF5 TSL data file."""
 
     tsl: Path
     neutron: Path
     temperatures: list[int]
 
-    def process(self):
-        """Process TSL ENDF6 file to HDF5 using OpenMC's API"""
+    def process(self) -> None:
+        """Process TSL ENDF6 file to HDF5 using OpenMC's API."""
         logger = self.get_logger()
         logger.info("PROCESS TSL DATA")
         logger.info("Neutron tape: %s", self.neutron)

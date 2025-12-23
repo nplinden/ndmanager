@@ -1,4 +1,4 @@
-def clean_indentation(element, level=0, spaces_per_level=2, trailing_indent=True):
+def clean_indentation(element, level=0, spaces_per_level=2, trailing_indent=True) -> None:
     """Set indentation of XML element and its sub-elements.
     Copied and pasted from https://effbot.org/zone/element-lib.htm#prettyprint.
     It walks your tree and adds spaces and newlines so the tree is
@@ -61,8 +61,8 @@ def get_text(elem, name, default=None):
     return child.text if child is not None else default
 
 
-def reorder_attributes(root):
-    """Sort attributes in XML to preserve pre-Python 3.8 behavior
+def reorder_attributes(root) -> None:
+    """Sort attributes in XML to preserve pre-Python 3.8 behavior.
 
     Parameters
     ----------
@@ -80,7 +80,7 @@ def reorder_attributes(root):
 
 
 def get_elem_tuple(elem, name, dtype=int):
-    """Helper function to get a tuple of values from an elem
+    """Helper function to get a tuple of values from an elem.
 
     Parameters
     ----------
@@ -100,3 +100,4 @@ def get_elem_tuple(elem, name, dtype=int):
     subelem = elem.find(name)
     if subelem is not None:
         return tuple([dtype(x) for x in subelem.text.split()])
+    return None

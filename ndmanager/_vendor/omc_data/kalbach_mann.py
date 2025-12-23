@@ -44,27 +44,30 @@ class _AtomicRepresentation(EqualityMixin):
 
     """
 
-    def __init__(self, z, a):
+    def __init__(self, z, a) -> None:
         # Sanity checks on values
         cv.check_type("z", z, Integral)
         cv.check_greater_than("z", z, 0, equality=True)
         cv.check_type("a", a, Integral)
         cv.check_greater_than("a", a, 0, equality=True)
         if z > a:
-            raise ValueError(f"Number of protons ({z}) must be less than or "
-                             f"equal to number of nucleons ({a}).")
+            msg = (
+                f"Number of protons ({z}) must be less than or "
+                             f"equal to number of nucleons ({a})."
+            )
+            raise ValueError(msg)
 
         self._z = z
         self._a = a
 
     def __add__(self, other):
-        """Add two _AtomicRepresentations"""
+        """Add two _AtomicRepresentations."""
         z = self.z + other.z
         a = self.a + other.a
         return _AtomicRepresentation(z=z, a=a)
 
     def __sub__(self, other):
-        """Substract two _AtomicRepresentations"""
+        """Substract two _AtomicRepresentations."""
         z = self.z - other.z
         a = self.a - other.a
         return _AtomicRepresentation(z=z, a=a)
@@ -109,7 +112,7 @@ def _separation_energy(compound, nucleus, particle):
     """Calculates the separation energy as defined in ENDF-6 manual
     BNL-203218-2018-INRE, Revision 215, File 6 description for LAW=1
     and LANG=2. This function can be used for the incident or emitted
-    particle of the following reaction: A + a -> C -> B + b
+    particle of the following reaction: A + a -> C -> B + b.
 
     Parameters
     ----------
@@ -209,8 +212,9 @@ def kalbach_slope(energy_projectile, energy_emitted, za_projectile,
     # TODO: develop for photons as projectile
     # TODO: test for other particles than neutron
     if za_projectile != 1:
+        msg = "Developed and tested for neutron projectile only."
         raise NotImplementedError(
-            "Developed and tested for neutron projectile only.",
+            msg,
         )
 
     # Special handling of elemental carbon
@@ -252,7 +256,7 @@ def kalbach_slope(energy_projectile, energy_emitted, za_projectile,
 
 
 class KalbachMann(AngleEnergy):
-    """Kalbach-Mann distribution
+    """Kalbach-Mann distribution.
 
     Parameters
     ----------
@@ -291,7 +295,7 @@ class KalbachMann(AngleEnergy):
     """
 
     def __init__(self, breakpoints, interpolation, energy, energy_out,
-                 precompound, slope):
+                 precompound, slope) -> None:
         super().__init__()
         self.breakpoints = breakpoints
         self.interpolation = interpolation
@@ -305,7 +309,7 @@ class KalbachMann(AngleEnergy):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_type("Kalbach-Mann breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
@@ -315,7 +319,7 @@ class KalbachMann(AngleEnergy):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_type("Kalbach-Mann interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
@@ -325,7 +329,7 @@ class KalbachMann(AngleEnergy):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("Kalbach-Mann incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
@@ -335,7 +339,7 @@ class KalbachMann(AngleEnergy):
         return self._energy_out
 
     @energy_out.setter
-    def energy_out(self, energy_out):
+    def energy_out(self, energy_out) -> None:
         cv.check_type("Kalbach-Mann distributions", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
@@ -345,7 +349,7 @@ class KalbachMann(AngleEnergy):
         return self._precompound
 
     @precompound.setter
-    def precompound(self, precompound):
+    def precompound(self, precompound) -> None:
         cv.check_type("Kalbach-Mann precompound factor", precompound,
                       Iterable, Tabulated1D)
         self._precompound = precompound
@@ -355,12 +359,12 @@ class KalbachMann(AngleEnergy):
         return self._slope
 
     @slope.setter
-    def slope(self, slope):
+    def slope(self, slope) -> None:
         cv.check_type("Kalbach-Mann slope", slope, Iterable, Tabulated1D)
         self._slope = slope
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -425,7 +429,7 @@ class KalbachMann(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate Kalbach-Mann distribution from HDF5 data
+        """Generate Kalbach-Mann distribution from HDF5 data.
 
         Parameters
         ----------
@@ -456,10 +460,7 @@ class KalbachMann(AngleEnergy):
             # Determine length of outgoing energy distribution and number of
             # discrete lines
             j = offsets[i]
-            if i < n_energy - 1:
-                n = offsets[i+1] - j
-            else:
-                n = data.shape[1] - j
+            n = offsets[i + 1] - j if i < n_energy - 1 else data.shape[1] - j
             m = n_discrete_lines[i]
 
             # Create discrete distribution if lines are present
@@ -497,7 +498,7 @@ class KalbachMann(AngleEnergy):
 
     @classmethod
     def from_ace(cls, ace, idx, ldis):
-        """Generate Kalbach-Mann energy-angle distribution from ACE data
+        """Generate Kalbach-Mann energy-angle distribution from ACE data.
 
         Parameters
         ----------

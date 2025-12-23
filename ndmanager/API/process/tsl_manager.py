@@ -1,4 +1,4 @@
-"""A class for managing TSL libraries generation"""
+"""A class for managing TSL libraries generation."""
 
 from pathlib import Path
 from typing import Any
@@ -14,7 +14,7 @@ from ndmanager.env import NDMANAGER_ENDF6
 
 
 def read_temperatures(from_yaml_node: int | str) -> list[int]:
-    """Read a temperatures node from a yaml file
+    """Read a temperatures node from a yaml file.
 
     Args:
         from_yaml_node (int | str): a yaml temperature field
@@ -29,7 +29,7 @@ def read_temperatures(from_yaml_node: int | str) -> list[int]:
 
 
 class TSLManager(InputParser, BaseManager):
-    """A class for managing TSL libraries generation"""
+    """A class for managing TSL libraries generation."""
 
     sublibrary: str = "TSL"
     cross_section_node_type: str = "thermal"
@@ -38,7 +38,7 @@ class TSLManager(InputParser, BaseManager):
         self, tsldict: dict[str, Any], neutron_library: NeutronManager, rootdir: Path,
     ) -> None:
         """Create a TSL manager given an input tsl dictionnary, an neutron manager
-        and a path to a directory
+        and a path to a directory.
 
         Args:
             tsldict (Dict[str, Any]): A TSL input dictionnary
@@ -66,7 +66,7 @@ class TSLManager(InputParser, BaseManager):
             self.temperatures = set()
 
     def build_tsl(self, rootdir: Path) -> None:
-        """Build the TSL HDF5 files
+        """Build the TSL HDF5 files.
 
         Args:
             rootdir (Path): A path to write the HDF5 files in
@@ -100,7 +100,7 @@ class TSLManager(InputParser, BaseManager):
 
     @staticmethod
     def get_name(tape: str | Path) -> str:
-        """Get the ZSYMAM value of an ENDF6 tape
+        """Get the ZSYMAM value of an ENDF6 tape.
 
         Args:
             tape (str | Path): Path to an ENDF6 tape

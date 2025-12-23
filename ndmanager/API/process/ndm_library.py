@@ -1,4 +1,4 @@
-"""Subclassing OpenMC's DataLibrary object for processing"""
+"""Subclassing OpenMC's DataLibrary object for processing."""
 
 import shutil
 from pathlib import Path
@@ -14,10 +14,10 @@ from ndmanager.env import NDMANAGER_HDF5
 
 
 class NDMLibrary(DataLibrary):
-    """Subclassing OpenMC's DataLibrary object for processing"""
+    """Subclassing OpenMC's DataLibrary object for processing."""
 
     def __init__(self, inputpath: str | Path) -> None:
-        """Create an NDMLibrary given a yaml input file
+        """Create an NDMLibrary given a yaml input file.
 
         Args:
             inputpath (str | Path): Path to a yaml input file
@@ -38,7 +38,7 @@ class NDMLibrary(DataLibrary):
         self.tsl = TSLManager(inputdict.get("tsl"), self.neutron, self.root)
 
     def process(self, j: int = 1, dryrun: bool = False, clean: bool = False) -> None:
-        """Process the NDManager library using OpenMC's API
+        """Process the NDManager library using OpenMC's API.
 
         Args:
             j (int, optional): Number of concurrent jobs to run. Defaults to 1.
@@ -53,7 +53,6 @@ class NDMLibrary(DataLibrary):
             if answer == "y":
                 shutil.rmtree(self.root)
             else:
-                print("Exiting.")
                 return
 
         self.root.mkdir(parents=True, exist_ok=True)
@@ -76,12 +75,10 @@ class NDMLibrary(DataLibrary):
         shutil.copy(self.inputpath, self.root / "input.yml")
 
         if not self.check_temperatures():
-            print(
-                "Reused and new neutron processed files used different temperature grids!",
-            )
+            pass
 
     def register(self, manager: NeutronManager | PhotonManager | TSLManager) -> None:
-        """Register managers in the DataLibrary database
+        """Register managers in the DataLibrary database.
 
         Args:
             manager (NeutronManager | PhotonManager | TSLManager): _description_
@@ -94,7 +91,7 @@ class NDMLibrary(DataLibrary):
 
     def check_temperatures(self) -> bool:
         """Check that the processing temperatures are identical to the
-        temperatures in the reused data files
+        temperatures in the reused data files.
 
         Returns:
             bool: Wether the temperatures are the same or not
@@ -104,13 +101,11 @@ class NDMLibrary(DataLibrary):
         temperature_sets = []
         for path in self.neutron.reuse.values():
             with h5py.File(path, "r") as f:
-                kTg = list(f.values())[0]["kTs"]
+                kTg = next(iter(f.values()))["kTs"]
                 temperatures = {int(temp[:-1]) for temp in kTg}
                 if temperatures not in temperature_sets:
                     temperature_sets.append(temperatures)
 
         if len(self.neutron.reuse) == 0:
             return True
-        if len(temperature_sets) == 1 and self.neutron.temperatures in temperature_sets:
-            return True
-        return False
+        return bool(len(temperature_sets) == 1 and self.neutron.temperatures in temperature_sets)

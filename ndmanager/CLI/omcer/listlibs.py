@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndo install` command"""
+"""Definition and parser for the `ndo install` command."""
 
 import argparse as ap
 import textwrap
@@ -12,11 +12,11 @@ from ndmanager.format import get_terminal_size, header
 
 
 class NdoListCommand(Command):
-    """Define the `ndo list` command"""
+    """Define the `ndo list` command."""
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction) -> None:
-        """Add the parser for the 'ndo build' command to a subparser object
+        """Add the parser for the 'ndo build' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -28,7 +28,7 @@ class NdoListCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """List the OpenMC libaries available for download with NDManager"""
+        """List the OpenMC libaries available for download with NDManager."""
         col, _ = get_terminal_size()
 
         xs = []
@@ -66,4 +66,3 @@ class NdoListCommand(Command):
                 s, initial_indent="", subsequent_indent=21 * " ", width=col,
             )
             lst.append("\n".join(s))
-        print("\n".join(lst))

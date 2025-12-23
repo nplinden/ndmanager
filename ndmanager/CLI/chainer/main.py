@@ -1,4 +1,4 @@
-"""Entry point for the ndc command"""
+"""Entry point for the ndc command."""
 
 import argparse as ap
 
@@ -19,8 +19,8 @@ NdcListCommand.parser(subparsers)
 NdcRemoveCommand.parser(subparsers)
 
 
-def main():
-    """Entry point for the ndc command"""
+def main() -> None:
+    """Entry point for the ndc command."""
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)

@@ -1,4 +1,4 @@
-"""Definition and parser for the 'ndf remove' command"""
+"""Definition and parser for the 'ndf remove' command."""
 
 import argparse as ap
 import shutil
@@ -14,8 +14,8 @@ class NdfRemoveCommand:
                 shutil.rmtree(library)
 
     @classmethod
-    def parser(cls, subparsers):
-        """Add the parser for the 'ndf remove' command to a subparser object
+    def parser(cls, subparsers) -> None:
+        """Add the parser for the 'ndf remove' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object

@@ -1,4 +1,4 @@
-"""Definition and parser for the 'ndf list' command"""
+"""Definition and parser for the 'ndf list' command."""
 
 import argparse as ap
 import textwrap
@@ -9,10 +9,10 @@ from ndmanager.format import get_terminal_size, header
 
 
 class NdfListCommand:
-    """Define the `ndf list` command"""
+    """Define the `ndf list` command."""
 
     def __init__(self, args: ap.Namespace) -> None:
-        """Execute the `nds list` command given an argparse namespace
+        """Execute the `nds list` command given an argparse namespace.
 
         Args:
             args (ap.Namespace): An argparse namespace containing the `nds list`
@@ -21,7 +21,7 @@ class NdfListCommand:
         """
         self.args = args
         if not IAEA.is_cached():
-            print("Initializing IAEA database...")
+            pass
         self.iaea = IAEA()
 
         col, _ = get_terminal_size()
@@ -32,10 +32,7 @@ class NdfListCommand:
         for libname in libnames:
             libdata = self.iaea[libname]
             fancyname = libdata.name.rstrip("/")
-            if (NDMANAGER_ENDF6 / libname).exists():
-                check = "✓"
-            else:
-                check = " "
+            check = "✓" if (NDMANAGER_ENDF6 / libname).exists() else " "
             s = f"{libname:<20} {fancyname:<20} [{check}]: {libdata.library}"
             s = textwrap.wrap(s, initial_indent="", subsequent_indent=47 * " ", width=col)
             self.lines.append("\n".join(s))
@@ -51,11 +48,10 @@ class NdfListCommand:
         s = textwrap.wrap(s, width=col)
         self.lines.append("\n".join(s))
 
-        print("\n".join(self.lines))
 
     def list_libraries(self):
         """Get the full names of the libraries to list,
-        taking aliases into account
+        taking aliases into account.
 
         Returns:
             List[str]: The list of library names
@@ -72,8 +68,8 @@ class NdfListCommand:
         return libnames
 
     @classmethod
-    def parser(cls, subparsers):
-        """Add the parser for the 'ndf list' command to a subparser object
+    def parser(cls, subparsers) -> None:
+        """Add the parser for the 'ndf list' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object

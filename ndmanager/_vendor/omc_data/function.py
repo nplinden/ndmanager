@@ -18,7 +18,7 @@ INTERPOLATION_SCHEME = {1: "histogram", 2: "linear-linear", 3: "linear-log",
 
 
 def sum_functions(funcs):
-    """Add tabulated/polynomials functions together
+    """Add tabulated/polynomials functions together.
 
     Parameters
     ----------
@@ -40,8 +40,11 @@ def sum_functions(funcs):
         if isinstance(f, Tabulated1D):
             xs.append(f.x)
             if not np.all(f.interpolation == 2):
-                raise ValueError("Only linear-linear tabulated functions "
-                                 "can be combined")
+                msg = (
+                    "Only linear-linear tabulated functions "
+                                 "can be combined"
+                )
+                raise ValueError(msg)
 
     if xs:
         # Take the union of all energies (sorted)
@@ -64,7 +67,7 @@ class Function1D(EqualityMixin, ABC):
 
     @abstractmethod
     def to_hdf5(self, group, name="xy"):
-        """Write function to an HDF5 group
+        """Write function to an HDF5 group.
 
         Parameters
         ----------
@@ -77,7 +80,7 @@ class Function1D(EqualityMixin, ABC):
 
     @classmethod
     def from_hdf5(cls, dataset):
-        """Generate function from an HDF5 dataset
+        """Generate function from an HDF5 dataset.
 
         Parameters
         ----------
@@ -141,7 +144,7 @@ class Tabulated1D(Function1D):
 
     """
 
-    def __init__(self, x, y, breakpoints=None, interpolation=None):
+    def __init__(self, x, y, breakpoints=None, interpolation=None) -> None:
         if breakpoints is None or interpolation is None:
             # Single linear-linear interpolation region by default
             self.breakpoints = np.array([len(x)])
@@ -247,8 +250,9 @@ class Tabulated1D(Function1D):
         if p == 5:
             # Log-log
             return yi*exp(log(x/xi)/log(xi1/xi)*log(yi1/yi))
+        return None
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.x)
 
     @property
@@ -256,7 +260,7 @@ class Tabulated1D(Function1D):
         return self._x
 
     @x.setter
-    def x(self, x):
+    def x(self, x) -> None:
         cv.check_type("x values", x, Iterable, Real)
         self._x = x
 
@@ -265,7 +269,7 @@ class Tabulated1D(Function1D):
         return self._y
 
     @y.setter
-    def y(self, y):
+    def y(self, y) -> None:
         cv.check_type("y values", y, Iterable, Real)
         self._y = y
 
@@ -274,7 +278,7 @@ class Tabulated1D(Function1D):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_type("breakpoints", breakpoints, Iterable, Integral)
         self._breakpoints = breakpoints
 
@@ -283,7 +287,7 @@ class Tabulated1D(Function1D):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_type("interpolation", interpolation, Iterable, Integral)
         self._interpolation = interpolation
 
@@ -350,8 +354,8 @@ class Tabulated1D(Function1D):
 
         return np.concatenate(([0.], np.cumsum(partial_sum)))
 
-    def to_hdf5(self, group, name="xy"):
-        """Write tabulated function to an HDF5 group
+    def to_hdf5(self, group, name="xy") -> None:
+        """Write tabulated function to an HDF5 group.
 
         Parameters
         ----------
@@ -369,7 +373,7 @@ class Tabulated1D(Function1D):
 
     @classmethod
     def from_hdf5(cls, dataset):
-        """Generate tabulated function from an HDF5 dataset
+        """Generate tabulated function from an HDF5 dataset.
 
         Parameters
         ----------
@@ -447,8 +451,8 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
 
     """
 
-    def to_hdf5(self, group, name="xy"):
-        """Write polynomial function to an HDF5 group
+    def to_hdf5(self, group, name="xy") -> None:
+        """Write polynomial function to an HDF5 group.
 
         Parameters
         ----------
@@ -463,7 +467,7 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
 
     @classmethod
     def from_hdf5(cls, dataset):
-        """Generate function from an HDF5 dataset
+        """Generate function from an HDF5 dataset.
 
         Parameters
         ----------
@@ -483,7 +487,7 @@ class Polynomial(np.polynomial.Polynomial, Function1D):
 
 
 class Combination(EqualityMixin):
-    """Combination of multiple functions with a user-defined operator
+    """Combination of multiple functions with a user-defined operator.
 
     This class allows you to create a callable object which represents the
     combination of other callable objects by way of a series of user-defined
@@ -512,7 +516,7 @@ class Combination(EqualityMixin):
 
     """
 
-    def __init__(self, functions, operations):
+    def __init__(self, functions, operations) -> None:
         self.functions = functions
         self.operations = operations
 
@@ -527,7 +531,7 @@ class Combination(EqualityMixin):
         return self._functions
 
     @functions.setter
-    def functions(self, functions):
+    def functions(self, functions) -> None:
         cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
@@ -536,7 +540,7 @@ class Combination(EqualityMixin):
         return self._operations
 
     @operations.setter
-    def operations(self, operations):
+    def operations(self, operations) -> None:
         cv.check_type("operations", operations, Iterable, np.ufunc)
         length = len(self.functions) - 1
         cv.check_length("operations", operations, length, length_max=length)
@@ -562,7 +566,7 @@ class Sum(Function1D):
 
     """
 
-    def __init__(self, functions):
+    def __init__(self, functions) -> None:
         self.functions = list(functions)
 
     def __call__(self, x):
@@ -573,12 +577,12 @@ class Sum(Function1D):
         return self._functions
 
     @functions.setter
-    def functions(self, functions):
+    def functions(self, functions) -> None:
         cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
-    def to_hdf5(self, group, name="xy"):
-        """Write sum of functions to an HDF5 group
+    def to_hdf5(self, group, name="xy") -> None:
+        """Write sum of functions to an HDF5 group.
 
         .. versionadded:: 0.13.1
 
@@ -598,7 +602,7 @@ class Sum(Function1D):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate sum of functions from an HDF5 group
+        """Generate sum of functions from an HDF5 group.
 
         .. versionadded:: 0.13.1
 
@@ -645,7 +649,7 @@ class Regions1D(EqualityMixin):
 
     """
 
-    def __init__(self, functions, breakpoints):
+    def __init__(self, functions, breakpoints) -> None:
         self.functions = functions
         self.breakpoints = breakpoints
 
@@ -663,7 +667,7 @@ class Regions1D(EqualityMixin):
         return self._functions
 
     @functions.setter
-    def functions(self, functions):
+    def functions(self, functions) -> None:
         cv.check_type("functions", functions, Iterable, Callable)
         self._functions = functions
 
@@ -672,7 +676,7 @@ class Regions1D(EqualityMixin):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_iterable_type("breakpoints", breakpoints, Real)
         self._breakpoints = breakpoints
 
@@ -700,7 +704,7 @@ class ResonancesWithBackground(EqualityMixin):
 
     """
 
-    def __init__(self, resonances, background, mt):
+    def __init__(self, resonances, background, mt) -> None:
         self.resonances = resonances
         self.background = background
         self.mt = mt
@@ -710,7 +714,7 @@ class ResonancesWithBackground(EqualityMixin):
         return self._background
 
     @background.setter
-    def background(self, background):
+    def background(self, background) -> None:
         cv.check_type("background cross section", background, Callable)
         self._background = background
 
@@ -719,7 +723,7 @@ class ResonancesWithBackground(EqualityMixin):
         return self._mt
 
     @mt.setter
-    def mt(self, mt):
+    def mt(self, mt) -> None:
         cv.check_type("MT value", mt, Integral)
         self._mt = mt
 
@@ -728,7 +732,7 @@ class ResonancesWithBackground(EqualityMixin):
         return self._resonances
 
     @resonances.setter
-    def resonances(self, resonances):
+    def resonances(self, resonances) -> None:
         cv.check_type("resolved resonance parameters", resonances,
                       ndmanager._vendor.omc_data.Resonances)
         self._resonances = resonances

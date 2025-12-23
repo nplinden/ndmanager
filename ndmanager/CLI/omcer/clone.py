@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndo clone` command"""
+"""Definition and parser for the `ndo clone` command."""
 
 import argparse as ap
 import shutil
@@ -8,11 +8,11 @@ from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoCloneCommand(Command):
-    """define the `ndo clone` command"""
+    """define the `ndo clone` command."""
 
     @classmethod
     def parser(cls, subparsers: ap._SubParsersAction) -> None:
-        """Add the parser for the 'ndo clone' command to a subparser object
+        """Add the parser for the 'ndo clone' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -34,7 +34,7 @@ class NdoCloneCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """Clone an HDF5 library from the NDManager database
+        """Clone an HDF5 library from the NDManager database.
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument
@@ -47,7 +47,9 @@ class NdoCloneCommand(Command):
         source = NDMANAGER_HDF5 / args.source
         target = NDMANAGER_HDF5 / args.target
         if not source.exists():
-            raise ValueError(f"{args.source} is not in the library list.")
+            msg = f"{args.source} is not in the library list."
+            raise ValueError(msg)
         if target.exists():
-            raise ValueError(f"{args.target} is already in the library list.")
+            msg = f"{args.target} is already in the library list."
+            raise ValueError(msg)
         shutil.copytree(source, target)

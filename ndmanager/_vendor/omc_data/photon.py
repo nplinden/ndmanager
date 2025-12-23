@@ -158,7 +158,7 @@ class AtomicRelaxation(EqualityMixin):
 
     """
 
-    def __init__(self, binding_energy, num_electrons, transitions):
+    def __init__(self, binding_energy, num_electrons, transitions) -> None:
         self.binding_energy = binding_energy
         self.num_electrons = num_electrons
         self.transitions = transitions
@@ -169,7 +169,7 @@ class AtomicRelaxation(EqualityMixin):
         return self._binding_energy
 
     @binding_energy.setter
-    def binding_energy(self, binding_energy):
+    def binding_energy(self, binding_energy) -> None:
         cv.check_type("binding energies", binding_energy, Mapping)
         for subshell, energy in binding_energy.items():
             cv.check_value("subshell", subshell, _SUBSHELLS)
@@ -182,7 +182,7 @@ class AtomicRelaxation(EqualityMixin):
         return self._num_electrons
 
     @num_electrons.setter
-    def num_electrons(self, num_electrons):
+    def num_electrons(self, num_electrons) -> None:
         cv.check_type("number of electrons", num_electrons, Mapping)
         for subshell, num in num_electrons.items():
             cv.check_value("subshell", subshell, _SUBSHELLS)
@@ -199,7 +199,7 @@ class AtomicRelaxation(EqualityMixin):
         return self._transitions
 
     @transitions.setter
-    def transitions(self, transitions):
+    def transitions(self, transitions) -> None:
         cv.check_type("transitions", transitions, Mapping)
         for subshell, df in transitions.items():
             cv.check_value("subshell", subshell, _SUBSHELLS)
@@ -208,7 +208,7 @@ class AtomicRelaxation(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace):
-        """Generate atomic relaxation data from an ACE file
+        """Generate atomic relaxation data from an ACE file.
 
         Parameters
         ----------
@@ -252,10 +252,7 @@ class AtomicRelaxation(EqualityMixin):
                     subj = _SUBSHELLS[int(ace.xss[idx])]
                     subk = _SUBSHELLS[int(ace.xss[idx + 1])]
                     etr = ace.xss[idx + 2]*EV_PER_MEV
-                    if j == 0:
-                        ftr = ace.xss[idx + 3]
-                    else:
-                        ftr = ace.xss[idx + 3] - ace.xss[idx - 1]
+                    ftr = ace.xss[idx + 3] if j == 0 else ace.xss[idx + 3] - ace.xss[idx - 1]
                     records.append((subj, subk, etr, ftr))
                     idx += 4
 
@@ -267,7 +264,7 @@ class AtomicRelaxation(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev_or_filename):
-        """Generate atomic relaxation data from an ENDF evaluation
+        """Generate atomic relaxation data from an ENDF evaluation.
 
         Parameters
         ----------
@@ -281,15 +278,15 @@ class AtomicRelaxation(EqualityMixin):
             Atomic relaxation data
 
         """
-        if isinstance(ev_or_filename, Evaluation):
-            ev = ev_or_filename
-        else:
-            ev = Evaluation(ev_or_filename)
+        ev = ev_or_filename if isinstance(ev_or_filename, Evaluation) else Evaluation(ev_or_filename)
 
         # Atomic relaxation data is always MF=28, MT=533
         if (28, 533) not in ev.section:
-            raise OSError(f"{ev} does not appear to be an atomic relaxation "
-                          "sublibrary.")
+            msg = (
+                f"{ev} does not appear to be an atomic relaxation "
+                          "sublibrary."
+            )
+            raise OSError(msg)
 
         # Determine number of subshells
         file_obj = StringIO(ev.section[28, 533])
@@ -303,7 +300,7 @@ class AtomicRelaxation(EqualityMixin):
         columns = ["secondary", "tertiary", "energy (eV)", "probability"]
 
         # Read data for each subshell
-        for i in range(n_subshells):
+        for _i in range(n_subshells):
             params, list_items = get_list_record(file_obj)
             subi = _SUBSHELLS[int(params[0])]
             n_transitions = int(params[5])
@@ -329,7 +326,7 @@ class AtomicRelaxation(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate atomic relaxation data from an HDF5 group
+        """Generate atomic relaxation data from an HDF5 group.
 
         Parameters
         ----------
@@ -371,8 +368,8 @@ class AtomicRelaxation(EqualityMixin):
 
         return cls(binding_energy, num_electrons, transitions)
 
-    def to_hdf5(self, group, shell):
-        """Write atomic relaxation data to an HDF5 group
+    def to_hdf5(self, group, shell) -> None:
+        """Write atomic relaxation data to an HDF5 group.
 
         Parameters
         ----------
@@ -439,22 +436,23 @@ class IncidentPhoton(EqualityMixin):
 
     """
 
-    def __init__(self, atomic_number):
+    def __init__(self, atomic_number) -> None:
         self.atomic_number = atomic_number
         self._atomic_relaxation = None
         self.reactions = {}
         self.compton_profiles = {}
         self.bremsstrahlung = {}
 
-    def __contains__(self, mt):
+    def __contains__(self, mt) -> bool:
         return mt in self.reactions
 
     def __getitem__(self, mt):
         if mt in self.reactions:
             return self.reactions[mt]
-        raise KeyError(f"No reaction with MT={mt}.")
+        msg = f"No reaction with MT={mt}."
+        raise KeyError(msg)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<IncidentPhoton: {self.name}>"
 
     def __iter__(self):
@@ -465,7 +463,7 @@ class IncidentPhoton(EqualityMixin):
         return self._atomic_number
 
     @atomic_number.setter
-    def atomic_number(self, atomic_number):
+    def atomic_number(self, atomic_number) -> None:
         cv.check_type("atomic number", atomic_number, Integral)
         cv.check_greater_than("atomic number", atomic_number, 0, True)
         self._atomic_number = atomic_number
@@ -475,7 +473,7 @@ class IncidentPhoton(EqualityMixin):
         return self._atomic_relaxation
 
     @atomic_relaxation.setter
-    def atomic_relaxation(self, atomic_relaxation):
+    def atomic_relaxation(self, atomic_relaxation) -> None:
         cv.check_type("atomic relaxation data", atomic_relaxation,
                       AtomicRelaxation)
         self._atomic_relaxation = atomic_relaxation
@@ -486,7 +484,7 @@ class IncidentPhoton(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace_or_filename):
-        """Generate incident photon data from an ACE table
+        """Generate incident photon data from an ACE table.
 
         Parameters
         ----------
@@ -501,15 +499,13 @@ class IncidentPhoton(EqualityMixin):
 
         """
         # First obtain the data for the first provided ACE table/file
-        if isinstance(ace_or_filename, Table):
-            ace = ace_or_filename
-        else:
-            ace = get_table(ace_or_filename)
+        ace = ace_or_filename if isinstance(ace_or_filename, Table) else get_table(ace_or_filename)
 
         # Get atomic number based on name of ACE table
         zaid, xs = ace.name.split(".")
         if not xs.endswith("p"):
-            raise TypeError(f"{ace} is not a photoatomic transport ACE table.")
+            msg = f"{ace} is not a photoatomic transport ACE table."
+            raise TypeError(msg)
         Z = get_metadata(int(zaid))[2]
 
         # Read each reaction
@@ -588,9 +584,12 @@ class IncidentPhoton(EqualityMixin):
                 e = data.atomic_relaxation.binding_energy[shell]
                 rx.subshell_binding_energy = e
         else:
-            raise ValueError(f"ACE table {ace.name} does not have subshell data. Only "
+            msg = (
+                f"ACE table {ace.name} does not have subshell data. Only "
                              "newer ACE photoatomic libraries are supported "
-                             "(e.g., eprdata14).")
+                             "(e.g., eprdata14)."
+            )
+            raise ValueError(msg)
 
         # Add bremsstrahlung DCS data
         data._add_bremsstrahlung()
@@ -599,7 +598,7 @@ class IncidentPhoton(EqualityMixin):
 
     @classmethod
     def from_endf(cls, photoatomic, relaxation=None):
-        """Generate incident photon data from an ENDF evaluation
+        """Generate incident photon data from an ENDF evaluation.
 
         Parameters
         ----------
@@ -616,16 +615,13 @@ class IncidentPhoton(EqualityMixin):
             Photon interaction data
 
         """
-        if isinstance(photoatomic, Evaluation):
-            ev = photoatomic
-        else:
-            ev = Evaluation(photoatomic)
+        ev = photoatomic if isinstance(photoatomic, Evaluation) else Evaluation(photoatomic)
 
         Z = ev.target["atomic_number"]
         data = cls(Z)
 
         # Read each reaction
-        for mf, mt, nc, mod in ev.reaction_list:
+        for mf, mt, _nc, _mod in ev.reaction_list:
             if mf == 23:
                 data.reactions[mt] = PhotonReaction.from_endf(ev, mt)
 
@@ -661,7 +657,7 @@ class IncidentPhoton(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group_or_filename):
-        """Generate photon reaction from an HDF5 group
+        """Generate photon reaction from an HDF5 group.
 
         Parameters
         ----------
@@ -688,12 +684,15 @@ class IncidentPhoton(EqualityMixin):
                 major, minor = h5file.attrs["version"]
                 # For now all versions of HDF5 data can be read
             else:
-                raise OSError(
+                msg = (
                     "HDF5 data does not indicate a version. Your installation "
-                    f"of the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data.",
+                    f"of the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data."
+                )
+                raise OSError(
+                    msg,
                     )
 
-            group = list(h5file.values())[0]
+            group = next(iter(h5file.values()))
 
         Z = group.attrs["Z"]
         data = cls(Z)
@@ -702,7 +701,7 @@ class IncidentPhoton(EqualityMixin):
         energy = group["energy"][()]
 
         # Read cross section data
-        for mt, (name, key) in _REACTION_NAME.items():
+        for mt, (_name, key) in _REACTION_NAME.items():
             if key in group:
                 rgroup = group[key]
             elif key in group["subshells"]:
@@ -730,8 +729,11 @@ class IncidentPhoton(EqualityMixin):
             pz = rgroup["pz"][()]
             J = rgroup["J"][()]
             if pz.size != J.shape[1]:
-                raise ValueError("'J' array shape is not consistent with the "
-                                 "'pz' array shape")
+                msg = (
+                    "'J' array shape is not consistent with the "
+                                 "'pz' array shape"
+                )
+                raise ValueError(msg)
             profile["J"] = [Tabulated1D(pz, Jk) for Jk in J]
 
         # Read bremsstrahlung
@@ -748,7 +750,7 @@ class IncidentPhoton(EqualityMixin):
 
         return data
 
-    def export_to_hdf5(self, path, mode="a", libver="earliest"):
+    def export_to_hdf5(self, path, mode="a", libver="earliest") -> None:
         """Export incident photon data to an HDF5 file.
 
         Parameters
@@ -827,10 +829,8 @@ class IncidentPhoton(EqualityMixin):
                     else:
                         brem_group.create_dataset(key, data=value)
 
-    def _add_bremsstrahlung(self):
-        """Add the data used in the thick-target bremsstrahlung approximation
-
-        """
+    def _add_bremsstrahlung(self) -> None:
+        """Add the data used in the thick-target bremsstrahlung approximation."""
         # Load bremsstrahlung data if it has not yet been loaded
         if not _BREMSSTRAHLUNG:
             # Add data used for density effect correction
@@ -894,7 +894,7 @@ class IncidentPhoton(EqualityMixin):
 
 
 class PhotonReaction(EqualityMixin):
-    """Photon-induced reaction
+    """Photon-induced reaction.
 
     Parameters
     ----------
@@ -916,14 +916,14 @@ class PhotonReaction(EqualityMixin):
 
     """
 
-    def __init__(self, mt):
+    def __init__(self, mt) -> None:
         self.mt = mt
         self._xs = None
         self._scattering_factor = None
         self._anomalous_real = None
         self._anomalous_imag = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.mt in _REACTION_NAME:
             return f"<Photon Reaction: MT={self.mt} {_REACTION_NAME[self.mt][0]}>"
         return f"<Photon Reaction: MT={self.mt}>"
@@ -933,7 +933,7 @@ class PhotonReaction(EqualityMixin):
         return self._anomalous_real
 
     @anomalous_real.setter
-    def anomalous_real(self, anomalous_real):
+    def anomalous_real(self, anomalous_real) -> None:
         cv.check_type("real part of anomalous scattering factor",
                       anomalous_real, Callable)
         self._anomalous_real = anomalous_real
@@ -943,7 +943,7 @@ class PhotonReaction(EqualityMixin):
         return self._anomalous_imag
 
     @anomalous_imag.setter
-    def anomalous_imag(self, anomalous_imag):
+    def anomalous_imag(self, anomalous_imag) -> None:
         cv.check_type("imaginary part of anomalous scattering factor",
                       anomalous_imag, Callable)
         self._anomalous_imag = anomalous_imag
@@ -953,7 +953,7 @@ class PhotonReaction(EqualityMixin):
         return self._scattering_factor
 
     @scattering_factor.setter
-    def scattering_factor(self, scattering_factor):
+    def scattering_factor(self, scattering_factor) -> None:
         cv.check_type("scattering factor", scattering_factor, Callable)
         self._scattering_factor = scattering_factor
 
@@ -962,13 +962,13 @@ class PhotonReaction(EqualityMixin):
         return self._xs
 
     @xs.setter
-    def xs(self, xs):
+    def xs(self, xs) -> None:
         cv.check_type("reaction cross section", xs, Callable)
         self._xs = xs
 
     @classmethod
     def from_ace(cls, ace, mt):
-        """Generate photon reaction from an ACE table
+        """Generate photon reaction from an ACE table.
 
         Parameters
         ----------
@@ -1008,8 +1008,11 @@ class PhotonReaction(EqualityMixin):
             # Heating
             idx = ace.jxs[5]
         else:
-            raise ValueError("ACE photoatomic cross sections do not have "
-                             f"data for MT={mt}.")
+            msg = (
+                "ACE photoatomic cross sections do not have "
+                             f"data for MT={mt}."
+            )
+            raise ValueError(msg)
 
         # Store cross section
         xs = ace.xss[idx : idx+n].copy()
@@ -1063,7 +1066,7 @@ class PhotonReaction(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev, mt):
-        """Generate photon reaction from an ENDF evaluation
+        """Generate photon reaction from an ENDF evaluation.
 
         Parameters
         ----------
@@ -1114,7 +1117,7 @@ class PhotonReaction(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group, mt, energy):
-        """Generate photon reaction from an HDF5 group
+        """Generate photon reaction from an HDF5 group.
 
         Parameters
         ----------
@@ -1159,8 +1162,8 @@ class PhotonReaction(EqualityMixin):
 
         return rx
 
-    def to_hdf5(self, group, energy, Z):
-        """Write photon reaction to an HDF5 group
+    def to_hdf5(self, group, energy, Z) -> None:
+        """Write photon reaction to an HDF5 group.
 
         Parameters
         ----------

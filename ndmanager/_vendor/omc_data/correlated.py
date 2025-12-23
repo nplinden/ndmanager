@@ -14,7 +14,7 @@ from .function import INTERPOLATION_SCHEME
 
 
 class CorrelatedAngleEnergy(AngleEnergy):
-    """Correlated angle-energy distribution
+    """Correlated angle-energy distribution.
 
     Parameters
     ----------
@@ -46,7 +46,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     _name = "correlated"
 
-    def __init__(self, breakpoints, interpolation, energy, energy_out, mu):
+    def __init__(self, breakpoints, interpolation, energy, energy_out, mu) -> None:
         super().__init__()
         self.breakpoints = breakpoints
         self.interpolation = interpolation
@@ -59,7 +59,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_type("correlated angle-energy breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
@@ -69,7 +69,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_type("correlated angle-energy interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
@@ -79,7 +79,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("correlated angle-energy incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
@@ -89,7 +89,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
         return self._energy_out
 
     @energy_out.setter
-    def energy_out(self, energy_out):
+    def energy_out(self, energy_out) -> None:
         cv.check_type("correlated angle-energy outgoing energy", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
@@ -99,13 +99,13 @@ class CorrelatedAngleEnergy(AngleEnergy):
         return self._mu
 
     @mu.setter
-    def mu(self, mu):
+    def mu(self, mu) -> None:
         cv.check_iterable_type("correlated angle-energy outgoing cosine",
                                mu, Univariate, 2, 2)
         self._mu = mu
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -126,7 +126,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
         # Make sure all mu data is tabular
         mu_tabular = []
         for i, mu_i in enumerate(self.mu):
-            mu_tabular.append([mu_ij if isinstance(mu_ij, (Tabular, Discrete)) else
+            mu_tabular.append([mu_ij if isinstance(mu_ij, Tabular | Discrete) else
                                mu_ij.to_tabular() for mu_ij in mu_i])
 
         # Determine total number of (mu,p) points and create array
@@ -164,9 +164,12 @@ class CorrelatedAngleEnergy(AngleEnergy):
                     n_discrete_lines[i] = n
                     interpolation[i] = 1
                 else:
-                    raise ValueError(
+                    msg = (
                         "Invalid univariate energy distribution as part of "
-                        f"correlated angle-energy: {d}")
+                        f"correlated angle-energy: {d}"
+                    )
+                    raise ValueError(
+                        msg)
                 eout[0, offset_e:offset_e+n] = d.x
                 eout[1, offset_e:offset_e+n] = d.p
                 eout[2, offset_e:offset_e+n] = d.c
@@ -200,7 +203,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate correlated angle-energy distribution from HDF5 data
+        """Generate correlated angle-energy distribution from HDF5 data.
 
         Parameters
         ----------
@@ -232,10 +235,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
             # Determine length of outgoing energy distribution and number of
             # discrete lines
             offset_e = offsets[i]
-            if i < n_energy - 1:
-                n = offsets[i+1] - offset_e
-            else:
-                n = dset_eout.shape[1] - offset_e
+            n = offsets[i + 1] - offset_e if i < n_energy - 1 else dset_eout.shape[1] - offset_e
             m = n_discrete_lines[i]
 
             # Create discrete distribution if lines are present
@@ -301,7 +301,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @classmethod
     def from_ace(cls, ace, idx, ldis):
-        """Generate correlated angle-energy distribution from ACE data
+        """Generate correlated angle-energy distribution from ACE data.
 
         Parameters
         ----------
@@ -417,7 +417,7 @@ class CorrelatedAngleEnergy(AngleEnergy):
 
     @classmethod
     def from_endf(cls, file_obj):
-        """Generate correlated angle-energy distribution from an ENDF evaluation
+        """Generate correlated angle-energy distribution from an ENDF evaluation.
 
         Parameters
         ----------

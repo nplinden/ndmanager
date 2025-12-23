@@ -1,14 +1,15 @@
-"""A generic class for managing libraries generation"""
+"""A generic class for managing libraries generation."""
 
 import multiprocessing as mp
+from typing import Never
 
 from tqdm import tqdm
 
 from ndmanager.API.process.hdf5_sublibrary import HDF5Sublibrary
 
 
-def processor(particle: HDF5Sublibrary):
-    """Encapsulate the HDF5Sublibrary.process method in a function
+def processor(particle: HDF5Sublibrary) -> None:
+    """Encapsulate the HDF5Sublibrary.process method in a function.
 
     Args:
         particle (HDF5Sublibrary): The sublibrary object
@@ -18,10 +19,10 @@ def processor(particle: HDF5Sublibrary):
 
 
 class BaseManager(list):
-    """A generic class for managing libraries generation"""
+    """A generic class for managing libraries generation."""
 
-    def process(self, desc: str, j: int = 1):
-        """Process the library using OpenMC's API
+    def process(self, desc: str, j: int = 1) -> None:
+        """Process the library using OpenMC's API.
 
         Args:
             desc (str): Description for the tqdm bar
@@ -37,10 +38,10 @@ class BaseManager(list):
         with mp.get_context("spawn").Pool(j) as p:
             pbar = tqdm(total=len(self), bar_format=bar_format, desc=desc)
 
-            def update_pbar(_):
+            def update_pbar(_) -> None:
                 pbar.update()
 
-            def error_callback(e):
+            def error_callback(e) -> Never:
                 raise e
 
             for particle in self:

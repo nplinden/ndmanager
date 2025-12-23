@@ -65,5 +65,3 @@ for i, energy in enumerate(energy_a17):
     for geometry in table.field_names[1:]:
         row.append(dose_per_fluence[geometry][i])
     table.add_row(row)
-print("Photons: Effective dose per fluence, in units of pSv cm², for monoenergetic particles incident in various geometries.\n")
-print(table.get_string(border=False))

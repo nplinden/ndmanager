@@ -1,4 +1,4 @@
-"""Nuclide module.xml.etree.Ele
+"""Nuclide module.xml.etree.Ele.
 
 Contains the per-nuclide components of a depletion chain.
 """
@@ -110,7 +110,7 @@ class Nuclide:
 
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name=None) -> None:
         # Information about the nuclide
         self.name = name
         self.half_life = None
@@ -128,7 +128,7 @@ class Nuclide:
         # Neutron fission yields, if present
         self._yield_data = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         n_modes, n_rx = self.n_decay_modes, self.n_reaction_paths
         return f"<Nuclide: {self.name} ({n_modes} modes, {n_rx} reactions)>"
 
@@ -147,7 +147,7 @@ class Nuclide:
         return self._yield_data
 
     @yield_data.setter
-    def yield_data(self, fission_yields):
+    def yield_data(self, fission_yields) -> None:
         if fission_yields is None:
             self._yield_data = None
         else:
@@ -163,8 +163,8 @@ class Nuclide:
             return None
         return self.yield_data.energies
 
-    def add_decay_mode(self, type, target, branching_ratio):
-        """Add decay mode to the nuclide
+    def add_decay_mode(self, type, target, branching_ratio) -> None:
+        """Add decay mode to the nuclide.
 
         Parameters
         ----------
@@ -182,8 +182,8 @@ class Nuclide:
             DecayTuple(type, target, branching_ratio),
         )
 
-    def add_reaction(self, type, target, Q, branching_ratio):
-        """Add transmutation reaction to the nuclide
+    def add_reaction(self, type, target, Q, branching_ratio) -> None:
+        """Add transmutation reaction to the nuclide.
 
         Parameters
         ----------
@@ -279,9 +279,12 @@ class Nuclide:
                     f'.//nuclide[@name="{parent}"]/neutron_fission_yields',
                 )
                 if fpy_elem is None:
-                    raise ValueError(
+                    msg = (
                         f"Fission product yields for {nuc.name} borrow from {parent}, but {parent} is"
-                        " not present in the chain file or has no yields.")
+                        " not present in the chain file or has no yields."
+                    )
+                    raise ValueError(
+                        msg)
                 nuc._fpy = parent
 
             nuc.yield_data = FissionYieldDistribution.from_xml_element(fpy_elem)
@@ -342,7 +345,7 @@ class Nuclide:
         return elem
 
     def validate(self, strict=True, quiet=False, tolerance=1e-4):
-        """Search for possible inconsistencies
+        """Search for possible inconsistencies.
 
         The following checks are performed:
 
@@ -441,7 +444,7 @@ class Nuclide:
 
 
 class FissionYieldDistribution(Mapping):
-    """Energy-dependent fission product yields for a single nuclide
+    """Energy-dependent fission product yields for a single nuclide.
 
     Can be used as a dictionary mapping energies and products to fission
     yields::
@@ -479,7 +482,7 @@ class FissionYieldDistribution(Mapping):
 
     """
 
-    def __init__(self, fission_yields):
+    def __init__(self, fission_yields) -> None:
         # mapping {energy: {product: value}}
         energies = sorted(fission_yields)
 
@@ -497,7 +500,7 @@ class FissionYieldDistribution(Mapping):
         self.products = tuple(ordered_prod)
         self.yield_matrix = yield_matrix
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.energies)
 
     def __getitem__(self, energy):
@@ -509,12 +512,12 @@ class FissionYieldDistribution(Mapping):
     def __iter__(self):
         return iter(self.energies)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__} with {self.yield_matrix.shape[1]} products at {len(self.energies)} energies>"
 
     @classmethod
     def from_xml_element(cls, element):
-        """Construct a distribution from a depletion chain xml file
+        """Construct a distribution from a depletion chain xml file.
 
         Parameters
         ----------
@@ -536,8 +539,8 @@ class FissionYieldDistribution(Mapping):
 
         return cls(all_yields)
 
-    def to_xml_element(self, root):
-        """Write fission yield data to an xml element
+    def to_xml_element(self, root) -> None:
+        """Write fission yield data to an xml element.
 
         Parameters
         ----------
@@ -554,7 +557,7 @@ class FissionYieldDistribution(Mapping):
             data_elem.text = " ".join(map(str, yield_obj.yields))
 
     def restrict_products(self, possible_products):
-        """Return a new distribution with select products
+        """Return a new distribution with select products.
 
         .. versionadded:: 0.12
 
@@ -587,7 +590,7 @@ class FissionYieldDistribution(Mapping):
 
 
 class FissionYield(Mapping):
-    """Mapping for fission yields of a parent at a specific energy
+    """Mapping for fission yields of a parent at a specific energy.
 
     Separated to support nested dictionary-like behavior for
     :class:`FissionYieldDistribution`, and allowing math operations
@@ -634,11 +637,11 @@ class FissionYield(Mapping):
 
     """
 
-    def __init__(self, products, yields):
+    def __init__(self, products, yields) -> None:
         self.products = products
         self.yields = yields
 
-    def __contains__(self, product):
+    def __contains__(self, product) -> bool:
         ix = bisect.bisect_left(self.products, product)
         return ix != len(self.products) and self.products[ix] == product
 
@@ -648,18 +651,18 @@ class FissionYield(Mapping):
             raise KeyError(product)
         return self.yields[ix]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.products)
 
     def __iter__(self):
         return iter(self.products)
 
     def items(self):
-        """Return pairs of product, yield"""
+        """Return pairs of product, yield."""
         return zip(self.products, self.yields, strict=False)
 
     def __add__(self, other):
-        """Add one set of fission yields to this set, return new yields"""
+        """Add one set of fission yields to this set, return new yields."""
         if not isinstance(other, FissionYield):
             return NotImplemented
         new = FissionYield(self.products, self.yields.copy())
@@ -667,7 +670,7 @@ class FissionYield(Mapping):
         return new
 
     def __iadd__(self, other):
-        """Increment value from other fission yield"""
+        """Increment value from other fission yield."""
         if not isinstance(other, FissionYield):
             return NotImplemented
         self.yields += other.yields
@@ -677,14 +680,14 @@ class FissionYield(Mapping):
         return self + other
 
     def __imul__(self, scalar):
-        """Scale these fission yields by a real scalar"""
+        """Scale these fission yields by a real scalar."""
         if not isinstance(scalar, Real):
             return NotImplemented
         self.yields *= scalar
         return self
 
     def __mul__(self, scalar):
-        """Return a new set of yields scaled by a real scalar"""
+        """Return a new set of yields scaled by a real scalar."""
         if not isinstance(scalar, Real):
             return NotImplemented
         new = FissionYield(self.products, self.yields.copy())
@@ -694,7 +697,7 @@ class FissionYield(Mapping):
     def __rmul__(self, scalar):
         return self * scalar
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__} containing {len(self)} products and yields>"
 
     def __deepcopy__(self, memo):

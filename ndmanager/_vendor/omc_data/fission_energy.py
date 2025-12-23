@@ -88,7 +88,7 @@ class FissionEnergyRelease(EqualityMixin):
     """
 
     def __init__(self, fragments, prompt_neutrons, delayed_neutrons,
-                 prompt_photons, delayed_photons, betas, neutrinos):
+                 prompt_photons, delayed_photons, betas, neutrinos) -> None:
         self.fragments = fragments
         self.prompt_neutrons = prompt_neutrons
         self.delayed_neutrons = delayed_neutrons
@@ -102,7 +102,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._fragments
 
     @fragments.setter
-    def fragments(self, energy_release):
+    def fragments(self, energy_release) -> None:
         cv.check_type("fragments", energy_release, Callable)
         self._fragments = energy_release
 
@@ -111,7 +111,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._prompt_neutrons
 
     @prompt_neutrons.setter
-    def prompt_neutrons(self, energy_release):
+    def prompt_neutrons(self, energy_release) -> None:
         cv.check_type("prompt_neutrons", energy_release, Callable)
         self._prompt_neutrons = energy_release
 
@@ -120,7 +120,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._delayed_neutrons
 
     @delayed_neutrons.setter
-    def delayed_neutrons(self, energy_release):
+    def delayed_neutrons(self, energy_release) -> None:
         cv.check_type("delayed_neutrons", energy_release, Callable)
         self._delayed_neutrons = energy_release
 
@@ -129,7 +129,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._prompt_photons
 
     @prompt_photons.setter
-    def prompt_photons(self, energy_release):
+    def prompt_photons(self, energy_release) -> None:
         cv.check_type("prompt_photons", energy_release, Callable)
         self._prompt_photons = energy_release
 
@@ -138,7 +138,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._delayed_photons
 
     @delayed_photons.setter
-    def delayed_photons(self, energy_release):
+    def delayed_photons(self, energy_release) -> None:
         cv.check_type("delayed_photons", energy_release, Callable)
         self._delayed_photons = energy_release
 
@@ -147,7 +147,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._betas
 
     @betas.setter
-    def betas(self, energy_release):
+    def betas(self, energy_release) -> None:
         cv.check_type("betas", energy_release, Callable)
         self._betas = energy_release
 
@@ -156,7 +156,7 @@ class FissionEnergyRelease(EqualityMixin):
         return self._neutrinos
 
     @neutrinos.setter
-    def neutrinos(self, energy_release):
+    def neutrinos(self, energy_release) -> None:
         cv.check_type("neutrinos", energy_release, Callable)
         self._neutrinos = energy_release
 
@@ -211,19 +211,30 @@ class FissionEnergyRelease(EqualityMixin):
 
         # Check to make sure this ENDF file matches the expected isomer.
         if ev.target["atomic_number"] != incident_neutron.atomic_number:
-            raise ValueError("The atomic number of the ENDF evaluation does "
-                             "not match the given IncidentNeutron.")
+            msg = (
+                "The atomic number of the ENDF evaluation does "
+                             "not match the given IncidentNeutron."
+            )
+            raise ValueError(msg)
         if ev.target["mass_number"] != incident_neutron.mass_number:
-            raise ValueError("The atomic mass of the ENDF evaluation does "
-                             "not match the given IncidentNeutron.")
+            msg = (
+                "The atomic mass of the ENDF evaluation does "
+                             "not match the given IncidentNeutron."
+            )
+            raise ValueError(msg)
         if ev.target["isomeric_state"] != incident_neutron.metastable:
-            raise ValueError("The metastable state of the ENDF evaluation "
-                             "does not match the given IncidentNeutron.")
+            msg = (
+                "The metastable state of the ENDF evaluation "
+                             "does not match the given IncidentNeutron."
+            )
+            raise ValueError(msg)
         if not ev.target["fissionable"]:
-            raise ValueError("The ENDF evaluation is not fissionable.")
+            msg = "The ENDF evaluation is not fissionable."
+            raise ValueError(msg)
 
         if (1, 458) not in ev.section:
-            raise ValueError("ENDF evaluation does not have MF=1, MT=458.")
+            msg = "ENDF evaluation does not have MF=1, MT=458."
+            raise ValueError(msg)
 
         file_obj = StringIO(ev.section[1, 458])
 
@@ -285,15 +296,22 @@ class FissionEnergyRelease(EqualityMixin):
                           if p.particle == "neutron"
                           and p.emission_mode in ("prompt", "total")]
                 else:
-                    raise ValueError("IncidentNeutron data has no fission "
-                                     "reaction.")
+                    msg = (
+                        "IncidentNeutron data has no fission "
+                                     "reaction."
+                    )
+                    raise ValueError(msg)
                 if len(nu) == 0:
-                    raise ValueError(
+                    msg = (
                         "Nu data is needed to compute fission energy "
-                        "release with the Sher-Beck format.",
+                        "release with the Sher-Beck format."
+                    )
+                    raise ValueError(
+                        msg,
                     )
                 if len(nu) > 1:
-                    raise ValueError("Ambiguous prompt/total nu value.")
+                    msg = "Ambiguous prompt/total nu value."
+                    raise ValueError(msg)
 
                 nu = nu[0]
                 if isinstance(nu, Tabulated1D):
@@ -355,8 +373,8 @@ class FissionEnergyRelease(EqualityMixin):
         return cls(fragments, prompt_neutrons, delayed_neutrons, prompt_photons,
                    delayed_photons, betas, neutrinos)
 
-    def to_hdf5(self, group):
-        """Write energy release data to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write energy release data to an HDF5 group.
 
         Parameters
         ----------

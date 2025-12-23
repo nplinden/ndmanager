@@ -1,4 +1,4 @@
-"""Definition and parser for the `ndo remove` command"""
+"""Definition and parser for the `ndo remove` command."""
 
 import argparse as ap
 import shutil
@@ -8,11 +8,11 @@ from ndmanager.env import NDMANAGER_HDF5
 
 
 class NdoRemoveCommand(Command):
-    """Define the `ndo remove` command"""
+    """Define the `ndo remove` command."""
 
     @classmethod
     def parser(cls, subparsers) -> None:
-        """Add the parser for the 'ndo remove' command to a subparser object
+        """Add the parser for the 'ndo remove' command to a subparser object.
 
         Args:
             subparsers (argparse._SubParsersAction): An argparse subparser object
@@ -31,7 +31,7 @@ class NdoRemoveCommand(Command):
         parser.set_defaults(func=cls)
 
     def run(self, args: ap.Namespace) -> None:
-        """Uninstall an OpenMC library
+        """Uninstall an OpenMC library.
 
         Args:
             args (ap.Namespace): The argparse object containing the command line argument

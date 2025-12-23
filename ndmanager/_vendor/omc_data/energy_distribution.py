@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from numbers import Integral, Real
+from typing import Never
 from warnings import warn
 
 import numpy as np
@@ -17,7 +18,7 @@ from .function import INTERPOLATION_SCHEME, Tabulated1D
 class EnergyDistribution(EqualityMixin, ABC):
     """Abstract superclass for all energy distributions."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @abstractmethod
@@ -26,7 +27,7 @@ class EnergyDistribution(EqualityMixin, ABC):
 
     @staticmethod
     def from_hdf5(group):
-        """Generate energy distribution from HDF5 data
+        """Generate energy distribution from HDF5 data.
 
         Parameters
         ----------
@@ -54,11 +55,12 @@ class EnergyDistribution(EqualityMixin, ABC):
             return LevelInelastic.from_hdf5(group)
         if energy_type == "continuous":
             return ContinuousTabular.from_hdf5(group)
-        raise ValueError(f"Unknown energy distribution type: {energy_type}")
+        msg = f"Unknown energy distribution type: {energy_type}"
+        raise ValueError(msg)
 
     @staticmethod
     def from_endf(file_obj, params):
-        """Generate energy distribution from an ENDF evaluation
+        """Generate energy distribution from an ENDF evaluation.
 
         Parameters
         ----------
@@ -89,10 +91,11 @@ class EnergyDistribution(EqualityMixin, ABC):
             return WattEnergy.from_endf(file_obj, params)
         if lf == 12:
             return MadlandNix.from_endf(file_obj, params)
+        return None
 
 
 class ArbitraryTabulated(EnergyDistribution):
-    r"""Arbitrary tabulated function given in ENDF MF=5, LF=1 represented as
+    r"""Arbitrary tabulated function given in ENDF MF=5, LF=1 represented as.
 
     .. math::
          f(E \rightarrow E') = g(E \rightarrow E')
@@ -113,17 +116,17 @@ class ArbitraryTabulated(EnergyDistribution):
 
     """
 
-    def __init__(self, energy, pdf):
+    def __init__(self, energy, pdf) -> None:
         super().__init__()
         self.energy = energy
         self.pdf = pdf
 
-    def to_hdf5(self, group):
+    def to_hdf5(self, group) -> Never:
         raise NotImplementedError
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate arbitrary tabulated distribution from an ENDF evaluation
+        """Generate arbitrary tabulated distribution from an ENDF evaluation.
 
         Parameters
         ----------
@@ -154,7 +157,7 @@ class ArbitraryTabulated(EnergyDistribution):
 
 
 class GeneralEvaporation(EnergyDistribution):
-    r"""General evaporation spectrum given in ENDF MF=5, LF=5 represented as
+    r"""General evaporation spectrum given in ENDF MF=5, LF=5 represented as.
 
     .. math::
         f(E \rightarrow E') = g(E'/\theta(E))
@@ -181,22 +184,22 @@ class GeneralEvaporation(EnergyDistribution):
 
     """
 
-    def __init__(self, theta, g, u):
+    def __init__(self, theta, g, u) -> None:
         super().__init__()
         self.theta = theta
         self.g = g
         self.u = u
 
-    def to_hdf5(self, group):
+    def to_hdf5(self, group) -> Never:
         raise NotImplementedError
 
     @classmethod
-    def from_ace(cls, ace, idx=0):
+    def from_ace(cls, ace, idx=0) -> Never:
         raise NotImplementedError
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate general evaporation spectrum from an ENDF evaluation
+        """Generate general evaporation spectrum from an ENDF evaluation.
 
         Parameters
         ----------
@@ -221,7 +224,7 @@ class GeneralEvaporation(EnergyDistribution):
 
 
 class MaxwellEnergy(EnergyDistribution):
-    r"""Simple Maxwellian fission spectrum represented as
+    r"""Simple Maxwellian fission spectrum represented as.
 
     .. math::
         f(E \rightarrow E') = \frac{\sqrt{E'}}{I} e^{-E'/\theta(E)}
@@ -244,7 +247,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     """
 
-    def __init__(self, theta, u):
+    def __init__(self, theta, u) -> None:
         super().__init__()
         self.theta = theta
         self.u = u
@@ -254,7 +257,7 @@ class MaxwellEnergy(EnergyDistribution):
         return self._theta
 
     @theta.setter
-    def theta(self, theta):
+    def theta(self, theta) -> None:
         cv.check_type("Maxwell theta", theta, Tabulated1D)
         self._theta = theta
 
@@ -263,12 +266,12 @@ class MaxwellEnergy(EnergyDistribution):
         return self._u
 
     @u.setter
-    def u(self, u):
+    def u(self, u) -> None:
         cv.check_type("Maxwell restriction energy", u, Real)
         self._u = u
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -282,7 +285,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate Maxwell distribution from HDF5 data
+        """Generate Maxwell distribution from HDF5 data.
 
         Parameters
         ----------
@@ -301,7 +304,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx=0):
-        """Create a Maxwell distribution from an ACE table
+        """Create a Maxwell distribution from an ACE table.
 
         Parameters
         ----------
@@ -329,7 +332,7 @@ class MaxwellEnergy(EnergyDistribution):
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate Maxwell distribution from an ENDF evaluation
+        """Generate Maxwell distribution from an ENDF evaluation.
 
         Parameters
         ----------
@@ -353,7 +356,7 @@ class MaxwellEnergy(EnergyDistribution):
 
 
 class Evaporation(EnergyDistribution):
-    r"""Evaporation spectrum represented as
+    r"""Evaporation spectrum represented as.
 
     .. math::
         f(E \rightarrow E') = \frac{E'}{I} e^{-E'/\theta(E)}
@@ -376,7 +379,7 @@ class Evaporation(EnergyDistribution):
 
     """
 
-    def __init__(self, theta, u):
+    def __init__(self, theta, u) -> None:
         super().__init__()
         self.theta = theta
         self.u = u
@@ -386,7 +389,7 @@ class Evaporation(EnergyDistribution):
         return self._theta
 
     @theta.setter
-    def theta(self, theta):
+    def theta(self, theta) -> None:
         cv.check_type("Evaporation theta", theta, Tabulated1D)
         self._theta = theta
 
@@ -395,12 +398,12 @@ class Evaporation(EnergyDistribution):
         return self._u
 
     @u.setter
-    def u(self, u):
+    def u(self, u) -> None:
         cv.check_type("Evaporation restriction energy", u, Real)
         self._u = u
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -414,7 +417,7 @@ class Evaporation(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate evaporation spectrum from HDF5 data
+        """Generate evaporation spectrum from HDF5 data.
 
         Parameters
         ----------
@@ -433,7 +436,7 @@ class Evaporation(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx=0):
-        """Create an evaporation spectrum from an ACE table
+        """Create an evaporation spectrum from an ACE table.
 
         Parameters
         ----------
@@ -461,7 +464,7 @@ class Evaporation(EnergyDistribution):
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate evaporation spectrum from an ENDF evaluation
+        """Generate evaporation spectrum from an ENDF evaluation.
 
         Parameters
         ----------
@@ -485,7 +488,7 @@ class Evaporation(EnergyDistribution):
 
 
 class WattEnergy(EnergyDistribution):
-    r"""Energy-dependent Watt spectrum represented as
+    r"""Energy-dependent Watt spectrum represented as.
 
     .. math::
         f(E \rightarrow E') = \frac{e^{-E'/a}}{I} \sinh \left ( \sqrt{bE'}
@@ -511,7 +514,7 @@ class WattEnergy(EnergyDistribution):
 
     """
 
-    def __init__(self, a, b, u):
+    def __init__(self, a, b, u) -> None:
         super().__init__()
         self.a = a
         self.b = b
@@ -522,7 +525,7 @@ class WattEnergy(EnergyDistribution):
         return self._a
 
     @a.setter
-    def a(self, a):
+    def a(self, a) -> None:
         cv.check_type("Watt a", a, Tabulated1D)
         self._a = a
 
@@ -531,7 +534,7 @@ class WattEnergy(EnergyDistribution):
         return self._b
 
     @b.setter
-    def b(self, b):
+    def b(self, b) -> None:
         cv.check_type("Watt b", b, Tabulated1D)
         self._b = b
 
@@ -540,12 +543,12 @@ class WattEnergy(EnergyDistribution):
         return self._u
 
     @u.setter
-    def u(self, u):
+    def u(self, u) -> None:
         cv.check_type("Watt restriction energy", u, Real)
         self._u = u
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -560,7 +563,7 @@ class WattEnergy(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate Watt fission spectrum from HDF5 data
+        """Generate Watt fission spectrum from HDF5 data.
 
         Parameters
         ----------
@@ -580,7 +583,7 @@ class WattEnergy(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx):
-        """Create a Watt fission spectrum from an ACE table
+        """Create a Watt fission spectrum from an ACE table.
 
         Parameters
         ----------
@@ -620,7 +623,7 @@ class WattEnergy(EnergyDistribution):
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate Watt fission spectrum from an ENDF evaluation
+        """Generate Watt fission spectrum from an ENDF evaluation.
 
         Parameters
         ----------
@@ -646,7 +649,7 @@ class WattEnergy(EnergyDistribution):
 
 class MadlandNix(EnergyDistribution):
     r"""Energy-dependent fission neutron spectrum (Madland and Nix) given in
-    ENDF MF=5, LF=12 represented as
+    ENDF MF=5, LF=12 represented as.
 
     .. math::
         f(E \rightarrow E') = \frac{1}{2} [ g(E', E_F(L)) + g(E', E_F(H))]
@@ -678,7 +681,7 @@ class MadlandNix(EnergyDistribution):
 
     """
 
-    def __init__(self, efl, efh, tm):
+    def __init__(self, efl, efh, tm) -> None:
         super().__init__()
         self.efl = efl
         self.efh = efh
@@ -689,7 +692,7 @@ class MadlandNix(EnergyDistribution):
         return self._efl
 
     @efl.setter
-    def efl(self, efl):
+    def efl(self, efl) -> None:
         name = "Madland-Nix light fragment energy"
         cv.check_type(name, efl, Real)
         cv.check_greater_than(name, efl, 0.)
@@ -700,7 +703,7 @@ class MadlandNix(EnergyDistribution):
         return self._efh
 
     @efh.setter
-    def efh(self, efh):
+    def efh(self, efh) -> None:
         name = "Madland-Nix heavy fragment energy"
         cv.check_type(name, efh, Real)
         cv.check_greater_than(name, efh, 0.)
@@ -711,12 +714,12 @@ class MadlandNix(EnergyDistribution):
         return self._tm
 
     @tm.setter
-    def tm(self, tm):
+    def tm(self, tm) -> None:
         cv.check_type("Madland-Nix maximum temperature", tm, Tabulated1D)
         self._tm = tm
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -731,7 +734,7 @@ class MadlandNix(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate Madland-Nix fission spectrum from HDF5 data
+        """Generate Madland-Nix fission spectrum from HDF5 data.
 
         Parameters
         ----------
@@ -751,7 +754,7 @@ class MadlandNix(EnergyDistribution):
 
     @classmethod
     def from_endf(cls, file_obj, params):
-        """Generate Madland-Nix fission spectrum from an ENDF evaluation
+        """Generate Madland-Nix fission spectrum from an ENDF evaluation.
 
         Parameters
         ----------
@@ -775,7 +778,7 @@ class MadlandNix(EnergyDistribution):
 
 
 class DiscretePhoton(EnergyDistribution):
-    """Discrete photon energy distribution
+    """Discrete photon energy distribution.
 
     Parameters
     ----------
@@ -799,7 +802,7 @@ class DiscretePhoton(EnergyDistribution):
 
     """
 
-    def __init__(self, primary_flag, energy, atomic_weight_ratio):
+    def __init__(self, primary_flag, energy, atomic_weight_ratio) -> None:
         super().__init__()
         self.primary_flag = primary_flag
         self.energy = energy
@@ -810,7 +813,7 @@ class DiscretePhoton(EnergyDistribution):
         return self._primary_flag
 
     @primary_flag.setter
-    def primary_flag(self, primary_flag):
+    def primary_flag(self, primary_flag) -> None:
         cv.check_type("discrete photon primary_flag", primary_flag, Integral)
         self._primary_flag = primary_flag
 
@@ -819,7 +822,7 @@ class DiscretePhoton(EnergyDistribution):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("discrete photon energy", energy, Real)
         self._energy = energy
 
@@ -828,12 +831,12 @@ class DiscretePhoton(EnergyDistribution):
         return self._atomic_weight_ratio
 
     @atomic_weight_ratio.setter
-    def atomic_weight_ratio(self, atomic_weight_ratio):
+    def atomic_weight_ratio(self, atomic_weight_ratio) -> None:
         cv.check_type("atomic weight ratio", atomic_weight_ratio, Real)
         self._atomic_weight_ratio = atomic_weight_ratio
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -848,7 +851,7 @@ class DiscretePhoton(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate discrete photon energy distribution from HDF5 data
+        """Generate discrete photon energy distribution from HDF5 data.
 
         Parameters
         ----------
@@ -868,7 +871,7 @@ class DiscretePhoton(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx):
-        """Generate discrete photon energy distribution from an ACE table
+        """Generate discrete photon energy distribution from an ACE table.
 
         Parameters
         ----------
@@ -889,7 +892,7 @@ class DiscretePhoton(EnergyDistribution):
 
 
 class LevelInelastic(EnergyDistribution):
-    r"""Level inelastic scattering
+    r"""Level inelastic scattering.
 
     Parameters
     ----------
@@ -907,7 +910,7 @@ class LevelInelastic(EnergyDistribution):
 
     """
 
-    def __init__(self, threshold, mass_ratio):
+    def __init__(self, threshold, mass_ratio) -> None:
         super().__init__()
         self.threshold = threshold
         self.mass_ratio = mass_ratio
@@ -917,7 +920,7 @@ class LevelInelastic(EnergyDistribution):
         return self._threshold
 
     @threshold.setter
-    def threshold(self, threshold):
+    def threshold(self, threshold) -> None:
         cv.check_type("level inelastic threhsold", threshold, Real)
         self._threshold = threshold
 
@@ -926,12 +929,12 @@ class LevelInelastic(EnergyDistribution):
         return self._mass_ratio
 
     @mass_ratio.setter
-    def mass_ratio(self, mass_ratio):
+    def mass_ratio(self, mass_ratio) -> None:
         cv.check_type("level inelastic mass ratio", mass_ratio, Real)
         self._mass_ratio = mass_ratio
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -945,7 +948,7 @@ class LevelInelastic(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate level inelastic distribution from HDF5 data
+        """Generate level inelastic distribution from HDF5 data.
 
         Parameters
         ----------
@@ -964,7 +967,7 @@ class LevelInelastic(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx):
-        """Generate level inelastic distribution from an ACE table
+        """Generate level inelastic distribution from an ACE table.
 
         Parameters
         ----------
@@ -985,7 +988,7 @@ class LevelInelastic(EnergyDistribution):
 
 
 class ContinuousTabular(EnergyDistribution):
-    """Continuous tabular distribution
+    """Continuous tabular distribution.
 
     Parameters
     ----------
@@ -1011,7 +1014,7 @@ class ContinuousTabular(EnergyDistribution):
 
     """
 
-    def __init__(self, breakpoints, interpolation, energy, energy_out):
+    def __init__(self, breakpoints, interpolation, energy, energy_out) -> None:
         super().__init__()
         self.breakpoints = breakpoints
         self.interpolation = interpolation
@@ -1023,7 +1026,7 @@ class ContinuousTabular(EnergyDistribution):
         return self._breakpoints
 
     @breakpoints.setter
-    def breakpoints(self, breakpoints):
+    def breakpoints(self, breakpoints) -> None:
         cv.check_type("continuous tabular breakpoints", breakpoints,
                       Iterable, Integral)
         self._breakpoints = breakpoints
@@ -1033,7 +1036,7 @@ class ContinuousTabular(EnergyDistribution):
         return self._interpolation
 
     @interpolation.setter
-    def interpolation(self, interpolation):
+    def interpolation(self, interpolation) -> None:
         cv.check_type("continuous tabular interpolation", interpolation,
                       Iterable, Integral)
         self._interpolation = interpolation
@@ -1043,7 +1046,7 @@ class ContinuousTabular(EnergyDistribution):
         return self._energy
 
     @energy.setter
-    def energy(self, energy):
+    def energy(self, energy) -> None:
         cv.check_type("continuous tabular incoming energy", energy,
                       Iterable, Real)
         self._energy = energy
@@ -1053,13 +1056,13 @@ class ContinuousTabular(EnergyDistribution):
         return self._energy_out
 
     @energy_out.setter
-    def energy_out(self, energy_out):
+    def energy_out(self, energy_out) -> None:
         cv.check_type("continuous tabular outgoing energy", energy_out,
                       Iterable, Univariate)
         self._energy_out = energy_out
 
-    def to_hdf5(self, group):
-        """Write distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -1120,7 +1123,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate continuous tabular distribution from HDF5 data
+        """Generate continuous tabular distribution from HDF5 data.
 
         Parameters
         ----------
@@ -1149,10 +1152,7 @@ class ContinuousTabular(EnergyDistribution):
             # Determine length of outgoing energy distribution and number of
             # discrete lines
             j = offsets[i]
-            if i < n_energy - 1:
-                n = offsets[i+1] - j
-            else:
-                n = data.shape[1] - j
+            n = offsets[i + 1] - j if i < n_energy - 1 else data.shape[1] - j
             m = n_discrete_lines[i]
 
             # Create discrete distribution if lines are present
@@ -1183,7 +1183,7 @@ class ContinuousTabular(EnergyDistribution):
 
     @classmethod
     def from_ace(cls, ace, idx, ldis):
-        """Generate continuous tabular energy distribution from ACE data
+        """Generate continuous tabular energy distribution from ACE data.
 
         Parameters
         ----------

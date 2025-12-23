@@ -94,7 +94,7 @@ class IncidentNeutron(EqualityMixin):
     """
 
     def __init__(self, name, atomic_number, mass_number, metastable,
-                 atomic_weight_ratio, kTs):
+                 atomic_weight_ratio, kTs) -> None:
         self.name = name
         self.atomic_number = atomic_number
         self.mass_number = mass_number
@@ -107,7 +107,7 @@ class IncidentNeutron(EqualityMixin):
         self._urr = {}
         self._resonances = None
 
-    def __contains__(self, mt):
+    def __contains__(self, mt) -> bool:
         return mt in self.reactions
 
     def __getitem__(self, mt):
@@ -117,9 +117,10 @@ class IncidentNeutron(EqualityMixin):
         mts = self.get_reaction_components(mt)
         if len(mts) > 0:
             return self._get_redundant_reaction(mt, mts)
-        raise KeyError(f"No reaction with MT={mt}.")
+        msg = f"No reaction with MT={mt}."
+        raise KeyError(msg)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<IncidentNeutron: {self.name}>"
 
     def __iter__(self):
@@ -130,7 +131,7 @@ class IncidentNeutron(EqualityMixin):
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name) -> None:
         cv.check_type("name", name, str)
         self._name = name
 
@@ -139,7 +140,7 @@ class IncidentNeutron(EqualityMixin):
         return self._atomic_number
 
     @atomic_number.setter
-    def atomic_number(self, atomic_number):
+    def atomic_number(self, atomic_number) -> None:
         cv.check_type("atomic number", atomic_number, Integral)
         cv.check_greater_than("atomic number", atomic_number, 0, True)
         self._atomic_number = atomic_number
@@ -149,7 +150,7 @@ class IncidentNeutron(EqualityMixin):
         return self._mass_number
 
     @mass_number.setter
-    def mass_number(self, mass_number):
+    def mass_number(self, mass_number) -> None:
         cv.check_type("mass number", mass_number, Integral)
         cv.check_greater_than("mass number", mass_number, 0, True)
         self._mass_number = mass_number
@@ -159,7 +160,7 @@ class IncidentNeutron(EqualityMixin):
         return self._metastable
 
     @metastable.setter
-    def metastable(self, metastable):
+    def metastable(self, metastable) -> None:
         cv.check_type("metastable", metastable, Integral)
         cv.check_greater_than("metastable", metastable, 0, True)
         self._metastable = metastable
@@ -169,7 +170,7 @@ class IncidentNeutron(EqualityMixin):
         return self._atomic_weight_ratio
 
     @atomic_weight_ratio.setter
-    def atomic_weight_ratio(self, atomic_weight_ratio):
+    def atomic_weight_ratio(self, atomic_weight_ratio) -> None:
         cv.check_type("atomic weight ratio", atomic_weight_ratio, Real)
         cv.check_greater_than("atomic weight ratio", atomic_weight_ratio, 0.0)
         self._atomic_weight_ratio = atomic_weight_ratio
@@ -179,7 +180,7 @@ class IncidentNeutron(EqualityMixin):
         return self._fission_energy
 
     @fission_energy.setter
-    def fission_energy(self, fission_energy):
+    def fission_energy(self, fission_energy) -> None:
         cv.check_type("fission energy release", fission_energy,
                       FissionEnergyRelease)
         self._fission_energy = fission_energy
@@ -189,7 +190,7 @@ class IncidentNeutron(EqualityMixin):
         return self._reactions
 
     @reactions.setter
-    def reactions(self, reactions):
+    def reactions(self, reactions) -> None:
         cv.check_type("reactions", reactions, Mapping)
         self._reactions = reactions
 
@@ -198,7 +199,7 @@ class IncidentNeutron(EqualityMixin):
         return self._resonances
 
     @resonances.setter
-    def resonances(self, resonances):
+    def resonances(self, resonances) -> None:
         cv.check_type("resonances", resonances, res.Resonances)
         self._resonances = resonances
 
@@ -207,7 +208,7 @@ class IncidentNeutron(EqualityMixin):
         return self._resonance_covariance
 
     @resonance_covariance.setter
-    def resonance_covariance(self, resonance_covariance):
+    def resonance_covariance(self, resonance_covariance) -> None:
         cv.check_type("resonance covariance", resonance_covariance,
                       res_cov.ResonanceCovariances)
         self._resonance_covariance = resonance_covariance
@@ -217,7 +218,7 @@ class IncidentNeutron(EqualityMixin):
         return self._urr
 
     @urr.setter
-    def urr(self, urr):
+    def urr(self, urr) -> None:
         cv.check_type("probability table dictionary", urr, MutableMapping)
         for key, value in urr:
             cv.check_type("probability table temperature", key, str)
@@ -232,7 +233,7 @@ class IncidentNeutron(EqualityMixin):
     def atomic_symbol(self):
         return ATOMIC_SYMBOL[self.atomic_number]
 
-    def add_temperature_from_ace(self, ace_or_filename, metastable_scheme="nndc"):
+    def add_temperature_from_ace(self, ace_or_filename, metastable_scheme="nndc") -> None:
         """Append data from an ACE file at a different temperature.
 
         Parameters
@@ -260,7 +261,8 @@ class IncidentNeutron(EqualityMixin):
 
         # Check that name matches
         if data.name != self.name:
-            raise ValueError("Data provided for an incorrect nuclide.")
+            msg = "Data provided for an incorrect nuclide."
+            raise ValueError(msg)
 
         # Add temperature
         self.kTs += data.kTs
@@ -280,7 +282,7 @@ class IncidentNeutron(EqualityMixin):
         if strT in data.urr:
             self.urr[strT] = data.urr[strT]
 
-    def add_elastic_0K_from_endf(self, filename, overwrite=False, **kwargs):
+    def add_elastic_0K_from_endf(self, filename, overwrite=False, **kwargs) -> None:
         """Append 0K elastic scattering cross section from an ENDF file.
 
         Parameters
@@ -303,7 +305,8 @@ class IncidentNeutron(EqualityMixin):
         """
         # Check for existing data
         if "0K" in self.energy and not overwrite:
-            raise ValueError("0 K data already exists for this nuclide.")
+            msg = "0 K data already exists for this nuclide."
+            raise ValueError(msg)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             # Set arguments for make_pendf
@@ -345,7 +348,7 @@ class IncidentNeutron(EqualityMixin):
             return mts
         return [mt] if mt in self else []
 
-    def export_to_hdf5(self, path, mode="a", libver="earliest"):
+    def export_to_hdf5(self, path, mode="a", libver="earliest") -> None:
         """Export incident neutron data to an HDF5 file.
 
         Parameters
@@ -362,8 +365,11 @@ class IncidentNeutron(EqualityMixin):
         """
         # If data come from ENDF, don't allow exporting to HDF5
         if hasattr(self, "_evaluation"):
-            raise NotImplementedError("Cannot export incident neutron data that "
-                                      "originated from an ENDF file.")
+            msg = (
+                "Cannot export incident neutron data that "
+                                      "originated from an ENDF file."
+            )
+            raise NotImplementedError(msg)
 
         # Open file and write version
         with h5py.File(str(path), mode, libver=libver) as f:
@@ -425,7 +431,7 @@ class IncidentNeutron(EqualityMixin):
 
     @classmethod
     def from_hdf5(cls, group_or_filename):
-        """Generate continuous-energy neutron interaction data from HDF5 group
+        """Generate continuous-energy neutron interaction data from HDF5 group.
 
         Parameters
         ----------
@@ -450,12 +456,15 @@ class IncidentNeutron(EqualityMixin):
                 major, minor = h5file.attrs["version"]
                 # For now all versions of HDF5 data can be read
             else:
-                raise OSError(
+                msg = (
                     "HDF5 data does not indicate a version. Your installation of "
-                    f"the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data.",
+                    f"the OpenMC Python API expects version {HDF5_VERSION_MAJOR}.x data."
+                )
+                raise OSError(
+                    msg,
                     )
 
-            group = list(h5file.values())[0]
+            group = next(iter(h5file.values()))
 
         name = group.name[1:]
         atomic_number = group.attrs["Z"]
@@ -502,7 +511,7 @@ class IncidentNeutron(EqualityMixin):
 
     @classmethod
     def from_ace(cls, ace_or_filename, metastable_scheme="nndc"):
-        """Generate incident neutron continuous-energy data from an ACE table
+        """Generate incident neutron continuous-energy data from an ACE table.
 
         Parameters
         ----------
@@ -525,16 +534,14 @@ class IncidentNeutron(EqualityMixin):
 
         """
         # First obtain the data for the first provided ACE table/file
-        if isinstance(ace_or_filename, Table):
-            ace = ace_or_filename
-        else:
-            ace = get_table(ace_or_filename)
+        ace = ace_or_filename if isinstance(ace_or_filename, Table) else get_table(ace_or_filename)
 
         # If mass number hasn't been specified, make an educated guess
         zaid, xs = ace.name.split(".")
         if not xs.endswith("c"):
+            msg = f"{ace} is not a continuous-energy neutron ACE table."
             raise TypeError(
-                f"{ace} is not a continuous-energy neutron ACE table.")
+                msg)
         name, element, Z, mass_number, metastable = \
             get_metadata(int(zaid), metastable_scheme)
 
@@ -641,7 +648,7 @@ class IncidentNeutron(EqualityMixin):
 
     @classmethod
     def from_endf(cls, ev_or_filename, covariance=False):
-        """Generate incident neutron continuous-energy data from an ENDF evaluation
+        """Generate incident neutron continuous-energy data from an ENDF evaluation.
 
         Parameters
         ----------
@@ -659,10 +666,7 @@ class IncidentNeutron(EqualityMixin):
             Incident neutron continuous-energy data
 
         """
-        if isinstance(ev_or_filename, Evaluation):
-            ev = ev_or_filename
-        else:
-            ev = Evaluation(ev_or_filename)
+        ev = ev_or_filename if isinstance(ev_or_filename, Evaluation) else Evaluation(ev_or_filename)
 
         atomic_number = ev.target["atomic_number"]
         mass_number = ev.target["mass_number"]
@@ -672,10 +676,7 @@ class IncidentNeutron(EqualityMixin):
 
         # Determine name
         element = ATOMIC_SYMBOL[atomic_number]
-        if metastable > 0:
-            name = f"{element}{mass_number}_m{metastable}"
-        else:
-            name = f"{element}{mass_number}"
+        name = f"{element}{mass_number}_m{metastable}" if metastable > 0 else f"{element}{mass_number}"
 
         # Instantiate incident neutron data
         data = cls(name, atomic_number, mass_number, metastable,
@@ -690,7 +691,7 @@ class IncidentNeutron(EqualityMixin):
             )
 
         # Read each reaction
-        for mf, mt, nc, mod in ev.reaction_list:
+        for mf, mt, _nc, _mod in ev.reaction_list:
             if mf == 3:
                 data.reactions[mt] = Reaction.from_endf(ev, mt)
 
@@ -710,12 +711,10 @@ class IncidentNeutron(EqualityMixin):
         # whether energy distributions were specified in MF=5. If not, copy the
         # energy distribution from MT=18.
         for mt, rx in data.reactions.items():
-            if mt in (19, 20, 21, 38):
-                if (5, mt) not in ev.section:
-                    if rx.products:
-                        neutron = data.reactions[18].products[0]
-                        rx.products[0].applicability = neutron.applicability
-                        rx.products[0].distribution = neutron.distribution
+            if mt in (19, 20, 21, 38) and (5, mt) not in ev.section and rx.products:
+                neutron = data.reactions[18].products[0]
+                rx.products[0].applicability = neutron.applicability
+                rx.products[0].distribution = neutron.distribution
 
         # Read fission energy release (requires that we already know nu for
         # fission)
@@ -841,7 +840,7 @@ class IncidentNeutron(EqualityMixin):
         return data
 
     def _get_redundant_reaction(self, mt, mts):
-        """Create redundant reaction from its components
+        """Create redundant reaction from its components.
 
         Parameters
         ----------

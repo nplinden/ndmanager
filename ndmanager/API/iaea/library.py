@@ -1,4 +1,4 @@
-"""A class to manage a nuclear data library originating from the IAEA website"""
+"""A class to manage a nuclear data library originating from the IAEA website."""
 
 import re
 from dataclasses import dataclass, field
@@ -15,7 +15,7 @@ FORBIDDEN_NODES = ["Name", "Last modified", "Size", "Parent Directory", "Descrip
 
 @dataclass
 class IAEALibrary:
-    """A class to manage a nuclear data library originating from the IAEA website
+    """A class to manage a nuclear data library originating from the IAEA website.
 
     Returns:
         IAEALibrary: The library instance
@@ -31,7 +31,7 @@ class IAEALibrary:
 
     @classmethod
     def from_website(cls, node: str) -> "IAEALibrary":
-        """Constructor the build a library using IAEA's website
+        """Constructor the build a library using IAEA's website.
 
         Args:
             node (str): Name of the library on the website
@@ -54,7 +54,7 @@ class IAEALibrary:
         return cls(**kwargs)
 
     def __getitem__(self, key: str) -> IAEASublibrary:
-        """Define the [] get operator
+        """Define the [] get operator.
 
         Args:
             key (str): name of the desired sublibrary
@@ -66,7 +66,7 @@ class IAEALibrary:
         return self.sublibraries[key]
 
     def __setitem__(self, key: str, value: IAEASublibrary) -> None:
-        """Define the [] set operator
+        """Define the [] set operator.
 
         Args:
             key (str): name of the sublibrary
@@ -76,7 +76,7 @@ class IAEALibrary:
         self.sublibraries[key] = value
 
     def keys(self) -> list[str]:
-        """The list of sublibraries available in this library
+        """The list of sublibraries available in this library.
 
         Returns:
             List[str]: The list of sublibraries
@@ -85,9 +85,9 @@ class IAEALibrary:
         return list(self.sublibraries.keys())
 
     @staticmethod
-    def parse_index(kwargs: dict[str, Any]):
+    def parse_index(kwargs: dict[str, Any]) -> None:
         """Parse a library index from the IAEA website, e.g.
-        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm
+        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm.
 
         Args:
             kwargs (Dict[Any]): The dictionnary of attributes

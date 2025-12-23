@@ -1,4 +1,4 @@
-"""Some utility functions"""
+"""Some utility functions."""
 
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -24,16 +24,14 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
     """
     p = NDMANAGER_HDF5 / libname / "cross_sections.xml"
     if not p.exists():
-        raise ValueError(f"Library '{libname}' does not exist")
+        msg = f"Library '{libname}' does not exist"
+        raise ValueError(msg)
     with open(p, encoding="utf-8") as f:
         root = ET.parse(f).getroot()
         dirnode = root.find("directory")
-        if dirnode is None:
-            directory = p.parent
-        else:
-            directory = Path(dirnode.text)
+        directory = p.parent if dirnode is None else Path(dirnode.text)
         for library in root.findall("library"):
-            if library.attrib["materials"] == nuclide:
-                if library.attrib["type"] == sub:
-                    return directory / library.attrib["path"]
-    raise ValueError(f"Can't find {sub} xs for {nuclide} in the {libname} library")
+            if library.attrib["materials"] == nuclide and library.attrib["type"] == sub:
+                return directory / library.attrib["path"]
+    msg = f"Can't find {sub} xs for {nuclide} in the {libname} library"
+    raise ValueError(msg)

@@ -1,4 +1,4 @@
-"""A class to manage nuclear data libraries originating from the IAEA website"""
+"""A class to manage nuclear data libraries originating from the IAEA website."""
 
 import copy
 import json
@@ -15,7 +15,7 @@ from ndmanager.env import NDMANAGER_ENDF6
 
 
 class IAEA:
-    """A class the manage IAEA's database of nuclear data libraries
+    """A class the manage IAEA's database of nuclear data libraries.
 
     Returns:
         IAEA: An IAEA object
@@ -63,7 +63,7 @@ class IAEA:
             self.from_json(p)
 
     def __getitem__(self, key: str) -> IAEALibrary:
-        """Define the [] get operator
+        """Define the [] get operator.
 
         Args:
             key (str): Name of the desired library
@@ -75,7 +75,7 @@ class IAEA:
         return self.libraries[self.aliases.get(key, key)]
 
     def __setitem__(self, key: str, value: IAEALibrary) -> None:
-        """Define the [] set operator
+        """Define the [] set operator.
 
         Args:
             key (str): Name of the new library
@@ -85,7 +85,7 @@ class IAEA:
         self.libraries[self.aliases.get(key, key.rstrip("/"))] = value
 
     def from_website(self) -> None:
-        """Parse the IAEA website to retrieve the database"""
+        """Parse the IAEA website to retrieve the database."""
         root = requests.get(IAEA_ROOT, timeout=600)
         tags = BeautifulSoup(root.text, "html.parser").find_all("a")
         tags = [tag.get("href") for tag in tags if tag.text not in FORBIDDEN_NODES]
@@ -101,7 +101,7 @@ class IAEA:
         pbar.close()
 
     def to_json(self, p: str | Path) -> None:
-        """Export the database to the json format
+        """Export the database to the json format.
 
         Args:
             p (str | Path): The path to write the database to
@@ -119,7 +119,7 @@ class IAEA:
             json.dump(dico, f, indent=2)
 
     def from_json(self, path: str | Path) -> None:
-        """Build the database from a json file
+        """Build the database from a json file.
 
         Args:
             path (str | Path): The path to the json file
@@ -140,7 +140,7 @@ class IAEA:
     @staticmethod
     def is_cached() -> bool:
         """Check that the cached database exists in the user's ~/.config/ndmanager
-        directory
+        directory.
 
         Returns:
             bool: Wether the cache file exists
@@ -149,7 +149,7 @@ class IAEA:
         return (NDMANAGER_ENDF6 / "IAEA_cache.json").exists()
 
     def keys(self) -> list[str]:
-        """The list of available libraries in the database
+        """The list of available libraries in the database.
 
         Returns:
             List[str]: List of libraries

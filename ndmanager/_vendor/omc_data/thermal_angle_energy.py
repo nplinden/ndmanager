@@ -7,7 +7,7 @@ from .correlated import CorrelatedAngleEnergy
 
 
 class CoherentElasticAE(AngleEnergy):
-    r"""Differential cross section for coherent elastic scattering
+    r"""Differential cross section for coherent elastic scattering.
 
     The differential cross section for coherent elastic scattering from a
     powdered crystalline material may be represented as:
@@ -33,11 +33,11 @@ class CoherentElasticAE(AngleEnergy):
 
     """
 
-    def __init__(self, coherent_xs):
+    def __init__(self, coherent_xs) -> None:
         self.coherent_xs = coherent_xs
 
-    def to_hdf5(self, group):
-        """Write coherent elastic distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write coherent elastic distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -50,7 +50,7 @@ class CoherentElasticAE(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate coherent elastic distribution from HDF5 data
+        """Generate coherent elastic distribution from HDF5 data.
 
         .. versionadded:: 0.13.1
 
@@ -70,7 +70,7 @@ class CoherentElasticAE(AngleEnergy):
 
 
 class IncoherentElasticAE(AngleEnergy):
-    r"""Differential cross section for incoherent elastic scattering
+    r"""Differential cross section for incoherent elastic scattering.
 
     The differential cross section for incoherent elastic scattering may be
     represented as:
@@ -95,11 +95,11 @@ class IncoherentElasticAE(AngleEnergy):
 
     """
 
-    def __init__(self, debye_waller):
+    def __init__(self, debye_waller) -> None:
         self.debye_waller = debye_waller
 
-    def to_hdf5(self, group):
-        """Write incoherent elastic distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write incoherent elastic distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -112,7 +112,7 @@ class IncoherentElasticAE(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate incoherent elastic distribution from HDF5 data
+        """Generate incoherent elastic distribution from HDF5 data.
 
         Parameters
         ----------
@@ -129,7 +129,7 @@ class IncoherentElasticAE(AngleEnergy):
 
 
 class IncoherentElasticAEDiscrete(AngleEnergy):
-    """Discrete angle representation of incoherent elastic scattering
+    """Discrete angle representation of incoherent elastic scattering.
 
     Parameters
     ----------
@@ -138,11 +138,11 @@ class IncoherentElasticAEDiscrete(AngleEnergy):
 
     """
 
-    def __init__(self, mu_out):
+    def __init__(self, mu_out) -> None:
         self.mu_out = mu_out
 
-    def to_hdf5(self, group):
-        """Write discrete incoherent elastic distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write discrete incoherent elastic distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -155,7 +155,7 @@ class IncoherentElasticAEDiscrete(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate discrete incoherent elastic distribution from HDF5 data
+        """Generate discrete incoherent elastic distribution from HDF5 data.
 
         Parameters
         ----------
@@ -172,7 +172,7 @@ class IncoherentElasticAEDiscrete(AngleEnergy):
 
 
 class IncoherentInelasticAEDiscrete(AngleEnergy):
-    """Discrete angle representation of incoherent inelastic scattering
+    """Discrete angle representation of incoherent inelastic scattering.
 
     Parameters
     ----------
@@ -194,13 +194,13 @@ class IncoherentInelasticAEDiscrete(AngleEnergy):
 
     """
 
-    def __init__(self, energy_out, mu_out, skewed=False):
+    def __init__(self, energy_out, mu_out, skewed=False) -> None:
         self.energy_out = energy_out
         self.mu_out = mu_out
         self.skewed = skewed
 
-    def to_hdf5(self, group):
-        """Write discrete incoherent inelastic distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write discrete incoherent inelastic distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -215,7 +215,7 @@ class IncoherentInelasticAEDiscrete(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate discrete incoherent inelastic distribution from HDF5 data
+        """Generate discrete incoherent inelastic distribution from HDF5 data.
 
         Parameters
         ----------
@@ -239,7 +239,7 @@ class IncoherentInelasticAE(CorrelatedAngleEnergy):
 
 
 class MixedElasticAE(AngleEnergy):
-    """Secondary distribution for mixed coherent/incoherent thermal elastic
+    """Secondary distribution for mixed coherent/incoherent thermal elastic.
 
     .. versionadded:: 0.13.1
 
@@ -259,12 +259,12 @@ class MixedElasticAE(AngleEnergy):
 
     """
 
-    def __init__(self, coherent, incoherent):
+    def __init__(self, coherent, incoherent) -> None:
         self.coherent = coherent
         self.incoherent = incoherent
 
-    def to_hdf5(self, group):
-        """Write mixed elastic distribution to an HDF5 group
+    def to_hdf5(self, group) -> None:
+        """Write mixed elastic distribution to an HDF5 group.
 
         Parameters
         ----------
@@ -280,7 +280,7 @@ class MixedElasticAE(AngleEnergy):
 
     @classmethod
     def from_hdf5(cls, group):
-        """Generate mixed thermal elastic distribution from HDF5 data
+        """Generate mixed thermal elastic distribution from HDF5 data.
 
         Parameters
         ----------
