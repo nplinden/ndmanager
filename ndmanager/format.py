@@ -1,20 +1,21 @@
-"""Some functions to format printed output"""
+"""Some functions to format printed output."""
 
 import os
 
 
-def clear_line(n: int = 1):
+def clear_line(n: int = 1) -> None:
     """Move the print cursor up n lines.
 
     Args:
         n (int, optional): Number of lines the cursor will be moved up. Defaults to 1.
+
     """
     for _ in range(n):
-        print("\033[1A", end="\x1b[2K")
+        pass
 
 
-def header(string: str, defcol: int = 150):
-    """Format a cool header with a title
+def header(string: str, defcol: int = 150) -> str:
+    """Format a cool header with a title.
 
     Args:
         string (str): The title
@@ -22,20 +23,22 @@ def header(string: str, defcol: int = 150):
 
     Returns:
         str: The formatted header
+
     """
     col, _ = get_terminal_size(defcol=defcol)
     toprint = f"  {string}  "
     return f"{toprint:{'-'}{'^'}{col}}"
 
 
-def footer(defcol: int = 150):
-    """Format a footer fitting the terminal size
+def footer(defcol: int = 150) -> str:
+    """Format a footer fitting the terminal size.
 
     Args:
         defcol (int, optional): Override column width default.
 
     Returns:
         str: The formatted footer
+
     """
     col, _ = get_terminal_size(defcol=defcol)
     return f"{'':{'-'}{'^'}{col}}"
@@ -43,6 +46,7 @@ def footer(defcol: int = 150):
 
 def get_terminal_size(defcol: int = 150, defrow: int = 80) -> os.terminal_size:
     """Get the size of the current terminal window.
+
     If such an information is not available (e.g. when ndmanager is run from
     a Docker command or in pytest), it returns a default value that can be controlled
     through the `defcol` and `defrow` parameters.
@@ -53,6 +57,7 @@ def get_terminal_size(defcol: int = 150, defrow: int = 80) -> os.terminal_size:
 
     Returns:
         os.terminal_size: The size of the terminal
+
     """
     try:
         return os.get_terminal_size()

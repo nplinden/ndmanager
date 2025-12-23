@@ -65,3 +65,10 @@ docs = [
     "sphinx-design>=0.6.1",
     "pydata-sphinx-theme>=0.16.1",
 ]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D203", "D213"]

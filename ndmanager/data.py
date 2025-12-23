@@ -1,8 +1,6 @@
 # pylint: disable=line-too-long
 """Defining some data used throughout the code."""
 
-from typing import Dict, List
-
 IGN_MAPPING = {
     "CSWEG-239": 2,
     "LANL-30": 3,
@@ -43,7 +41,7 @@ IGN_MAPPING |= {v: k for k, v in IGN_MAPPING.items()}
 
 IAEA_ROOT = "https://www-nds.iaea.org/public/download-endf/"
 
-OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {
+OPENMC_LIBS: dict[str, dict[str, dict[str, str | int]]] = {
     "official": {
         "endfb71": {
             "fancyname": "ENDF-B/VII.1",
@@ -97,7 +95,7 @@ OPENMC_LIBS: Dict[str, Dict[str, Dict[str, str | int]]] = {
             "source": "https://anl.box.com/shared/static/nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
             "tarname": "nd7p4jherolkx4b1rfaw5uqp58nxtstr.xz",
             "extractedname": "lib80x_hdf5",
-            "info": "ENDF-B/VIII.0 based library converted from ACE files distributed by Los Alamos National lab (LANL)",
+            "info": "ENDF-B/VIII.0 library converted from ACE files distributed by Los Alamos National lab (LANL)",
             "homepage": "https://openmc.org/lanl-data-libraries/",
             "size": 15774715647,
         },
@@ -128,7 +126,8 @@ OPENMC_CHAINS = {
     "casl-thermal": {
         "url": "https://anl.box.com/shared/static/3nvnasacm2b56716oh5hyndxdyauh5gs.xml",
         "size": 981527,
-        "info": "A simplified chain as described by https://doi.org/10.2172/1256820 with thermal capture branching ratios",
+        "info": "A simplified chain as described by https://doi.org/10.2172/1256820 "
+        "with thermal capture branching ratios",
     },
     "casl-fast": {
         "url": "https://anl.box.com/shared/static/9fqbq87j0tx4m6vfl06pl4ccc0hwamg9.xml",
@@ -137,7 +136,7 @@ OPENMC_CHAINS = {
     },
 }
 
-SUBLIBRARIES: Dict[str, str] = {
+SUBLIBRARIES: dict[str, str] = {
     "n": "Incident-Neutron Data",
     "decay": "Radioactive Decay Data",
     "nfpy": "Neutron-Induced Fission Product Yields",
@@ -172,7 +171,7 @@ NSUB_IDS = {
     20040: "he4",
 }
 
-SUBLIBRARIES_SHORTLIST: List[str] = [
+SUBLIBRARIES_SHORTLIST: list[str] = [
     "n",
     "decay",
     "nfpy",
@@ -182,7 +181,7 @@ SUBLIBRARIES_SHORTLIST: List[str] = [
     "photo",
 ]
 
-ATOMIC_SYMBOL: Dict[int | str, int | str] = {
+ATOMIC_SYMBOL: dict[int | str, int | str] = {
     0: "n",
     1: "H",
     2: "He",
@@ -305,10 +304,10 @@ ATOMIC_SYMBOL: Dict[int | str, int | str] = {
 }
 ATOMIC_SYMBOL |= {v: k for k, v in ATOMIC_SYMBOL.items()}
 
-META_SYMBOL: Dict[str | int, int | str] = {"": 0, "M": 1, "N": 2, "O": 3}
+META_SYMBOL: dict[str | int, int | str] = {"": 0, "M": 1, "N": 2, "O": 3}
 META_SYMBOL |= {v: k for k, v in META_SYMBOL.items()}
 
-TSL_NEUTRON: Dict[str, Dict[str, str]] = {
+TSL_NEUTRON: dict[str, dict[str, str]] = {
     "foo": {
         "tsl_0037_H(CH2).endf6": "H1",
         "tsl_0002_para-H.endf6": "H1",
