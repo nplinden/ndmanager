@@ -16,8 +16,7 @@ class NeutronManager(InputParser, BaseManager):
     cross_section_node_type: str = "neutron"
 
     def __init__(self, neutrondict: dict[str, Any], rootdir: Path) -> None:
-        """Create a neutron manager given an input neutron dictionnary
-        and a path to a directory.
+        """Create a neutron manager.
 
         Args:
             neutrondict (Dict[str, Any]): A neutron input dictionnary

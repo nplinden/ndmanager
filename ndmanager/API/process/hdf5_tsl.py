@@ -35,6 +35,5 @@ class HDF5TSL(HDF5Sublibrary):
                 self.tsl,
                 self.temperatures,
             )
-        assert self.path.name == f"{data.name}.h5"
         data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)

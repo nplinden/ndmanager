@@ -43,9 +43,8 @@ class IAEA:
         "tendl2023": "TENDL-2023",
     }
 
-    def __init__(self, nocache: bool = False) -> None:
-        """Initialize the database from parse IAEA's website of from
-        using a cached json file.
+    def __init__(self, *, nocache: bool = False) -> None:
+        """Initialize the database from parsing IAEA's website or from using a cached json file.
 
         Args:
             nocache (bool, optional): Force the constructor the ignore the cached
@@ -115,7 +114,7 @@ class IAEA:
             dico[libname]["sublibraries"] = {}
             for sublibname, sublib in sublibraries.items():
                 dico[libname]["sublibraries"] |= {sublibname: sublib.__dict__}
-        with open(p, "w", encoding="utf-8") as f:
+        with Path(p).open("w", encoding="utf-8") as f:
             json.dump(dico, f, indent=2)
 
     def from_json(self, path: str | Path) -> None:
@@ -125,7 +124,7 @@ class IAEA:
             path (str | Path): The path to the json file
 
         """
-        with open(path, encoding="utf-8") as f:
+        with Path(path).open(encoding="utf-8") as f:
             dictionnary = json.load(f)
             for libname, lib in dictionnary.items():
                 raw_sublibraries = lib.pop("sublibraries")
@@ -139,8 +138,7 @@ class IAEA:
 
     @staticmethod
     def is_cached() -> bool:
-        """Check that the cached database exists in the user's ~/.config/ndmanager
-        directory.
+        """Check that the cached database exists in the user's ~/.config/ndmanager directory.
 
         Returns:
             bool: Wether the cache file exists
@@ -149,7 +147,7 @@ class IAEA:
         return (NDMANAGER_ENDF6 / "IAEA_cache.json").exists()
 
     def keys(self) -> list[str]:
-        """The list of available libraries in the database.
+        """Return the list of available libraries in the database.
 
         Returns:
             List[str]: List of libraries

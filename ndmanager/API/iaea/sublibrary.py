@@ -40,7 +40,7 @@ class IAEASublibrary:
 
     @classmethod
     def from_website(cls, root: str, node: str, kind: str) -> "IAEASublibrary":
-        """Constructor to build a sublibrary using IAEA's website.
+        """Build a sublibrary using IAEA's website.
 
         Args:
             root (str): Root url of the library
@@ -66,8 +66,8 @@ class IAEASublibrary:
         materials = cls.parse_index(index, kwargs)
 
         for matname, tag in zip(materials, tags, strict=False):
-            if kwargs["nsub"] == 12:
-                # TSL file
+            id_tsl = 12
+            if kwargs["nsub"] == id_tsl:
                 name = (tag.get("href")).split("/")[-1].rstrip(".zip")
                 kwargs["urls"][name] = root + tag.get("href")
             else:
@@ -103,7 +103,7 @@ class IAEASublibrary:
         self.urls[key] = value
 
     def __len__(self) -> int:
-        """The number of materials in the sublibrary.
+        """Return the number of materials in the sublibrary.
 
         Returns:
             int: The number of materials in the sublibrary
@@ -112,7 +112,7 @@ class IAEASublibrary:
         return len(self.urls)
 
     def keys(self) -> list[str]:
-        """The list of materials in the sublibrary.
+        """Return the list of materials in the sublibrary.
 
         Returns:
             List[str]: List of materials in the sublibrary
@@ -122,8 +122,9 @@ class IAEASublibrary:
 
     @staticmethod
     def parse_index(index: list[str], kwargs: dict[str, Any]) -> list[str]:
-        """Parse an sublibrary index from the IAEA website, e.g.
-        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm.
+        """Parse an sublibrary index from the IAEA website.
+
+        e.g.: https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm.
 
         Args:
             index (List[str]): The index file lines
@@ -183,12 +184,12 @@ class IAEASublibrary:
         with tempfile.TemporaryDirectory() as tmpdir, chdir(tmpdir):
             content = requests.get(url, timeout=600).content
             zipname = url.split("/")[-1]
-            with open(zipname, "wb") as f:
+            with Path(zipname).open("wb") as f:
                 f.write(content)
             with zipfile.ZipFile(zipname) as zf:
                 zf.extractall()
             datafile = f"{zipname[:-4]}.dat"
-            with open(datafile, encoding="utf-8", newline="") as f:
+            with Path(datafile).open(encoding="utf-8", newline="") as f:
                 return f.read()
 
     def download_single(self, material: str, targetfile: str | Path) -> None:
@@ -202,7 +203,7 @@ class IAEASublibrary:
         content = self.fetch_tape(material)
         target = Path(targetfile)
         target.parent.mkdir(parents=True, exist_ok=True)
-        with open(target, "w", encoding="utf-8", newline="") as f:
+        with target.open("w", encoding="utf-8", newline="") as f:
             print(content, file=f, end="")
 
     def download(
@@ -211,8 +212,7 @@ class IAEASublibrary:
         style: str = "nuclide",
         processes: int = 1,
     ) -> None:
-        """Download the all the tapes in the sublibrary to a directory specified by
-        `targetdir`.
+        """Download the all the tapes in the sublibrary to a directory specified by `targetdir`.
 
         Args:
             targetdir (str | Path): Path to the directory to write the tapes in
@@ -250,10 +250,10 @@ class IAEASublibrary:
             pbar.close()
         else:
 
-            def error_callback(e) -> Never:
+            def error_callback(e: Exception) -> Never:
                 raise e
 
-            def update_pbar(_) -> None:
+            def update_pbar(*args) -> None:
                 pbar.update()
 
             description = f"{self.lib}/{self.kind}"

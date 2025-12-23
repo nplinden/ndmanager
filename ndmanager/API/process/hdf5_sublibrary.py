@@ -18,13 +18,13 @@ class HDF5Sublibrary:
 
     @abc.abstractmethod
     def process(self) -> Never:
-        """An HDF5Sublibrary should define a process method."""
+        """Process ENDF6 file to HDF5 using OpenMC's API."""
         msg = "Can't use the process method directly on a HDF5Sublibrary object"
         raise NotImplementedError(
             msg,
         )
 
-    def get_logger(self):
+    def get_logger(self) -> logging.Logger:
         """Create a new logger and return it.
 
         Returns:
@@ -39,7 +39,7 @@ class HDF5Sublibrary:
         logger.addHandler(handler)
         logger.setLevel("INFO")
 
-        def showwarning(message, *args, **kwargs) -> None:
+        def showwarning(message: str, *args, **kwargs) -> None:
             logger.warning(message)
 
         warnings.showwarning = showwarning

@@ -25,7 +25,7 @@ class NDMLibrary(DataLibrary):
         """
         super().__init__()
         self.inputpath = inputpath
-        with open(inputpath, encoding="utf-8") as f:
+        with Path(inputpath).open(encoding="utf-8") as f:
             inputdict = yaml.safe_load(f)
         self.description = inputdict.get("description", "")
         self.summary = inputdict.get("summary", "")
@@ -37,7 +37,7 @@ class NDMLibrary(DataLibrary):
         self.photon = PhotonManager(inputdict.get("photon"), self.root)
         self.tsl = TSLManager(inputdict.get("tsl"), self.neutron, self.root)
 
-    def process(self, j: int = 1, dryrun: bool = False, clean: bool = False) -> None:
+    def process(self, j: int = 1, *, clean: bool = False) -> None:
         """Process the NDManager library using OpenMC's API.
 
         Args:
@@ -90,8 +90,7 @@ class NDMLibrary(DataLibrary):
             self.register_file(particle.path)
 
     def check_temperatures(self) -> bool:
-        """Check that the processing temperatures are identical to the
-        temperatures in the reused data files.
+        """Check that the processing temperatures are identical to the temperatures in the reused data files.
 
         Returns:
             bool: Wether the temperatures are the same or not

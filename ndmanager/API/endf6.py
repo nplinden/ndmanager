@@ -20,14 +20,14 @@ class Endf6:
         """
         self.filename = filename
         self.nuclide = Nuclide.from_file(filename)
-        with open(filename, encoding="utf-8") as f:
+        with Path(filename).open(encoding="utf-8") as f:
             for _ in range(4):
                 line = f.readline()
             NSUB = int(line[46:56])
         self.sublibrary = NSUB_IDS[NSUB]
 
 
-def get_endf6(libname: str, sub: str, nuclide: str):
+def get_endf6(libname: str, sub: str, nuclide: str) -> Path:
     """Get the path to a ENDF6 tape stored in the NDManager database.
 
     Args:
@@ -61,9 +61,8 @@ def get_endf6(libname: str, sub: str, nuclide: str):
     return p
 
 
-def list_endf6(sublibrary: str, params: dict[str, str]):
-    """List the paths to ENDF6 evaluations necessary to build the cross-sections
-    and depletion chains.
+def list_endf6(sublibrary: str, params: dict[str, str]) -> dict[str, Path]:
+    """List the paths to ENDF6 evaluations necessary to build the cross-sections and depletion chains.
 
     Args:
         sublibrary (str): The sublibrary type (n, decay, nfpy).

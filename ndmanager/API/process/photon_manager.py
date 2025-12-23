@@ -15,6 +15,13 @@ class PhotonManager(InputParser, BaseManager):
     cross_section_node_type = "photon"
 
     def __init__(self, photondict: dict, rootdir: Path) -> None:
+        """Create a photon manager object.
+
+        Args:
+            photondict (dict): A photon input dictionary
+            rootdir (Path): A path to write the HDF5 files in
+
+        """
         InputParser.__init__(self, photondict)
 
         self.sorting_key = lambda x: ATOMIC_SYMBOL[x.target]

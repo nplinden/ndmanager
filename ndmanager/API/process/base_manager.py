@@ -38,10 +38,10 @@ class BaseManager(list):
         with mp.get_context("spawn").Pool(j) as p:
             pbar = tqdm(total=len(self), bar_format=bar_format, desc=desc)
 
-            def update_pbar(_) -> None:
+            def update_pbar(*args) -> None:
                 pbar.update()
 
-            def error_callback(e) -> Never:
+            def error_callback(e: Exception) -> Never:
                 raise e
 
             for particle in self:

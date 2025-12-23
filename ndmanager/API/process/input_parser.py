@@ -1,5 +1,6 @@
 """A generic class to parse yml inputs of the omcer module."""
 
+from pathlib import Path
 from typing import Any
 
 from ndmanager._vendor.omc_data import DataLibrary
@@ -37,7 +38,7 @@ class InputParser:
             else:
                 self.reuse = {}
 
-    def list_endf6(self, sublibrary: str):
+    def list_endf6(self, sublibrary: str) -> dict[str, Path]:
         """List the ENDF6 tapes asked by the input file.
 
         Args:

@@ -40,8 +40,7 @@ class TSLManager(InputParser, BaseManager):
         neutron_library: NeutronManager,
         rootdir: Path,
     ) -> None:
-        """Create a TSL manager given an input tsl dictionnary, an neutron manager
-        and a path to a directory.
+        """Create a TSL manager.
 
         Args:
             tsldict (Dict[str, Any]): A TSL input dictionnary

@@ -65,6 +65,7 @@ docs = [
 
 [tool.ruff]
 line-length = 120
+exclude = ["ndmanager/_vendor"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -76,6 +77,11 @@ ignore = [
     "S324",
     "N803",
     "D100",
+    "D104",
     "COM812",
     "ISC001",
+    "ARG001",
+    "ANN002",
+    "ANN003",
+    "RUF012",
 ]

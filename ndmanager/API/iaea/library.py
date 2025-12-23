@@ -31,7 +31,7 @@ class IAEALibrary:
 
     @classmethod
     def from_website(cls, node: str) -> "IAEALibrary":
-        """Constructor the build a library using IAEA's website.
+        """Build a library using IAEA's website.
 
         Args:
             node (str): Name of the library on the website
@@ -76,7 +76,7 @@ class IAEALibrary:
         self.sublibraries[key] = value
 
     def keys(self) -> list[str]:
-        """The list of sublibraries available in this library.
+        """Return the list of sublibraries available in this library.
 
         Returns:
             List[str]: The list of sublibraries
@@ -86,8 +86,9 @@ class IAEALibrary:
 
     @staticmethod
     def parse_index(kwargs: dict[str, Any]) -> None:
-        """Parse a library index from the IAEA website, e.g.
-        https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm.
+        """Parse a library index from the IAEA website.
+
+        e.g.: https://www-nds.iaea.org/public/download-endf/JEFF-3.3/000-NSUB-index.htm.
 
         Args:
             kwargs (Dict[Any]): The dictionnary of attributes
