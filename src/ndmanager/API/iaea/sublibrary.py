@@ -7,13 +7,14 @@ import zipfile
 from contextlib import chdir
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Never
-from rich.progress import Progress, BarColumn, TextColumn, TimeRemainingColumn
+from typing import NoReturn
 
 import requests
 from bs4 import BeautifulSoup
+from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
 from ndmanager.API.nuclide import Nuclide
+from ndmanager.data import NSUB_IDS
 
 
 @dataclass
@@ -24,14 +25,10 @@ class IAEASublibrary:
         ValueError: If an unknown name style is passed to IAEASublibrary.download
         e: Raise errors raised by parallel download of nuclear data files
 
-    Returns:
-        IAEASublibrary: The sublibrary instance
-
     """
 
+    index: str
     kind: str
-    library_root: str
-    index_node: str
     lib: str
     library: str
     nsub: int
@@ -39,35 +36,37 @@ class IAEASublibrary:
     urls: dict[str, str]
 
     @classmethod
-    def from_website(cls, root: str, node: str, kind: str) -> "IAEASublibrary":
+    def from_website(cls, index_url: str) -> "IAEASublibrary":
         """Build a sublibrary using IAEA's website.
 
         Args:
-            root (str): Root url of the library
-            node (str): Name of the index file in the root directory
-            kind (str): The kind of sublibrary (from NSUB)
+            index_url (str): Url of the index file in the root directory
 
         Returns:
             IAEASublibrary: An IAEASublibrary object
 
         """
         kwargs = {}
-        kwargs["library_root"] = root
-        kwargs["index_node"] = node
+        kwargs["index"] = index_url
+        root = index_url.rstrip("/").rsplit("/", 1)[0] + "/"
+
         kwargs["urls"] = {}
-        kwargs["kind"] = kind
+        r = requests.get(index_url, timeout=600)
+        r.raise_for_status()
 
-        url = root + node
-        r = requests.get(url, timeout=600)
         html = BeautifulSoup(r.text, "html.parser")
-        tags = html.find_all("a")
-        index = html.find_all("pre")[0].text.split("\n")
+        links = html.find_all("a")
+        pre_tags = html.find_all("pre")
+        if not pre_tags:
+            msg = f"No <pre> tag found in index page: {index_url}"
+            raise ValueError(msg)
+        text = pre_tags[0].text.split("\n")
 
-        materials = cls.parse_index(index, kwargs)
+        materials, metadata = cls.parse_materials(text)
+        kwargs.update(metadata)
 
-        for matname, tag in zip(materials, tags, strict=False):
-            id_tsl = 12
-            if kwargs["nsub"] == id_tsl:
+        for matname, tag in zip(materials, links, strict=True):
+            if kwargs["kind"] == "tsl":
                 name = (tag.get("href")).split("/")[-1].rstrip(".zip")
                 kwargs["urls"][name] = root + tag.get("href")
             else:
@@ -121,53 +120,45 @@ class IAEASublibrary:
         return list(self.urls.keys())
 
     @staticmethod
-    def parse_index(index: list[str], kwargs: dict[str, Any]) -> list[str]:
+    def parse_materials(index: list[str]) -> tuple[list[str], dict[str, str | int]]:
         """Parse an sublibrary index from the IAEA website.
 
         e.g.: https://www-nds.iaea.org/public/download-endf/JEFF-3.3/n-index.htm.
 
         Args:
             index (List[str]): The index file lines
-            kwargs (Dict[str, Any]): The dictionnary of attributes
 
         Returns:
             List[str]: The list of material names
 
         """
         materials = []
+        metadata = {}
+
+        span = None
         for line in index:
             splat = line.split()
             if len(splat) == 0:
                 continue
             if re.match(r" Lib:", line):
-                kwargs["lib"] = splat[1]
+                metadata["lib"] = splat[1]
             if re.match(r" Library:", line):
-                kwargs["library"] = " ".join(splat[1:])
+                metadata["library"] = " ".join(splat[1:])
             if re.match(r" Sub-library:", line):
-                kwargs["nsub"] = int(splat[1][5:])
-                kwargs["sublibrary"] = " ".join(splat[2:])
+                metadata["nsub"] = int(splat[1][5:])
+                metadata["kind"] = NSUB_IDS[metadata["nsub"]]
+                metadata["sublibrary"] = " ".join(splat[2:])
             if splat[0] == "#)":
+                # Get the width of the "Material" column for later use
                 span = re.search(r"Material[ ]+", line).span()
                 continue
-            if re.match(r"\d+\)", splat[0]) is not None:
-                s = IAEASublibrary.insert_separator(line, span[0])
-                s = IAEASublibrary.insert_separator(s, span[1] + 1)
-                materials.append(s.split("$")[1].strip())
-        return materials
-
-    @staticmethod
-    def insert_separator(string: str, pos: int) -> str:
-        """Insert a $ at the `pos` position in the string.
-
-        Args:
-            string (str): The base string
-            pos (int): The position of the $
-
-        Returns:
-            str: A new string with the $ inserted
-
-        """
-        return string[:pos] + "$" + string[pos:]
+            if re.match(r"\d+\)", splat[0].lstrip("\x00")) is not None:  # Match lines starting with "1)", "2)", etc.
+                if span is None:
+                    msg = "Could not determine material column span."
+                    raise ValueError(msg)
+                s = line.lstrip("\x00")[span[0] : span[1]].strip()
+                materials.append(s)
+        return materials, metadata
 
     def fetch_tape(self, material: str) -> str:
         """Fetch the content of an ENDF6 tape for the desired material.
@@ -187,9 +178,16 @@ class IAEASublibrary:
             with Path(zipname).open("wb") as f:
                 f.write(content)
             with zipfile.ZipFile(zipname) as zf:
+                for member in zf.namelist():
+                    if member.startswith("/") or ".." in member:
+                        msg = f"Unsafe zip member path: {member}"
+                        raise ValueError(msg)
                 zf.extractall()
-            datafile = f"{zipname[:-4]}.dat"
-            with Path(datafile).open(encoding="utf-8", newline="") as f:
+            datafile = Path(f"{zipname[:-4]}.dat")
+            if not datafile.exists():
+                msg = f"Expected data file {datafile} not found in zip archive."
+                raise FileNotFoundError(msg)
+            with datafile.open(encoding="utf-8", newline="") as f:
                 return f.read()
 
     def download_single(self, material: str, targetfile: str | Path) -> None:
@@ -209,38 +207,31 @@ class IAEASublibrary:
     def download(
         self,
         targetdir: str | Path,
-        style: str = "nuclide",
         processes: int = 1,
     ) -> None:
         """Download the all the tapes in the sublibrary to a directory specified by `targetdir`.
 
         Args:
             targetdir (str | Path): Path to the directory to write the tapes in
-            style (str, optional): Style of the tape names. Defaults to "nuclide".
-                                   In {'nuclide', 'tsl', 'atom'}
             processes (int, optional): Number of download jobs to launch. Defaults to 1.
 
         Raises:
-            ValueError: If an unknown name style is passed to IAEASublibrary.download
             e: Raise errors raised by parallel download of nuclear data files
 
         """
-        targets = []
-        nuclides = []
-        for nuclide in self.urls:
-            if style in ("nuclide", "tsl"):
-                name = nuclide
-            elif style == "atom":
-                name = Nuclide.from_name(nuclide).element
-            else:
-                msg = "Unknown name style"
-                raise ValueError(msg)
-            targets.append(Path(targetdir) / f"{name}.endf6")
-            nuclides.append(nuclide)
+        if processes < 1:
+            msg = "Number of processes must be at least 1."
+            raise ValueError(msg)
 
-        description_size = len(self.lib) + 6
-        description = f"{self.lib}/{self.kind}"
-        description = f"{description:<{description_size}}"
+        p = Path(targetdir)
+
+        nuclides = list(self.urls)
+        if self.kind in ["photo", "ard"]:
+            targets = [p / f"{Nuclide.from_name(nuclide).element}.endf6" for nuclide in nuclides]
+        else:
+            targets = [p / f"{nuclide}.endf6" for nuclide in nuclides]
+
+        description = f"{self.lib}/{self.kind:<6}"
         with Progress(
             TextColumn("{task.description}"),
             BarColumn(),
@@ -249,20 +240,20 @@ class IAEASublibrary:
         ) as pbar:
             if processes == 1:
                 task = pbar.add_task(description, total=len(nuclides))
-                for nuclide, target in zip(nuclides, targets, strict=False):
+                for nuclide, target in zip(nuclides, targets, strict=True):
                     self.download_single(nuclide, target)
                     pbar.update(task, advance=1)
             else:
                 task = pbar.add_task(description, total=len(nuclides))
 
-                def error_callback(e: Exception) -> Never:
+                def error_callback(e: Exception) -> None:
                     raise e
 
                 def update_pbar(*args) -> None:
                     pbar.update(task, advance=1)
 
                 with mp.get_context("spawn").Pool(processes) as p:
-                    for nuclide, target in zip(nuclides, targets, strict=False):
+                    for nuclide, target in zip(nuclides, targets, strict=True):
                         p.apply_async(
                             self.download_single,
                             args=(nuclide, target),

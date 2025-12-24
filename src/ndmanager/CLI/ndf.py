@@ -115,10 +115,8 @@ def install(
 
             target = NDMANAGER_ENDF6 / library / sublibrary
             sublibdata = libdata[sublibrary]
-            name_style = "atom" if sublibrary in ["photo", "ard"] else "nuclide"
             sublibdata.download(
                 targetdir=target,
-                style=name_style,
                 processes=jobs,
             )
 

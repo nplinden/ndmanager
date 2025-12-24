@@ -19,10 +19,7 @@ def sublibrary():
 
 def test_from_website(sublibrary):
     assert sublibrary.kind == "d"
-    assert (
-        sublibrary.library_root
-        == "https://www-nds.iaea.org/public/download-endf/IAEA-Medical/"
-    )
+    assert sublibrary.library_root == "https://www-nds.iaea.org/public/download-endf/IAEA-Medical/"
     assert sublibrary.lib == "IAEA-Medical"
     assert (
         sublibrary.library
@@ -36,10 +33,7 @@ def test_from_website(sublibrary):
 
 
 def test_getitem(sublibrary):
-    assert (
-        sublibrary["N14"]
-        == "https://www-nds.iaea.org/public/download-endf/IAEA-Medical/d/d_0725_7-N-14.zip"
-    )
+    assert sublibrary["N14"] == "https://www-nds.iaea.org/public/download-endf/IAEA-Medical/d/d_0725_7-N-14.zip"
 
 
 def test_setitem(sublibrary):
@@ -62,7 +56,7 @@ def test_parse_index():
     index = html.find_all("pre")[0].text.split("\n")
 
     kwargs = {}
-    materials = IAEASublibrary.parse_index(index, kwargs)
+    materials = IAEASublibrary.parse_materials(index, kwargs)
 
     assert kwargs["lib"] == "IAEA-Medical"
     assert (

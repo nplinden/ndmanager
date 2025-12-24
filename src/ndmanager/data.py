@@ -139,6 +139,11 @@ OPENMC_CHAINS = {
 SUBLIBRARIES: dict[str, str] = {
     "n": "Incident-Neutron Data",
     "decay": "Radioactive Decay Data",
+    "pfpy": "Proton-Induced Fission Product Yields",
+    "dfpy": "Deuteron-Induced Fission Product Yields",
+    "tfpy": "Triton-Induced Fission Product Yields",
+    "he3fp": "Helium-3-Induced Fission Product Yields",
+    "he4fp": "Helium-4-Induced Fission Product Yields",
     "nfpy": "Neutron-Induced Fission Product Yields",
     "sfpy": "Spontaneous Fission Product Yields",
     "tsl": "Thermal Neutron Scattering Data",
@@ -165,10 +170,15 @@ NSUB_IDS = {
     19: "std",
     113: "e",
     10010: "p",
+    10011: "pfpy",
     10020: "d",
+    10021: "dfpy",
     10030: "t",
+    10031: "tfpy",
     20030: "he3",
+    20031: "he3fp",
     20040: "he4",
+    20041: "he4fp",
 }
 
 SUBLIBRARIES_SHORTLIST: list[str] = [
@@ -772,3 +782,27 @@ REACTIONS = [
     "(n,3n2pa)",
     "(n,5n2p)",
 ]
+
+NSUB_TAGS = {
+    "[G]": "g",
+    "[PHOTO]": "photo",
+    "[DECAY]": "decay",
+    "[S/FPY]": "sfpy",
+    "[ARD]": "ard",
+    "[N]": "n",
+    "[N]-MT": "nmt",
+    "[N/FPY]": "nfpy",
+    "[P/FPY]": "pfpy",
+    "[D/FPY]": "dfpy",
+    "[T/FPY]": "tfpy",
+    "[HE3/FP]": "he3fp",
+    "[HE4/FP]": "he4fp",
+    "[TSL]": "tsl",
+    "[Std]": "std",
+    "[E]": "e",
+    "[P]": "p",
+    "[D]": "d",
+    "[T]": "t",
+    "[HE3]": "he3",
+    "[HE4]": "he4",
+}

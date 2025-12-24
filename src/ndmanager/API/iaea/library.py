@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from ndmanager.API.iaea.sublibrary import IAEASublibrary
-from ndmanager.data import IAEA_ROOT
+from ndmanager.data import IAEA_ROOT, NSUB_TAGS
 
 FORBIDDEN_NODES = ["Name", "Last modified", "Size", "Parent Directory", "Description"]
 
@@ -94,40 +94,13 @@ class IAEALibrary:
             kwargs (Dict[Any]): The dictionnary of attributes
 
         """
-        nsub_tags = {
-            "[G]": "g",
-            "[PHOTO]": "photo",
-            "[DECAY]": "decay",
-            "[S/FPY]": "sfpy",
-            "[ARD]": "ard",
-            "[N]": "n",
-            "[N]-MT": "nmt",
-            "[N/FPY]": "nfpy",
-            "[P/FPY]": "pfpy",
-            "[D/FPY]": "dfpy",
-            "[T/FPY]": "tfpy",
-            "[HE3/FP]": "he3fp",
-            "[HE4/FP]": "he4fp",
-            "[TSL]": "tsl",
-            "[Std]": "std",
-            "[E]": "e",
-            "[P]": "p",
-            "[D]": "d",
-            "[T]": "t",
-            "[HE3]": "he3",
-            "[HE4]": "he4",
-        }
         url = kwargs["url"] + "000-NSUB-index.htm"
         r = requests.get(url, timeout=600)
         html = BeautifulSoup(r.text, "html.parser")
         tags = html.find_all("a")
         for tag in tags:
-            kind = nsub_tags[tag.text]
-            kwargs["sublibraries"][kind] = IAEASublibrary.from_website(
-                kwargs["url"],
-                tag.get("href"),
-                kind,
-            )
+            sublib = IAEASublibrary.from_website(kwargs["url"] + tag.get("href"))
+            kwargs["sublibraries"][sublib.kind] = sublib
         index = html.find_all("pre")[0].text.split("\n")
         for line in index:
             splat = line.split()
