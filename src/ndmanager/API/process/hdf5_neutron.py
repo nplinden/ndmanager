@@ -50,7 +50,6 @@ class HDF5Neutron(HDF5Sublibrary):
             data = IncidentNeutron.from_njoy(
                 self.neutron,
                 temperatures=self.temperatures,
-                input_filename="He3.njoy",
             )
             data.export_to_hdf5(self.path, "w")
         logger.info("Processing time: %.1f", time.time() - t0)
