@@ -1,4 +1,5 @@
 import h5py
+from pathlib import Path
 
 
 def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
@@ -40,3 +41,14 @@ def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
 
         if "urr" in source[nuclide]:
             source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
+
+
+def get_available_temperature(sourcepath: Path) -> set[int]:
+    with h5py.File(sourcepath, "r") as source:
+        if len(source.keys()) != 1:
+            msg = "The source file must contain data for a single nuclide"
+            raise ValueError(msg)
+
+        nuclide = next(iter(source.keys()))
+        temperatures = source[f"{nuclide}/energy"].keys()
+        return {int(t[:-1]) for t in temperatures}
