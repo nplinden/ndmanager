@@ -318,13 +318,6 @@ META_SYMBOL: dict[str | int, int | str] = {"": 0, "M": 1, "N": 2, "O": 3}
 META_SYMBOL |= {v: k for k, v in META_SYMBOL.items()}
 
 TSL_NEUTRON: dict[str, dict[str, str]] = {
-    "foo": {
-        "tsl_0037_H(CH2).endf6": "H1",
-        "tsl_0002_para-H.endf6": "H1",
-    },
-    "bar": {
-        "tsl_ortho-H_0003.endf6": "H1",
-    },
     "jeff311": {
         "tsl_0001_H(H2O).endf6": "H1",
         "tsl_0007_H(ZrH).endf6": "H1",
