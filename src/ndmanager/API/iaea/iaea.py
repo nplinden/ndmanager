@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
-from tqdm import tqdm
+from rich.progress import Progress
 
 from ndmanager.API.iaea.library import FORBIDDEN_NODES, IAEALibrary
 from ndmanager.API.iaea.sublibrary import IAEASublibrary
@@ -89,15 +89,13 @@ class IAEA:
         tags = BeautifulSoup(root.text, "html.parser").find_all("a")
         tags = [tag.get("href") for tag in tags if tag.text not in FORBIDDEN_NODES]
 
-        bar_format = "{l_bar}{bar:40}| {n_fmt}/{total_fmt} [{elapsed}s]"
-        pbar = tqdm(total=len(tags), bar_format=bar_format)
-        for name in tags:
-            pbar.set_description(f"{name:<25}")
-            val = IAEALibrary.from_website(name)
-            if val.valid:
-                self[val.name.rstrip("/")] = val
-            pbar.update()
-        pbar.close()
+        with Progress() as pbar:
+            task = pbar.add_task("Building IAEA database...", total=len(tags))
+            for name in tags:
+                val = IAEALibrary.from_website(name)
+                if val.valid:
+                    self[val.name.rstrip("/")] = val
+                pbar.update(task, advance=1, description=f"Building IAEA database: {name:<25}")
 
     def to_json(self, p: str | Path) -> None:
         """Export the database to the json format.
