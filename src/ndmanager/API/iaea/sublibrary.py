@@ -65,9 +65,15 @@ class IAEASublibrary:
         materials, metadata = cls.parse_materials(text)
         kwargs.update(metadata)
 
+        pattern = re.compile(r"([^/\\]+)(?=\.(zip|dat)\b)", re.IGNORECASE)
         for matname, tag in zip(materials, links, strict=True):
             if kwargs["kind"] == "tsl":
-                name = (tag.get("href")).split("/")[-1].rstrip(".zip")
+                raw = tag.get("href")
+                match = pattern.search(raw)
+                if match is None:
+                    msg = f"Could not parse TSL tape name from href '{raw}'"
+                    raise ValueError(msg)
+                name = match.group(1)
                 kwargs["urls"][name] = root + tag.get("href")
             else:
                 try:
@@ -174,20 +180,29 @@ class IAEASublibrary:
 
         with tempfile.TemporaryDirectory() as tmpdir, chdir(tmpdir):
             content = requests.get(url, timeout=600).content
-            zipname = url.split("/")[-1]
-            with Path(zipname).open("wb") as f:
+            fpath = Path(url.split("/")[-1])
+            with fpath.open("wb") as f:
                 f.write(content)
-            with zipfile.ZipFile(zipname) as zf:
-                for member in zf.namelist():
-                    if member.startswith("/") or ".." in member:
-                        msg = f"Unsafe zip member path: {member}"
-                        raise ValueError(msg)
-                zf.extractall()
-            datafile = Path(f"{zipname[:-4]}.dat")
-            if not datafile.exists():
-                msg = f"Expected data file {datafile} not found in zip archive."
-                raise FileNotFoundError(msg)
-            with datafile.open(encoding="utf-8", newline="") as f:
+
+            if fpath.suffix.lower() == ".zip":
+                with zipfile.ZipFile(fpath) as zf:
+                    for member in zf.namelist():
+                        if member.startswith("/") or ".." in member:
+                            msg = f"Unsafe zip member path: {member}"
+                            raise ValueError(msg)
+                    zf.extractall()
+                fpath.unlink()
+
+                extracted = list(Path().glob("*"))
+                if len(extracted) != 1:
+                    msg = "Multiple file were extracted from zip archive, cannot determine target file."
+                    raise FileNotFoundError(msg)
+                if len(extracted) == 0:
+                    msg = "No file were extracted from zip archive, cannot determine target file."
+                    raise FileNotFoundError(msg)
+                fpath = extracted[0]
+
+            with fpath.open(encoding="utf-8", newline="") as f:
                 return f.read()
 
     def download_single(self, material: str, targetfile: str | Path) -> None:
