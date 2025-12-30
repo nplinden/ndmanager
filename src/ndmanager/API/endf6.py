@@ -97,9 +97,7 @@ def list_endf6(sublibrary: str, params: dict[str, str]) -> dict[str, Path]:
             p = NDMANAGER_ENDF6 / guestlib / sublibrary / f"{nuclide}.endf6"
             if not p.exists():
                 msg = f"Nuclide {nuclide} is not available in the {guestlib} library."
-                raise ValueError(
-                    msg,
-                )
+                raise ValueError(msg)
             guest_dict[nuclide] = p
         base_dict |= guest_dict
 
