@@ -115,10 +115,7 @@ def install(
 
             target = NDMANAGER_ENDF6 / library / sublibrary
             sublibdata = libdata[sublibrary]
-            sublibdata.download(
-                targetdir=target,
-                processes=jobs,
-            )
+            sublibdata.download(targetdir=target, processes=jobs)
 
             # A manual erratum for the neutron xs of B10 in ENDF/B-VIII.0
             if library == "endfb8" and sublibrary == "n":
