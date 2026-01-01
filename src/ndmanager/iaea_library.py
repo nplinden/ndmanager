@@ -7,7 +7,7 @@ from typing import Any
 import requests
 from bs4 import BeautifulSoup
 
-from ndmanager.API.iaea.sublibrary import IAEASublibrary
+from ndmanager.iaea_sublibrary import IAEASublibrary
 from ndmanager.data import IAEA_ROOT, NSUB_TAGS
 
 FORBIDDEN_NODES = ["Name", "Last modified", "Size", "Parent Directory", "Description"]

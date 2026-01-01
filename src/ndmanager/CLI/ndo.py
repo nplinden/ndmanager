@@ -14,7 +14,7 @@ from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from ndmanager.API.process.ndm_library import NDMLibrary
+from ndmanager.library import Library
 from ndmanager.data import OPENMC_LIBS
 from ndmanager.env import NDMANAGER_HDF5
 
@@ -167,7 +167,8 @@ def build_command(
         jobs (int): Number of concurrent processes.
 
     """
-    lib = NDMLibrary(filename)
-    if temperatures:
-        lib.neutron.update_temperatures(set(temperatures))
-    lib.process(jobs, clean=clean)
+    lib = Library(filename)
+    if clean:
+        lib.remove()
+    lib.build(jobs=jobs)
+    lib.export_to_xml()

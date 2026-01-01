@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
-from ndmanager.API.nuclide import Nuclide
+from ndmanager.nuclide import Nuclide
 from ndmanager.data import NSUB_IDS
 
 

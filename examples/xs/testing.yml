@@ -1,0 +1,22 @@
+summary: A library based on the JEFF-3.3 evaluations.
+description: A library for testing purposes.
+name: test
+neutron:
+  # base: jeff33
+  # temperatures: 250 294 600 900 1200 2500
+  temperatures: 250
+  # omit: C0
+  add:
+    endfb8: C12 C13
+  # reuse:
+  #   jeff311: U235
+photon:
+  base: endfb8
+  omit: Fe Xe
+  add:
+    endfb81: Fe C
+tsl:
+  # base: jeff33
+  add:
+    jeff33:
+      tsl_0031_Graphite.endf6: C12

@@ -13,7 +13,7 @@ from rich.progress import Progress
 from rich.table import Table
 
 from ndmanager._vendor.omc_data import Chain
-from ndmanager.API.endf6 import list_endf6
+from ndmanager.endf6 import list_endf6
 from ndmanager.data import BRANCHING_RATIOS, OPENMC_CHAINS, REACTIONS
 from ndmanager.env import NDMANAGER_CHAINS
 

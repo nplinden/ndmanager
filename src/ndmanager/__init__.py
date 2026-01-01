@@ -4,11 +4,12 @@ from importlib.metadata import version
 
 __version__ = version("ndmanager")
 
-from .API.endf6 import Endf6, get_endf6
-from .API.iaea import IAEA, IAEALibrary, IAEASublibrary
-from .API.nuclide import Nuclide
-from .API.sha1 import compute_file_sha1
-from .API.utils import get_hdf5
+from .endf6 import Endf6, get_endf6
+from .iaea import IAEA
+from .iaea_library import IAEALibrary
+from .iaea_sublibrary import IAEASublibrary
+from .nuclide import Nuclide
+from .utils import get_hdf5
 
 __all__ = [
     "Endf6",

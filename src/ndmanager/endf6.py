@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-from ndmanager.API.nuclide import Nuclide
+from ndmanager.nuclide import Nuclide
 from ndmanager.data import NSUB_IDS
 from ndmanager.env import NDMANAGER_ENDF6
 
