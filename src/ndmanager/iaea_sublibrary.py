@@ -7,14 +7,13 @@ import zipfile
 from contextlib import chdir
 from dataclasses import dataclass
 from pathlib import Path
-from typing import NoReturn
 
 import requests
 from bs4 import BeautifulSoup
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 
-from ndmanager.nuclide import Nuclide
 from ndmanager.data import NSUB_IDS
+from ndmanager.nuclide import Nuclide
 
 
 @dataclass

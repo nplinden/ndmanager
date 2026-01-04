@@ -8,10 +8,10 @@ import requests
 from bs4 import BeautifulSoup
 from rich.progress import Progress
 
-from ndmanager.iaea_library import FORBIDDEN_NODES, IAEALibrary
-from ndmanager.iaea_sublibrary import IAEASublibrary
 from ndmanager.data import IAEA_ROOT
 from ndmanager.env import NDMANAGER_ENDF6
+from ndmanager.iaea_library import FORBIDDEN_NODES, IAEALibrary
+from ndmanager.iaea_sublibrary import IAEASublibrary
 
 
 class IAEA:

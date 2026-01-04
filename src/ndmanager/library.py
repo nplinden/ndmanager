@@ -1,14 +1,13 @@
-from ndmanager._vendor.omc_data import DataLibrary
-from pathlib import Path
-import shutil
-import yaml
-from ndmanager.env import NDMANAGER_HDF5
-from ndmanager.nuclide import Nuclide
-from ndmanager.input_parser import InputParser
-from ndmanager.processors import process_photon, process_neutron, process_tsl
-from rich.progress import Progress
 import multiprocessing as mp
-from ndmanager._vendor.omc_data import get_thermal_name, Evaluation
+import shutil
+from pathlib import Path
+
+from rich.progress import Progress
+
+from ndmanager._vendor.omc_data import DataLibrary, Evaluation, get_thermal_name
+from ndmanager.input_parser import InputParser
+from ndmanager.nuclide import Nuclide
+from ndmanager.processors import process_neutron, process_photon, process_tsl
 
 
 def sorting_key(entry: dict) -> tuple[int, int | str]:

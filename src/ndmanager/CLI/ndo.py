@@ -14,9 +14,9 @@ from rich.console import Console
 from rich.progress import Progress
 from rich.table import Table
 
-from ndmanager.library import Library
 from ndmanager.data import OPENMC_LIBS
 from ndmanager.env import NDMANAGER_HDF5
+from ndmanager.library import Library
 
 
 @click.group()

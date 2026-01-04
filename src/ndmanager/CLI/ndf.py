@@ -9,10 +9,10 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
-from ndmanager.endf6 import Endf6
-from ndmanager.iaea import IAEA
 from ndmanager.data import SUBLIBRARIES_SHORTLIST
+from ndmanager.endf6 import Endf6
 from ndmanager.env import NDMANAGER_ENDF6
+from ndmanager.iaea import IAEA
 
 
 @click.group()

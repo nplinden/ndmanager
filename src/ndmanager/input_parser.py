@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import Any
+
 import yaml
-from ndmanager._vendor.omc_data import DataLibrary
-from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
-from ndmanager.endf6 import get_endf6
+
 from ndmanager.data import TSL_NEUTRON
+from ndmanager.endf6 import get_endf6
+from ndmanager.env import NDMANAGER_ENDF6, NDMANAGER_HDF5
 
 
 class InputParser:
@@ -63,10 +63,7 @@ class InputParser:
             raise ValueError(msg)
 
         tmp = data.get("temperatures", "")
-        if isinstance(tmp, int):
-            temperatures = [tmp]
-        else:
-            temperatures = [int(t) for t in data.get("temperatures", "").split()]
+        temperatures = [tmp] if isinstance(tmp, int) else [int(t) for t in data.get("temperatures", "").split()]
         base = data.get("base")
         add = data.get("add", {})
         omit = set(data.get("omit", "").split())

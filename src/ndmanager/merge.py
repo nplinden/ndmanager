@@ -1,5 +1,6 @@
-import h5py
 from pathlib import Path
+
+import h5py
 
 
 def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
