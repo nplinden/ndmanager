@@ -12,6 +12,20 @@ from ndmanager._vendor.omc_data import get_thermal_name, Evaluation
 
 
 def sorting_key(entry: dict) -> tuple[int, int | str]:
+    """Generate a sorting key for library entries.
+
+    Orders entries by type (neutron, photon, then thermal) and then by
+    ZAM identifier for neutron/photon or by material name for thermal.
+
+    Args:
+        entry (dict): A library entry dictionary with 'type' and 'materials' keys
+
+    Returns:
+        tuple[int, int | str]: A tuple where the first element determines the
+            primary sort order (0=neutron, 1=photon, 2=thermal) and the second
+            element is either the ZAM identifier (int) or material name (str)
+
+    """
     if entry["type"] == "neutron":
         return (0, Nuclide.from_name(entry["materials"][0]).zam)
     if entry["type"] == "photon":
@@ -54,6 +68,19 @@ class Library(DataLibrary, InputParser):
         self.sort(key=sorting_key)
 
     def build_photon(self, jobs: int) -> None:
+        """Build photon data library by processing all photon elements.
+
+        Processes photon data files either serially (jobs=1) or in parallel
+        (jobs>1) with a progress bar display. Registers each processed file
+        to the library.
+
+        Args:
+            jobs (int): Number of parallel jobs to use for processing
+
+        Raises:
+            ValueError: Raised if jobs is less than 1
+
+        """
         with Progress() as pbar:
             task = pbar.add_task("Processing photons", total=len(self.photon_data))
 
@@ -88,6 +115,19 @@ class Library(DataLibrary, InputParser):
                     p.join()
 
     def build_neutron(self, jobs: int = 1) -> None:
+        """Build neutron data library by processing all nuclides.
+
+        Processes neutron data files from NJOY tapes either serially (jobs=1)
+        or in parallel (jobs>1) with a progress bar display. Registers each
+        processed file to the library.
+
+        Args:
+            jobs (int): Number of parallel jobs to use for processing. Defaults to 1.
+
+        Raises:
+            ValueError: Raised if jobs is less than 1
+
+        """
         with Progress() as pbar:
             task = pbar.add_task("Processing neutron", total=len(self.neutron_data))
 
@@ -122,6 +162,19 @@ class Library(DataLibrary, InputParser):
                     p.join()
 
     def build_tsl(self, jobs: int = 1) -> None:
+        """Build thermal scattering law (TSL) data library.
+
+        Processes TSL data files either serially (jobs=1) or in parallel
+        (jobs>1) with a progress bar display. Registers each processed file
+        to the library.
+
+        Args:
+            jobs (int): Number of parallel jobs to use for processing. Defaults to 1.
+
+        Raises:
+            ValueError: Raised if jobs is less than 1
+
+        """
         with Progress() as pbar:
             task = pbar.add_task("Processing TSL", total=len(self.tsl_data))
 
@@ -157,9 +210,25 @@ class Library(DataLibrary, InputParser):
                     p.close()
                     p.join()
 
-    def export_to_xml(self):
+    def export_to_xml(self) -> None:
+        """Export the library to an XML cross sections file.
+
+        Writes the library configuration to the cross_sections.xml file
+        at the library's root directory path.
+
+        Returns:
+            The result of the parent class's export_to_xml method
+
+        """
         return super().export_to_xml(self.path)
 
-    def remove(self):
+    def remove(self) -> None:
+        """Remove the library by deleting its root directory.
+
+        Recursively deletes the library's root directory and all its
+        contents if it exists. This includes all processed data files,
+        logs, and the cross_sections.xml file.
+
+        """
         if self.root.exists():
             shutil.rmtree(self.root)
