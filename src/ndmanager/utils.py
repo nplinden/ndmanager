@@ -39,7 +39,23 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
     raise ValueError(msg)
 
 
-def get_logger(path: Path):
+def get_logger(path: Path) -> logging.Logger:
+    """Get a configured logger that writes to a file and redirects warnings.
+
+    Creates a logger with a file handler that writes to the specified path.
+    The logger is configured with INFO level and a standard timestamp format.
+    Also redirects Python warnings to be logged through this logger.
+
+    Args:
+        path (Path): The path to the log file. Parent directories will be
+            created if they don't exist. The logger name is derived from
+            the filename stem.
+
+    Returns:
+        logging.Logger: A configured logger instance that writes to the
+            specified file and captures warnings.
+
+    """
     if not path.parent.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
 
