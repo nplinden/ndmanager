@@ -7,6 +7,17 @@ from ndmanager.utils import get_logger
 
 
 def process_neutron(target: Path, tape: Path, temperatures: set[int]) -> None:
+    """Process neutron data file from NJOY tape.
+
+    Args:
+        target (Path): Target HDF5 file path
+        tape (Path): NJOY tape file path
+        temperatures (set[int]): Set of temperatures to process
+
+    Raises:
+        ValueError: Raised if no temperatures are specified or if input file does not exist
+
+    """
     if not temperatures:
         msg = "No temperatures specified for processing"
         raise ValueError(msg)
