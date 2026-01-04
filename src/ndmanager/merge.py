@@ -44,6 +44,18 @@ def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
 
 
 def get_available_temperature(sourcepath: Path) -> set[int]:
+    """Get the set of available temperatures in a nuclear data file.
+
+    Args:
+        sourcepath (Path): Path to the nuclear data HDF5 file
+
+    Raises:
+        ValueError: Raised if the file contains data for multiple nuclides
+
+    Returns:
+        set[int]: Set of available temperatures (in Kelvin) in the file
+
+    """
     with h5py.File(sourcepath, "r") as source:
         if len(source.keys()) != 1:
             msg = "The source file must contain data for a single nuclide"
