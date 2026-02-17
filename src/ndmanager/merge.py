@@ -19,7 +19,7 @@ def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
         raise ValueError(msg)
 
     nuclide = next(iter(source.keys()))
-    if next(iter(source.keys())) != nuclide:
+    if next(iter(target.keys())) != nuclide:
         msg = "Both source and target files must contain data for the same nuclide"
         raise ValueError(msg)
 
