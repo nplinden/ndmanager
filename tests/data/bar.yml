@@ -1,0 +1,11 @@
+summary: A simple library with H1.
+description: |
+  A simple library with H1.
+name: bar
+neutron:
+  temperatures: 500
+  add:
+    foo: H1 H2
+photon:
+  add:
+    foo: H
