@@ -111,7 +111,7 @@ class TestProcessNeutron:
             
             # Verify IncidentNeutron.from_njoy was called with only new temperatures
             expected_new_temps = {900}
-            mock_incident_neutron.from_njoy.assert_called_once_with(tape_path, expected_new_temps)
+            mock_incident_neutron.from_njoy.assert_called_once_with(tape_path, temperatures=expected_new_temps)
             
             # Verify export_to_hdf5 and merge were called
             mock_data.export_to_hdf5.assert_called_once()
