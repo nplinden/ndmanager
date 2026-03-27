@@ -11,37 +11,35 @@ def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
         targetpath: Path to the target data file. This file will be modified
 
     """
-    source = h5py.File(sourcepath, "r")
-    target = h5py.File(targetpath, "a")
+    with h5py.File(sourcepath, "r") as source, h5py.File(targetpath, "a") as target:
+        if len(source.keys()) != 1 or len(target.keys()) != 1:
+            msg = "Both source and target files must contain data for a single nuclide"
+            raise ValueError(msg)
 
-    if len(source.keys()) != 1 or len(target.keys()) != 1:
-        msg = "Both source and target files must contain data for a single nuclide"
-        raise ValueError(msg)
+        nuclide = next(iter(source.keys()))
+        if next(iter(target.keys())) != nuclide:
+            msg = "Both source and target files must contain data for the same nuclide"
+            raise ValueError(msg)
 
-    nuclide = next(iter(source.keys()))
-    if next(iter(target.keys())) != nuclide:
-        msg = "Both source and target files must contain data for the same nuclide"
-        raise ValueError(msg)
+        s_temperatures = source[f"{nuclide}/energy"].keys()
+        s_temperatures = {int(t[:-1]) for t in s_temperatures}
+        t_temperatures = target[f"{nuclide}/energy"].keys()
+        t_temperatures = {int(t[:-1]) for t in t_temperatures}
 
-    s_temperatures = source[f"{nuclide}/energy"].keys()
-    s_temperatures = {int(t[:-1]) for t in s_temperatures}
-    t_temperatures = target[f"{nuclide}/energy"].keys()
-    t_temperatures = {int(t[:-1]) for t in t_temperatures}
+        new_temperatures = s_temperatures - t_temperatures
 
-    new_temperatures = s_temperatures - t_temperatures
+        for t in new_temperatures:
+            source.copy(source[f"{nuclide}/energy/{t}K"], target[f"{nuclide}/energy/"])
+            source.copy(source[f"{nuclide}/kTs/{t}K"], target[f"{nuclide}/kTs/"])
 
-    for t in new_temperatures:
-        source.copy(source[f"{nuclide}/energy/{t}K"], target[f"{nuclide}/energy/"])
-        source.copy(source[f"{nuclide}/kTs/{t}K"], target[f"{nuclide}/kTs/"])
+            for reaction in source[f"{nuclide}/reactions"]:
+                source.copy(
+                    source[f"{nuclide}/reactions/{reaction}/{t}K"],
+                    target[f"{nuclide}/reactions/{reaction}/"],
+                )
 
-        for reaction in source[f"{nuclide}/reactions"]:
-            source.copy(
-                source[f"{nuclide}/reactions/{reaction}/{t}K"],
-                target[f"{nuclide}/reactions/{reaction}/"],
-            )
-
-        if "urr" in source[nuclide]:
-            source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
+            if "urr" in source[nuclide]:
+                source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
 
 
 def get_available_temperature(sourcepath: Path) -> set[int]:
