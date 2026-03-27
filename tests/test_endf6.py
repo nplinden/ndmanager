@@ -122,6 +122,24 @@ class TestEndf6Init:
         assert endf6.nuclide.Z == 92
         assert endf6.sublibrary == "n"
 
+    def test_nonexistent_file_raises_error(self, tmp_path):
+        """Test that a non-existent file raises an error."""
+        with pytest.raises((FileNotFoundError, OSError)):
+            Endf6(tmp_path / "nonexistent.endf6")
+
+    def test_unknown_nsub_raises_error(self, tmp_path):
+        """Test that an ENDF6 file with an unrecognised NSUB value raises KeyError."""
+        # NSUB=99999 is not in NSUB_IDS
+        content = ENDF6_U235_NEUTRON.replace(
+            "         10          8 125 1451    3",
+            "      99999          8 125 1451    3",
+        )
+        p = tmp_path / "U235.endf6"
+        p.write_text(content)
+
+        with pytest.raises(KeyError):
+            Endf6(p)
+
 
 class TestGetEndf6:
     """Test the get_endf6 function."""

@@ -47,6 +47,14 @@ class TestGetHdf5:
         with pytest.raises(ValueError, match="Library 'nonexistent' does not exist"):
             get_hdf5("nonexistent", "neutron", "U235")
 
+    def test_malformed_xml_raises_error(self, xml_lib):
+        """Test that malformed XML in cross_sections.xml raises a parse error."""
+        import xml.etree.ElementTree as ET
+        xml_lib("<this is not valid xml<<<")
+
+        with pytest.raises(ET.ParseError):
+            get_hdf5("testlib", "neutron", "U235")
+
     def test_successful_retrieval_with_directory_node(self, xml_lib):
         """Test successful retrieval when XML has an absolute directory node."""
         lib_dir = xml_lib("""<?xml version="1.0"?>

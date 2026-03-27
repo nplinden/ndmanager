@@ -375,3 +375,32 @@ class TestEdgeCases:
         assert nuclide.Z == 118
         assert nuclide.A == 294
         assert nuclide.element == "Og"
+
+
+class TestInvalidInputs:
+    """Test behaviour with invalid or malformed inputs."""
+
+    def test_from_name_no_regex_match_raises(self):
+        """Test that a name with no letters raises AttributeError."""
+        with pytest.raises(AttributeError):
+            Nuclide.from_name("12345")
+
+    def test_from_name_unknown_element_raises(self):
+        """Test that an unknown element symbol raises KeyError."""
+        with pytest.raises(KeyError):
+            Nuclide.from_name("Xx235")
+
+    def test_from_iaea_name_wrong_parts_raises(self):
+        """Test that an IAEA name with wrong number of parts raises an error."""
+        with pytest.raises((ValueError, AttributeError, IndexError)):
+            Nuclide.from_iaea_name("001-H")  # missing mass number
+
+    def test_from_iaea_name_unknown_element_raises(self):
+        """Test that an unknown element in IAEA format raises KeyError."""
+        with pytest.raises(KeyError):
+            Nuclide.from_iaea_name("001-Xx-1")
+
+    def test_from_file_nonexistent_raises(self, tmp_path):
+        """Test that a non-existent file raises an error."""
+        with pytest.raises((FileNotFoundError, OSError)):
+            Nuclide.from_file(tmp_path / "nonexistent.endf6")
