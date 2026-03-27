@@ -27,7 +27,7 @@ def ndo() -> None:
 @ndo.command(name="list")
 def list_command() -> None:
     """List installable and installed OpenMC nuclear data libraries."""
-    xmls = NDMANAGER_HDF5.rglob("*.xml")
+    xmls = NDMANAGER_HDF5.rglob("*.xml") if NDMANAGER_HDF5.exists() else []
     installed = sorted([str(f.parent.relative_to(NDMANAGER_HDF5)) for f in xmls], key=str.lower)
 
     console = Console()

@@ -26,7 +26,7 @@ def ndc() -> None:
 @ndc.command(name="list")
 def list_command() -> None:
     """List installable and installed OpenMC nuclear data chains."""
-    xmls = NDMANAGER_CHAINS.glob("*.xml")
+    xmls = NDMANAGER_CHAINS.glob("*.xml") if NDMANAGER_CHAINS.exists() else []
     installed = sorted([f.stem for f in xmls], key=str.lower)
 
     console = Console()

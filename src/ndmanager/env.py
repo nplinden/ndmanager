@@ -18,6 +18,3 @@ if "NDMANAGER_CHAINS" in os.environ:
 else:
     NDMANAGER_CHAINS = Path.home() / "ndmanager/chains"
 
-NDMANAGER_ENDF6.mkdir(parents=True, exist_ok=True)
-NDMANAGER_HDF5.mkdir(parents=True, exist_ok=True)
-NDMANAGER_CHAINS.mkdir(parents=True, exist_ok=True)
