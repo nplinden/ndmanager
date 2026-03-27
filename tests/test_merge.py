@@ -132,6 +132,71 @@ class TestMergeNeutronFile:
                 assert result_temps == source_temps | target_temps
 
 
+class TestMergeUrr:
+    """Test URR (unresolved resonance region) handling during merge."""
+
+    def _make_h5(self, path: Path, nuclide: str, temperatures: list[int], has_urr: bool) -> None:
+        """Create a minimal HDF5 file with the given nuclide and temperatures."""
+        with h5py.File(path, "w") as f:
+            grp = f.create_group(nuclide)
+            energy = grp.create_group("energy")
+            kts = grp.create_group("kTs")
+            reactions = grp.create_group("reactions")
+            react = reactions.create_group("reaction_002")
+            for t in temperatures:
+                energy.create_dataset(f"{t}K", data=[1.0, 2.0])
+                kts.create_dataset(f"{t}K", data=[1.0])
+                react.create_dataset(f"{t}K", data=[1.0, 2.0])
+            if has_urr:
+                urr = grp.create_group("urr")
+                for t in temperatures:
+                    urr.create_dataset(f"{t}K", data=[1.0])
+
+    def test_urr_in_source_not_target_skips_silently(self, tmp_path):
+        """Test that URR data in source is skipped when target has no URR group."""
+        source_path = tmp_path / "source.h5"
+        target_path = tmp_path / "target.h5"
+
+        self._make_h5(source_path, "H1", [500], has_urr=True)
+        self._make_h5(target_path, "H1", [600], has_urr=False)
+
+        # Should not raise
+        merge_neutron_file(str(source_path), str(target_path))
+
+        with h5py.File(target_path, "r") as f:
+            assert "500K" in f["H1/energy"]   # temperature was merged
+            assert "urr" not in f["H1"]        # URR was not created
+
+    def test_urr_in_both_is_merged(self, tmp_path):
+        """Test that URR temperatures are merged when both files have a URR group."""
+        source_path = tmp_path / "source.h5"
+        target_path = tmp_path / "target.h5"
+
+        self._make_h5(source_path, "H1", [500], has_urr=True)
+        self._make_h5(target_path, "H1", [600], has_urr=True)
+
+        merge_neutron_file(str(source_path), str(target_path))
+
+        with h5py.File(target_path, "r") as f:
+            assert "500K" in f["H1/urr"]
+            assert "600K" in f["H1/urr"]
+
+    def test_urr_in_target_not_source_unchanged(self, tmp_path):
+        """Test that existing URR data in target is untouched when source has no URR."""
+        source_path = tmp_path / "source.h5"
+        target_path = tmp_path / "target.h5"
+
+        self._make_h5(source_path, "H1", [500], has_urr=False)
+        self._make_h5(target_path, "H1", [600], has_urr=True)
+
+        merge_neutron_file(str(source_path), str(target_path))
+
+        with h5py.File(target_path, "r") as f:
+            assert "500K" in f["H1/energy"]   # temperature was merged
+            assert "600K" in f["H1/urr"]       # original URR intact
+            assert "500K" not in f["H1/urr"]   # no URR added for new temp
+
+
 class TestGetAvailableTemperature:
     """Test the get_available_temperature function."""
 
