@@ -44,7 +44,7 @@ def process_neutron(target: Path, tape: Path, temperatures: set[int]) -> Path:
 
         with tempfile.NamedTemporaryFile(delete=True) as temp_file:
             logger.info("New processing temperatures: %s", " ".join([str(t) for t in remaining_temps]))
-            xs = IncidentNeutron.from_njoy(tape, remaining_temps)
+            xs = IncidentNeutron.from_njoy(tape, temperatures=remaining_temps)
             xs.export_to_hdf5(temp_file.name, "w")
             merge_neutron_file(temp_file.name, target)
     return target
