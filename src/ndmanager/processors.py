@@ -6,7 +6,7 @@ from ndmanager.merge import get_available_temperature, merge_neutron_file
 from ndmanager.utils import get_logger
 
 
-def process_neutron(target: Path, tape: Path, temperatures: set[int]) -> None:
+def process_neutron(target: Path, tape: Path, temperatures: set[int]) -> Path:
     """Process neutron data file from NJOY tape.
 
     Args:
@@ -50,7 +50,7 @@ def process_neutron(target: Path, tape: Path, temperatures: set[int]) -> None:
     return target
 
 
-def process_photon(target: Path, photo: Path, ard: Path | None = None) -> None:
+def process_photon(target: Path, photo: Path, ard: Path | None = None) -> Path:
     """Process photon data file.
 
     Args:
@@ -84,7 +84,7 @@ def process_photon(target: Path, photo: Path, ard: Path | None = None) -> None:
     return target
 
 
-def process_tsl(target: Path, neutron: Path, tsl: Path) -> None:
+def process_tsl(target: Path, neutron: Path, tsl: Path) -> Path:
     """Process TSL data file.
 
     Args:
