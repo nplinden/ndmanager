@@ -84,7 +84,7 @@ class InputParser:
                 msg = f"Neutron base path '{base_path}' does not exist"
                 raise ValueError(msg)
 
-            tapes = {p.stem: p for p in base_path.glob("*.endf6") if p.name not in omit | set(reuse)}
+            tapes = {p.stem: p for p in base_path.glob("*.endf6") if p.stem not in omit | set(reuse)}
 
         # Remove neutron evaluations if they are present.
         tapes.pop("n1", None)
@@ -126,8 +126,8 @@ class InputParser:
                 msg = f"ARD base path '{ard_base}' does not exist"
                 raise ValueError(msg)
 
-            photo = {p.stem: p for p in photo_base.glob("*.endf6") if p.name not in omit | set(reuse)}
-            ard = {p.stem: p for p in ard_base.glob("*.endf6") if p.name not in omit | set(reuse)}
+            photo = {p.stem: p for p in photo_base.glob("*.endf6") if p.stem not in omit | set(reuse)}
+            ard = {p.stem: p for p in ard_base.glob("*.endf6") if p.stem not in omit | set(reuse)}
             photon |= {nuc: (photo[nuc], ard.get(nuc)) for nuc in photo}
 
         for guestlib, nuclides in add.items():
