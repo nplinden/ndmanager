@@ -38,7 +38,7 @@ def merge_neutron_file(sourcepath: str, targetpath: str) -> None:
                     target[f"{nuclide}/reactions/{reaction}/"],
                 )
 
-            if "urr" in source[nuclide]:
+            if "urr" in source[nuclide] and "urr" in target[nuclide]:
                 source.copy(source[f"{nuclide}/urr/{t}K"], target[f"{nuclide}/urr/"])
 
 
