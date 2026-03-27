@@ -1,7 +1,7 @@
 """Tests for the library module."""
 
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -151,6 +151,18 @@ class TestLibraryBuild:
         mock_neutron.assert_called_once_with(4)
         mock_photon.assert_called_once_with(4)
 
+    @patch.object(Library, "build_neutron")
+    @patch.object(Library, "build_photon")
+    @patch.object(Library, "build_tsl")
+    @patch.object(Library, "sort")
+    def test_build_calls_tsl_when_tsl_data_set(self, mock_sort, mock_tsl, mock_photon, mock_neutron, foo_lib):
+        """Test that build calls build_tsl when tsl_data is set."""
+        foo_lib.tsl_data = {"dummy": (Path("neutron.endf6"), Path("tsl.endf6"))}
+
+        foo_lib.build(jobs=1)
+
+        mock_tsl.assert_called_once_with(1)
+
 
 class TestLibraryBuildNeutron:
     """Test the Library.build_neutron method."""
@@ -175,6 +187,43 @@ class TestLibraryBuildNeutron:
         with pytest.raises(ValueError, match="must be at least 1"):
             foo_lib.build_neutron(jobs=-1)
 
+    @patch.object(Library, "register_file")
+    @patch("ndmanager.library.mp")
+    def test_build_neutron_parallel(self, mock_mp, mock_register, foo_lib):
+        """Test neutron building in parallel mode (jobs>1)."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+
+        # Simulate apply_async invoking the callback with the target path
+        def invoke_callback(func, args, callback=None, error_callback=None):
+            if callback:
+                callback(args[0])
+
+        mock_pool.apply_async.side_effect = invoke_callback
+
+        foo_lib.build_neutron(jobs=4)
+
+        # Should be called for H1 and H2
+        assert mock_pool.apply_async.call_count == 2
+        assert mock_register.call_count == 2
+        mock_pool.close.assert_called_once()
+        mock_pool.join.assert_called_once()
+
+    @patch("ndmanager.library.mp")
+    def test_build_neutron_parallel_error_callback(self, mock_mp, foo_lib):
+        """Test that error_callback re-raises exceptions in parallel mode."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+
+        def invoke_error_callback(func, args, callback=None, error_callback=None):
+            if error_callback:
+                error_callback(RuntimeError("processing failed"))
+
+        mock_pool.apply_async.side_effect = invoke_error_callback
+
+        with pytest.raises(RuntimeError, match="processing failed"):
+            foo_lib.build_neutron(jobs=4)
+
 
 class TestLibraryBuildPhoton:
     """Test the Library.build_photon method."""
@@ -196,6 +245,42 @@ class TestLibraryBuildPhoton:
         with pytest.raises(ValueError, match="must be at least 1"):
             foo_lib.build_photon(jobs=0)
 
+    @patch.object(Library, "register_file")
+    @patch("ndmanager.library.mp")
+    def test_build_photon_parallel(self, mock_mp, mock_register, foo_lib):
+        """Test photon building in parallel mode (jobs>1)."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+
+        def invoke_callback(func, args, callback=None, error_callback=None):
+            if callback:
+                callback(args[0])
+
+        mock_pool.apply_async.side_effect = invoke_callback
+
+        foo_lib.build_photon(jobs=4)
+
+        # Should be called for H element
+        assert mock_pool.apply_async.call_count == 1
+        assert mock_register.call_count == 1
+        mock_pool.close.assert_called_once()
+        mock_pool.join.assert_called_once()
+
+    @patch("ndmanager.library.mp")
+    def test_build_photon_parallel_error_callback(self, mock_mp, foo_lib):
+        """Test that error_callback re-raises exceptions in parallel mode."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+
+        def invoke_error_callback(func, args, callback=None, error_callback=None):
+            if error_callback:
+                error_callback(RuntimeError("processing failed"))
+
+        mock_pool.apply_async.side_effect = invoke_error_callback
+
+        with pytest.raises(RuntimeError, match="processing failed"):
+            foo_lib.build_photon(jobs=4)
+
 
 class TestLibraryBuildTsl:
     """Test the Library.build_tsl method."""
@@ -207,6 +292,67 @@ class TestLibraryBuildTsl:
 
         with pytest.raises(ValueError, match="must be at least 1"):
             foo_lib.build_tsl(jobs=0)
+
+    @patch("ndmanager.library.get_thermal_name")
+    @patch("ndmanager.library.Evaluation")
+    @patch.object(Library, "register_file")
+    @patch("ndmanager.library.process_tsl")
+    def test_build_tsl_serial(self, mock_process, mock_register, mock_eval, mock_thermal_name, foo_lib):
+        """Test TSL building in serial mode (jobs=1)."""
+        mock_eval.return_value.target = {"zsymam": "H(H2O)"}
+        mock_thermal_name.return_value = "c_H_in_H2O"
+        mock_process.return_value = None
+        foo_lib.tsl_data = {"dummy": (Path("neutron.endf6"), Path("tsl.endf6"))}
+
+        foo_lib.build_tsl(jobs=1)
+
+        assert mock_process.call_count == 1
+        assert mock_register.call_count == 1
+
+    @patch("ndmanager.library.get_thermal_name")
+    @patch("ndmanager.library.Evaluation")
+    @patch.object(Library, "register_file")
+    @patch("ndmanager.library.mp")
+    def test_build_tsl_parallel(self, mock_mp, mock_register, mock_eval, mock_thermal_name, foo_lib):
+        """Test TSL building in parallel mode (jobs>1)."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+        mock_eval.return_value.target = {"zsymam": "H(H2O)"}
+        mock_thermal_name.return_value = "c_H_in_H2O"
+        foo_lib.tsl_data = {"dummy": (Path("neutron.endf6"), Path("tsl.endf6"))}
+
+        def invoke_callback(func, args, callback=None, error_callback=None):
+            if callback:
+                callback(args[0])
+
+        mock_pool.apply_async.side_effect = invoke_callback
+
+        foo_lib.build_tsl(jobs=4)
+
+        assert mock_pool.apply_async.call_count == 1
+        assert mock_register.call_count == 1
+        mock_pool.close.assert_called_once()
+        mock_pool.join.assert_called_once()
+
+    @patch("ndmanager.library.get_thermal_name")
+    @patch("ndmanager.library.Evaluation")
+    @patch("ndmanager.library.mp")
+    def test_build_tsl_parallel_error_callback(self, mock_mp, mock_eval, mock_thermal_name, foo_lib):
+        """Test that error_callback re-raises exceptions in parallel mode."""
+        mock_pool = MagicMock()
+        mock_mp.get_context.return_value.Pool.return_value.__enter__.return_value = mock_pool
+        mock_eval.return_value.target = {"zsymam": "H(H2O)"}
+        mock_thermal_name.return_value = "c_H_in_H2O"
+        foo_lib.tsl_data = {"dummy": (Path("neutron.endf6"), Path("tsl.endf6"))}
+
+        def invoke_error_callback(func, args, callback=None, error_callback=None):
+            if error_callback:
+                error_callback(RuntimeError("processing failed"))
+
+        mock_pool.apply_async.side_effect = invoke_error_callback
+
+        with pytest.raises(RuntimeError, match="processing failed"):
+            foo_lib.build_tsl(jobs=4)
 
 
 class TestLibraryExportToXml:
