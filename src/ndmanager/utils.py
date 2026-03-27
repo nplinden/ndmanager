@@ -60,12 +60,13 @@ def get_logger(path: Path) -> logging.Logger:
         path.parent.mkdir(parents=True, exist_ok=True)
 
     logger = logging.getLogger(path.stem)
-    handler = logging.FileHandler(path)
-    fmt = "%(asctime)s [%(levelname)-8s] %(message)s"
-    formatter = logging.Formatter(fmt, "%Y-%m-%d %H:%M:%S")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel("INFO")
+    if not logger.handlers:
+        handler = logging.FileHandler(path)
+        fmt = "%(asctime)s [%(levelname)-8s] %(message)s"
+        formatter = logging.Formatter(fmt, "%Y-%m-%d %H:%M:%S")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel("INFO")
 
     def showwarning(message: str, *args, **kwargs) -> None:
         logger.warning(message)
