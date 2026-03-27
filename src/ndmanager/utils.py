@@ -31,7 +31,7 @@ def get_hdf5(libname: str, sub: str, nuclide: str) -> Path:
     with p.open(encoding="utf-8") as f:
         root = ET.parse(f).getroot()
         dirnode = root.find("directory")
-        directory = p.parent if dirnode is None else Path(dirnode.text)
+        directory = p.parent if dirnode is None else Path(dirnode.text).resolve()
         for library in root.findall("library"):
             if library.attrib["materials"] == nuclide and library.attrib["type"] == sub:
                 return directory / library.attrib["path"]
