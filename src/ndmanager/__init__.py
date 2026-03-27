@@ -17,7 +17,6 @@ __all__ = [
     "IAEALibrary",
     "IAEASublibrary",
     "Nuclide",
-    "compute_file_sha1",
     "get_endf6",
     "get_hdf5",
 ]
