@@ -21,7 +21,15 @@ class InputParser:
         with self.filepath.open() as f:
             self.input_dict = yaml.safe_load(f)
 
-        self.name = self.input_dict.get("name", "")
+        if not self.input_dict:
+            msg = f"Input file '{self.filepath}' is empty or invalid"
+            raise ValueError(msg)
+
+        if "name" not in self.input_dict:
+            msg = f"Input file '{self.filepath}' is missing required field 'name'"
+            raise ValueError(msg)
+
+        self.name = self.input_dict["name"]
         self.summary = self.input_dict.get("summary", "")
         self.description = self.input_dict.get("description", "")
 
