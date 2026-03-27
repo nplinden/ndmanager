@@ -120,11 +120,16 @@ def install(
             # A manual erratum for the neutron xs of B10 in ENDF/B-VIII.0
             if library == "endfb8" and sublibrary == "n":
                 url = "https://www.nndc.bnl.gov/endf-b8.0/erratafiles/n-005_B_010.endf"
-                tape = requests.get(url, timeout=600).text
-                target = NDMANAGER_ENDF6 / "endfb8/n/B10.endf6"
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with target.open("w", encoding="utf-8", newline="") as f:
-                    f.write(tape)
+                try:
+                    response = requests.get(url, timeout=600)
+                    response.raise_for_status()
+                except requests.RequestException as e:
+                    click.echo(f"[Warning] Failed to download B10 erratum: {e}", err=True)
+                else:
+                    target = NDMANAGER_ENDF6 / "endfb8/n/B10.endf6"
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with target.open("w", encoding="utf-8", newline="") as f:
+                        f.write(response.text)
 
 
 def _install_local_library(library: Path, name: str) -> None:
