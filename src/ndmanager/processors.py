@@ -91,7 +91,6 @@ def process_tsl(target: Path, neutron: Path, tsl: Path) -> None:
         target (Path): Target HDF5 file path
         neutron (Path): Neutron ENDF6 file path
         tsl (Path): TSL ENDF6 file path
-        temperatures (set[int]): Set of temperatures to process
 
     Raises:
         ValueError: Raised if input files do not exist
