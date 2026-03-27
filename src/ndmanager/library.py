@@ -182,7 +182,7 @@ class Library(DataLibrary, InputParser):
                 raise ValueError(msg)
             if jobs == 1:
                 for neutron, tsl in self.tsl_data.values():
-                    name = get_thermal_name(Evaluation(tsl).target["zsymam"])
+                    name = get_thermal_name(Evaluation(tsl).target["zsymam"].replace(" ", ""))
                     target = self.root / "tsl" / f"{name}.h5"
                     process_tsl(target, neutron, tsl)
                     self.register_file(target)
